@@ -1,0 +1,2 @@
+Für die meisten UCs, die mit der Schnittstelle UseCase interagieren sieht die Interaktion wie ein einfacher Methodenaufruf mit einem Rückgabewert aus.
+Für diese UCs wurden keine Sequenzdiagramme erstellt, da diese kaum Informationsgehalt haben.
