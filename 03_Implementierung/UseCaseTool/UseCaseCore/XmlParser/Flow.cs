@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace UseCaseCore.XmlParser
 {
-    abstract class Flow
+    public abstract class Flow
     {
 
         private List<string> steps;
