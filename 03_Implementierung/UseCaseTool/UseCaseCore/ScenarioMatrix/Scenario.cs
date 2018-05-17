@@ -60,8 +60,12 @@ namespace UseCaseCore.ScenarioMatrix
         {
             this.ScenarioID = newID;
         }
-        
 
+        public Scenario(int newID, string description)
+        {
+            this.ScenarioID = newID;
+            this.Description = description;
+        }
 
 
 
