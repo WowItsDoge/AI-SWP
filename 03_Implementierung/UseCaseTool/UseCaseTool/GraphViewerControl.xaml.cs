@@ -40,6 +40,8 @@ namespace UseCaseTool
             //bind the graph to the viewer 
             viewer.Graph = graph;
             viewer.Dock = System.Windows.Forms.DockStyle.Fill;
+            viewer.OutsideAreaBrush = System.Drawing.Brushes.White;
+            viewer.ToolBarIsVisible = false;
 
             // display the windows form control in the wpf view
             GraphView.Child = viewer;
