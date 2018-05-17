@@ -23,9 +23,9 @@
 
 
         <Grid x:Name="GridColumn0" Grid.Column="0" Grid.Row="1" Grid.RowSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <Button x:Name="openButton" Content="Öffnen" HorizontalAlignment="Left" Height="28" Margin="10,10,0,0" VerticalAlignment="Top" Width="130" Click="openButton_Click"/>
+            <Button x:Name="openButton" Content="Öffnen" HorizontalAlignment="Left" Height="28" Margin="10,10,0,0" VerticalAlignment="Top" Width="130" Click="OpenButtonClick"/>
             <Button x:Name="cancelButton" Content="Abbrechen" HorizontalAlignment="Left" Height="28" Margin="155,10,0,0" VerticalAlignment="Top" Width="130" IsEnabled="False"/>
-            <Button x:Name="sidebarHide" Content="-" HorizontalAlignment="Left" Margin="300,-10,-10,-10" VerticalAlignment="Stretch" Width="15" Click="sidebarHide_Click" BorderThickness="0" Background="#41B1E1"/>
+            <Button x:Name="sidebarHide" Content="-" HorizontalAlignment="Left" Margin="300,-10,-10,-10" VerticalAlignment="Stretch" Width="15" Click="SidebarHideClick" BorderThickness="0" Background="#41B1E1"/>
 
             <TextBlock x:Name="selectedFile" HorizontalAlignment="Left" Height="28" Margin="10,50,0,0" TextWrapping="Wrap" Text="keine Datei ausgewählt..." VerticalAlignment="Top" Width="275" />
             <GroupBox x:Name="Ablauf" Header="Ablauf" Margin="10,90,20,10" HorizontalAlignment="Left" Width="275" Grid.Row="2">
@@ -50,7 +50,7 @@
         </Grid>
 
         <Grid x:Name="GridColumn1" Grid.Column="1" Grid.Row="1" Grid.RowSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <Button x:Name="sidebarShow" Content="+" HorizontalAlignment="Left" Margin="0,-10,0,-10" VerticalAlignment="Stretch" Width="15" Click="sidebarShow_Click" BorderThickness="0" Visibility="Collapsed" Background="LightGray"/>
+            <Button x:Name="sidebarShow" Content="+" HorizontalAlignment="Left" Margin="0,-10,0,-10" VerticalAlignment="Stretch" Width="15" Click="SidebarShowClick" BorderThickness="0" Visibility="Collapsed" Background="LightGray"/>
             <TabControl x:Name="tabControl" HorizontalAlignment="Stretch" Margin="25,10,10,10" VerticalAlignment="Stretch">
 
                 <TabItem Header="Mängelbericht">
@@ -98,7 +98,7 @@
         <DockPanel Grid.ColumnSpan="2" HorizontalAlignment="Stretch" Height="30" LastChildFill="False" VerticalAlignment="Top" >
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="_Datei">
-                    <MenuItem Header="_Datei öffnen..." Click="openButton_Click">
+                    <MenuItem Header="_Datei öffnen..." Click="OpenButtonClick">
                         <MenuItem.Icon>
                             <Image Source="/images/folder_open.png" Width="20" Height="20"/>
                         </MenuItem.Icon>
@@ -111,12 +111,12 @@
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Header="_Bearbeiten">
-                    <MenuItem Header="_Bericht exportieren" Click="exportReport_Click">
+                    <MenuItem Header="_Bericht exportieren" Click="ExportReportClick">
                         <MenuItem.Icon>
                             <Image Source="/images/export.png" Width="20" Height="20"/>
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Header="_Matrix exportieren" Click="exportMatrix_Click">
+                    <MenuItem Header="_Matrix exportieren" Click="ExportMatrixClick">
                         <MenuItem.Icon>
                             <Image Source="/images/export.png" Width="20" Height="20"/>
                         </MenuItem.Icon>
