@@ -41,8 +41,13 @@ namespace UseCaseTool
             }
         }
 
-
-
+        private void CloseClick(object sender, RoutedEventArgs e)
+        {
+            if (MessageBox.Show("Programm wirklich schließen?", "Bestätigung", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                this.Close();
+            }
+        }
 
         /// <summary>
         /// Button to hide the sidebar
