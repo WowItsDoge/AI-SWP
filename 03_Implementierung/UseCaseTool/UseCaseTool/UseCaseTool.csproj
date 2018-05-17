@@ -89,6 +89,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="MatrixControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UcaWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -100,6 +104,9 @@
     <Compile Include="Controller.cs" />
     <Compile Include="GraphViewerControl.xaml.cs">
       <DependentUpon>GraphViewerControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MatrixControl.xaml.cs">
+      <DependentUpon>MatrixControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UcaWindow.xaml.cs">
       <DependentUpon>UcaWindow.xaml</DependentUpon>

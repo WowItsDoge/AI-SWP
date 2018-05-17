@@ -57,7 +57,9 @@
                     <Grid Background="#FFE5E5E5"/>
                 </TabItem>
                 <TabItem Header="Szenariomatrix">
-                    <Grid Background="#FFE5E5E5"/>
+                    <Grid Background="#FFE5E5E5">
+                        <UseCaseTool:MatrixControl/>
+                    </Grid>
                 </TabItem>
                 <TabItem Header="Graph">
 
