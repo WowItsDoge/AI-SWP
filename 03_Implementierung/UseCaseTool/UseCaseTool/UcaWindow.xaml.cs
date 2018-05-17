@@ -4,7 +4,6 @@
 
 using MahApps.Metro.Controls;
 using Microsoft.Win32;
-using System.Windows;
 
 namespace UseCaseTool
 {
@@ -26,7 +25,7 @@ namespace UseCaseTool
             InitializeComponent();
         }
 
-        private void openButton_Click(object sender, RoutedEventArgs e)
+        private void OpenButtonClick(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openXmlFileDialog = new OpenFileDialog();
 
@@ -45,7 +44,7 @@ namespace UseCaseTool
         }
 
 
-        private void sidebarHide_Click(object sender, RoutedEventArgs e)
+        private void SidebarHideClick(object sender, RoutedEventArgs e)
         {
             oldWidth = GridColumn0.ActualWidth;
 
@@ -55,7 +54,7 @@ namespace UseCaseTool
             sidebarShow.Visibility = Visibility.Visible;
         }
 
-        private void sidebarShow_Click(object sender, RoutedEventArgs e)
+        private void SidebarShowClick(object sender, RoutedEventArgs e)
         {
             mainGrid.ColumnDefinitions[0].Width = new GridLength(oldWidth);
             GridColumn0.Visibility = Visibility.Visible;
@@ -66,9 +65,9 @@ namespace UseCaseTool
 
 
 
-        private void exportReport_Click(object sender, RoutedEventArgs e)
+        private void ExportReportClick(object sender, RoutedEventArgs e)
         {
-            openSaveFileDialog();
+            OpenSaveFileDialog();
             if (exportDirectory != null)
             {
                 ucController.reportFilePath(exportDirectory);
@@ -76,16 +75,16 @@ namespace UseCaseTool
         }
 
 
-        private void exportMatrix_Click(object sender, RoutedEventArgs e)
+        private void ExportMatrixClick(object sender, RoutedEventArgs e)
         {
-            openSaveFileDialog();
+            OpenSaveFileDialog();
             if (exportDirectory != null)
             {
                 ucController.matrixFilePath(exportDirectory);
             }
         }
 
-        private string openSaveFileDialog()
+        private string OpenSaveFileDialog()
         {
             SaveFileDialog saveFileDialogReport = new SaveFileDialog();
 
