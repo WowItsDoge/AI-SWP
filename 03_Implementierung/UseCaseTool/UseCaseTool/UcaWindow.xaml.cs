@@ -13,23 +13,41 @@ namespace UseCaseTool
     /// </summary>
     public partial class UcaWindow : MetroWindow
     {
+        /// <summary>
+        /// That's storage for the originally broad sidebar.
+        /// </summary>
         private double oldWidth = 0;
+
+        /// <summary>
+        /// Save the export directory
+        /// </summary>
         private string exportDirectory = string.Empty;
 
+        /// <summary>
+        /// Creates an element of the controller class
+        /// </summary>
         private Controller controller = new Controller();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UcaWindow"/> class.
+        /// </summary>
         public UcaWindow()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
+        /// <summary>
+        /// Button to open the dialog with which you can select the file
+        /// </summary>
+        /// <param name="sender">The sender</param>
+        /// <param name="e">The e</param>
         private void OpenButtonClick(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openXmlFileDialog = new OpenFileDialog();
 
             openXmlFileDialog.InitialDirectory = "c:\\";
             openXmlFileDialog.Filter = "XML files (*.xml)|*.xml";
-            //openXmlFileDialog.FilterIndex = 2;
+            ////openXmlFileDialog.FilterIndex = 2;
             openXmlFileDialog.RestoreDirectory = true;
 
             openXmlFileDialog.ShowDialog();
@@ -37,10 +55,15 @@ namespace UseCaseTool
             if (openXmlFileDialog.FileName != null)
             {
                 selectedFile.Text = openXmlFileDialog.FileName;
-                controller.CurrentXmlFilePath(openXmlFileDialog.FileName);
+                this.controller.CurrentXmlFilePath(openXmlFileDialog.FileName);
             }
         }
 
+        /// <summary>
+        /// Button to close the window
+        /// </summary>
+        /// <param name="sender">The sender</param>
+        /// <param name="e">The e</param>
         private void CloseClick(object sender, RoutedEventArgs e)
         {
             if (MessageBox.Show("Programm wirklich schließen?", "Bestätigung", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
@@ -52,11 +75,11 @@ namespace UseCaseTool
         /// <summary>
         /// Button to hide the sidebar
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The sender</param>
+        /// <param name="e">The e</param>
         private void SidebarHideClick(object sender, RoutedEventArgs e)
         {
-            oldWidth = GridColumn0.ActualWidth;
+            this.oldWidth = GridColumn0.ActualWidth;
 
             mainGrid.ColumnDefinitions[0].Width = new GridLength(0);
 
@@ -67,54 +90,61 @@ namespace UseCaseTool
         /// <summary>
         /// Button to show the sidebar
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The sender</param>
+        /// <param name="e">The e</param>
         private void SidebarShowClick(object sender, RoutedEventArgs e)
         {
-            mainGrid.ColumnDefinitions[0].Width = new GridLength(oldWidth);
+            mainGrid.ColumnDefinitions[0].Width = new GridLength(this.oldWidth);
             GridColumn0.Visibility = Visibility.Visible;
 
             sidebarShow.Visibility = Visibility.Collapsed;
             sidebarHide.Visibility = Visibility.Visible;
         }
 
-
         /// <summary>
         /// Button to export the report
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The sender</param>
+        /// <param name="e">The e</param>
         private void ExportReportClick(object sender, RoutedEventArgs e)
         {
-            OpenSaveFileDialog();
-            if (exportDirectory != null)
+            this.OpenSaveFileDialog();
+            if (this.exportDirectory != null)
             {
-                controller.ReportFilePath(exportDirectory);
+                this.controller.ReportFilePath(this.exportDirectory);
             }
         }
 
-
+        /// <summary>
+        /// Button to export the matrix
+        /// </summary>
+        /// <param name="sender">The sender</param>
+        /// <param name="e">The e</param>
         private void ExportMatrixClick(object sender, RoutedEventArgs e)
         {
-            OpenSaveFileDialog();
-            if (exportDirectory != null)
+            this.OpenSaveFileDialog();
+            if (this.exportDirectory != null)
             {
-                controller.MatrixFilePath(exportDirectory);
+                this.controller.MatrixFilePath(this.exportDirectory);
             }
         }
 
+        /// <summary>
+        /// Open file dialog where the report is exported
+        /// </summary>
+        /// <returns>Return the path to where the report should be exported</returns>
         private string OpenSaveFileDialog()
         {
             SaveFileDialog saveFileDialogReport = new SaveFileDialog();
 
             saveFileDialogReport.InitialDirectory = "c:\\";
             saveFileDialogReport.Filter = "PDF files (*.pdf)|*.pdf";
-            //saveFileDialogReport.FilterIndex = 2;
+            ////saveFileDialogReport.FilterIndex = 2;
             saveFileDialogReport.RestoreDirectory = true;
 
             saveFileDialogReport.ShowDialog();
-            exportDirectory = saveFileDialogReport.FileName;
-            return exportDirectory;
+            this.exportDirectory = saveFileDialogReport.FileName;
+            return this.exportDirectory;
         }
     }
 }
