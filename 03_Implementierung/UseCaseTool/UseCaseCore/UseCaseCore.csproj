@@ -65,6 +65,8 @@
     <Compile Include="RuleValidation\RucmRules\IRule.cs" />
     <Compile Include="RuleValidation\RucmRules\RucmRule.cs" />
     <Compile Include="RuleValidation\RucmRuleValidator.cs" />
+    <Compile Include="ScenarioMatrix\Scenario.cs" />
+    <Compile Include="ScenarioMatrix\ScenarioMatrix.cs" />
     <Compile Include="XmlParser\BasicFlow.cs" />
     <Compile Include="XmlParser\BoundedAlternativeFlow.cs" />
     <Compile Include="XmlParser\Flow.cs" />
@@ -77,6 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ScenarioMatrix\" />
+    <Folder Include="RuleValidation\" />
     <Folder Include="UcIntern\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
