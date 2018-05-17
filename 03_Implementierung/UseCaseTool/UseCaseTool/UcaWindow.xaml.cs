@@ -1,24 +1,22 @@
-﻿// <copyright file="MainWindow.xaml.cs" company="Team B">
+﻿// <copyright file="UcaWindow.xaml.cs" company="Team B">
 //      Team B. All rights reserved.
 // </copyright>
-
-using MahApps.Metro.Controls;
-using Microsoft.Win32;
 
 namespace UseCaseTool
 {
     using System.Windows;
+    using MahApps.Metro.Controls;
+    using Microsoft.Win32;
 
     /// <summary>
     /// Interaction logic for MainWindow
     /// </summary>
     public partial class UcaWindow : MetroWindow
     {
-        double oldWidth = 0;
-        string exportDirectory = "";
+        private double oldWidth = 0;
+        private string exportDirectory = string.Empty;
 
-
-        Controller ucController = new Controller();
+        private Controller controller = new Controller();
 
         public UcaWindow()
         {
@@ -39,11 +37,18 @@ namespace UseCaseTool
             if (openXmlFileDialog.FileName != null)
             {
                 selectedFile.Text = openXmlFileDialog.FileName;
-                ucController.currentXmlFilePath(openXmlFileDialog.FileName);
+                controller.CurrentXmlFilePath(openXmlFileDialog.FileName);
             }
         }
 
 
+
+
+        /// <summary>
+        /// Button to hide the sidebar
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SidebarHideClick(object sender, RoutedEventArgs e)
         {
             oldWidth = GridColumn0.ActualWidth;
@@ -54,6 +59,11 @@ namespace UseCaseTool
             sidebarShow.Visibility = Visibility.Visible;
         }
 
+        /// <summary>
+        /// Button to show the sidebar
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SidebarShowClick(object sender, RoutedEventArgs e)
         {
             mainGrid.ColumnDefinitions[0].Width = new GridLength(oldWidth);
@@ -64,13 +74,17 @@ namespace UseCaseTool
         }
 
 
-
+        /// <summary>
+        /// Button to export the report
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ExportReportClick(object sender, RoutedEventArgs e)
         {
             OpenSaveFileDialog();
             if (exportDirectory != null)
             {
-                ucController.reportFilePath(exportDirectory);
+                controller.ReportFilePath(exportDirectory);
             }
         }
 
@@ -80,7 +94,7 @@ namespace UseCaseTool
             OpenSaveFileDialog();
             if (exportDirectory != null)
             {
-                ucController.matrixFilePath(exportDirectory);
+                controller.MatrixFilePath(exportDirectory);
             }
         }
 
