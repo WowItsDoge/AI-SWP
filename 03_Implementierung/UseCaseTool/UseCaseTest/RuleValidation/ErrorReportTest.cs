@@ -7,7 +7,7 @@ namespace UseCaseTest.RuleValidation
     using NUnit.Framework;
 
     /// <summary>
-    /// Testclass for ErrorReport
+    /// Test class for ErrorReport
     /// </summary>
     [TestFixture]
     public class ErrorReportTest

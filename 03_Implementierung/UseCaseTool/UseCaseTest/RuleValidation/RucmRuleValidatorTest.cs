@@ -7,7 +7,7 @@ namespace UseCaseTest.RuleValidation
     using NUnit.Framework;
 
     /// <summary>
-    /// Test class for RucmRuleValidator
+    /// Test class for RUCMRuleValidator
     /// </summary>
     [TestFixture]
     public class RucmRuleValidatorTest

@@ -7,7 +7,7 @@ namespace UseCaseTest.RuleValidation.Errors
     using NUnit.Framework;
 
     /// <summary>
-    /// Testclass for the GeneralError
+    /// Test class for the GeneralError
     /// </summary>
     [TestFixture]
     public class GeneralErrorTest

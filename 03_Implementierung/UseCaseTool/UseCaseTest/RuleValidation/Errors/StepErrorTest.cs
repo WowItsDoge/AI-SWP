@@ -7,7 +7,7 @@ namespace UseCaseTest.RuleValidation.Errors
     using NUnit.Framework;
 
     /// <summary>
-    /// Testclass for the StepError
+    /// Test class for the StepError
     /// </summary>
     [TestFixture]
     public class StepErrorTest

@@ -7,7 +7,7 @@ namespace UseCaseTest.RuleValidation.Errors
     using NUnit.Framework;
 
     /// <summary>
-    /// testclass for the FlowError
+    /// Test class for the FlowError
     /// </summary>
     [TestFixture]
     public class FlowErrorTest
