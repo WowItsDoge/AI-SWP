@@ -289,3 +289,5 @@ __pycache__/
 05_Konfigurationsmanagement/.DS_Store
 10_Projektmanagement/.DS_Store
 .DS_Store
+03_Implementierung/UseCaseTool/UseCaseCore/UseCaseCore.csproj
+03_Implementierung/UseCaseTool/UseCaseCore/UseCaseCore.csproj
