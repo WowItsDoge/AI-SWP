@@ -78,8 +78,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="ScenarioMatrix\" />
-    <Folder Include="RuleValidation\" />
     <Folder Include="UcIntern\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

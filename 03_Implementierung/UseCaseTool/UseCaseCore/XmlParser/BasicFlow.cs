@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿// <copyright file="BasicFlow.cs" company="Team B">
+//      Team B. All rights reserved.
+// </copyright>
 namespace UseCaseCore.XmlParser
 {
-    class BasicFlow : Flow
+    /// <summary>
+    /// The basic flow instance.
+    /// </summary>
+    public class BasicFlow : Flow
     {
-
     }
 }
