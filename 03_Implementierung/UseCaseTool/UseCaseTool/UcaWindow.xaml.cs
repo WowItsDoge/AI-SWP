@@ -177,14 +177,12 @@ namespace UseCaseTool
 
         private void zoomIn_Click(object sender, RoutedEventArgs e)
         {
-            zoomFactor *= 1.2;
-            GraphView.Zoom(zoomFactor);
+            GraphView.Zoom(1.2);
         }
 
         private void zoomOut_Click(object sender, RoutedEventArgs e)
         {
-            zoomFactor *= 0.8;
-            GraphView.Zoom(zoomFactor);
+            GraphView.Zoom(0.8);
         }
     }
 }

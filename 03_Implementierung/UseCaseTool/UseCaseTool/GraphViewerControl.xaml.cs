@@ -26,6 +26,8 @@ namespace UseCaseTool
     {
         private Microsoft.Msagl.GraphViewerGdi.GViewer viewer;
 
+        private Microsoft.Msagl.Drawing.Graph graph;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="GraphViewerControl"/> class.
         /// </summary>
@@ -37,17 +39,10 @@ namespace UseCaseTool
             viewer = new Microsoft.Msagl.GraphViewerGdi.GViewer();
 
             // create a graph object 
-            Microsoft.Msagl.Drawing.Graph graph = new Microsoft.Msagl.Drawing.Graph("graph");
+            graph = new Microsoft.Msagl.Drawing.Graph("graph");
 
             // create the graph content 
-            graph.AddEdge("A", "B");
-            graph.AddEdge("B", "C");
-            graph.AddEdge("A", "C").Attr.Color = Microsoft.Msagl.Drawing.Color.Green;
-            graph.FindNode("A").Attr.FillColor = Microsoft.Msagl.Drawing.Color.Magenta;
-            graph.FindNode("B").Attr.FillColor = Microsoft.Msagl.Drawing.Color.MistyRose;
-            Microsoft.Msagl.Drawing.Node c = graph.FindNode("C");
-            c.Attr.FillColor = Microsoft.Msagl.Drawing.Color.PaleGreen;
-            c.Attr.Shape = Microsoft.Msagl.Drawing.Shape.Diamond;
+            UpdateGraphView();
 
             // bind the graph to the viewer 
             viewer.Graph = graph;
@@ -61,13 +56,25 @@ namespace UseCaseTool
 
         public void Zoom(double delta)
         {
-            viewer.ZoomF = delta;
+            viewer.ZoomF *= delta;
         }
 
         public void Move(double x, double y)
         {
             viewer.Transform = new Microsoft.Msagl.Core.Geometry.Curves.PlaneTransformation(1, 0, x, 0, 1, -y);
             viewer.DrawingPanel.Invalidate();
+        }
+
+        private void UpdateGraphView()
+        {
+            graph.AddEdge("A", "B");
+            graph.AddEdge("B", "C");
+            graph.AddEdge("A", "C").Attr.Color = Microsoft.Msagl.Drawing.Color.Green;
+            graph.FindNode("A").Attr.FillColor = Microsoft.Msagl.Drawing.Color.Magenta;
+            graph.FindNode("B").Attr.FillColor = Microsoft.Msagl.Drawing.Color.MistyRose;
+            Microsoft.Msagl.Drawing.Node c = graph.FindNode("C");
+            c.Attr.FillColor = Microsoft.Msagl.Drawing.Color.PaleGreen;
+            c.Attr.Shape = Microsoft.Msagl.Drawing.Shape.Diamond;
         }
     }
 }
