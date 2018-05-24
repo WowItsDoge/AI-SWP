@@ -7,6 +7,7 @@ namespace UseCaseTool
     using System.Windows;
     using MahApps.Metro.Controls;
     using Microsoft.Win32;
+    using System.Windows.Input;
 
     /// <summary>
     /// Interaction logic for MainWindow
@@ -17,6 +18,11 @@ namespace UseCaseTool
         /// That's storage for the originally broad sidebar.
         /// </summary>
         private double oldWidth = 0;
+
+        /// <summary>
+        /// current zoom factor (graph)
+        /// </summary>
+        private double zoomFactor = 1;
 
         /// <summary>
         /// Save the export directory
@@ -59,6 +65,7 @@ namespace UseCaseTool
             {
                 selectedFile.Text = openXmlFileDialog.FileName;
                 this.controller.CurrentXmlFilePath(openXmlFileDialog.FileName);
+                ////selectedFile.TextAlignment = TextAlignment.Right;
             }
         }
 
@@ -140,14 +147,44 @@ namespace UseCaseTool
         {
             SaveFileDialog saveFileDialogReport = new SaveFileDialog();
 
-            saveFileDialogReport.InitialDirectory = "c:\\";
             saveFileDialogReport.Filter = "PDF files (*.pdf)|*.pdf";
-            ////saveFileDialogReport.FilterIndex = 2;
             saveFileDialogReport.RestoreDirectory = true;
 
             saveFileDialogReport.ShowDialog();
             this.exportDirectory = saveFileDialogReport.FileName;
             return this.exportDirectory;
+        }
+
+        /// <summary>
+        /// Button to show infos
+        /// </summary>
+        /// <param name="sender">The sender</param>
+        /// <param name="e">The e</param>
+        private void InfoClick(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Bla bla...", "Info Über Use-Case Visualizer", MessageBoxButton.OK, MessageBoxImage.Question);
+        }
+
+        /// <summary>
+        /// Button to change language
+        /// </summary>
+        /// <param name="sender">The sender</param>
+        /// <param name="e">The e</param>
+        private void ChangeLanguageClick(object sender, RoutedEventArgs e)
+        {
+            ////
+        }
+
+        private void zoomIn_Click(object sender, RoutedEventArgs e)
+        {
+            zoomFactor *= 1.2;
+            GraphView.Zoom(zoomFactor);
+        }
+
+        private void zoomOut_Click(object sender, RoutedEventArgs e)
+        {
+            zoomFactor *= 0.8;
+            GraphView.Zoom(zoomFactor);
         }
     }
 }
