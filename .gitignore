@@ -295,4 +295,9 @@ __pycache__/
 
 
 # Special Style Cop File with comment for Domi
-!03_Implementierung\UseCaseTool\packages\StyleCop.MSBuild.5.0.0\tools\Settings.StyleCop
+!**/packages/StyleCop.MSBuild.5.0.0/
+**/packages/StyleCop.MSBuild.5.0.0/**
+!**/packages/StyleCop.MSBuild.5.0.0/tools
+**/packages/StyleCop.MSBuild.5.0.0/tools/**
+!**/packages/StyleCop.MSBuild.5.0.0/tools/Settings.StyleCop
+
