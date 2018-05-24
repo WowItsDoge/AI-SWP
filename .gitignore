@@ -301,3 +301,4 @@ __pycache__/
 **/packages/StyleCop.MSBuild.5.0.0/tools/**
 !**/packages/StyleCop.MSBuild.5.0.0/tools/Settings.StyleCop
 
+StyleCop.Cache
