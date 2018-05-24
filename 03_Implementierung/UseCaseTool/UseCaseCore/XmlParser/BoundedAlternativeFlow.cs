@@ -15,6 +15,14 @@ namespace UseCaseCore.XmlParser
         ////private List<ReferenceStep> referenceSteps;
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="BoundedAlternativeFlow" /> class.
+        /// </summary>
+        public BoundedAlternativeFlow() : base()
+        {
+            this.id = 0;
+        }
+
+        /// <summary>
         /// The method to set the flow id.
         /// </summary>
         /// <param name="id">Specifies the id to set.</param>

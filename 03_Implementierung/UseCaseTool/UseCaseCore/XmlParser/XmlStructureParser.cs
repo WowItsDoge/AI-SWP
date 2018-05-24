@@ -3,7 +3,12 @@
 // </copyright>
 namespace UseCaseCore.XmlParser
 {
+    using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Xml;
+    using DocumentFormat.OpenXml.Packaging;
+    using OpenXmlPowerTools;
 
     /// <summary>
     /// The xml structure parser instance.
@@ -53,17 +58,40 @@ namespace UseCaseCore.XmlParser
         /// <summary>
         /// A list of the global alternative flows of the use case.
         /// </summary>
-        private List<GlobalAlternativeFlow> globalAlternativeFlow = new List<GlobalAlternativeFlow>();
+        private List<GlobalAlternativeFlow> globalAlternativeFlow;
 
         /// <summary>
         /// A list of the specific alternative flows of the use case.
         /// </summary>
-        private List<SpecificAlternativeFlow> specificAlternativeFlow = new List<SpecificAlternativeFlow>();
+        private List<SpecificAlternativeFlow> specificAlternativeFlow;
 
         /// <summary>
         /// A list of the bounded alternative flows of the use case.
         /// </summary>
-        private List<BoundedAlternativeFlow> boundedAlternativeFlow = new List<BoundedAlternativeFlow>();
+        private List<BoundedAlternativeFlow> boundedAlternativeFlow;
+
+        /// <summary>
+        /// The word processing document for the use case file.
+        /// </summary>
+        private WordprocessingDocument useCaseFile;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="XmlStructureParser" /> class.
+        /// </summary>
+        public XmlStructureParser()
+        {
+            this.useCaseName = string.Empty;
+            this.briefDescription = string.Empty;
+            this.precondition = string.Empty;
+            this.primaryActor = string.Empty;
+            this.secondaryActor = string.Empty;
+            this.dependency = string.Empty;
+            this.generalization = string.Empty;
+            this.basicFlow = new BasicFlow();
+            this.globalAlternativeFlow = new List<GlobalAlternativeFlow>();
+            this.specificAlternativeFlow = new List<SpecificAlternativeFlow>();
+            this.boundedAlternativeFlow = new List<BoundedAlternativeFlow>();
+        }
 
         /// <summary>
         /// Loads external (word) xml file, which is stored on a storage medium. The absolute path to the file must be passed as parameter.
@@ -74,7 +102,31 @@ namespace UseCaseCore.XmlParser
         /// <returns>Returns true if the file exists and could be loaded, otherwise false.</returns>
         public bool LoadXmlFile(string path)
         {
-            return false;
+            try
+            {
+                this.useCaseFile = WordprocessingDocument.Open(path, true);
+                SimplifyMarkupSettings settings = new SimplifyMarkupSettings
+                {
+                    RemoveComments = true,
+                    RemoveContentControls = true,
+                    RemoveEndAndFootNotes = true,
+                    RemoveFieldCodes = false,
+                    RemoveLastRenderedPageBreak = true,
+                    RemovePermissions = true,
+                    RemoveProof = true,
+                    RemoveRsidInfo = true,
+                    RemoveSmartTags = true,
+                    RemoveSoftHyphens = true,
+                    ReplaceTabsWithSpaces = true,
+                };
+                MarkupSimplifier.SimplifyMarkup(this.useCaseFile, settings);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message.ToString());
+                return false;
+            }
         }
 
         /// <summary>
@@ -102,16 +154,84 @@ namespace UseCaseCore.XmlParser
         /// Returns true if file was analyzed successfully.
         /// Returns false if file was not analyzed successfully.
         /// </summary>
+        /// <param name="useCase">Out parameter for the whole internal use case representation.</param>
         /// <returns>Returns true if the file was analyzed successfully, otherwise false.</returns>
-        /*
-        public bool ParseXmlFile(out UseCase useCase)
+        //// public bool ParseXmlFile(out UseCase useCase)
+        public bool ParseXmlFile(out string useCase)
         {
-        
+            XmlDocument useCaseXml = new XmlDocument();
+            try
+            {
+                useCaseXml.PreserveWhitespace = false;
+                useCaseXml.LoadXml(this.useCaseFile.MainDocumentPart.Document.InnerXml);
+                if (useCaseXml.DocumentElement.ChildNodes == null)
+                {
+                    this.useCaseFile.Close();
+                    useCase = string.Empty;
+                    return false;
+                }
+
+                try
+                {
+                    this.useCaseName = this.ParseRucmProperty(useCaseXml, "Use Case Name");
+                    this.briefDescription = this.ParseRucmProperty(useCaseXml, "Brief Description");
+                    this.precondition = this.ParseRucmProperty(useCaseXml, "Precondition");
+                    this.primaryActor = this.ParseRucmProperty(useCaseXml, "Primary Actor");
+                    this.secondaryActor = this.ParseRucmProperty(useCaseXml, "Secondary Actors");
+                    this.dependency = this.ParseRucmProperty(useCaseXml, "Dependency");
+                    this.generalization = this.ParseRucmProperty(useCaseXml, "Generalization");
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message.ToString());
+                }
+
+                this.useCaseFile.Close();
+                useCase = string.Empty;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message.ToString());
+                this.useCaseFile.Close();
+                useCase = string.Empty;
+                return false;
+            }
         }
-        */
-        private string ParseRucmProperty(string propertyName)
+
+        /// <summary>
+        /// Parses the RUCM properties.
+        /// </summary>
+        /// <param name="useCaseXml">Specifies the loaded use case xml file.</param>
+        /// <param name="propertyName">Specifies the property name to parse.</param>
+        /// <returns>Returns a string with the parsed RUCM property.</returns>
+        private string ParseRucmProperty(XmlDocument useCaseXml, string propertyName)
         {
-            return string.Empty;
+            string xPathFilter = "//*/text()[normalize-space(.)='" + propertyName + "']/parent::*";
+            XmlNode root = useCaseXml.DocumentElement;
+            XmlNodeList propertyNode = root.SelectNodes(xPathFilter);
+            if (propertyNode.Count == 0)
+            {
+                return string.Empty;
+                throw new Exception("Error: count = 0");
+            }
+
+            if (propertyNode.Count > 1)
+            {
+                return string.Empty;
+                throw new Exception("Error: count > 1");
+            }
+
+            try
+            {
+                string propertyContent = propertyNode[0].ParentNode.ParentNode.ParentNode.ParentNode.ChildNodes[1].InnerText;
+                return propertyContent;
+            }
+            catch
+            {
+                return string.Empty;
+                throw new Exception("Error: content not found");
+            }
         }
 
         /*

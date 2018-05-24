@@ -8,5 +8,11 @@ namespace UseCaseCore.XmlParser
     /// </summary>
     public class BasicFlow : Flow
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BasicFlow" /> class.
+        /// </summary>
+        public BasicFlow() : base()
+        {
+        }
     }
 }

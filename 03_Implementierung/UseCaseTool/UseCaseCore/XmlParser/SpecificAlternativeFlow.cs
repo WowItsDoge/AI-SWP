@@ -16,6 +16,14 @@ namespace UseCaseCore.XmlParser
         //// private ReferenceStep referenceStep;
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="SpecificAlternativeFlow" /> class.
+        /// </summary>
+        public SpecificAlternativeFlow() : base()
+        {
+            this.id = 0;
+        }
+
+        /// <summary>
         /// A method to set the flow id.
         /// </summary>
         /// <param name="id">Specifies the id to set.</param>

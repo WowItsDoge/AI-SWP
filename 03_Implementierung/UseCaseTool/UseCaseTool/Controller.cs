@@ -4,12 +4,17 @@
 
 namespace UseCaseTool
 {
+    using UseCaseCore.XmlParser;
+
     /// <summary>
     /// Controller class
     /// </summary>
     public class Controller
     {
-        //// XMLStructureParser xmlParser = new XMLStructureParser;
+        /// <summary>
+        /// Creates an instance of the xml structure parser class
+        /// </summary>
+        private XmlStructureParser xmlParser = new XmlStructureParser();
 
         /// <summary>
         /// Tell the system path and file name of the XML UseCase file. The string para-meter contains the path to the new file.
@@ -17,7 +22,10 @@ namespace UseCaseTool
         /// <param name="filePath">The currently selected path</param>
         public void CurrentXmlFilePath(string filePath)
         {
-            ////  xmlParser.starteParsing(filePath);
+            this.xmlParser.LoadXmlFile(filePath);
+            //// TODO: check return value and delete test variable
+            string test = string.Empty;
+            this.xmlParser.ParseXmlFile(out test);
         }
 
         /// <summary>

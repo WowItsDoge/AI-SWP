@@ -46,7 +46,7 @@ namespace UseCaseTool
             OpenFileDialog openXmlFileDialog = new OpenFileDialog();
 
             openXmlFileDialog.InitialDirectory = "c:\\";
-            openXmlFileDialog.Filter = "XML files (*.xml)|*.xml";
+            openXmlFileDialog.Filter = "Docm files (*.docm)|*.docm";
             ////openXmlFileDialog.FilterIndex = 2;
             openXmlFileDialog.RestoreDirectory = true;
 

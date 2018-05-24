@@ -14,6 +14,14 @@ namespace UseCaseCore.XmlParser
         private int id;
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="GlobalAlternativeFlow" /> class.
+        /// </summary>
+        public GlobalAlternativeFlow() : base()
+        {
+            this.id = 0;
+        }
+
+        /// <summary>
         /// A method to set the flow id.
         /// </summary>
         /// <param name="id">Specifies the id to set.</param>

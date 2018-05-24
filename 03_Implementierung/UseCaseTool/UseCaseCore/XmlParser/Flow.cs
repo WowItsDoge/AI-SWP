@@ -21,6 +21,15 @@ namespace UseCaseCore.XmlParser
         private string postcondition;
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="Flow" /> class.
+        /// </summary>
+        public Flow()
+        {
+            this.steps = new List<string>();
+            this.postcondition = string.Empty;
+        }
+
+        /// <summary>
         /// A method to add a step to the flow.
         /// </summary>
         /// <param name="stepToAdd">Specifies the step to add.</param>
