@@ -291,3 +291,8 @@ __pycache__/
 .DS_Store
 03_Implementierung/UseCaseTool/UseCaseCore/UseCaseCore.csproj
 03_Implementierung/UseCaseTool/UseCaseCore/UseCaseCore.csproj
+
+
+
+# Special Style Cop File with comment for Domi
+!03_Implementierung\UseCaseTool\packages\StyleCop.MSBuild.5.0.0\tools\Settings.StyleCop
