@@ -21,6 +21,11 @@ namespace UseCaseTool
         /// <summary>
         /// Save the export directory
         /// </summary>
+        private string importDirectory = string.Empty;
+        
+        /// <summary>
+        /// /// Save the export directory
+        /// </summary>
         private string exportDirectory = string.Empty;
 
         /// <summary>
@@ -45,14 +50,12 @@ namespace UseCaseTool
         {
             OpenFileDialog openXmlFileDialog = new OpenFileDialog();
 
-            openXmlFileDialog.InitialDirectory = "c:\\";
             openXmlFileDialog.Filter = "Docm files (*.docm)|*.docm";
-            ////openXmlFileDialog.FilterIndex = 2;
             openXmlFileDialog.RestoreDirectory = true;
 
             openXmlFileDialog.ShowDialog();
 
-            if (openXmlFileDialog.FileName != null)
+            if (openXmlFileDialog.FileName != string.Empty)
             {
                 selectedFile.Text = openXmlFileDialog.FileName;
                 this.controller.CurrentXmlFilePath(openXmlFileDialog.FileName);
