@@ -1,26 +1,50 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿// <copyright file="Flow.cs" company="Team B">
+//      Team B. All rights reserved.
+// </copyright>
 namespace UseCaseCore.XmlParser
 {
+    using System.Collections.Generic;
+
+    /// <summary>
+    /// The abstract class for the flows.
+    /// </summary>
     public abstract class Flow
     {
-
+        /// <summary>
+        /// A list of steps the flow has.
+        /// </summary>
         private List<string> steps;
+
+        /// <summary>
+        /// The postcondition the flow has.
+        /// </summary>
         private string postcondition;
 
-        public void addStep(string stepToAdd)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Flow" /> class.
+        /// </summary>
+        public Flow()
         {
-
+            this.steps = new List<string>();
+            this.postcondition = string.Empty;
         }
 
-        public void setPostcondition(string postconditionToSet)
+        /// <summary>
+        /// A method to add a step to the flow.
+        /// </summary>
+        /// <param name="stepToAdd">Specifies the step to add.</param>
+        public void AddStep(string stepToAdd)
         {
-
+            this.steps.Add(stepToAdd);
         }
 
+        /// <summary>
+        /// A method to set the postcondition of the flow.
+        /// </summary>
+        /// <param name="postconditionToSet">Specifies the postcondition to set.</param>
+        public void SetPostcondition(string postconditionToSet)
+        {
+            this.postcondition = postconditionToSet;
+        }
     }
 }

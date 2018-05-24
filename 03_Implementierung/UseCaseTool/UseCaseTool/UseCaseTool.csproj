@@ -105,6 +105,7 @@
     <Compile Include="GraphViewerControl.xaml.cs">
       <DependentUpon>GraphViewerControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MaterialDesignColors.cs" />
     <Compile Include="MatrixControl.xaml.cs">
       <DependentUpon>MatrixControl.xaml</DependentUpon>
     </Compile>

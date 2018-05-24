@@ -109,7 +109,7 @@
                         </MenuItem.Icon>
                     </MenuItem>
                     <Separator />
-                    <MenuItem Header="_Beenden">
+                    <MenuItem Header="_Beenden" Click="CloseClick">
                         <MenuItem.Icon>
                             <Image Source="/images/exit.png" Width="18" Height="18"/>
                         </MenuItem.Icon>

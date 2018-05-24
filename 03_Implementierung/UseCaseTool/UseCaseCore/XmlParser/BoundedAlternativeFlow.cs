@@ -1,28 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿// <copyright file="BoundedAlternativeFlow.cs" company="Team B">
+//      Team B. All rights reserved.
+// </copyright>
 namespace UseCaseCore.XmlParser
 {
-    class BoundedAlternativeFlow : Flow
+    /// <summary>
+    /// The bounded alternative flow instance.
+    /// </summary>
+    public class BoundedAlternativeFlow : Flow
     {
-
+        /// <summary>
+        /// The flow id.
+        /// </summary>
         private int id;
-        // private List<ReferenceStep> referenceSteps;
+        ////private List<ReferenceStep> referenceSteps;
 
-        public void setId(int id)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BoundedAlternativeFlow" /> class.
+        /// </summary>
+        public BoundedAlternativeFlow() : base()
         {
-
+            this.id = 0;
         }
 
-        /*
-        public void addReferenceStep(ReferenceStep referenceStepToAdd)
+        /// <summary>
+        /// The method to set the flow id.
+        /// </summary>
+        /// <param name="id">Specifies the id to set.</param>
+        public void SetId(int id)
+        {
+            this.id = id;
+        }
+
+        /*public void addReferenceStep(ReferenceStep referenceStepToAdd)
         {
 
-        }
-        */
-
+        }*/
     }
 }
