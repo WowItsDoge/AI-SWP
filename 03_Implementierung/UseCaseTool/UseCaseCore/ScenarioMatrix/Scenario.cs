@@ -14,7 +14,7 @@ namespace UseCaseCore.ScenarioMatrix
         private int scenarioID;
 
         /// <summary>
-        /// Describes which steps get exectuted in what order
+        /// Describes which steps get executed in what order
         /// </summary>
         private string description;
 
@@ -22,9 +22,29 @@ namespace UseCaseCore.ScenarioMatrix
         /// User Comment to this scenario
         /// </summary>
         private string comment;
+        
+        /// <summary>
+        /// Initializes a new instance of the Scenario class
+        /// </summary>
+        /// <param name="newID"> ID for the Scenario </param>
+        public Scenario(int newID)
+        {
+            this.ScenarioID = newID;
+        }
 
         /// <summary>
-        /// Get/Set ScenarioID
+        /// Initializes a new instance of the Scenario class
+        /// </summary>
+        /// <param name="newID"> ID for the Scenario </param>
+        /// <param name="description"> Description for the scenario </param>
+        public Scenario(int newID, string description)
+        {
+            this.ScenarioID = newID;
+            this.Description = description;
+        }
+
+        /// <summary>
+        /// Gets or sets ScenarioID
         /// </summary>
         public int ScenarioID
         {
@@ -32,9 +52,8 @@ namespace UseCaseCore.ScenarioMatrix
             set { this.scenarioID = value; }
         }
 
-
         /// <summary>
-        /// Get/Set Description
+        /// Gets or sets Description
         /// </summary>
         public string Description
         {
@@ -42,33 +61,13 @@ namespace UseCaseCore.ScenarioMatrix
             set { this.description = value; }
         }
 
-
         /// <summary>
-        /// Get/Set Comment
+        /// Gets or sets Comment
         /// </summary>
         public string Comment
         {
             get { return this.comment; }
             set { this.comment = value; }
-        }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="newID"></param>
-        public Scenario(int newID)
-        {
-            this.ScenarioID = newID;
-        }
-
-        public Scenario(int newID, string description)
-        {
-            this.ScenarioID = newID;
-            this.Description = description;
-        }
-
-
-
-
+        }        
     }
 }
