@@ -50,7 +50,7 @@
                         <UseCaseTool:MatrixControl/>
                     </Grid>
                 </TabItem>
-                <TabItem Header="Graph">
+                <TabItem Header="Graph" KeyUp="TabItem_KeyUp">
                     <Grid Background="#FFE5E5E5">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>

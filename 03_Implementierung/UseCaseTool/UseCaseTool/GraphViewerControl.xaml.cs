@@ -18,6 +18,7 @@ namespace UseCaseTool
     using System.Windows.Media.Imaging;
     using System.Windows.Navigation;
     using System.Windows.Shapes;
+    using System.Reflection;
 
     /// <summary>
     /// Interaction logic for GraphViewerControl
@@ -61,7 +62,13 @@ namespace UseCaseTool
 
         public void Move(double x, double y)
         {
-            viewer.Transform = new Microsoft.Msagl.Core.Geometry.Curves.PlaneTransformation(1, 0, x, 0, 1, -y);
+            double[][] currentTransform = (double[][])typeof(Microsoft.Msagl.Core.Geometry.Curves.PlaneTransformation)
+                .GetField("elements", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(viewer.Transform);
+
+            viewer.Transform = new Microsoft.Msagl.Core.Geometry.Curves.PlaneTransformation(
+                currentTransform[0][0], currentTransform[0][1], currentTransform[0][2] + x,
+                currentTransform[1][0], currentTransform[1][1], currentTransform[1][2] + y);
+
             viewer.DrawingPanel.Invalidate();
         }
 

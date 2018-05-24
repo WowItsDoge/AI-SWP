@@ -20,11 +20,6 @@ namespace UseCaseTool
         private double oldWidth = 0;
 
         /// <summary>
-        /// current zoom factor (graph)
-        /// </summary>
-        private double zoomFactor = 1;
-
-        /// <summary>
         /// Save the export directory
         /// </summary>
         private string importDirectory = string.Empty;
@@ -183,6 +178,11 @@ namespace UseCaseTool
         private void zoomOut_Click(object sender, RoutedEventArgs e)
         {
             GraphView.Zoom(0.8);
+        }
+
+        private void TabItem_KeyUp(object sender, KeyEventArgs e)
+        {
+            GraphView.Move(10, 0);
         }
     }
 }
