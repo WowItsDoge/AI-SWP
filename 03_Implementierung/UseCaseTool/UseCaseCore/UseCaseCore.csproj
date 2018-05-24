@@ -77,6 +77,8 @@
     <Compile Include="RuleValidation\IRucmRuleValidator.cs" />
     <Compile Include="RuleValidation\RucmRules\IRule.cs" />
     <Compile Include="RuleValidation\RucmRules\RucmRule.cs" />
+    <Compile Include="RuleValidation\RucmRules\RucmRule_24_25.cs" />
+    <Compile Include="RuleValidation\RucmRules\RuleRepository.cs" />
     <Compile Include="RuleValidation\RucmRuleValidator.cs" />
     <Compile Include="ScenarioMatrix\Scenario.cs" />
     <Compile Include="ScenarioMatrix\ScenarioMatrix.cs" />

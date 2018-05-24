@@ -6,6 +6,7 @@ namespace UseCaseCore.RuleValidation
 {
     using System.Collections.Generic;
 
+    using Errors;
     using RucmRules;
     using XmlParser;
 
@@ -27,10 +28,11 @@ namespace UseCaseCore.RuleValidation
         /// <summary>
         /// Initializes a new instance of the <see cref="RucmRuleValidator"/> class.
         /// </summary>
-        public RucmRuleValidator()
+        /// <param name="rules">A list containing all rules that should be used.</param>
+        public RucmRuleValidator(List<IRule> rules)
         {
             this.errorReport = new ErrorReport();
-            this.ruleList = new List<IRule>();
+            this.ruleList = rules;
         }
 
         /// <summary>
@@ -39,6 +41,7 @@ namespace UseCaseCore.RuleValidation
         /// <param name="errorToAdd">Contains the message that should be added.</param>
         public void AddExternalError(string errorToAdd)
         {
+            this.errorReport.AddError(new GeneralError(errorToAdd));
         }
 
         /// <summary>
@@ -48,7 +51,7 @@ namespace UseCaseCore.RuleValidation
         /// <returns>Returns true if the ErrorReport was exported without any problems, otherwise false.</returns>
         public bool Export(string path)
         {
-            return false;
+            return this.errorReport.Export(path);
         }
 
         /// <summary>
@@ -57,7 +60,7 @@ namespace UseCaseCore.RuleValidation
         /// <returns>Returns the existing ErrorReport instance.</returns>
         public ErrorReport GetErrorReport()
         {
-            return null;
+            return this.errorReport;
         }
 
         /// <summary>
@@ -70,7 +73,18 @@ namespace UseCaseCore.RuleValidation
         /// <returns>Returns true if there was no violation found, otherwise false.</returns>
         public bool Validate(Flow flowToCheck, Flow referencedBasicFlow = null)
         {
-            return false;
+            var result = true;
+            foreach (var rule in this.ruleList)
+            {
+                var errors = rule.Check(flowToCheck, referencedBasicFlow);
+                foreach (var error in errors)
+                {
+                    this.errorReport.AddError(error);
+                    result = false;
+                }
+            }
+
+            return result;
         }
     }
 }
