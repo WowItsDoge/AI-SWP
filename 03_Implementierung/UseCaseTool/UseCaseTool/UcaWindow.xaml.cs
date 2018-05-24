@@ -1,4 +1,4 @@
-﻿// <copyright file="MainWindow.xaml.cs" company="Team B">
+﻿// <copyright file="UcaWindow.xaml.cs" company="Team B">
 //      Team B. All rights reserved.
 // </copyright>
 
