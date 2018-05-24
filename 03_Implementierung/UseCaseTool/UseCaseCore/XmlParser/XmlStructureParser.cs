@@ -58,17 +58,17 @@ namespace UseCaseCore.XmlParser
         /// <summary>
         /// A list of the global alternative flows of the use case.
         /// </summary>
-        private List<GlobalAlternativeFlow> globalAlternativeFlow;
+        private List<GlobalAlternativeFlow> globalAlternativeFlows;
 
         /// <summary>
         /// A list of the specific alternative flows of the use case.
         /// </summary>
-        private List<SpecificAlternativeFlow> specificAlternativeFlow;
+        private List<SpecificAlternativeFlow> specificAlternativeFlows;
 
         /// <summary>
         /// A list of the bounded alternative flows of the use case.
         /// </summary>
-        private List<BoundedAlternativeFlow> boundedAlternativeFlow;
+        private List<BoundedAlternativeFlow> boundedAlternativeFlows;
 
         /// <summary>
         /// The word processing document for the use case file.
@@ -88,9 +88,9 @@ namespace UseCaseCore.XmlParser
             this.dependency = string.Empty;
             this.generalization = string.Empty;
             this.basicFlow = new BasicFlow();
-            this.globalAlternativeFlow = new List<GlobalAlternativeFlow>();
-            this.specificAlternativeFlow = new List<SpecificAlternativeFlow>();
-            this.boundedAlternativeFlow = new List<BoundedAlternativeFlow>();
+            this.globalAlternativeFlows = new List<GlobalAlternativeFlow>();
+            this.specificAlternativeFlows = new List<SpecificAlternativeFlow>();
+            this.boundedAlternativeFlows = new List<BoundedAlternativeFlow>();
         }
 
         /// <summary>
@@ -140,8 +140,6 @@ namespace UseCaseCore.XmlParser
 
         /// <summary>
         /// If external xml file contains easy structural errors (for example missing bracket on line 50), it can be tried to repair automatically. Attention: Source file on storage medium will be overwritten!
-        /// Returns true if file was repaired successfully.
-        /// Returns false if file was not repaired successfully.
         /// </summary>
         /// <returns>Returns true if the malformed xml could be fixed, otherwise false.</returns>
         public bool TryToFixMalformedXml()
@@ -151,8 +149,6 @@ namespace UseCaseCore.XmlParser
 
         /// <summary>
         /// Analyzes the previously read xml file.
-        /// Returns true if file was analyzed successfully.
-        /// Returns false if file was not analyzed successfully.
         /// </summary>
         /// <param name="useCase">Out parameter for the whole internal use case representation.</param>
         /// <returns>Returns true if the file was analyzed successfully, otherwise false.</returns>
@@ -162,7 +158,6 @@ namespace UseCaseCore.XmlParser
             XmlDocument useCaseXml = new XmlDocument();
             try
             {
-                useCaseXml.PreserveWhitespace = false;
                 useCaseXml.LoadXml(this.useCaseFile.MainDocumentPart.Document.InnerXml);
                 if (useCaseXml.DocumentElement.ChildNodes == null)
                 {
@@ -180,10 +175,17 @@ namespace UseCaseCore.XmlParser
                     this.secondaryActor = this.ParseRucmProperty(useCaseXml, "Secondary Actors");
                     this.dependency = this.ParseRucmProperty(useCaseXml, "Dependency");
                     this.generalization = this.ParseRucmProperty(useCaseXml, "Generalization");
+                    this.GetBasicFlow();
+                    this.GetGlobalAlternativeFlows();
+                    this.GetSpecificAlternativeFlows();
+                    this.GetBoundedAlternativeFlows();
                 }
                 catch (Exception ex)
                 {
                     Debug.WriteLine(ex.Message.ToString());
+                    this.useCaseFile.Close();
+                    useCase = string.Empty;
+                    return false;
                 }
 
                 this.useCaseFile.Close();
@@ -235,6 +237,7 @@ namespace UseCaseCore.XmlParser
         }
 
         /*
+         *  TODO: do we really need this?
         private List<ReferenceStep> GetReferenceSteps(string referenceStepString)
         {
 
@@ -249,26 +252,88 @@ namespace UseCaseCore.XmlParser
         {
             return "";
         }
+        */
 
+        /// <summary>
+        /// Gets the basic flow.
+        /// </summary>
+        /// <returns>Returns the basic flow.</returns>
         private BasicFlow GetBasicFlow()
         {
-
+            this.basicFlow.AddStep("INCLUDE USE CASE Validate PIN.");
+            this.basicFlow.AddStep("ATM customer selects Withdrawal through the system");
+            this.basicFlow.AddStep("ATM customer enters the withdrawal amount through the system.");
+            this.basicFlow.AddStep("ATM customer selects the account number through the system.");
+            this.basicFlow.AddStep("The system VALIDATES THAT the account number is valid.");
+            this.basicFlow.AddStep("The system VALIDATES THAT ATM customer has enough funds in the account.");
+            this.basicFlow.AddStep("The system VALIDATES THAT the withdrawal amount does not exceed the daily limit of the account.");
+            this.basicFlow.AddStep("The system VALIDATES THAT the ATM has enough funds.");
+            this.basicFlow.AddStep("The system dispenses the cash amount.");
+            this.basicFlow.AddStep("The system prints a receipt showing transaction number, transaction type, amount withdrawn, and account balance.");
+            this.basicFlow.AddStep("The system ejects the ATM card.");
+            this.basicFlow.AddStep("The system displays Welcome message.");
+            this.basicFlow.SetPostcondition("ATM customer funds have been withdrawn.");
+            return this.basicFlow;
         }
 
-        private List<GlobalAlternativeFlow> GetGlobalAlternativeFlow()
+        /// <summary>
+        /// Gets the global alternative flow.
+        /// </summary>
+        /// <returns>Returns the global alternative flow.</returns>
+        private List<GlobalAlternativeFlow> GetGlobalAlternativeFlows()
         {
-
+            GlobalAlternativeFlow globalAlternative = new GlobalAlternativeFlow();
+            globalAlternative.AddStep("IF ATM customer enters Cancel THEN");
+            globalAlternative.AddStep("The system cancels the transaction MEANWHILE the system ejects the ATM card.");
+            globalAlternative.AddStep("ABORT.");
+            globalAlternative.SetPostcondition("ATM customer funds have not been withdrawn. The system is idle. The system is displaying a Welcome message.");
+            this.globalAlternativeFlows.Add(globalAlternative);
+            return this.globalAlternativeFlows;
         }
 
-        private List<SpecificAlternativeFlow> GetSpecificAlternativeFlow()
+        /// <summary>
+        /// Gets the specific alternative flow.
+        /// </summary>
+        /// <returns>Returns the specific alternative flow.</returns>
+        private List<SpecificAlternativeFlow> GetSpecificAlternativeFlows()
         {
-
+            SpecificAlternativeFlow specificAlternative = new SpecificAlternativeFlow();
+            specificAlternative.AddStep("RFS Basic Flow 8");
+            specificAlternative.AddStep("The system displays an apology message MEANWHILE the system ejects the ATM card.");
+            specificAlternative.AddStep("ABORT.");
+            specificAlternative.SetPostcondition("ATM customer funds have not been withdrawn. The system is idle.The system is displaying a Welcome message.");
+            this.specificAlternativeFlows.Add(specificAlternative);
+            return this.specificAlternativeFlows;
         }
 
-        private List<BoundedAlternativeFlow> GetBoundedAlternativeFlow()
+        /// <summary>
+        /// Gets the bounded alternative flow.
+        /// </summary>
+        /// <returns>Returns the bounded alternative flow.</returns>
+        private List<BoundedAlternativeFlow> GetBoundedAlternativeFlows()
         {
-
+            BoundedAlternativeFlow boundedAlternative0 = new BoundedAlternativeFlow();
+            BoundedAlternativeFlow boundedAlternative1 = new BoundedAlternativeFlow();
+            BoundedAlternativeFlow boundedAlternative2 = new BoundedAlternativeFlow();
+            boundedAlternative0.AddStep("RFS Basic Flow 5");
+            boundedAlternative0.AddStep("The system displays an apology message MEANWHILE the system ejects the ATM card.");
+            boundedAlternative0.AddStep("The system shuts down.");
+            boundedAlternative0.AddStep("ABORT.");
+            boundedAlternative1.AddStep("RFS Basic Flow 6");
+            boundedAlternative1.AddStep("The system displays an apology message MEANWHILE the system ejects the ATM card.");
+            boundedAlternative1.AddStep("The system shuts down.");
+            boundedAlternative1.AddStep("ABORT.");
+            boundedAlternative2.AddStep("RFS Basic Flow 7");
+            boundedAlternative2.AddStep("The system displays an apology message MEANWHILE the system ejects the ATM card.");
+            boundedAlternative2.AddStep("The system shuts down.");
+            boundedAlternative2.AddStep("ABORT.");
+            boundedAlternative0.SetPostcondition("ATM customer funds have not been withdrawn. The system is shut down.");
+            boundedAlternative1.SetPostcondition("ATM customer funds have not been withdrawn. The system is shut down.");
+            boundedAlternative2.SetPostcondition("ATM customer funds have not been withdrawn. The system is shut down.");
+            this.boundedAlternativeFlows.Add(boundedAlternative0);
+            this.boundedAlternativeFlows.Add(boundedAlternative1);
+            this.boundedAlternativeFlows.Add(boundedAlternative2);
+            return this.boundedAlternativeFlows;
         }
-        */
     }
 }

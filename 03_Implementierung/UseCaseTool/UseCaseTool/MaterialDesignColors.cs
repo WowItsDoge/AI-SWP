@@ -1,25 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media;
+﻿// <copyright file="MaterialDesignColors.cs" company="Team B">
+//      Team B. All rights reserved.
+// </copyright>
 
 namespace UseCaseTool
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using System.Windows.Media;
+
+    /// <summary>
+    /// Material Design Colors
+    /// https://material.io/design/color/the-color-system.html#tools-for-picking-colors
+    /// </summary>
     public static class MaterialDesignColors
     {
-        // colors by google material design
-        // https://material.io/design/color/the-color-system.html#tools-for-picking-colors
-
-        public static int CompletePaletteSize { get; private set; }
-        public static int StandardPaletteSize { get; private set; }
-        public static int SmallPaletteSize { get; private set; }
-
-        public static string[] Red { get; private set; }
-
-        public static string[] Green { get; private set; }
-
+        /// <summary>
+        /// Initializes static members of the <see cref="MaterialDesignColors"/> class.
+        /// </summary>
         static MaterialDesignColors()
         {
             // initialize palette size
@@ -65,11 +65,46 @@ namespace UseCaseTool
             };
         }
 
+        /// <summary>
+        /// Gets CompletePaletteSize
+        /// </summary>
+        public static int CompletePaletteSize { get; private set; }
+
+        /// <summary>
+        /// Gets StandardPaletteSize
+        /// </summary>
+        public static int StandardPaletteSize { get; private set; }
+
+        /// <summary>
+        /// Gets SmallPaletteSize
+        /// </summary>
+        public static int SmallPaletteSize { get; private set; }
+
+        /// <summary>
+        /// Gets Red colors
+        /// </summary>
+        public static string[] Red { get; private set; }
+
+        /// <summary>
+        /// Gets Green colors
+        /// </summary>
+        public static string[] Green { get; private set; }
+
+        /// <summary>
+        /// Converts a hex color string to a Windows.Media.Color
+        /// </summary>
+        /// <param name="hexColor">Color in hex</param>
+        /// <returns>Windows.Media.Color object</returns>
         public static Color ColorFromHex(string hexColor)
         {
             return (Color)ColorConverter.ConvertFromString(hexColor);
         }
 
+        /// <summary>
+        /// Converts a hex color to a Microsoft Auto Graph Layout Color
+        /// </summary>
+        /// <param name="hexColor">Color in hex</param>
+        /// <returns>Microsoft Auto Graph Layout Color</returns>
         public static Microsoft.Msagl.Drawing.Color MsaglColorFromHex(string hexColor)
         {
             Color color = ColorFromHex(hexColor);

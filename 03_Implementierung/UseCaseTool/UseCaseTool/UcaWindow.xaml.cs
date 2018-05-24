@@ -7,6 +7,7 @@ namespace UseCaseTool
     using System.Windows;
     using MahApps.Metro.Controls;
     using Microsoft.Win32;
+    using System.Windows.Input;
 
     /// <summary>
     /// Interaction logic for MainWindow
@@ -20,6 +21,11 @@ namespace UseCaseTool
 
         /// <summary>
         /// Save the export directory
+        /// </summary>
+        private string importDirectory = string.Empty;
+        
+        /// <summary>
+        /// /// Save the export directory
         /// </summary>
         private string exportDirectory = string.Empty;
 
@@ -45,17 +51,16 @@ namespace UseCaseTool
         {
             OpenFileDialog openXmlFileDialog = new OpenFileDialog();
 
-            openXmlFileDialog.InitialDirectory = "c:\\";
             openXmlFileDialog.Filter = "Docm files (*.docm)|*.docm";
-            ////openXmlFileDialog.FilterIndex = 2;
             openXmlFileDialog.RestoreDirectory = true;
 
             openXmlFileDialog.ShowDialog();
 
-            if (openXmlFileDialog.FileName != null)
+            if (openXmlFileDialog.FileName != string.Empty)
             {
                 selectedFile.Text = openXmlFileDialog.FileName;
                 this.controller.CurrentXmlFilePath(openXmlFileDialog.FileName);
+                ////selectedFile.TextAlignment = TextAlignment.Right;
             }
         }
 
@@ -137,14 +142,47 @@ namespace UseCaseTool
         {
             SaveFileDialog saveFileDialogReport = new SaveFileDialog();
 
-            saveFileDialogReport.InitialDirectory = "c:\\";
             saveFileDialogReport.Filter = "PDF files (*.pdf)|*.pdf";
-            ////saveFileDialogReport.FilterIndex = 2;
             saveFileDialogReport.RestoreDirectory = true;
 
             saveFileDialogReport.ShowDialog();
             this.exportDirectory = saveFileDialogReport.FileName;
             return this.exportDirectory;
+        }
+
+        /// <summary>
+        /// Button to show infos
+        /// </summary>
+        /// <param name="sender">The sender</param>
+        /// <param name="e">The e</param>
+        private void InfoClick(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Bla bla...", "Info Über Use-Case Visualizer", MessageBoxButton.OK, MessageBoxImage.Question);
+        }
+
+        /// <summary>
+        /// Button to change language
+        /// </summary>
+        /// <param name="sender">The sender</param>
+        /// <param name="e">The e</param>
+        private void ChangeLanguageClick(object sender, RoutedEventArgs e)
+        {
+            ////
+        }
+
+        private void zoomIn_Click(object sender, RoutedEventArgs e)
+        {
+            GraphView.Zoom(1.2);
+        }
+
+        private void zoomOut_Click(object sender, RoutedEventArgs e)
+        {
+            GraphView.Zoom(0.8);
+        }
+
+        private void TabItem_KeyUp(object sender, KeyEventArgs e)
+        {
+            GraphView.Move(10, 0);
         }
     }
 }
