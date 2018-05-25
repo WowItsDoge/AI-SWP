@@ -1,8 +1,11 @@
 <StyleCopSettings Version="105">
   <GlobalSettings>
     <CollectionProperty Name="DeprecatedWords">
-      <Value>preprocessor,pre-processor</Value>
-      <Value>shortlived,short-lived</Value>
+      <Value>preprocessor, pre-processor</Value>
+      <Value>shortlived, short-lived</Value>
+    </CollectionProperty>
+    <CollectionProperty Name="RecognizedWords">
+      <Value>postcondition</Value>
     </CollectionProperty>
   </GlobalSettings>
   <Parsers>
@@ -40,16 +43,6 @@
           <Value>z</Value>
         </CollectionProperty>
       </AnalyzerSettings>
-    </Analyzer>
-    <Analyzer AnalyzerId="StyleCop.CSharp.DocumentationRules">
-      <Rules>
-        <Rule Name="ElementDocumentationMustBeSpelledCorrectly">
-          <RuleSettings>
-            <BooleanProperty Name="Enabled">False</BooleanProperty>
-          </RuleSettings>
-        </Rule>
-      </Rules>
-      <AnalyzerSettings />
     </Analyzer>
   </Analyzers>
 </StyleCopSettings>

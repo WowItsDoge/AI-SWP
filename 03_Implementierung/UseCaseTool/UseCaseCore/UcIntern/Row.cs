@@ -4,6 +4,7 @@
 
 namespace UseCaseCore.UcIntern
 {
+    using System;
     using System.Collections.Generic;
 
     /// <summary>
@@ -19,10 +20,31 @@ namespace UseCaseCore.UcIntern
         /// <param name="standardReturnObject">The object returned if no specific entry is available.</param>
         public Row(int columnCount, T standardReturnObject)
         {
+            this.IsReadonly = false;
             this.StandardReturnObject = standardReturnObject;
             this.Entries = new List<Entry<T>>();
             this.ColumnCount = columnCount;
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Row{T}"/> class.
+        /// The new instance is readonly.
+        /// </summary>
+        /// <param name="columnCount">The number of columns in the row.</param>
+        /// <param name="standardReturnObject">The object returned if no specific entry is available.</param>
+        /// <param name="readonlyEntries">A correctly ordered list with the readonly entries of the row.</param>
+        private Row(int columnCount, T standardReturnObject, List<Entry<T>> readonlyEntries)
+        {
+            this.IsReadonly = true;
+            this.ColumnCount = columnCount;
+            this.StandardReturnObject = standardReturnObject;
+            this.Entries = readonlyEntries;
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether the entry is readonly.
+        /// </summary>
+        public bool IsReadonly { get; }
 
         /// <summary>
         /// Gets the object returned if no specific entry is available.
@@ -31,6 +53,8 @@ namespace UseCaseCore.UcIntern
 
         /// <summary>
         /// Gets the list of entries in the row.
+        /// The entries are ordered by their column index that is ascending.
+        /// There are no doubled column indices nor ones lower than 0 or greater or equal to column count.
         /// </summary>
         private List<Entry<T>> Entries { get; }
 
@@ -62,6 +86,11 @@ namespace UseCaseCore.UcIntern
 
             set
             {
+                if (this.IsReadonly)
+                {
+                    throw new InvalidOperationException("The row is readonly!");
+                }
+
                 Entry<T> entry = this.SearchEntry(index);
 
                 if (entry != null)
@@ -76,6 +105,22 @@ namespace UseCaseCore.UcIntern
                     this.Entries.Insert(insertIndex, entry);
                 }
             }
+        }
+
+        /// <summary>
+        /// Creates a copy of the Row object that is readonly.
+        /// </summary>
+        /// <returns>A new Row object, with the column count, standard return object and the entries of the current one, that is readonly.</returns>
+        public Row<T> AsReadonly()
+        {
+            List<Entry<T>> readonlyEntries = new List<Entry<T>>(this.Entries.Count);
+
+            foreach (Entry<T> entry in this.Entries)
+            {
+                readonlyEntries.Add(entry.AsReadonly());
+            }
+
+            return new Row<T>(this.ColumnCount, this.StandardReturnObject, readonlyEntries);
         }
 
         /// <summary>
