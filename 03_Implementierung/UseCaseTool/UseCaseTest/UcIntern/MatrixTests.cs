@@ -297,35 +297,5 @@ namespace UseCaseTest.UcIntern
                 }
             }
         }
-
-        private class TestArray
-        {
-            private string[][] testMatrix;
-
-            public TestArray()
-            {
-                int elementCount = 10000;
-                string[][] testMatrix = new string[elementCount][];
-                
-                for (int row = 0; row < elementCount; row++)
-                {
-                    testMatrix[row] = new string[elementCount];
-                }
-            }
-        }
-
-        /// <summary>
-        /// Creates a n x m matrix, creates a readonly copy
-        /// and tries to accesses invalid indices.
-        /// </summary>
-        [Test]
-        public void SizeTest()
-        {
-            // Arrange
-            TestArray ta = new TestArray();
-
-            // Assert
-            Assert.IsTrue(true);
-        }
     }
 }
