@@ -18,8 +18,14 @@ namespace UseCaseCore.UcIntern
         /// </summary>
         /// <param name="columnCount">The number of columns in the row.</param>
         /// <param name="standardReturnObject">The object returned if no specific entry is available.</param>
+        /// <exception cref="ArgumentOutOfRangeException">If the column count is less than 0.</exception>
         public Row(int columnCount, T standardReturnObject)
         {
+            if (columnCount < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(columnCount), "No negative column count allowed!");
+            }
+
             this.IsReadonly = false;
             this.StandardReturnObject = standardReturnObject;
             this.Entries = new List<Entry<T>>();
@@ -54,7 +60,7 @@ namespace UseCaseCore.UcIntern
         /// <summary>
         /// Gets the list of entries in the row.
         /// The entries are ordered by their column index that is ascending.
-        /// There are no doubled column indices nor ones lower than 0 or greater or equal to column count.
+        /// There are no doubled column indices nor ones less than 0 or greater or equal to column count.
         /// </summary>
         private List<Entry<T>> Entries { get; }
 
@@ -68,10 +74,14 @@ namespace UseCaseCore.UcIntern
         /// </summary>
         /// <param name="index">The index of the entry.</param>
         /// <returns>The content of the entry.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">If the index is less than 0 or greater or equal to the column count.</exception>
+        /// <exception cref="InvalidOperationException">If the row is readonly.</exception>
         public T this[int index]
         {
             get
             {
+                this.TestIndex(index);
+
                 Entry<T> entry = this.SearchEntry(index);
 
                 if (entry != null)
@@ -86,6 +96,8 @@ namespace UseCaseCore.UcIntern
 
             set
             {
+                this.TestIndex(index);
+
                 if (this.IsReadonly)
                 {
                     throw new InvalidOperationException("The row is readonly!");
@@ -121,6 +133,19 @@ namespace UseCaseCore.UcIntern
             }
 
             return new Row<T>(this.ColumnCount, this.StandardReturnObject, readonlyEntries);
+        }
+
+        /// <summary>
+        /// Tests if the index is out of the column range and throws an exception if so.
+        /// </summary>
+        /// <param name="index">The index to be tested for the valid range.</param>
+        /// <exception cref="ArgumentOutOfRangeException">If the index is less than 0 or greater or equal to the column count.</exception>
+        private void TestIndex(int index)
+        {
+            if (index < 0 || index >= this.ColumnCount)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index), "The index must be in the range 0 (included) to " + this.ColumnCount + " (excluded)!");
+            }
         }
 
         /// <summary>

@@ -24,6 +24,11 @@ namespace UseCaseCore.UcIntern
         /// <param name="content">The content of the entry.</param>
         public Entry(int columnIndex, T content)
         {
+            if (columnIndex < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(columnIndex), "No negative columns allowed!");
+            }
+
             this.ColumnIndex = columnIndex;
             this.Content = content;
         }
@@ -36,6 +41,7 @@ namespace UseCaseCore.UcIntern
         /// <summary>
         /// Gets or sets the content of the entry.
         /// </summary>
+        /// <exception cref="InvalidOperationException">If the row is readonly.</exception>
         public T Content
         {
             get
@@ -66,7 +72,7 @@ namespace UseCaseCore.UcIntern
         public Entry<T> AsReadonly()
         {
             Entry<T> readonlyEntry = new Entry<T>(this.ColumnIndex, this.Content);
-            readonlyEntry.IsReadonly = false;
+            readonlyEntry.IsReadonly = true;
 
             return readonlyEntry;
         }

@@ -4,6 +4,7 @@
 
 namespace UseCaseCore.UcIntern
 {
+    using System;
     using System.Collections.Generic;
 
     /// <summary>
@@ -33,6 +34,16 @@ namespace UseCaseCore.UcIntern
         /// <param name="standardReturnObject">The value returned by every entry where no specific entry is set.</param>
         public Matrix(int rowCount, int columnCount, T standardReturnObject)
         {
+            if (rowCount < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(rowCount), "No negative row count allowed!");
+            }
+
+            if (columnCount < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(columnCount), "No negative column count allowed!");
+            }
+
             this.IsReadonly = false;
             this.RowCount = rowCount;
             this.ColumnCount = columnCount;
@@ -40,7 +51,7 @@ namespace UseCaseCore.UcIntern
             this.Rows = new List<Row<T>>(this.RowCount);
             for (int pos = 0; pos < this.RowCount; pos++)
             {
-                this.Rows[pos] = new Row<T>(this.ColumnCount, standardReturnObject);
+                this.Rows.Add(new Row<T>(this.ColumnCount, standardReturnObject));
             }
         }
 
