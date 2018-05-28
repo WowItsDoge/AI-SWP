@@ -3,6 +3,9 @@
 // </copyright>
 namespace UseCaseCore.XmlParser
 {
+    using System.Collections.Generic;
+    using UcIntern;
+
     /// <summary>
     /// The specific alternative flow instance.
     /// </summary>
@@ -13,7 +16,10 @@ namespace UseCaseCore.XmlParser
         /// </summary>
         private int id;
 
-        //// private ReferenceStep referenceStep;
+        /// <summary>
+        /// The reference step.
+        /// </summary>
+        private ReferenceStep referenceStep;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SpecificAlternativeFlow" /> class.
@@ -21,15 +27,25 @@ namespace UseCaseCore.XmlParser
         public SpecificAlternativeFlow() : base()
         {
             this.id = 0;
+            this.referenceStep = null;
         }
 
         /// <summary>
-        /// A method to set the flow id.
+        /// The method to add a reference step.
         /// </summary>
-        /// <param name="id">Specifies the id to set.</param>
-        public void SetId(int id)
+        /// <param name="referenceStepToAdd">Specifies the reference step to add.</param>
+        public void AddReferenceStep(ReferenceStep referenceStepToAdd)
         {
-            this.id = id;
+            this.referenceStep = referenceStepToAdd;
+        }
+
+        /// <summary>
+        /// The method to get a reference step.
+        /// </summary>
+        /// <returns> The reference step.</returns>
+        public ReferenceStep GetReferenceStep()
+        {
+            return this.referenceStep;
         }
     }
 }

@@ -39,12 +39,30 @@ namespace UseCaseCore.XmlParser
         }
 
         /// <summary>
+        /// A method to add a step to the flow.
+        /// </summary>
+        /// <returns> The list of the steps.</returns>
+        public List<string> GetSteps()
+        {
+            return this.steps;
+        }
+
+        /// <summary>
         /// A method to set the postcondition of the flow.
         /// </summary>
         /// <param name="postconditionToSet">Specifies the postcondition to set.</param>
         public void SetPostcondition(string postconditionToSet)
         {
             this.postcondition = postconditionToSet;
+        }
+
+        /// <summary>
+        /// A method to get the postcondition of the flow.
+        /// </summary>
+        /// <returns> The postcondition of the flow.</returns>
+        public string GetPostcondition()
+        {
+            return this.postcondition;
         }
     }
 }

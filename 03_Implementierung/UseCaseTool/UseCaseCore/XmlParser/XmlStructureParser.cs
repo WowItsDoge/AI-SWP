@@ -9,6 +9,8 @@ namespace UseCaseCore.XmlParser
     using System.Xml;
     using DocumentFormat.OpenXml.Packaging;
     using OpenXmlPowerTools;
+    using UcIntern;
+    using RuleValidation;
 
     /// <summary>
     /// The xml structure parser instance.
@@ -69,6 +71,11 @@ namespace UseCaseCore.XmlParser
         /// A list of the bounded alternative flows of the use case.
         /// </summary>
         private List<BoundedAlternativeFlow> boundedAlternativeFlows;
+
+        /// <summary>
+        /// Creates an instance of the UseCase class
+        /// </summary>
+        private UseCase useCaseOutParameter = new UseCase();
 
         /// <summary>
         /// The word processing document for the use case file.
@@ -153,7 +160,7 @@ namespace UseCaseCore.XmlParser
         /// <param name="useCase">Out parameter for the whole internal use case representation.</param>
         /// <returns>Returns true if the file was analyzed successfully, otherwise false.</returns>
         //// public bool ParseXmlFile(out UseCase useCase)
-        public bool ParseXmlFile(out string useCase)
+        public bool ParseXmlFile(out UseCase useCase)
         {
             XmlDocument useCaseXml = new XmlDocument();
             try
@@ -162,7 +169,7 @@ namespace UseCaseCore.XmlParser
                 if (useCaseXml.DocumentElement.ChildNodes == null)
                 {
                     this.useCaseFile.Close();
-                    useCase = string.Empty;
+                    useCase = null;
                     return false;
                 }
 
@@ -184,19 +191,65 @@ namespace UseCaseCore.XmlParser
                 {
                     Debug.WriteLine(ex.Message.ToString());
                     this.useCaseFile.Close();
-                    useCase = string.Empty;
+                    useCase = null;
                     return false;
                 }
 
+                bool validationResult = true;
+                RucmRuleValidator rucmRuleValidator = new RucmRuleValidator(RuleValidation.RucmRules.RuleRepository.Rules);
+                rucmRuleValidator.Validate(this.basicFlow);
+                foreach (GlobalAlternativeFlow globalAlternativeFlow in this.globalAlternativeFlows)
+                {
+                    if (validationResult == true) { validationResult = rucmRuleValidator.Validate(globalAlternativeFlow, this.basicFlow); }
+                    else break;
+                }
+                foreach (SpecificAlternativeFlow specificAlternativeFlow in this.specificAlternativeFlows)
+                {
+                    if (validationResult == true) { validationResult = rucmRuleValidator.Validate(specificAlternativeFlow, this.basicFlow); }
+                    else break;
+                }
+                foreach (BoundedAlternativeFlow boundedAlternativeFlow in this.boundedAlternativeFlows)
+                {
+                    if (validationResult == true) { validationResult = rucmRuleValidator.Validate(boundedAlternativeFlow, this.basicFlow); }
+                    else break;
+                }
+
                 this.useCaseFile.Close();
-                useCase = string.Empty;
-                return true;
+                this.useCaseOutParameter.UseCaseName = this.useCaseName;
+                this.useCaseOutParameter.BriefDescription = this.briefDescription;
+                this.useCaseOutParameter.Precondition = this.precondition;
+                this.useCaseOutParameter.PrimaryActor = this.primaryActor;
+                this.useCaseOutParameter.SecondaryActors = this.secondaryActor;
+                this.useCaseOutParameter.Dependency = this.dependency;
+                this.useCaseOutParameter.Generalization = this.generalization;
+                this.useCaseOutParameter.SetBasicFlow(this.basicFlow.GetSteps(), this.basicFlow.GetPostcondition());
+                int i = 0;
+                foreach (GlobalAlternativeFlow globalAlternativeFlow in this.globalAlternativeFlows)
+                {
+                    i++;
+                    this.useCaseOutParameter.AddGlobalAlternativeFlow(i, globalAlternativeFlow.GetSteps(), globalAlternativeFlow.GetPostcondition());
+                }
+                i = 0;
+                foreach (SpecificAlternativeFlow specificAlternativeFlow in this.specificAlternativeFlows) 
+                {
+                    i++;
+                    this.useCaseOutParameter.AddSpecificAlternativeFlow(i, specificAlternativeFlow.GetSteps(), specificAlternativeFlow.GetPostcondition(), specificAlternativeFlow.GetReferenceStep());
+                }
+                i = 0;
+                foreach (BoundedAlternativeFlow boundedAlternativeFlow in this.boundedAlternativeFlows)
+                {
+                    i++;
+                    this.useCaseOutParameter.AddBoundedAlternativeFlow(i, boundedAlternativeFlow.GetSteps(), boundedAlternativeFlow.GetPostcondition(), boundedAlternativeFlow.GetReferenceSteps());
+                }
+                this.useCaseOutParameter.BuildGraph();
+                useCase = this.useCaseOutParameter;
+                return validationResult;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message.ToString());
                 this.useCaseFile.Close();
-                useCase = string.Empty;
+                useCase = null;
                 return false;
             }
         }
@@ -235,24 +288,6 @@ namespace UseCaseCore.XmlParser
                 throw new Exception("Error: content not found");
             }
         }
-
-        /*
-         *  TODO: do we really need this?
-        private List<ReferenceStep> GetReferenceSteps(string referenceStepString)
-        {
-
-        }
-
-        private List<string> GetSteps(string flowName)
-        {
-        
-        }
-
-        private string GetPostcondition(string flowName)
-        {
-            return "";
-        }
-        */
 
         /// <summary>
         /// Gets the basic flow.
@@ -298,7 +333,9 @@ namespace UseCaseCore.XmlParser
         private List<SpecificAlternativeFlow> GetSpecificAlternativeFlows()
         {
             SpecificAlternativeFlow specificAlternative = new SpecificAlternativeFlow();
-            specificAlternative.AddStep("RFS Basic Flow 8");
+            FlowIdentifier flowidentifier = new FlowIdentifier(FlowType.SpecificAlternative, 1);
+            ReferenceStep referenceStep = new ReferenceStep(flowidentifier, 8);
+            specificAlternative.AddReferenceStep(referenceStep);
             specificAlternative.AddStep("The system displays an apology message MEANWHILE the system ejects the ATM card.");
             specificAlternative.AddStep("ABORT.");
             specificAlternative.SetPostcondition("ATM customer funds have not been withdrawn. The system is idle.The system is displaying a Welcome message.");
@@ -313,23 +350,29 @@ namespace UseCaseCore.XmlParser
         private List<BoundedAlternativeFlow> GetBoundedAlternativeFlows()
         {
             BoundedAlternativeFlow boundedAlternative0 = new BoundedAlternativeFlow();
-            BoundedAlternativeFlow boundedAlternative1 = new BoundedAlternativeFlow();
-            BoundedAlternativeFlow boundedAlternative2 = new BoundedAlternativeFlow();
-            boundedAlternative0.AddStep("RFS Basic Flow 5");
+            FlowIdentifier flowidentifier0 = new FlowIdentifier(FlowType.BoundedAlternative, 1);
+            ReferenceStep referenceStep0 = new ReferenceStep(flowidentifier0, 5);
             boundedAlternative0.AddStep("The system displays an apology message MEANWHILE the system ejects the ATM card.");
             boundedAlternative0.AddStep("The system shuts down.");
             boundedAlternative0.AddStep("ABORT.");
-            boundedAlternative1.AddStep("RFS Basic Flow 6");
+            boundedAlternative0.SetPostcondition("ATM customer funds have not been withdrawn. The system is shut down.");
+
+            BoundedAlternativeFlow boundedAlternative1 = new BoundedAlternativeFlow();
+            FlowIdentifier flowidentifier1 = new FlowIdentifier(FlowType.BoundedAlternative, 2);
+            ReferenceStep referenceStep1 = new ReferenceStep(flowidentifier1, 6);
             boundedAlternative1.AddStep("The system displays an apology message MEANWHILE the system ejects the ATM card.");
             boundedAlternative1.AddStep("The system shuts down.");
             boundedAlternative1.AddStep("ABORT.");
-            boundedAlternative2.AddStep("RFS Basic Flow 7");
+            boundedAlternative1.SetPostcondition("ATM customer funds have not been withdrawn. The system is shut down.");
+
+            BoundedAlternativeFlow boundedAlternative2 = new BoundedAlternativeFlow();
+            FlowIdentifier flowidentifier2 = new FlowIdentifier(FlowType.BoundedAlternative, 3);
+            ReferenceStep referenceStep2 = new ReferenceStep(flowidentifier2, 7);
             boundedAlternative2.AddStep("The system displays an apology message MEANWHILE the system ejects the ATM card.");
             boundedAlternative2.AddStep("The system shuts down.");
             boundedAlternative2.AddStep("ABORT.");
-            boundedAlternative0.SetPostcondition("ATM customer funds have not been withdrawn. The system is shut down.");
-            boundedAlternative1.SetPostcondition("ATM customer funds have not been withdrawn. The system is shut down.");
             boundedAlternative2.SetPostcondition("ATM customer funds have not been withdrawn. The system is shut down.");
+
             this.boundedAlternativeFlows.Add(boundedAlternative0);
             this.boundedAlternativeFlows.Add(boundedAlternative1);
             this.boundedAlternativeFlows.Add(boundedAlternative2);
