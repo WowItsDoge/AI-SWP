@@ -3,6 +3,9 @@
 // </copyright>
 namespace UseCaseCore.XmlParser
 {
+    using System.Collections.Generic;
+    using UcIntern;
+
     /// <summary>
     /// The bounded alternative flow instance.
     /// </summary>
@@ -12,7 +15,11 @@ namespace UseCaseCore.XmlParser
         /// The flow id.
         /// </summary>
         private int id;
-        ////private List<ReferenceStep> referenceSteps;
+
+        /// <summary>
+        /// The list of reference steps.
+        /// </summary>
+        private List<ReferenceStep> referenceSteps;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BoundedAlternativeFlow" /> class.
@@ -20,6 +27,7 @@ namespace UseCaseCore.XmlParser
         public BoundedAlternativeFlow() : base()
         {
             this.id = 0;
+            this.referenceSteps = new List<ReferenceStep>();
         }
 
         /// <summary>
@@ -31,9 +39,22 @@ namespace UseCaseCore.XmlParser
             this.id = id;
         }
 
-        /*public void addReferenceStep(ReferenceStep referenceStepToAdd)
+        /// <summary>
+        /// The method to add a reference step.
+        /// </summary>
+        /// <param name="referenceStepToAdd">Specifies the reference step to add.</param>
+        public void AddReferenceStep(ReferenceStep referenceStepToAdd)
         {
+            this.referenceSteps.Add(referenceStepToAdd);
+        }
 
-        }*/
+        /// <summary>
+        /// The method to get a reference steps.
+        /// </summary>
+        /// <returns> The list of reference steps.</returns>
+        public List<ReferenceStep> GetReferenceSteps()
+        {
+            return this.referenceSteps;
+        }
     }
 }
