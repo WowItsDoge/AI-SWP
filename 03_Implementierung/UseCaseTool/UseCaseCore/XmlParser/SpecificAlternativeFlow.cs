@@ -12,11 +12,6 @@ namespace UseCaseCore.XmlParser
     public class SpecificAlternativeFlow : Flow
     {
         /// <summary>
-        /// The flow id.
-        /// </summary>
-        private int id;
-
-        /// <summary>
         /// The reference step.
         /// </summary>
         private ReferenceStep referenceStep;
@@ -26,7 +21,6 @@ namespace UseCaseCore.XmlParser
         /// </summary>
         public SpecificAlternativeFlow() : base()
         {
-            this.id = 0;
             this.referenceStep = null;
         }
 

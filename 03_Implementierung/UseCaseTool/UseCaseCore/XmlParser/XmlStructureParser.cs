@@ -9,8 +9,8 @@ namespace UseCaseCore.XmlParser
     using System.Xml;
     using DocumentFormat.OpenXml.Packaging;
     using OpenXmlPowerTools;
-    using UcIntern;
     using RuleValidation;
+    using UcIntern;
 
     /// <summary>
     /// The xml structure parser instance.
@@ -102,8 +102,6 @@ namespace UseCaseCore.XmlParser
 
         /// <summary>
         /// Loads external (word) xml file, which is stored on a storage medium. The absolute path to the file must be passed as parameter.
-        /// Returns true if file was read successfully.
-        /// Returns false if file was not read successfully.
         /// </summary>
         /// <param name="path">Specifies the path for the xml file the user wants to load.</param>
         /// <returns>Returns true if the file exists and could be loaded, otherwise false.</returns>
@@ -159,7 +157,6 @@ namespace UseCaseCore.XmlParser
         /// </summary>
         /// <param name="useCase">Out parameter for the whole internal use case representation.</param>
         /// <returns>Returns true if the file was analyzed successfully, otherwise false.</returns>
-        //// public bool ParseXmlFile(out UseCase useCase)
         public bool ParseXmlFile(out UseCase useCase)
         {
             XmlDocument useCaseXml = new XmlDocument();
@@ -195,53 +192,13 @@ namespace UseCaseCore.XmlParser
                     return false;
                 }
 
-                bool validationResult = true;
-                RucmRuleValidator rucmRuleValidator = new RucmRuleValidator(RuleValidation.RucmRules.RuleRepository.Rules);
-                rucmRuleValidator.Validate(this.basicFlow);
-                foreach (GlobalAlternativeFlow globalAlternativeFlow in this.globalAlternativeFlows)
+                bool validationResult = this.ValidateRucmRules();
+                this.useCaseFile.Close();
+                if (validationResult == true)
                 {
-                    if (validationResult == true) { validationResult = rucmRuleValidator.Validate(globalAlternativeFlow, this.basicFlow); }
-                    else break;
-                }
-                foreach (SpecificAlternativeFlow specificAlternativeFlow in this.specificAlternativeFlows)
-                {
-                    if (validationResult == true) { validationResult = rucmRuleValidator.Validate(specificAlternativeFlow, this.basicFlow); }
-                    else break;
-                }
-                foreach (BoundedAlternativeFlow boundedAlternativeFlow in this.boundedAlternativeFlows)
-                {
-                    if (validationResult == true) { validationResult = rucmRuleValidator.Validate(boundedAlternativeFlow, this.basicFlow); }
-                    else break;
+                    this.SetUseCaseOutParameter();
                 }
 
-                this.useCaseFile.Close();
-                this.useCaseOutParameter.UseCaseName = this.useCaseName;
-                this.useCaseOutParameter.BriefDescription = this.briefDescription;
-                this.useCaseOutParameter.Precondition = this.precondition;
-                this.useCaseOutParameter.PrimaryActor = this.primaryActor;
-                this.useCaseOutParameter.SecondaryActors = this.secondaryActor;
-                this.useCaseOutParameter.Dependency = this.dependency;
-                this.useCaseOutParameter.Generalization = this.generalization;
-                this.useCaseOutParameter.SetBasicFlow(this.basicFlow.GetSteps(), this.basicFlow.GetPostcondition());
-                int i = 0;
-                foreach (GlobalAlternativeFlow globalAlternativeFlow in this.globalAlternativeFlows)
-                {
-                    i++;
-                    this.useCaseOutParameter.AddGlobalAlternativeFlow(i, globalAlternativeFlow.GetSteps(), globalAlternativeFlow.GetPostcondition());
-                }
-                i = 0;
-                foreach (SpecificAlternativeFlow specificAlternativeFlow in this.specificAlternativeFlows) 
-                {
-                    i++;
-                    this.useCaseOutParameter.AddSpecificAlternativeFlow(i, specificAlternativeFlow.GetSteps(), specificAlternativeFlow.GetPostcondition(), specificAlternativeFlow.GetReferenceStep());
-                }
-                i = 0;
-                foreach (BoundedAlternativeFlow boundedAlternativeFlow in this.boundedAlternativeFlows)
-                {
-                    i++;
-                    this.useCaseOutParameter.AddBoundedAlternativeFlow(i, boundedAlternativeFlow.GetSteps(), boundedAlternativeFlow.GetPostcondition(), boundedAlternativeFlow.GetReferenceSteps());
-                }
-                this.useCaseOutParameter.BuildGraph();
                 useCase = this.useCaseOutParameter;
                 return validationResult;
             }
@@ -252,6 +209,93 @@ namespace UseCaseCore.XmlParser
                 useCase = null;
                 return false;
             }
+        }
+
+        /// <summary>
+        /// This function validates the RUCM rules. 
+        /// </summary>
+        /// <returns>Returns true if the validation was successful.</returns>
+        private bool ValidateRucmRules()
+        {
+            bool currentValidationResult = true;
+            RucmRuleValidator rucmRuleValidator = new RucmRuleValidator(RuleValidation.RucmRules.RuleRepository.Rules);
+            rucmRuleValidator.Validate(this.basicFlow);
+            foreach (GlobalAlternativeFlow globalAlternativeFlow in this.globalAlternativeFlows)
+            {
+                if (currentValidationResult == true)
+                {
+                    currentValidationResult = rucmRuleValidator.Validate(globalAlternativeFlow, this.basicFlow);
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            foreach (SpecificAlternativeFlow specificAlternativeFlow in this.specificAlternativeFlows)
+            {
+                if (currentValidationResult == true)
+                {
+                    currentValidationResult = rucmRuleValidator.Validate(specificAlternativeFlow, this.basicFlow);
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            foreach (BoundedAlternativeFlow boundedAlternativeFlow in this.boundedAlternativeFlows)
+            {
+                if (currentValidationResult == true)
+                {
+                    currentValidationResult = rucmRuleValidator.Validate(boundedAlternativeFlow, this.basicFlow);
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return currentValidationResult;
+        }
+
+        /// <summary>
+        /// This function sets the parsed values for the use case.
+        /// </summary>
+        /// <returns>Returns the use case with the values you set.</returns>
+        private UseCase SetUseCaseOutParameter()
+        {
+            this.useCaseOutParameter.UseCaseName = this.useCaseName;
+            this.useCaseOutParameter.BriefDescription = this.briefDescription;
+            this.useCaseOutParameter.Precondition = this.precondition;
+            this.useCaseOutParameter.PrimaryActor = this.primaryActor;
+            this.useCaseOutParameter.SecondaryActors = this.secondaryActor;
+            this.useCaseOutParameter.Dependency = this.dependency;
+            this.useCaseOutParameter.Generalization = this.generalization;
+            this.useCaseOutParameter.SetBasicFlow(this.basicFlow.GetSteps(), this.basicFlow.GetPostcondition());
+            int i = 0;
+            foreach (GlobalAlternativeFlow globalAlternativeFlow in this.globalAlternativeFlows)
+            {
+                i++;
+                this.useCaseOutParameter.AddGlobalAlternativeFlow(i, globalAlternativeFlow.GetSteps(), globalAlternativeFlow.GetPostcondition());
+            }
+
+            i = 0;
+            foreach (SpecificAlternativeFlow specificAlternativeFlow in this.specificAlternativeFlows)
+            {
+                i++;
+                this.useCaseOutParameter.AddSpecificAlternativeFlow(i, specificAlternativeFlow.GetSteps(), specificAlternativeFlow.GetPostcondition(), specificAlternativeFlow.GetReferenceStep());
+            }
+
+            i = 0;
+            foreach (BoundedAlternativeFlow boundedAlternativeFlow in this.boundedAlternativeFlows)
+            {
+                i++;
+                this.useCaseOutParameter.AddBoundedAlternativeFlow(i, boundedAlternativeFlow.GetSteps(), boundedAlternativeFlow.GetPostcondition(), boundedAlternativeFlow.GetReferenceSteps());
+            }
+
+            this.useCaseOutParameter.BuildGraph();
+            return this.useCaseOutParameter;
         }
 
         /// <summary>

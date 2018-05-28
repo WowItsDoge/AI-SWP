@@ -4,8 +4,8 @@
 
 namespace UseCaseTool
 {
-    using UseCaseCore.XmlParser;
     using UseCaseCore.UcIntern;
+    using UseCaseCore.XmlParser;
 
     /// <summary>
     /// Controller class
@@ -29,7 +29,7 @@ namespace UseCaseTool
         public void CurrentXmlFilePath(string filePath)
         {
             this.xmlParser.LoadXmlFile(filePath);
-            this.xmlParser.ParseXmlFile(out useCase);
+            this.xmlParser.ParseXmlFile(out this.useCase);
         }
 
         /// <summary>
