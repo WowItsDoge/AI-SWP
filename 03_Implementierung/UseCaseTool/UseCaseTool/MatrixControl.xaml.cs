@@ -21,7 +21,7 @@ namespace UseCaseTool
     using UseCaseCore.ScenarioMatrix;
 
     /// <summary>
-    /// Interaktionslogik für MatrixControl.xaml
+    /// Interaction logic for MatrixControl.xaml
     /// </summary>
     public partial class MatrixControl : UserControl
     {
@@ -33,8 +33,8 @@ namespace UseCaseTool
             this.InitializeComponent();
 
             // Beispieldaten
-            List<Scenario> scenarios = new List<Scenario> { new Scenario(1, "K1;K2;K3"), new Scenario(2, "K1;K2;K4"), new Scenario(3, "K1;K2;K5") };
-            this.Draw(scenarios);
+            // List<Scenario> scenarios = new List<Scenario> { new Scenario(1, "K1;K2;K3"), new Scenario(2, "K1;K2;K4"), new Scenario(3, "K1;K2;K5") };
+            // this.Draw(scenarios);
         }
         
         /// <summary>
