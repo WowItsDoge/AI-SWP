@@ -32,6 +32,7 @@ namespace UseCaseCore.UcIntern
         /// <param name="rowCount">The dimension n of the n x m matrix the rows.</param>
         /// <param name="columnCount">The dimension m of the n x m matrix the columns.</param>
         /// <param name="standardReturnObject">The value returned by every entry where no specific entry is set.</param>
+        /// <exception cref="ArgumentOutOfRangeException">If the row or column count is negative.</exception>
         public Matrix(int rowCount, int columnCount, T standardReturnObject)
         {
             if (rowCount < 0)
@@ -44,14 +45,14 @@ namespace UseCaseCore.UcIntern
                 throw new ArgumentOutOfRangeException(nameof(columnCount), "No negative column count allowed!");
             }
 
-            this.IsReadonly = false;
             this.RowCount = rowCount;
             this.ColumnCount = columnCount;
+            this.StandardReturnObject = standardReturnObject;
 
             this.Rows = new List<Row<T>>(this.RowCount);
             for (int pos = 0; pos < this.RowCount; pos++)
             {
-                this.Rows.Add(new Row<T>(this.ColumnCount, standardReturnObject));
+                this.Rows.Add(new Row<T>(this.ColumnCount, this.StandardReturnObject));
             }
         }
 
@@ -62,12 +63,35 @@ namespace UseCaseCore.UcIntern
         /// <param name="rowCount">The dimension n of the n x m matrix the rows.</param>
         /// <param name="columnCount">The dimension m of the n x m matrix the columns.</param>
         /// <param name="readonlyRows">A correctly ordered list with the readonly rows.</param>
-        private Matrix(int rowCount, int columnCount, List<Row<T>> readonlyRows)
+        private Matrix(int rowCount, int columnCount, List<Row<T>> readonlyRows, T standardReturnObject)
         {
             this.IsReadonly = true;
             this.RowCount = rowCount;
             this.ColumnCount = columnCount;
             this.Rows = readonlyRows;
+            this.StandardReturnObject = standardReturnObject;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Matrix{T}"/> class.
+        /// The content of the given array is copied into the matrix.
+        /// The standard return object is the object that occurs most and
+        /// is found first (searching columns and then rows).
+        /// </summary>
+        /// <param name="multArray">A multidimensional array that is copied into the matrix.</param>
+        public Matrix(T[,] multArray)
+        {
+            this.RowCount = multArray.GetLength(0);
+            this.ColumnCount = multArray.GetLength(1);
+            this.StandardReturnObject = this.GetObjectFirstOccuringTheMost(multArray);
+
+            this.Rows = new List<Row<T>>(this.RowCount);
+            for (int pos = 0; pos < this.RowCount; pos++)
+            {
+                this.Rows.Add(new Row<T>(this.ColumnCount, this.StandardReturnObject));
+            }
+
+            this.CopyMultidimensionalArrayIntoMatrix(multArray);
         }
 
         /// <summary>
@@ -81,9 +105,14 @@ namespace UseCaseCore.UcIntern
         public int ColumnCount { get; }
 
         /// <summary>
+        /// Gets the object returned for entries with no specific value.
+        /// </summary>
+        public T StandardReturnObject { get; }
+
+        /// <summary>
         /// Gets a value indicating whether the entry is readonly.
         /// </summary>
-        public bool IsReadonly { get; }
+        public bool IsReadonly { get; } = false;
 
         /// <summary>
         /// Gets the list of the rows in the matrix.
@@ -106,6 +135,25 @@ namespace UseCaseCore.UcIntern
         }
 
         /// <summary>
+        /// Gets or sets an entry of the matrix.
+        /// </summary>
+        /// <param name="row">The index of the row.</param>
+        /// <param name="column">The index of the column.</param>
+        /// <returns>The entry that belongs to the indices.</returns>
+        public T this[int row, int column]
+        {
+            get
+            {
+                return this[row][column];
+            }
+
+            set
+            {
+                this[row][column] = value;
+            }
+        }
+
+        /// <summary>
         /// Creates a copy of the Matrix object that is readonly.
         /// </summary>
         /// <returns>A new Matrix object, with the row count, column count and the rows of the current one, that is readonly.</returns>
@@ -118,7 +166,64 @@ namespace UseCaseCore.UcIntern
                 readonlyRows.Add(row.AsReadonly());
             }
 
-            return new Matrix<T>(this.RowCount, this.ColumnCount, readonlyRows);
+            return new Matrix<T>(this.RowCount, this.ColumnCount, readonlyRows, this.StandardReturnObject);
+        }
+
+        /// <summary>
+        /// Searches the columns and then the rows for the object occuring the
+        /// most and found first.
+        /// </summary>
+        /// <param name="contentArray">The matrix that is searched.</param>
+        /// <returns>The object occuring the most and found first.</returns>
+        private T GetObjectFirstOccuringTheMost(T[,] contentArray)
+        {
+            List<T> objectsInContentArray = new List<T>();
+            List<long> numberOccurancesOfObjectsInContentArray = new List<long>();
+
+
+            foreach (T entry in contentArray)
+            {
+                if (objectsInContentArray.Contains(entry))
+                {
+                    int indexOfObject = objectsInContentArray.IndexOf(entry);
+                    numberOccurancesOfObjectsInContentArray[indexOfObject] += 1;
+                }
+                else
+                {
+                    objectsInContentArray.Add(entry);
+                    numberOccurancesOfObjectsInContentArray.Add(1);
+                }
+            }
+
+            T firstMostOccuringObject = default(T);
+            long numberOccurancesOfCurrentObject = -1;
+
+            for (int pos = 0; pos < objectsInContentArray.Count; pos++)
+            {
+                if (numberOccurancesOfCurrentObject < numberOccurancesOfObjectsInContentArray[pos])
+                {
+                    firstMostOccuringObject = objectsInContentArray[pos];
+                    numberOccurancesOfCurrentObject = numberOccurancesOfObjectsInContentArray[pos];
+                }
+            }
+
+            return firstMostOccuringObject;
+        }
+
+        /// <summary>
+        /// Sets the content of this matrix object to the contents of the given
+        /// multidimensional array.
+        /// </summary>
+        /// <param name="contentArray">The matrix that should be copied. The dimensions must match matrix.</param>
+        private void CopyMultidimensionalArrayIntoMatrix(T[,] contentArray)
+        {
+            for (int row = 0; row < this.RowCount; row++)
+            {
+                for (int column = 0; column < this.ColumnCount; column++)
+                {
+                    this[row, column] = contentArray[row, column];
+                }
+            }
         }
     }
 }
