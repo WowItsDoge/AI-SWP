@@ -173,15 +173,15 @@ namespace UseCaseCore.UcIntern
         /// Searches the columns and then the rows for the object occuring the
         /// most and found first.
         /// </summary>
-        /// <param name="contentArray">The matrix that is searched.</param>
+        /// <param name="multArray">The matrix that is searched.</param>
         /// <returns>The object occuring the most and found first.</returns>
-        private T GetObjectFirstOccuringTheMost(T[,] contentArray)
+        private T GetObjectFirstOccuringTheMost(T[,] multArray)
         {
             List<T> objectsInContentArray = new List<T>();
             List<long> numberOccurancesOfObjectsInContentArray = new List<long>();
 
 
-            foreach (T entry in contentArray)
+            foreach (T entry in multArray)
             {
                 if (objectsInContentArray.Contains(entry))
                 {
@@ -214,14 +214,14 @@ namespace UseCaseCore.UcIntern
         /// Sets the content of this matrix object to the contents of the given
         /// multidimensional array.
         /// </summary>
-        /// <param name="contentArray">The matrix that should be copied. The dimensions must match matrix.</param>
-        private void CopyMultidimensionalArrayIntoMatrix(T[,] contentArray)
+        /// <param name="multArray">The matrix that should be copied. The dimensions must match matrix.</param>
+        private void CopyMultidimensionalArrayIntoMatrix(T[,] multArray)
         {
             for (int row = 0; row < this.RowCount; row++)
             {
                 for (int column = 0; column < this.ColumnCount; column++)
                 {
-                    this[row, column] = contentArray[row, column];
+                    this[row, column] = multArray[row, column];
                 }
             }
         }
