@@ -39,7 +39,7 @@ namespace UseCaseCore.XmlParser
         }
 
         /// <summary>
-        /// A method to add a step to the flow.
+        /// A method to get the steps of the flow.
         /// </summary>
         /// <returns> The list of the steps.</returns>
         public List<string> GetSteps()

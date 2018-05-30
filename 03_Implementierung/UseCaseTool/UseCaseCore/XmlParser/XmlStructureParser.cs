@@ -18,6 +18,11 @@ namespace UseCaseCore.XmlParser
     public class XmlStructureParser
     {
         /// <summary>
+        /// The current error message.
+        /// </summary>
+        private string errorMessage;
+
+        /// <summary>
         /// The use case name.
         /// </summary>
         private string useCaseName;
@@ -87,6 +92,7 @@ namespace UseCaseCore.XmlParser
         /// </summary>
         public XmlStructureParser()
         {
+            this.errorMessage = string.Empty;
             this.useCaseName = string.Empty;
             this.briefDescription = string.Empty;
             this.precondition = string.Empty;
@@ -130,6 +136,7 @@ namespace UseCaseCore.XmlParser
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message.ToString());
+                this.errorMessage = ex.Message.ToString();
                 return false;
             }
         }
@@ -140,7 +147,7 @@ namespace UseCaseCore.XmlParser
         /// <returns>Returns a string with the error message if there was an error.</returns>
         public string GetError()
         {
-            return string.Empty;
+            return this.errorMessage;
         }
 
         /// <summary>
@@ -167,6 +174,7 @@ namespace UseCaseCore.XmlParser
                 {
                     this.useCaseFile.Close();
                     useCase = null;
+                    this.errorMessage = "Use case document corrupted (no child nodes found!)";
                     return false;
                 }
 
@@ -189,6 +197,7 @@ namespace UseCaseCore.XmlParser
                     Debug.WriteLine(ex.Message.ToString());
                     this.useCaseFile.Close();
                     useCase = null;
+                    this.errorMessage = ex.Message.ToString();
                     return false;
                 }
 
@@ -197,6 +206,10 @@ namespace UseCaseCore.XmlParser
                 if (validationResult == true)
                 {
                     this.SetUseCaseOutParameter();
+                }
+                else
+                {
+                    this.errorMessage = "RUCM rule validation failed!";
                 }
 
                 useCase = this.useCaseOutParameter;
@@ -207,6 +220,7 @@ namespace UseCaseCore.XmlParser
                 Debug.WriteLine(ex.Message.ToString());
                 this.useCaseFile.Close();
                 useCase = null;
+                this.errorMessage = ex.Message.ToString();
                 return false;
             }
         }

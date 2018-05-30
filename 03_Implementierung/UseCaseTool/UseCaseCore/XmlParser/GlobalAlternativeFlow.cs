@@ -29,5 +29,14 @@ namespace UseCaseCore.XmlParser
         {
             this.id = id;
         }
+
+        /// <summary>
+        /// The method to get the flow id.
+        /// </summary>
+        /// <returns>The flow id.</returns>
+        public int GetId()
+        {
+            return this.id;
+        }
     }
 }

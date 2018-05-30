@@ -40,6 +40,15 @@ namespace UseCaseCore.XmlParser
         }
 
         /// <summary>
+        /// The method to get the flow id.
+        /// </summary>
+        /// <returns>The flow id.</returns>
+        public int GetId()
+        {
+            return this.id;
+        }
+
+        /// <summary>
         /// The method to add a reference step.
         /// </summary>
         /// <param name="referenceStepToAdd">Specifies the reference step to add.</param>
@@ -49,7 +58,7 @@ namespace UseCaseCore.XmlParser
         }
 
         /// <summary>
-        /// The method to get a reference steps.
+        /// The method to get the reference steps.
         /// </summary>
         /// <returns> The list of reference steps.</returns>
         public List<ReferenceStep> GetReferenceSteps()
