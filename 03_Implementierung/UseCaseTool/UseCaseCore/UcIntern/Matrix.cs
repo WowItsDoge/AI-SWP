@@ -58,22 +58,6 @@ namespace UseCaseCore.UcIntern
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Matrix{T}"/> class.
-        /// The new instance is readonly.
-        /// </summary>
-        /// <param name="rowCount">The dimension n of the n x m matrix the rows.</param>
-        /// <param name="columnCount">The dimension m of the n x m matrix the columns.</param>
-        /// <param name="readonlyRows">A correctly ordered list with the readonly rows.</param>
-        private Matrix(int rowCount, int columnCount, List<Row<T>> readonlyRows, T standardReturnObject)
-        {
-            this.IsReadonly = true;
-            this.RowCount = rowCount;
-            this.ColumnCount = columnCount;
-            this.Rows = readonlyRows;
-            this.StandardReturnObject = standardReturnObject;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Matrix{T}"/> class.
         /// The content of the given array is copied into the matrix.
         /// The standard return object is the object that occurs most and
         /// is found first (searching columns and then rows).
@@ -92,6 +76,23 @@ namespace UseCaseCore.UcIntern
             }
 
             this.CopyMultidimensionalArrayIntoMatrix(multArray);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Matrix{T}"/> class.
+        /// The new instance is readonly.
+        /// </summary>
+        /// <param name="rowCount">The dimension n of the n x m matrix the rows.</param>
+        /// <param name="columnCount">The dimension m of the n x m matrix the columns.</param>
+        /// <param name="readonlyRows">A correctly ordered list with the readonly rows.</param>
+        /// <param name="standardReturnObject">The standard return object of the matrix.</param>
+        private Matrix(int rowCount, int columnCount, List<Row<T>> readonlyRows, T standardReturnObject)
+        {
+            this.IsReadonly = true;
+            this.RowCount = rowCount;
+            this.ColumnCount = columnCount;
+            this.Rows = readonlyRows;
+            this.StandardReturnObject = standardReturnObject;
         }
 
         /// <summary>
@@ -179,7 +180,6 @@ namespace UseCaseCore.UcIntern
         {
             List<T> objectsInContentArray = new List<T>();
             List<long> numberOccurancesOfObjectsInContentArray = new List<long>();
-
 
             foreach (T entry in multArray)
             {
