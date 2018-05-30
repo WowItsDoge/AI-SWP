@@ -41,6 +41,17 @@ namespace UseCaseCore.ScenarioMatrix
             this.ScenarioID = newID;
             this.nodes = new List<Node>();
         }
+
+        /// <summary>
+        /// Initializes a new instance of the Scenario class
+        /// </summary>
+        /// <param name="s"> scenario that gets copied </param>
+        public Scenario(Scenario s)
+        {
+            this.scenarioID = s.scenarioID;
+            this.nodes = new List<Node>();
+            s.nodes.ForEach(n => this.nodes.Add(n));
+        }
         
         /// <summary>
         /// Gets or sets ScenarioID

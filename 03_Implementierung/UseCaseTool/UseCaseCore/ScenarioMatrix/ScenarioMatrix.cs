@@ -123,24 +123,13 @@ namespace UseCaseCore.ScenarioMatrix
             {
                 return 0; // A Scenario with only 1 node doesnt contain any edges
             }
-
-            int amountOfEdges = 0;
-            Node nPrev = s.Nodes[0];
-
-            // Start from the second element since nPrev is already the first element
-            foreach (Node n in s.Nodes.Skip(1)) 
-            {
-                if (n.StepDescription == node2.StepDescription && nPrev.StepDescription == node1.StepDescription)
-                {
-                    amountOfEdges++;
-                }
-
-                nPrev = n;
-            }
-
-            return amountOfEdges;
+            
+            return s.Nodes
+                .Select((n, i) => new { n, i })
+                .Where(x => x.i > 0)
+                .Where(x => x.n.Equals(node2) && s.Nodes[x.i - 1].Equals(node1)).Count();            
         }
-
+        
         /// <summary>
         /// Calculates all scenarios
         /// </summary>
@@ -173,7 +162,7 @@ namespace UseCaseCore.ScenarioMatrix
         private void TraverseGraphRec(Matrix<bool> matrix, int startnode, Scenario s, int cycleDepth)
         { 
             int stepsFound = 0;
-            Scenario saveScenario = s;
+            Scenario savedScenario = s;
             for (int i = 0; i < matrix.ColumnCount; i++)
             {
                 if (matrix[startnode][i] == true)
@@ -190,7 +179,7 @@ namespace UseCaseCore.ScenarioMatrix
                     this.TraverseGraphRec(matrix, i, s, cycleDepth);
 
                     // Continue with old scenario 
-                    s = saveScenario;
+                    s = savedScenario;
                 }
             }
 
