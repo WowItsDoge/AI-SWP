@@ -39,6 +39,7 @@ namespace UseCaseTool
         /// </summary>
         public UcaWindow()
         {
+            this.DataContext = this.controller;
             this.InitializeComponent();
         }
 
@@ -170,12 +171,22 @@ namespace UseCaseTool
             ////
         }
 
-        private void zoomIn_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Button to change zoom level
+        /// </summary>
+        /// <param name="sender">The sender</param>
+        /// <param name="e">The e</param>
+        private void ZoomIn_Click(object sender, RoutedEventArgs e)
         {
             GraphView.Zoom(1.2);
         }
 
-        private void zoomOut_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Button to change zoom level
+        /// </summary>
+        /// <param name="sender">The sender</param>
+        /// <param name="e">The e</param>
+        private void ZoomOut_Click(object sender, RoutedEventArgs e)
         {
             GraphView.Zoom(0.8);
         }
