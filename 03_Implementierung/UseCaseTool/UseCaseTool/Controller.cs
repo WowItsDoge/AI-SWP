@@ -6,11 +6,15 @@ namespace UseCaseTool
 {
     using UseCaseCore.UcIntern;
     using UseCaseCore.XmlParser;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
+    using System.Windows.Media;
+    using System.Windows;
 
     /// <summary>
     /// Controller class
     /// </summary>
-    public class Controller
+    public class Controller : INotifyPropertyChanged
     {
         /// <summary>
         /// Creates an instance of the xml structure parser class
@@ -22,14 +26,67 @@ namespace UseCaseTool
         /// </summary>
         private UseCase useCase = new UseCase();
 
+        private Brush foregroundColor = new SolidColorBrush(Color.FromArgb(255, 155, 155, 155));
+        private Visibility visibilityOk = Visibility.Hidden;
+        private Visibility visibilityFail = Visibility.Hidden;
+
+
+        public Brush ForegroundColor
+        {
+            get { return foregroundColor; }
+            set
+            {
+                foregroundColor = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Visibility VisibilityOk
+        {
+            get
+            {
+                return visibilityOk;
+            }
+            set
+            {
+                visibilityOk = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Visibility VisibilityFail
+        {
+            get
+            {
+                return visibilityFail;
+            }
+            set
+            {
+                visibilityFail = value;
+                OnPropertyChanged();
+            }
+        }
+
         /// <summary>
         /// Tell the system path and file name of the XML UseCase file. The string para-meter contains the path to the new file.
         /// </summary>
         /// <param name="filePath">The currently selected path</param>
         public void CurrentXmlFilePath(string filePath)
         {
-            this.xmlParser.LoadXmlFile(filePath);
-            this.xmlParser.ParseXmlFile(out this.useCase);
+            if (this.xmlParser.LoadXmlFile(filePath))
+            {
+                this.ForegroundColor = Brushes.LimeGreen;
+                this.VisibilityOk = Visibility.Visible;
+
+                this.xmlParser.ParseXmlFile(out this.useCase);
+                string test = string.Empty;
+            }
+            else
+            {
+                this.ForegroundColor = Brushes.Red;
+                this.VisibilityFail = Visibility.Visible;
+            }
+
         }
 
         /// <summary>
@@ -50,6 +107,12 @@ namespace UseCaseTool
         public void ReportFilePath(string filePath)
         {
             ////  ...
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
