@@ -53,6 +53,25 @@ namespace UseCaseCore.UcIntern
         public bool IsReadonly { get; }
 
         /// <summary>
+        /// Gets the number of entries in the row that are different from
+        /// the standard return object. An entry is only created for values
+        /// different from the standard return object. This value corresponds
+        /// to the memory usage of the row.
+        /// </summary>
+        public long EntryCount
+        {
+                get
+                {
+                    return this.Entries.Count;
+                }
+        }
+
+        /// <summary>
+        /// Gets the number of columns in the row.
+        /// </summary>
+        public int ColumnCount { get; }
+
+        /// <summary>
         /// Gets the object returned if no specific entry is available.
         /// </summary>
         private T StandardReturnObject { get; }
@@ -63,11 +82,6 @@ namespace UseCaseCore.UcIntern
         /// There are no doubled column indices nor ones less than 0 or greater or equal to column count.
         /// </summary>
         private List<Entry<T>> Entries { get; }
-
-        /// <summary>
-        /// Gets the number of columns in the row.
-        /// </summary>
-        private int ColumnCount { get; }
 
         /// <summary>
         /// Gets or sets the content of an entry.
@@ -105,16 +119,29 @@ namespace UseCaseCore.UcIntern
 
                 Entry<T> entry = this.SearchEntry(index);
 
-                if (entry != null)
+                if (entry == null)
                 {
-                    entry.Content = value;
+                    if (this.IsEqualToStandardReturnObject(value))
+                    {
+                    }
+                    else
+                    {
+                        // Create a new entry and insert it into its correct position in the list.
+                        entry = new Entry<T>(index, value);
+                        int insertIndex = this.FindFreePositionForEntryInList(index);
+                        this.Entries.Insert(insertIndex, entry);
+                    }
                 }
                 else
                 {
-                    // Create a new entry and insert it into its correct position in the list.
-                    entry = new Entry<T>(index, value);
-                    int insertIndex = this.FindFreePositionForEntryInList(index);
-                    this.Entries.Insert(insertIndex, entry);
+                    if (this.IsEqualToStandardReturnObject(value))
+                    {
+                        this.Entries.Remove(entry);
+                    }
+                    else
+                    {
+                        entry.Content = value;
+                    }
                 }
             }
         }
@@ -133,6 +160,27 @@ namespace UseCaseCore.UcIntern
             }
 
             return new Row<T>(this.ColumnCount, this.StandardReturnObject, readonlyEntries);
+        }
+
+        /// <summary>
+        /// Tests if the given object has the same value (if T is a value type)
+        /// or reference (if T is not a value type) as the standard return object.
+        /// </summary>
+        /// <param name="obj">The object for which equality is tested with the standard retrun object.</param>
+        /// <returns>If the obj is equal to the standard return object on the basis descibed above.</returns>
+        public bool IsEqualToStandardReturnObject(T obj)
+        {
+            if (obj == null)
+            {
+                return this.StandardReturnObject == null;
+            }
+
+            if (obj.GetType().IsValueType)
+            {
+                return obj.Equals(this.StandardReturnObject);
+            }
+
+            return object.ReferenceEquals(obj, this.StandardReturnObject);
         }
 
         /// <summary>
@@ -190,7 +238,7 @@ namespace UseCaseCore.UcIntern
             for (pos = 0; pos < this.Entries.Count; pos++)
             {
                 entry = this.Entries[pos];
-                    
+
                 if (entry.ColumnIndex >= index)
                 {
                     if (entry.ColumnIndex == index)

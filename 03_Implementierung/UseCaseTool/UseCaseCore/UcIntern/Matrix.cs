@@ -106,6 +106,27 @@ namespace UseCaseCore.UcIntern
         public int ColumnCount { get; }
 
         /// <summary>
+        /// Gets the number of entries in the matrix that are different from
+        /// the standard return object. An entry is only created for values
+        /// different from the standard return object. This value corresponds
+        /// to the memory usage of the matrix.
+        /// </summary>
+        public long EntryCount
+        {
+                get
+                {
+                    long entryCount = 0;
+
+                    foreach (Row<T> r in this.Rows)
+                    {
+                        entryCount += r.EntryCount;
+                    }
+
+                    return entryCount;
+                }
+        }
+
+        /// <summary>
         /// Gets the object returned for entries with no specific value.
         /// </summary>
         public T StandardReturnObject { get; }
