@@ -26,10 +26,9 @@ namespace UseCaseTool
         /// </summary>
         private UseCase useCase = new UseCase();
 
-        private Brush foregroundColor = new SolidColorBrush(Color.FromArgb(255, 155, 155, 155));
+        private Brush foregroundColor = new SolidColorBrush(Color.FromArgb(255, 65, 177, 255)); 
         private Visibility visibilityOk = Visibility.Hidden;
         private Visibility visibilityFail = Visibility.Hidden;
-
 
         public Brush ForegroundColor
         {
@@ -86,7 +85,6 @@ namespace UseCaseTool
                 this.ForegroundColor = Brushes.Red;
                 this.VisibilityFail = Visibility.Visible;
             }
-
         }
 
         /// <summary>
