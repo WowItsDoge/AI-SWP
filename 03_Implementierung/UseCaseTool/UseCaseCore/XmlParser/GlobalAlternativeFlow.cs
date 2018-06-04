@@ -22,21 +22,21 @@ namespace UseCaseCore.XmlParser
         }
 
         /// <summary>
-        /// A method to set the flow id.
-        /// </summary>
-        /// <param name="id">Specifies the id to set.</param>
-        private void SetId(int id)
-        {
-            this.id = id;
-        }
-
-        /// <summary>
         /// The method to get the flow id.
         /// </summary>
         /// <returns>The flow id.</returns>
         public int GetId()
         {
             return this.id;
+        }
+
+        /// <summary>
+        /// A method to set the flow id.
+        /// </summary>
+        /// <param name="id">Specifies the id to set.</param>
+        public void SetId(int id)
+        {
+            this.id = id;
         }
     }
 }

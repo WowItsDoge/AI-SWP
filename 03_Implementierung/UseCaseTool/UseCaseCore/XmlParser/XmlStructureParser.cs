@@ -88,6 +88,11 @@ namespace UseCaseCore.XmlParser
         private WordprocessingDocument useCaseFile;
 
         /// <summary>
+        /// The loaded xml document.
+        /// </summary>
+        private XmlDocument useCaseXml;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="XmlStructureParser" /> class.
         /// </summary>
         public XmlStructureParser()
@@ -104,6 +109,8 @@ namespace UseCaseCore.XmlParser
             this.globalAlternativeFlows = new List<GlobalAlternativeFlow>();
             this.specificAlternativeFlows = new List<SpecificAlternativeFlow>();
             this.boundedAlternativeFlows = new List<BoundedAlternativeFlow>();
+            this.useCaseFile = null;
+            this.useCaseXml = new XmlDocument();
         }
 
         /// <summary>
@@ -166,11 +173,10 @@ namespace UseCaseCore.XmlParser
         /// <returns>Returns true if the file was analyzed successfully, otherwise false.</returns>
         public bool ParseXmlFile(out UseCase useCase)
         {
-            XmlDocument useCaseXml = new XmlDocument();
             try
             {
-                useCaseXml.LoadXml(this.useCaseFile.MainDocumentPart.Document.InnerXml);
-                if (useCaseXml.DocumentElement.ChildNodes == null)
+                this.useCaseXml.LoadXml(this.useCaseFile.MainDocumentPart.Document.InnerXml);
+                if (this.useCaseXml.DocumentElement.ChildNodes == null)
                 {
                     this.useCaseFile.Close();
                     useCase = null;
@@ -180,13 +186,13 @@ namespace UseCaseCore.XmlParser
 
                 try
                 {
-                    this.useCaseName = this.ParseRucmProperty(useCaseXml, "Use Case Name");
-                    this.briefDescription = this.ParseRucmProperty(useCaseXml, "Brief Description");
-                    this.precondition = this.ParseRucmProperty(useCaseXml, "Precondition");
-                    this.primaryActor = this.ParseRucmProperty(useCaseXml, "Primary Actor");
-                    this.secondaryActor = this.ParseRucmProperty(useCaseXml, "Secondary Actors");
-                    this.dependency = this.ParseRucmProperty(useCaseXml, "Dependency");
-                    this.generalization = this.ParseRucmProperty(useCaseXml, "Generalization");
+                    this.useCaseName = this.ParseRucmProperty("Use Case Name");
+                    this.briefDescription = this.ParseRucmProperty("Brief Description");
+                    this.precondition = this.ParseRucmProperty("Precondition");
+                    this.primaryActor = this.ParseRucmProperty("Primary Actor");
+                    this.secondaryActor = this.ParseRucmProperty("Secondary Actors");
+                    this.dependency = this.ParseRucmProperty("Dependency");
+                    this.generalization = this.ParseRucmProperty("Generalization");
                     this.GetBasicFlow();
                     this.GetGlobalAlternativeFlows();
                     this.GetSpecificAlternativeFlows();
@@ -315,13 +321,12 @@ namespace UseCaseCore.XmlParser
         /// <summary>
         /// Parses the RUCM properties.
         /// </summary>
-        /// <param name="useCaseXml">Specifies the loaded use case xml file.</param>
         /// <param name="propertyName">Specifies the property name to parse.</param>
         /// <returns>Returns a string with the parsed RUCM property.</returns>
-        private string ParseRucmProperty(XmlDocument useCaseXml, string propertyName)
+        private string ParseRucmProperty(string propertyName)
         {
             string xPathFilter = "//*/text()[normalize-space(.)='" + propertyName + "']/parent::*";
-            XmlNode root = useCaseXml.DocumentElement;
+            XmlNode root = this.useCaseXml.DocumentElement;
             XmlNodeList propertyNode = root.SelectNodes(xPathFilter);
             if (propertyNode.Count == 0)
             {
@@ -350,38 +355,93 @@ namespace UseCaseCore.XmlParser
         /// <summary>
         /// Gets the basic flow.
         /// </summary>
-        /// <returns>Returns the basic flow.</returns>
-        private BasicFlow GetBasicFlow()
+        /// <returns>True if a basic flow could be parsed from the xml. False otherwise.</returns>
+        private bool GetBasicFlow()
         {
-            this.basicFlow.AddStep("INCLUDE USE CASE Validate PIN.");
-            this.basicFlow.AddStep("ATM customer selects Withdrawal through the system");
-            this.basicFlow.AddStep("ATM customer enters the withdrawal amount through the system.");
-            this.basicFlow.AddStep("ATM customer selects the account number through the system.");
-            this.basicFlow.AddStep("The system VALIDATES THAT the account number is valid.");
-            this.basicFlow.AddStep("The system VALIDATES THAT ATM customer has enough funds in the account.");
-            this.basicFlow.AddStep("The system VALIDATES THAT the withdrawal amount does not exceed the daily limit of the account.");
-            this.basicFlow.AddStep("The system VALIDATES THAT the ATM has enough funds.");
-            this.basicFlow.AddStep("The system dispenses the cash amount.");
-            this.basicFlow.AddStep("The system prints a receipt showing transaction number, transaction type, amount withdrawn, and account balance.");
-            this.basicFlow.AddStep("The system ejects the ATM card.");
-            this.basicFlow.AddStep("The system displays Welcome message.");
-            this.basicFlow.SetPostcondition("ATM customer funds have been withdrawn.");
-            return this.basicFlow;
+            string xPathFilter = "//*/text()[normalize-space(.)='Basic Flow']/parent::*";
+            XmlNode root = this.useCaseXml.DocumentElement;
+            XmlNodeList basicFlowNode = root.SelectNodes(xPathFilter);
+            if (basicFlowNode.Count == 0)
+            {
+                return false;
+                throw new Exception("Error: No Basic Flow found");
+            }
+
+            if (basicFlowNode.Count > 1)
+            {
+                return false;
+                throw new Exception("Error: Document contains more than one Basic Flow");
+            }
+
+            try
+            {
+                XmlNode basicFlowContent = basicFlowNode[0].ParentNode.ParentNode.ParentNode.ParentNode;
+                XmlNode basicFlowStepContent = basicFlowContent.NextSibling;
+                while (basicFlowStepContent.ChildNodes[1].InnerText != "Postcondition")
+                {
+                    this.basicFlow.AddStep(basicFlowStepContent.ChildNodes[2].InnerText);
+                    basicFlowStepContent = basicFlowStepContent.NextSibling;
+                }
+                this.basicFlow.SetPostcondition(basicFlowStepContent.ChildNodes[2].InnerText);
+                return true;
+            }
+            catch
+            {
+                return false;
+                throw new Exception("Error: content not found");
+            }
         }
 
         /// <summary>
         /// Gets the global alternative flow.
         /// </summary>
-        /// <returns>Returns the global alternative flow.</returns>
-        private List<GlobalAlternativeFlow> GetGlobalAlternativeFlows()
+        /// <returns>True if a global alternative flow could be parsed from the xml. False otherwise.</returns>
+        private bool GetGlobalAlternativeFlows()
         {
-            GlobalAlternativeFlow globalAlternative = new GlobalAlternativeFlow();
-            globalAlternative.AddStep("IF ATM customer enters Cancel THEN");
-            globalAlternative.AddStep("The system cancels the transaction MEANWHILE the system ejects the ATM card.");
-            globalAlternative.AddStep("ABORT.");
-            globalAlternative.SetPostcondition("ATM customer funds have not been withdrawn. The system is idle. The system is displaying a Welcome message.");
-            this.globalAlternativeFlows.Add(globalAlternative);
-            return this.globalAlternativeFlows;
+            string xPathFilter = "//*/text()[normalize-space(.)='Global Alternative Flows']/parent::*";
+            XmlNode root = this.useCaseXml.DocumentElement;
+            XmlNodeList globalAlternativeFlowNodes = root.SelectNodes(xPathFilter);
+            if (globalAlternativeFlowNodes.Count == 0)
+            {
+                return false;
+            }
+
+            try
+            {
+                for (int i = 1; i <= globalAlternativeFlowNodes.Count; i++)
+                {
+                    GlobalAlternativeFlow globalAlternativFlow = new GlobalAlternativeFlow();
+                    XmlNode globalAlternativeFlowContent = globalAlternativeFlowNodes[i - 1].ParentNode.ParentNode.ParentNode.ParentNode;
+                    XmlNode globlaAlternativeFlowStepContent = globalAlternativeFlowContent;
+                    while (globlaAlternativeFlowStepContent.ChildNodes[1].InnerText != "Postcondition")
+                    {
+                        switch (globlaAlternativeFlowStepContent.ChildNodes.Count)
+                        {
+                            case 2:
+                                globalAlternativFlow.AddStep(globlaAlternativeFlowStepContent.ChildNodes[1].InnerText);
+                                break;
+                            case 3:
+                                globalAlternativFlow.AddStep(globlaAlternativeFlowStepContent.ChildNodes[2].InnerText);
+                                break;
+                            default:
+                                break;
+                        }
+
+                        globlaAlternativeFlowStepContent = globlaAlternativeFlowStepContent.NextSibling;
+                    }
+
+                    globalAlternativFlow.SetPostcondition(globlaAlternativeFlowStepContent.ChildNodes[2].InnerText);
+                    globalAlternativFlow.SetId(i);
+                    this.globalAlternativeFlows.Add(globalAlternativFlow);
+                }
+
+                return true;
+            }
+            catch
+            {
+                return false;
+                throw new Exception("Error: content not found");
+            }
         }
 
         /// <summary>
