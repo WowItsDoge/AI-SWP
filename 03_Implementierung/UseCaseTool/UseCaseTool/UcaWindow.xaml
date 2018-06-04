@@ -36,21 +36,21 @@
             <TextBlock x:Name="selectedFile" FontSize="14" HorizontalAlignment="Left" Height="24" Margin="10,52,0,0" TextWrapping="Wrap" Text="keine Datei ausgewählt..." VerticalAlignment="Top" Width="275" Focusable="True"/>
             <GroupBox x:Name="Ablauf" Header="Ablauf" Margin="10,90,0,10" HorizontalAlignment="Left" Width="266">
                 <Grid>
-                    <Label x:Name="labelImportProgress" Content="Datei einlesen..." HorizontalAlignment="Left" Margin="10,15,0,0" VerticalAlignment="Top" Width="236" FontSize="16" FontWeight="DemiBold" Background="{Binding Path=ForegroundColor}" Foreground="White"/>
-                    <Image x:Name="imageOK1" HorizontalAlignment="Left" Height="29" Margin="210,15,0,0" VerticalAlignment="Top" Width="30" Source="/images/ok.png" Visibility="{Binding Path=VisibilityOk}"/>
-                    <Image x:Name="imageFail1" HorizontalAlignment="Left" Height="29" Margin="210,15,0,0" VerticalAlignment="Top" Width="30" Source="/images/fail.png" Visibility="{Binding Path=VisibilityFail}"/>
+                    <Label x:Name="labelImportProgress" Content="Datei einlesen..." HorizontalAlignment="Left" Margin="10,15,0,0" VerticalAlignment="Top" Width="236" FontSize="16" FontWeight="DemiBold" Background="{Binding Path=BackgroundColor1}" Foreground="White"/>
+                    <Image x:Name="imageOK1" HorizontalAlignment="Left" Height="29" Margin="210,15,0,0" VerticalAlignment="Top" Width="30" Source="/images/ok.png" Visibility="{Binding Path=VisibilityOk1}"/>
+                    <Image x:Name="imageFail1" HorizontalAlignment="Left" Height="29" Margin="210,15,0,0" VerticalAlignment="Top" Width="30" Source="/images/fail.png" Visibility="{Binding Path=VisibilityFail1}"/>
 
-                    <Label x:Name="labelValiProgress" Content="Use-Case validieren..." HorizontalAlignment="Left" Margin="10,55,0,0" VerticalAlignment="Top" Width="236" FontSize="16" FontWeight="DemiBold" Background="{Binding Path=ForegroundColor}" Foreground="White"/>
-                    <Image x:Name="imageOK2" HorizontalAlignment="Left" Height="29" Margin="210,55,0,0" VerticalAlignment="Top" Width="30" Source="/images/ok.png" Visibility="{Binding Path=VisibilityOk}"/>
-                    <Image x:Name="imageFail2" HorizontalAlignment="Left" Height="29" Margin="210,55,0,0" VerticalAlignment="Top" Width="30" Source="/images/fail.png" Visibility="{Binding Path=VisibilityFail}"/>
+                    <Label x:Name="labelValiProgress" Content="Use-Case validieren..." HorizontalAlignment="Left" Margin="10,55,0,0" VerticalAlignment="Top" Width="236" FontSize="16" FontWeight="DemiBold" Background="{Binding Path=BackgroundColor2}" Foreground="White"/>
+                    <Image x:Name="imageOK2" HorizontalAlignment="Left" Height="29" Margin="210,55,0,0" VerticalAlignment="Top" Width="30" Source="/images/ok.png" Visibility="{Binding Path=VisibilityOk2}"/>
+                    <Image x:Name="imageFail2" HorizontalAlignment="Left" Height="29" Margin="210,55,0,0" VerticalAlignment="Top" Width="30" Source="/images/fail.png" Visibility="{Binding Path=VisibilityFail2}"/>
 
-                    <Label x:Name="labelMatrixProgess" Content="Szenario-Matrix erstellen..." HorizontalAlignment="Left" Margin="10,95,0,0" VerticalAlignment="Top" Width="236" FontSize="16" FontWeight="DemiBold" Foreground="#41B1E1"/>
-                    <Image x:Name="imageOK3" HorizontalAlignment="Left" Height="29" Margin="210,95,0,0" VerticalAlignment="Top" Width="30" Source="/images/ok.png" Visibility="{Binding Path=VisibilityOk}"/>
-                    <Image x:Name="imageFail3" HorizontalAlignment="Left" Height="29" Margin="210,95,0,0" VerticalAlignment="Top" Width="30" Source="/images/fail.png" Visibility="{Binding Path=VisibilityFail}"/>
+                    <Label x:Name="labelMatrixProgess" Content="Szenario-Matrix erstellen..." HorizontalAlignment="Left" Margin="10,95,0,0" VerticalAlignment="Top" Width="236" FontSize="16" FontWeight="DemiBold" Background="{Binding Path=BackgroundColor3}" Foreground="White"/>
+                    <Image x:Name="imageOK3" HorizontalAlignment="Left" Height="29" Margin="210,95,0,0" VerticalAlignment="Top" Width="30" Source="/images/ok.png" Visibility="{Binding Path=VisibilityOk3}"/>
+                    <Image x:Name="imageFail3" HorizontalAlignment="Left" Height="29" Margin="210,95,0,0" VerticalAlignment="Top" Width="30" Source="/images/fail.png" Visibility="{Binding Path=VisibilityFail3}"/>
 
-                    <Label x:Name="labelGraphProgress" Content="Graph erstellen..." HorizontalAlignment="Left" Margin="10,135,0,0" VerticalAlignment="Top" Width="236" FontSize="16" FontWeight="DemiBold" Foreground="#41B1E1"/>
-                    <Image x:Name="imageOK4" HorizontalAlignment="Left" Height="29" Margin="210,135,0,0" VerticalAlignment="Top" Width="30" Source="/images/ok.png" Visibility="{Binding Path=VisibilityOk}"/>
-                    <Image x:Name="imageFail4" HorizontalAlignment="Left" Height="29" Margin="210,135,0,0" VerticalAlignment="Top" Width="30" Source="/images/fail.png" Visibility="{Binding Path=VisibilityFail}"/>
+                    <Label x:Name="labelGraphProgress" Content="Graph erstellen..." HorizontalAlignment="Left" Margin="10,135,0,0" VerticalAlignment="Top" Width="236" FontSize="16" FontWeight="DemiBold" Background="{Binding Path=BackgroundColor4}" Foreground="White"/>
+                    <Image x:Name="imageOK4" HorizontalAlignment="Left" Height="29" Margin="210,135,0,0" VerticalAlignment="Top" Width="30" Source="/images/ok.png" Visibility="{Binding Path=VisibilityOk4}"/>
+                    <Image x:Name="imageFail4" HorizontalAlignment="Left" Height="29" Margin="210,135,0,0" VerticalAlignment="Top" Width="30" Source="/images/fail.png" Visibility="{Binding Path=VisibilityFail4}"/>
 
                 </Grid>
             </GroupBox>
