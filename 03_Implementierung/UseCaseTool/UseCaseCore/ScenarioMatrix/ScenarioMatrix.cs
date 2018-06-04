@@ -109,7 +109,25 @@ namespace UseCaseCore.ScenarioMatrix
         {
             return this.scenarios;
         }
-        
+
+        /// <summary>
+        /// Calculates all scenarios
+        /// </summary>
+        public void CreateScenarios()
+        {
+            if (this.uc == null)
+            {
+                return;
+            }
+
+            this.scenarios = new List<Scenario>(); // Clear all old scenarios to create new ones
+
+            Scenario s = new Scenario(this.scenarios.Count);            
+            s.Nodes.Add(this.uc.Nodes[0]); // Startknoten hinzufügen
+
+            this.TraverseGraphRec(this.uc.EdgeMatrix, 0, s, this.CycleDepth);
+        }
+
         /// <summary>
         /// Returns the amount of Edges from node1 to node2 in a scenario
         /// </summary>
@@ -131,20 +149,6 @@ namespace UseCaseCore.ScenarioMatrix
         }
         
         /// <summary>
-        /// Calculates all scenarios
-        /// </summary>
-        private void CreateScenarios()
-        {
-            if (this.uc == null)
-            {
-                return;
-            }
-
-            this.scenarios = new List<Scenario>(); // Clear all old scenarios to create new ones
-            this.TraverseGraphRec(this.uc.EdgeMatrix, 0, new Scenario(this.scenarios.Count), this.CycleDepth);
-        }
-
-        /// <summary>
         /// Creates the ScenarioMatrix
         /// </summary>
         private void CreateMatrix()
@@ -162,7 +166,7 @@ namespace UseCaseCore.ScenarioMatrix
         private void TraverseGraphRec(Matrix<bool> matrix, int startnode, Scenario s, int cycleDepth)
         { 
             int stepsFound = 0;
-            Scenario savedScenario = s;
+            Scenario savedScenario = new Scenario(s);
             for (int i = 0; i < matrix.ColumnCount; i++)
             {
                 if (matrix[startnode][i] == true)
