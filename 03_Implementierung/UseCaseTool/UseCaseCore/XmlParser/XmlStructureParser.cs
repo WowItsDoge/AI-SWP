@@ -382,6 +382,7 @@ namespace UseCaseCore.XmlParser
                     this.basicFlow.AddStep(basicFlowStepContent.ChildNodes[2].InnerText);
                     basicFlowStepContent = basicFlowStepContent.NextSibling;
                 }
+
                 this.basicFlow.SetPostcondition(basicFlowStepContent.ChildNodes[2].InnerText);
                 return true;
             }
@@ -393,7 +394,7 @@ namespace UseCaseCore.XmlParser
         }
 
         /// <summary>
-        /// Gets the global alternative flow.
+        /// Gets the global alternative flows.
         /// </summary>
         /// <returns>True if a global alternative flow could be parsed from the xml. False otherwise.</returns>
         private bool GetGlobalAlternativeFlows()
@@ -445,7 +446,7 @@ namespace UseCaseCore.XmlParser
         }
 
         /// <summary>
-        /// Gets the specific alternative flow.
+        /// Gets the specific alternative flows.
         /// </summary>
         /// <returns>Returns the specific alternative flow.</returns>
         private List<SpecificAlternativeFlow> GetSpecificAlternativeFlows()
@@ -462,7 +463,7 @@ namespace UseCaseCore.XmlParser
         }
 
         /// <summary>
-        /// Gets the bounded alternative flow.
+        /// Gets the bounded alternative flows.
         /// </summary>
         /// <returns>Returns the bounded alternative flow.</returns>
         private List<BoundedAlternativeFlow> GetBoundedAlternativeFlows()
