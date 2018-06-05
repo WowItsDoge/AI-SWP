@@ -42,6 +42,7 @@ namespace UseCaseCore.RuleValidation
         /// <param name="errorToAdd">An error object containing the information about the error.</param>
         public void AddError(IError errorToAdd)
         {
+            this.errorList.Add(errorToAdd);
         }
 
         /// <summary>
