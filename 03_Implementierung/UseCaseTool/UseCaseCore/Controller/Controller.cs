@@ -348,7 +348,7 @@ namespace UseCaseCore.Controller
         /// <param name="filePath">destination path for the matrix</param>
         public void MatrixFilePath(string filePath)
         {
-            //ToDo...
+            // this.matrix.Export(filePath);
         }
 
         /// <summary>
