@@ -144,20 +144,6 @@ namespace UseCaseCore.UcIntern
         private List<Row<T>> Rows { get; }
 
         /// <summary>
-        /// Gets a row of the matrix with its index.
-        /// </summary>
-        /// <param name="index">The index of the row.</param>
-        /// <returns>The row that belongs to index.</returns>
-        [Obsolete("Use [,] operator instead as it makes clear that the matrix is rectangular.")]
-        public Row<T> this[int index]
-        {
-            get
-            {
-                return this.Rows[index];
-            }
-        }
-
-        /// <summary>
         /// Gets or sets an entry of the matrix.
         /// </summary>
         /// <param name="row">The index of the row.</param>
