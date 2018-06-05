@@ -6,6 +6,7 @@ namespace UseCaseCore.UcIntern
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     /// <summary>
     /// The row of a matrix with its entries.
@@ -86,17 +87,17 @@ namespace UseCaseCore.UcIntern
         /// <summary>
         /// Gets or sets the content of an entry.
         /// </summary>
-        /// <param name="index">The index of the entry.</param>
+        /// <param name="columnIndex">The index of the entry.</param>
         /// <returns>The content of the entry.</returns>
         /// <exception cref="ArgumentOutOfRangeException">If the index is less than 0 or greater or equal to the column count.</exception>
         /// <exception cref="InvalidOperationException">If the row is readonly.</exception>
-        public T this[int index]
+        public T this[int columnIndex]
         {
             get
             {
-                this.TestIndex(index);
+                this.TestIndex(columnIndex);
 
-                Entry<T> entry = this.SearchEntry(index);
+                Entry<T> entry = this.SearchEntry(columnIndex);
 
                 if (entry != null)
                 {
@@ -110,14 +111,14 @@ namespace UseCaseCore.UcIntern
 
             set
             {
-                this.TestIndex(index);
+                this.TestIndex(columnIndex);
 
                 if (this.IsReadonly)
                 {
                     throw new InvalidOperationException("The row is readonly!");
                 }
 
-                Entry<T> entry = this.SearchEntry(index);
+                Entry<T> entry = this.SearchEntry(columnIndex);
 
                 if (entry == null)
                 {
@@ -127,8 +128,8 @@ namespace UseCaseCore.UcIntern
                     else
                     {
                         // Create a new entry and insert it into its correct position in the list.
-                        entry = new Entry<T>(index, value);
-                        int insertIndex = this.FindFreePositionForEntryInList(index);
+                        entry = new Entry<T>(columnIndex, value);
+                        int insertIndex = this.FindFreePositionForEntryInList(columnIndex);
                         this.Entries.Insert(insertIndex, entry);
                     }
                 }
@@ -186,22 +187,22 @@ namespace UseCaseCore.UcIntern
         /// <summary>
         /// Tests if the index is out of the column range and throws an exception if so.
         /// </summary>
-        /// <param name="index">The index to be tested for the valid range.</param>
+        /// <param name="columnIndex">The index to be tested for the valid range.</param>
         /// <exception cref="ArgumentOutOfRangeException">If the index is less than 0 or greater or equal to the column count.</exception>
-        private void TestIndex(int index)
+        private void TestIndex(int columnIndex)
         {
-            if (index < 0 || index >= this.ColumnCount)
+            if (columnIndex < 0 || columnIndex >= this.ColumnCount)
             {
-                throw new ArgumentOutOfRangeException(nameof(index), "The index must be in the range 0 (included) to " + this.ColumnCount + " (excluded)!");
+                throw new ArgumentOutOfRangeException(nameof(columnIndex), "The index must be in the range 0 (included) to " + this.ColumnCount + " (excluded)!");
             }
         }
 
         /// <summary>
         /// Searches for an entry for a specific index.
         /// </summary>
-        /// <param name="index">The index to search for.</param>
+        /// <param name="columnIndex">The index to search for.</param>
         /// <returns>The corresponding entry object or null if the index is not used.</returns>
-        private Entry<T> SearchEntry(int index)
+        private Entry<T> SearchEntry(int columnIndex)
         {
             Entry<T> returnEntry = null;
 
@@ -211,9 +212,9 @@ namespace UseCaseCore.UcIntern
             // In both cases the search can be aborted.
             foreach (Entry<T> entry in this.Entries)
             {
-                if (entry.ColumnIndex >= index)
+                if (entry.ColumnIndex >= columnIndex)
                 {
-                    if (entry.ColumnIndex == index)
+                    if (entry.ColumnIndex == columnIndex)
                     {
                         returnEntry = entry;
                     }
@@ -228,9 +229,9 @@ namespace UseCaseCore.UcIntern
         /// <summary>
         /// Finds the index index where to insert a new entry with an column index that not yet exists in the list.
         /// </summary>
-        /// <param name="index">The new column index.</param>
+        /// <param name="columnIndex">The new column index.</param>
         /// <returns>The index where to insert the new entry and -1 if the index is already in the list.</returns>
-        private int FindFreePositionForEntryInList(int index)
+        private int FindFreePositionForEntryInList(int columnIndex)
         {
             Entry<T> entry;
             int pos;
@@ -239,9 +240,9 @@ namespace UseCaseCore.UcIntern
             {
                 entry = this.Entries[pos];
 
-                if (entry.ColumnIndex >= index)
+                if (entry.ColumnIndex >= columnIndex)
                 {
-                    if (entry.ColumnIndex == index)
+                    if (entry.ColumnIndex == columnIndex)
                     {
                         return -1;
                     }
