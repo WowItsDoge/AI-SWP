@@ -148,6 +148,7 @@ namespace UseCaseCore.UcIntern
         /// </summary>
         /// <param name="index">The index of the row.</param>
         /// <returns>The row that belongs to index.</returns>
+        [Obsolete("Use [,] operator instead as it makes clear that the matrix is rectangular.")]
         public Row<T> this[int index]
         {
             get
@@ -166,12 +167,12 @@ namespace UseCaseCore.UcIntern
         {
             get
             {
-                return this[row][column];
+                return this.Rows[row][column];
             }
 
             set
             {
-                this[row][column] = value;
+                this.Rows[row][column] = value;
             }
         }
 

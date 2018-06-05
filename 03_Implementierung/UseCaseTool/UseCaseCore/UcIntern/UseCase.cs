@@ -55,14 +55,14 @@ namespace UseCaseCore.UcIntern
             this.BoundedAlternativeFlows = new List<Flow>();
 
             this.EdgeMatrix = new Matrix<bool>(4, false);
-            this.EdgeMatrix[0][1] = true; // 0 -> 1
-            this.EdgeMatrix[1][2] = true; // 1 -> 2
-            this.EdgeMatrix[0][3] = true; // 0 -> Specific 0
-            this.EdgeMatrix[3][2] = true; // Specific 0 -> 2
+            this.EdgeMatrix[0, 1] = true; // 0 -> 1
+            this.EdgeMatrix[1, 2] = true; // 1 -> 2
+            this.EdgeMatrix[0, 3] = true; // 0 -> Specific 0
+            this.EdgeMatrix[3, 2] = true; // Specific 0 -> 2
 
             this.ConditionMatrix = new Matrix<Condition>(4, null);
-            this.ConditionMatrix[0][3] = new Condition("Wahr", true);
-            this.ConditionMatrix[0][1] = new Condition("Wahr", false);
+            this.ConditionMatrix[0, 3] = new Condition("Wahr", true);
+            this.ConditionMatrix[0, 1] = new Condition("Wahr", false);
         }
 
         /// <summary>
