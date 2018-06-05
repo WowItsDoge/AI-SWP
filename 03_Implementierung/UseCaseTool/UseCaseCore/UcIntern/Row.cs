@@ -166,8 +166,8 @@ namespace UseCaseCore.UcIntern
         /// Tests if the given object has the same value (if T is a value type)
         /// or reference (if T is not a value type) as the standard return object.
         /// </summary>
-        /// <param name="obj">The object for which equality is tested with the standard retrun object.</param>
-        /// <returns>If the obj is equal to the standard return object on the basis descibed above.</returns>
+        /// <param name="obj">The object for which equality is tested with the standard return object.</param>
+        /// <returns>If <paramref name="obj"/> is equal to the standard return object on the basis described above.</returns>
         public bool IsEqualToStandardReturnObject(T obj)
         {
             if (obj == null)

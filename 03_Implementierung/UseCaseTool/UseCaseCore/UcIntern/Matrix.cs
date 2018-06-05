@@ -67,7 +67,7 @@ namespace UseCaseCore.UcIntern
         {
             this.RowCount = multArray.GetLength(0);
             this.ColumnCount = multArray.GetLength(1);
-            this.StandardReturnObject = this.GetObjectFirstOccuringTheMost(multArray);
+            this.StandardReturnObject = this.GetObjectFirstContainedTheMost(multArray);
 
             this.Rows = new List<Row<T>>(this.RowCount);
             for (int pos = 0; pos < this.RowCount; pos++)
@@ -192,12 +192,12 @@ namespace UseCaseCore.UcIntern
         }
 
         /// <summary>
-        /// Searches the columns and then the rows for the object occuring the
+        /// Searches the columns and then the rows for the object contained the
         /// most and found first.
         /// </summary>
         /// <param name="multArray">The matrix that is searched.</param>
-        /// <returns>The object occuring the most and found first.</returns>
-        private T GetObjectFirstOccuringTheMost(T[,] multArray)
+        /// <returns>The object contained the most and found first.</returns>
+        private T GetObjectFirstContainedTheMost(T[,] multArray)
         {
             List<T> objectsInContentArray = new List<T>();
             List<long> numberOccurancesOfObjectsInContentArray = new List<long>();
