@@ -63,6 +63,7 @@
     <Compile Include="RuleValidation\RucmRuleValidatorTest.cs" />
     <Compile Include="ScenarioMatrix\ScenarioMatrixTest.cs" />
     <Compile Include="ScenarioMatrix\ScenarioTest.cs" />
+    <Compile Include="UcIntern\BitShifterTests.cs" />
     <Compile Include="UcIntern\EntryTests.cs" />
     <Compile Include="UcIntern\MatrixTests.cs" />
     <Compile Include="UcIntern\RowTests.cs" />
