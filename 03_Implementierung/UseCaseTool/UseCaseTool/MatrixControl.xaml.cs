@@ -39,9 +39,11 @@ namespace UseCaseTool
         /// <param name="scenarios"> scenarios to be drawn in the matrix </param>
         public void Draw(List<Scenario> scenarios)
         {
+            int i = 1;
             foreach (Scenario s in scenarios)
             {
-                this.AddTableRow(s);
+                this.AddTableRow(s, i);
+                i++;
             }
         }
 
@@ -49,7 +51,8 @@ namespace UseCaseTool
         /// Adds a table row with a given scenario to the scenario matrix
         /// </summary>
         /// <param name="s"> scenario to be included in the matrix table </param>
-        private void AddTableRow(Scenario s)
+        /// <param name="i"> scenario number </param>
+        private void AddTableRow(Scenario s, int i)
         {            
             var rowGroup = this.MatrixTable.RowGroups.Last();
 
@@ -61,15 +64,14 @@ namespace UseCaseTool
                 cell.BorderThickness = new Thickness(1);
                 cell.BorderBrush = Brushes.Black;
 
-                cell.Blocks.Add(new Paragraph(new Run("Szenario " + s.ScenarioID.ToString())));
+                cell.Blocks.Add(new Paragraph(new Run("Szenario " + i.ToString())));
                 row.Cells.Add(cell);
 
                 cell = new TableCell();
                 cell.BorderThickness = new Thickness(1);
                 cell.BorderBrush = Brushes.Black;
                 cell.Blocks.Add(new Paragraph(new Run(s.Description)));
-
-
+                
                 row.Cells.Add(cell);
                 
                 rowGroup.Rows.Add(row);

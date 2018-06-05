@@ -6,6 +6,7 @@ namespace UseCaseCore.ScenarioMatrix
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
@@ -23,7 +24,7 @@ namespace UseCaseCore.ScenarioMatrix
         private List<Scenario> scenarios;
 
         /// <summary>
-        ///  Sets the Cycledepth that defines how many times an alternative flow may be repeated
+        ///  Sets the cycle depth that defines how many times an alternative flow may be repeated
         /// </summary>
         private int cycleDepth;
 
@@ -41,7 +42,7 @@ namespace UseCaseCore.ScenarioMatrix
         {
             this.uc = uc;
             this.scenarios = new List<Scenario>();
-            this.CycleDepth = cycleDepth;
+            this.cycleDepth = cycleDepth;
         }
 
         /// <summary>
@@ -61,40 +62,26 @@ namespace UseCaseCore.ScenarioMatrix
         /// <summary>
         /// Gets or sets CycleDepth
         /// </summary>
-        private int CycleDepth
+        public int CycleDepth
         {
-            get { return this.cycleDepth; }
-            set { this.cycleDepth = value; }
-        }
-
-        /// <summary>
-        /// Changes the CycleDepth with a given value. Negative values get ignored. If the value changed, scenarios get recalculated
-        /// </summary>
-        /// <param name="newCycleDepth"> new value for cycleDepth</param>
-        public void ChangeCycleDepth(int newCycleDepth)
-        {
-            // If negative cycledepth or same value return
-            if (newCycleDepth < 0 || newCycleDepth == this.CycleDepth)
+            get
             {
-                return;
+                return this.cycleDepth;
             }
 
-            this.CycleDepth = newCycleDepth;
-            this.CreateScenarios();
+            set
+            {
+                // If negative cycledepth or same value return
+                if (value < 0 || value == this.CycleDepth)
+                {
+                    return;
+                }
+
+                this.cycleDepth = value;
+                this.CreateScenarios();
+            }
         }
         
-        /// <summary>
-        /// Initializes the ScenarioMatrix
-        /// </summary>
-        /// <param name="uc"> Reference to the UseCase from which the scenarios should be created </param>
-        /// <returns> Returns true if successful Initialization</returns>
-        public bool Initialize(UseCase uc)
-        {
-            this.uc = uc; 
-
-            return this.CreateScenarios();
-        }
-
         /// <summary>
         /// Exports the ScenarioMatrix to a given path
         /// </summary>
@@ -102,7 +89,31 @@ namespace UseCaseCore.ScenarioMatrix
         /// <returns> Returns true if successful </returns>
         public bool Export(string path)
         {
-            return true;
+            bool exportResult = false;
+            try
+            {
+                using (StreamWriter sw = new StreamWriter(path, false))
+                {
+                    sw.WriteLine("Scenario Matrix:");
+                    sw.WriteLine(string.Empty);
+                    int i = 1;
+                    foreach (Scenario s in this.scenarios)
+                    {
+                        sw.WriteLine("Scenario " + i.ToString() + ": " + s.Description);
+                        i++;
+                    }
+
+                    sw.Close();
+                }
+
+                exportResult = true;
+            }
+            catch
+            {
+                exportResult = false;
+            }
+                           
+            return exportResult;
         }
 
         /// <summary>
@@ -120,28 +131,21 @@ namespace UseCaseCore.ScenarioMatrix
         /// <returns> Returns true if more than 0 scenarios were found </returns>
         public bool CreateScenarios()
         {
-            if (this.uc == null)
+            if (this.uc == null || this.uc.Nodes.Count == 0)
             {
                 return false;
             }
 
             this.scenarios = new List<Scenario>(); // Clear all old scenarios to create new ones
 
-            Scenario s = new Scenario(this.scenarios.Count);            
+            Scenario s = new Scenario();            
             s.Nodes.Add(this.uc.Nodes[0]); // Startknoten hinzufügen
+            s.Description += "Step 1, ";
 
             this.TraverseGraphRec(this.uc.EdgeMatrix, 0, s, this.CycleDepth);
 
-            // If no scenarios found return false
-            if (this.scenarios.Count > 0) 
-            {
-                return false;
-            }
-            else
-            {
-                this.CreateMatrix();
-                return true;
-            }
+            this.CreateMatrix();
+            return true;
         }
 
         /// <summary>
@@ -178,14 +182,15 @@ namespace UseCaseCore.ScenarioMatrix
         /// <summary>
         /// Traverses the graph recursively, while finding all possible paths through the graph
         /// </summary>
-        /// <param name="matrix"> Edgematrix representing the graph </param>
+        /// <param name="matrix"> Edge matrix representing the graph </param>
         /// <param name="startnode"> Node from which the traversing starts </param>
         /// <param name="s"> scenario up to the current node </param>
-        /// <param name="cycleDepth"> maximum cycledepth for the scenarios </param>
+        /// <param name="cycleDepth"> maximum cycle depth for the scenarios </param>
         private void TraverseGraphRec(Matrix<bool> matrix, int startnode, Scenario s, int cycleDepth)
         { 
             int stepsFound = 0;
             Scenario savedScenario = new Scenario(s);
+
             for (int i = 0; i < matrix.ColumnCount; i++)
             {
                 if (matrix[startnode, i] == true) 
@@ -197,7 +202,7 @@ namespace UseCaseCore.ScenarioMatrix
 
                     // Add current node to the scenario and increase of found steps from the previous node
                     s.Nodes.Add(this.uc.Nodes[i]);
-                    s.Description += "Step" + i.ToString() + ", ";
+                    s.Description += "Step" + (i + 1).ToString() + ", ";
                     stepsFound++; 
 
                     this.TraverseGraphRec(matrix, i, s, cycleDepth);
@@ -210,6 +215,7 @@ namespace UseCaseCore.ScenarioMatrix
             // If no next steps were found for the current steps, the scenario is finished and can be added to the list
             if (stepsFound == 0)
             {
+                s.Description = Regex.Replace(s.Description, "(.*),", "$1"); // Remove last comma
                 this.scenarios.Add(s);
             }
         }

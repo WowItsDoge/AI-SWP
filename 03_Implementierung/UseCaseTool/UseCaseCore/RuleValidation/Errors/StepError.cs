@@ -43,7 +43,7 @@ namespace UseCaseCore.RuleValidation.Errors
         /// <returns>A string with the error message.</returns>
         public string GetErrorString()
         {
-            return string.Empty;
+            return "Error in Step " + this.stepReferenceNumber + ": " + this.errorMessage + "\t" + this.resolveMessage + "\n";
         }
     }
 }

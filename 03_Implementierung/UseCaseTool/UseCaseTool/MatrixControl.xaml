@@ -8,7 +8,7 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         <FlowDocumentReader UseLayoutRounding="True" SnapsToDevicePixels="True" ViewingMode="Scroll"
-                            IsTwoPageViewEnabled="False" IsPageViewEnabled="False" IsScrollViewEnabled="True">
+                            IsTwoPageViewEnabled="False"  IsScrollViewEnabled="True">
             <FlowDocumentReader.Resources>
                 <Style TargetType="TableCell">
                     <Setter Property="TextAlignment" Value="Center"/>
