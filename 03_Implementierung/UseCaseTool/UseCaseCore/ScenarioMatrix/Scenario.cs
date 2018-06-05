@@ -39,6 +39,7 @@ namespace UseCaseCore.ScenarioMatrix
         public Scenario(int newID)
         {
             this.ScenarioID = newID;
+            this.description = string.Empty;
             this.nodes = new List<Node>();
         }
 
@@ -49,6 +50,7 @@ namespace UseCaseCore.ScenarioMatrix
         public Scenario(Scenario s)
         {
             this.scenarioID = s.scenarioID;
+            this.description = s.Description;
             this.nodes = new List<Node>();
             s.nodes.ForEach(n => this.nodes.Add(n));
         }

@@ -30,11 +30,7 @@ namespace UseCaseTool
         /// </summary>
         public MatrixControl()
         {
-            this.InitializeComponent();
-
-            // Beispieldaten
-            // List<Scenario> scenarios = new List<Scenario> { new Scenario(1, "K1;K2;K3"), new Scenario(2, "K1;K2;K4"), new Scenario(3, "K1;K2;K5") };
-            // this.Draw(scenarios);
+            this.InitializeComponent();                        
         }
         
         /// <summary>
@@ -71,7 +67,9 @@ namespace UseCaseTool
                 cell = new TableCell();
                 cell.BorderThickness = new Thickness(1);
                 cell.BorderBrush = Brushes.Black;
-                cell.Blocks.Add(new Paragraph(new Run(s.Description.ToString())));
+                cell.Blocks.Add(new Paragraph(new Run(s.Description)));
+
+
                 row.Cells.Add(cell);
                 
                 rowGroup.Rows.Add(row);

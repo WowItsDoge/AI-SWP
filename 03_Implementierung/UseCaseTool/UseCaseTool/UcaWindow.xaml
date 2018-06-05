@@ -69,7 +69,7 @@
                 </TabItem>
                 <TabItem Header="Szenariomatrix">
                     <Grid Background="#FFE5E5E5">
-                        <UseCaseTool:MatrixControl/>
+                        <UseCaseTool:MatrixControl x:Name="MatrixControl"/>
                     </Grid>
                 </TabItem>
                 <TabItem Header="Graph" KeyUp="TabItem_KeyUp">

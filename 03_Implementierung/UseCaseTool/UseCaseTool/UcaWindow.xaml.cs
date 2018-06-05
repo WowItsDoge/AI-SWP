@@ -41,7 +41,17 @@ namespace UseCaseTool
         public UcaWindow()
         {
             this.DataContext = this.controller;
+            this.controller.ScenariosCreated += Controller_ScenariosCreated;
             this.InitializeComponent();
+        }
+
+        /// <summary>
+        /// When new scenarios were created, draw them with the Matrix Control
+        /// </summary>
+        /// <param name="obj"></param>
+        private void Controller_ScenariosCreated(System.Collections.Generic.List<UseCaseCore.ScenarioMatrix.Scenario> obj)
+        {
+            this.MatrixControl.Draw(obj);
         }
 
         /// <summary>

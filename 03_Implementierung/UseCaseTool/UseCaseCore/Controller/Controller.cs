@@ -12,6 +12,8 @@ namespace UseCaseCore.Controller
     using System.Runtime.CompilerServices;
     using System.Windows.Media;
     using System.Windows;
+    using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// 
@@ -54,6 +56,11 @@ namespace UseCaseCore.Controller
 
         private Visibility visibilityOk = Visibility.Hidden;
         private Visibility visibilityFail = Visibility.Hidden;
+
+        /// <summary>
+        /// Fires when new scenarios were created
+        /// </summary>
+        public event Action<List<Scenario>> ScenariosCreated;
 
         public Brush BackgroundColor1
         {
@@ -310,10 +317,22 @@ namespace UseCaseCore.Controller
         private void backgroundWorkerGenerateMatrix_DoWork(object sender, DoWorkEventArgs e)
         {
             matrix = new ScenarioMatrix(useCase, 1);
-            //ToDo...
+            matrix.ScenariosCreated += Matrix_scenariosCreated;
         }
 
-    public void CancelProgress()
+        /// <summary>
+        /// When new Scenarios got created
+        /// </summary>
+        /// <param name="obj"> Scenarios to be drawn </param>
+        private void Matrix_scenariosCreated(System.Collections.Generic.List<Scenario> obj)
+        {
+            if (this.ScenariosCreated != null) 
+            {
+                ScenariosCreated(obj);
+            }
+        }
+
+        public void CancelProgress()
         {
             backgroundWorkerLoadFile.CancelAsync();
             backgroundWorkerValidFile.CancelAsync();

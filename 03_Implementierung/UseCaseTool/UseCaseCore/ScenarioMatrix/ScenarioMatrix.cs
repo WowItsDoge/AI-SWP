@@ -45,6 +45,11 @@ namespace UseCaseCore.ScenarioMatrix
         }
 
         /// <summary>
+        /// Event that fires when new Scenarios were created
+        /// </summary>
+        public event Action<List<Scenario>> ScenariosCreated;
+
+        /// <summary>
         /// Gets or sets the Use Case from which the scenarios get created
         /// </summary>
         public UseCase UC
@@ -87,8 +92,7 @@ namespace UseCaseCore.ScenarioMatrix
         {
             this.uc = uc; 
 
-            // this.CreateScenarios();
-            return true; // TOCHANGE
+            return this.CreateScenarios();
         }
 
         /// <summary>
@@ -109,15 +113,16 @@ namespace UseCaseCore.ScenarioMatrix
         {
             return this.scenarios;
         }
-
+        
         /// <summary>
-        /// Calculates all scenarios
+        /// Creates the Scenarios to the current UseCase
         /// </summary>
-        public void CreateScenarios()
+        /// <returns> Returns true if more than 0 scenarios were found </returns>
+        public bool CreateScenarios()
         {
             if (this.uc == null)
             {
-                return;
+                return false;
             }
 
             this.scenarios = new List<Scenario>(); // Clear all old scenarios to create new ones
@@ -126,6 +131,17 @@ namespace UseCaseCore.ScenarioMatrix
             s.Nodes.Add(this.uc.Nodes[0]); // Startknoten hinzufügen
 
             this.TraverseGraphRec(this.uc.EdgeMatrix, 0, s, this.CycleDepth);
+
+            // If no scenarios found return false
+            if (this.scenarios.Count > 0) 
+            {
+                return false;
+            }
+            else
+            {
+                this.CreateMatrix();
+                return true;
+            }
         }
 
         /// <summary>
@@ -153,7 +169,10 @@ namespace UseCaseCore.ScenarioMatrix
         /// </summary>
         private void CreateMatrix()
         {
-            // TODO
+            if (this.ScenariosCreated != null) 
+            {
+                this.ScenariosCreated(this.scenarios);
+            }
         }
 
         /// <summary>
@@ -169,7 +188,7 @@ namespace UseCaseCore.ScenarioMatrix
             Scenario savedScenario = new Scenario(s);
             for (int i = 0; i < matrix.ColumnCount; i++)
             {
-                if (matrix[startnode][i] == true)
+                if (matrix[startnode, i] == true) 
                 {
                     if (ContainedEdges(this.uc.Nodes[startnode], this.uc.Nodes[i], s) >= cycleDepth)
                     {
@@ -177,8 +196,9 @@ namespace UseCaseCore.ScenarioMatrix
                     }
 
                     // Add current node to the scenario and increase of found steps from the previous node
-                    s.Nodes.Add(this.uc.Nodes[i]); 
-                    stepsFound++;
+                    s.Nodes.Add(this.uc.Nodes[i]);
+                    s.Description += "Step" + i.ToString() + ", ";
+                    stepsFound++; 
 
                     this.TraverseGraphRec(matrix, i, s, cycleDepth);
 
