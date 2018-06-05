@@ -60,7 +60,7 @@ namespace UseCaseCore.UcIntern
             this.EdgeMatrix[0, 3] = true; // 0 -> Specific 0
             this.EdgeMatrix[3, 2] = true; // Specific 0 -> 2
 
-            this.ConditionMatrix = new Matrix<Condition>(4, null);
+            this.ConditionMatrix = new Matrix<Condition?>(4, null);
             this.ConditionMatrix[0, 3] = new Condition("Wahr", true);
             this.ConditionMatrix[0, 1] = new Condition("Wahr", false);
         }
@@ -124,7 +124,7 @@ namespace UseCaseCore.UcIntern
         /// <para/>
         /// Do not set the condition matrix outside of the module UC-Intern.
         /// </summary>
-        public Matrix<Condition> ConditionMatrix { get; set; }
+        public Matrix<Condition?> ConditionMatrix { get; set; }
 
         /// <summary>
         /// Gets or sets the basic flow.

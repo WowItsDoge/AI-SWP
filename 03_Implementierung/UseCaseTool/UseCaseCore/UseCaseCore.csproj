@@ -85,6 +85,7 @@
     <Compile Include="RuleValidation\RucmRuleValidator.cs" />
     <Compile Include="ScenarioMatrix\Scenario.cs" />
     <Compile Include="ScenarioMatrix\ScenarioMatrix.cs" />
+    <Compile Include="UcIntern\BitShifter.cs" />
     <Compile Include="UcIntern\Condition.cs" />
     <Compile Include="UcIntern\Entry.cs" />
     <Compile Include="UcIntern\Flow.cs" />
