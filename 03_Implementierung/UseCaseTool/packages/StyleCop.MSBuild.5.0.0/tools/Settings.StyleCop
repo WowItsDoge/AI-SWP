@@ -1,8 +1,12 @@
-<StyleCopSettings Version="4.3">
+<StyleCopSettings Version="105">
   <GlobalSettings>
     <CollectionProperty Name="DeprecatedWords">
-      <Value>preprocessor,pre-processor</Value>
-      <Value>shortlived,short-lived</Value>
+      <Value>preprocessor, pre-processor</Value>
+      <Value>shortlived, short-lived</Value>
+    </CollectionProperty>
+    <CollectionProperty Name="RecognizedWords">
+      <Value>postcondition</Value>
+      <Value>xaml</Value>
     </CollectionProperty>
   </GlobalSettings>
   <Parsers>
