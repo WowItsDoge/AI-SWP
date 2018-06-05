@@ -5,6 +5,7 @@
 namespace UseCaseTest.RuleValidation.Errors
 {
     using NUnit.Framework;
+    using UseCaseCore.RuleValidation.Errors;
 
     /// <summary>
     /// Test class for the GeneralError
@@ -13,19 +14,14 @@ namespace UseCaseTest.RuleValidation.Errors
     public class GeneralErrorTest
     {
         /// <summary>
-        /// Tests the constructor of the class.
-        /// </summary>
-        [Test]
-        public void GeneralErrorConstrTest()
-        {
-        }
-
-        /// <summary>
         /// Produces a string, continuing all the information of the error.
         /// </summary>
         [Test]
-        public void GetErrorStringTest()
+        public void GetGeneralErrorStringTest()
         {
+            var errorMessage = "Das ist ein Fehler!";
+            var generalError = new GeneralError(errorMessage);
+            Assert.IsTrue(generalError.GetErrorString() == errorMessage + "\n");
         }
     }
 }

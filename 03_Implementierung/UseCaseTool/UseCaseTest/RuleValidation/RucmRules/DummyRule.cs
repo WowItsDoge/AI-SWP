@@ -29,7 +29,35 @@ namespace UseCaseTest.RuleValidation.RucmRules
             this.errorList = new List<IError>();
             for (int i = 0; i < errorCount; i++)
             {
-                this.errorList.Add(new GeneralError("Error #" + i));
+                this.errorList.Add(new GeneralError("Error #" + (i+1)));
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DummyRule"/> class.
+        /// </summary>
+        /// <param name="generalCount">The number of general errors that should be produced in the check method.</param>
+        /// <param name="flowCount">The number of flow errors that should be produced in the check method.</param>
+        /// <param name="stepCount">The number of step errors that should be produced in the check method.</param>
+        public DummyRule(int generalCount, int flowCount, int stepCount)
+        {
+            this.errorList = new List<IError>();
+            for (int i = 0; i < generalCount;)
+            {
+                i++;
+                this.errorList.Add(new GeneralError("Error #" + i ));
+            }
+
+            for (int i = 0; i < flowCount;)
+            {
+                i++;
+                this.errorList.Add(new FlowError(i, "Lösung zu: " + i, "Error #" + i));
+            }
+
+            for (int i = 0; i < stepCount;)
+            {
+                i++;
+                this.errorList.Add(new StepError(i, "Lösung zu: " + i, "Error #" + i));
             }
         }
 
