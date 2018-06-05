@@ -111,7 +111,7 @@ namespace UseCaseTest.UcIntern
                 {
                     if (!testMatrix[row][column].Equals(standardString))
                     {
-                        matrix[row][column] = testMatrix[row][column];
+                        matrix[row, column] = testMatrix[row][column];
                     }
                 }
             }
@@ -121,7 +121,7 @@ namespace UseCaseTest.UcIntern
             {
                 for (int column = 0; column < testMatrix[0].Length; column++)
                 {
-                    Assert.AreSame(testMatrix[row][column], matrix[row][column]);
+                    Assert.AreSame(testMatrix[row][column], matrix[row, column]);
                 }
             }
         }
@@ -152,13 +152,13 @@ namespace UseCaseTest.UcIntern
                         typeof(ArgumentOutOfRangeException),
                         () =>
                         {
-                            matrix[row][column] = null;
+                            matrix[row, column] = null;
                         });
                         Assert.Catch(
                         typeof(ArgumentOutOfRangeException),
                         () =>
                         {
-                            object o = matrix[row][column];
+                            object o = matrix[row, column];
                         });
                     }
                 }
@@ -208,7 +208,7 @@ namespace UseCaseTest.UcIntern
                 {
                     if (!testMatrix[row][column].Equals(standardString))
                     {
-                        matrix[row][column] = testMatrix[row][column];
+                        matrix[row, column] = testMatrix[row][column];
                     }
                 }
             }
@@ -221,7 +221,7 @@ namespace UseCaseTest.UcIntern
             {
                 for (int column = 0; column < testMatrix[0].Length; column++)
                 {
-                    Assert.AreSame(testMatrix[row][column], matrix[row][column]);
+                    Assert.AreSame(testMatrix[row][column], matrix[row, column]);
                 }
             }
         }
@@ -251,7 +251,7 @@ namespace UseCaseTest.UcIntern
                         typeof(InvalidOperationException),
                         () =>
                         {
-                            readonlyMatrix[row][column] = null;
+                            readonlyMatrix[row, column] = null;
                         });
                 }
             }
@@ -285,15 +285,100 @@ namespace UseCaseTest.UcIntern
                         typeof(ArgumentOutOfRangeException),
                         () =>
                         {
-                            readonlyMatrix[row][column] = null;
+                            readonlyMatrix[row, column] = null;
                         });
                         Assert.Catch(
                         typeof(ArgumentOutOfRangeException),
                         () =>
                         {
-                            object o = readonlyMatrix[row][column];
+                            object o = readonlyMatrix[row, column];
                         });
                     }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Creates a matrix from an multidimensional array and creates a new matrix from it.
+        /// </summary>
+        [Test]
+        public void CreateMatrixFromMultidimensionalArray()
+        {
+            // Arrange
+            bool[,] expected = new bool[,]
+            {
+                { true, false, false },
+                { false, true, false },
+                { false, false, true },
+                { false, false, true }
+            };
+
+            // Act
+            Matrix<bool> matrix = new Matrix<bool>(expected);
+
+            // Assert
+            // Test content
+            for (int row = 0; row < expected.GetLength(0); row++)
+            {
+                for (int column = 0; column < expected.GetLength(1); column++)
+                {
+                    Assert.AreEqual(expected[row, column], matrix[row, column]);
+                }
+            }
+
+            // Test standard return object
+            Assert.AreEqual(false, matrix.StandardReturnObject);
+        }
+
+        /// <summary>
+        /// Tests the memory saving behaviour of the matrix.
+        /// For that purpose the matrix is slowly filled and emptied again with a not standard return value object.
+        /// While doing that the entry count is monitored.
+        /// The test is executed for different types of generic arguments that are: ValueTypes, Nullable ValueTypes and ReferenceTypes
+        /// </summary>
+        [Test]
+        public void TestMemorySavingBehaviour()
+        {
+            this.TestMemorySavingBehaviour<bool>(false, true);
+            this.TestMemorySavingBehaviour<bool?>(null, true);
+            this.TestMemorySavingBehaviour<object>(new object(), new object());
+        }
+
+        /// <summary>
+        /// Tests the memory saving behaviour of the matrix.
+        /// For that purpose the matrix is slowly filled and emptied again with a not standard return value object.
+        /// While doing that the entry count is monitored.
+        /// Make sure the standard return object and the fill object differ.
+        /// </summary>
+        /// <typeparam name="T">The type of the matrix that is to be tested.</typeparam>
+        /// <param name="standardReturnObject">The object set as standard return object in the matrix.</param>
+        /// <param name="fillObject">The object with which the matrix is filled.</param>
+        public void TestMemorySavingBehaviour<T>(T standardReturnObject, T fillObject)
+        {
+            Assert.AreNotEqual(standardReturnObject, fillObject);
+
+            // Arrange
+            int rowCount = 2,
+                columnCount = 2;
+            Matrix<T> matrix = new Matrix<T>(rowCount, columnCount, standardReturnObject);
+
+            // Fill
+            for (int row = 0; row < matrix.RowCount; row++)
+            {
+                for (int column = 0; column < matrix.ColumnCount; column++)
+                {
+                    matrix[row, column] = fillObject;
+                    Assert.AreEqual((row * matrix.ColumnCount) + column + 1, matrix.EntryCount);
+                }
+            }
+
+            // Empty
+            for (int row = 0; row < matrix.RowCount; row++)
+            {
+                for (int column = 0; column < matrix.ColumnCount; column++)
+                {
+                    matrix[row, column] = standardReturnObject;
+                    Assert.AreEqual((matrix.RowCount * matrix.ColumnCount) - ((row * matrix.ColumnCount) + column + 1), matrix.EntryCount);
                 }
             }
         }
