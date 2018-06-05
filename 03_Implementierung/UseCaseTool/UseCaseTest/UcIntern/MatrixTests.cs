@@ -332,7 +332,7 @@ namespace UseCaseTest.UcIntern
 
         /// <summary>
         /// Tests the memory saving behaviour of the matrix.
-        /// For that purpose the matrix is slowly filled and emptied again with a not standard return value object.
+        /// For that purpose the matrix is slowly filled and emptied again with a object different from the standard return object.
         /// While doing that the entry count is monitored.
         /// The test is executed for different types of generic arguments that are: ValueTypes, Nullable ValueTypes and ReferenceTypes
         /// </summary>
@@ -346,7 +346,7 @@ namespace UseCaseTest.UcIntern
 
         /// <summary>
         /// Tests the memory saving behaviour of the matrix.
-        /// For that purpose the matrix is slowly filled and emptied again with a not standard return value object.
+        /// For that purpose the matrix is slowly filled and emptied again with a object different from the standard return object.
         /// While doing that the entry count is monitored.
         /// Make sure the standard return object and the fill object differ.
         /// </summary>
