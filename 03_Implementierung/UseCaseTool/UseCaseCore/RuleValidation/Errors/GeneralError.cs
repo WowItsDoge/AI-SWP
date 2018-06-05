@@ -29,7 +29,7 @@ namespace UseCaseCore.RuleValidation.Errors
         /// <returns>A string with the error message.</returns>
         public string GetErrorString()
         {
-            return string.Empty;
+            return this.errorMessage + "\n";
         }
     }
 }
