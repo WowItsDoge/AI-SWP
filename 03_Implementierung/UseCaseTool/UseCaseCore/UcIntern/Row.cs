@@ -229,7 +229,7 @@ namespace UseCaseCore.UcIntern
         /// Finds the index index where to insert a new entry with an column index that not yet exists in the list.
         /// </summary>
         /// <param name="index">The new column index.</param>
-        /// <returns>The index where to insert the new entry and -1 if the index is column index is already in the list.</returns>
+        /// <returns>The index where to insert the new entry and -1 if the index is already in the list.</returns>
         private int FindFreePositionForEntryInList(int index)
         {
             Entry<T> entry;
