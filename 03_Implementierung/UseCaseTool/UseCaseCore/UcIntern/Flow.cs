@@ -12,6 +12,26 @@ namespace UseCaseCore.UcIntern
     public struct Flow
     {
         /// <summary>
+        /// Gets the identifier of the flow.
+        /// </summary>
+        public readonly FlowIdentifier Identifier;
+
+        /// <summary>
+        /// Gets the postcondition of the flow.
+        /// </summary>
+        public readonly string Postcondition;
+
+        /// <summary>
+        /// Gets the nodes of the flow.
+        /// </summary>
+        public readonly IList<Node> Nodes;
+
+        /// <summary>
+        /// Gets the reference steps of the flow.
+        /// </summary>
+        public readonly IList<ReferenceStep> ReferenceSteps;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Flow"/> struct. 
         /// </summary>
         /// <param name="identifier">The identifier of the flow.</param>
@@ -25,26 +45,6 @@ namespace UseCaseCore.UcIntern
             this.Nodes = nodes.AsReadOnly();
             this.ReferenceSteps = referenceSteps.AsReadOnly();
         }
-
-        /// <summary>
-        /// Gets the identifier of the flow.
-        /// </summary>
-        public FlowIdentifier Identifier { get; }
-
-        /// <summary>
-        /// Gets the postcondition of the flow.
-        /// </summary>
-        public string Postcondition { get; }
-
-        /// <summary>
-        /// Gets the nodes of the flow.
-        /// </summary>
-        public IList<Node> Nodes { get; }
-
-        /// <summary>
-        /// Gets the reference steps of the flow.
-        /// </summary>
-        public IList<ReferenceStep> ReferenceSteps { get; }
 
         /// <summary>
         /// Tests if <paramref name="x"/> is equal to <paramref name="y"/>.

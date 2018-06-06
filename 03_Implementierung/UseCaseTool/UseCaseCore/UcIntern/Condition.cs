@@ -16,6 +16,16 @@ namespace UseCaseCore.UcIntern
     public struct Condition
     {
         /// <summary>
+        /// Gets the condition text.
+        /// </summary>
+        public readonly string ConditionText;
+
+        /// <summary>
+        /// Gets a value indicating whether the condition text is true.
+        /// </summary>
+        public readonly bool ConditionState;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Condition"/> struct.
         /// </summary>
         /// <param name="conditionText">The condition text.</param>
@@ -25,16 +35,6 @@ namespace UseCaseCore.UcIntern
             this.ConditionText = conditionText;
             this.ConditionState = conditionState;
         }
-
-        /// <summary>
-        /// Gets the condition text.
-        /// </summary>
-        public string ConditionText { get; }
-
-        /// <summary>
-        /// Gets a value indicating whether the condition text is true.
-        /// </summary>
-        public bool ConditionState { get; }
 
         /// <summary>
         /// Tests if <paramref name="x"/> is equal to <paramref name="y"/>.

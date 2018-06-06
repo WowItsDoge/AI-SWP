@@ -10,6 +10,16 @@ namespace UseCaseCore.UcIntern
     public class ReferenceStep
     {
         /// <summary>
+        /// Gets the identifier of the flow the reference step points to.
+        /// </summary>
+        public readonly FlowIdentifier Identifier;
+
+        /// <summary>
+        /// Gets the step number of the flow that is referenced.
+        /// </summary>
+        public readonly int Step;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ReferenceStep"/> class.
         /// </summary>
         /// <param name="identifier">The identifier of the flow the reference step points to.</param>
@@ -19,16 +29,6 @@ namespace UseCaseCore.UcIntern
             this.Identifier = identifier;
             this.Step = step;
         }
-
-        /// <summary>
-        /// Gets the identifier of the flow the reference step points to.
-        /// </summary>
-        public FlowIdentifier Identifier { get; }
-
-        /// <summary>
-        /// Gets the step number of the flow that is referenced.
-        /// </summary>
-        public int Step { get; }
 
         /// <summary>
         /// Tests if <paramref name="x"/> is equal to <paramref name="y"/>.

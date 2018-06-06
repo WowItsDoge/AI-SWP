@@ -10,6 +10,16 @@ namespace UseCaseCore.UcIntern
     public class FlowIdentifier
     {
         /// <summary>
+        /// Gets the flow type.
+        /// </summary>
+        public readonly FlowType Type;
+
+        /// <summary>
+        /// Gets the flow id.
+        /// </summary>
+        public readonly int Id;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="FlowIdentifier"/> class. 
         /// </summary>
         /// <param name="type">The flow type.</param>
@@ -19,16 +29,6 @@ namespace UseCaseCore.UcIntern
             this.Type = type;
             this.Id = id;
         }
-
-        /// <summary>
-        /// Gets the flow type.
-        /// </summary>
-        public FlowType Type { get; }
-
-        /// <summary>
-        /// Gets the flow id.
-        /// </summary>
-        public int Id { get; }
 
         /// <summary>
         /// Tests if <paramref name="x"/> is equal to <paramref name="y"/>.
