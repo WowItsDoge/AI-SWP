@@ -24,12 +24,12 @@ namespace UseCaseCore.UcIntern
         /// <summary>
         /// Gets the nodes of the flow.
         /// </summary>
-        public readonly IList<Node> Nodes;
+        public readonly IReadOnlyList<Node> Nodes;
 
         /// <summary>
         /// Gets the reference steps of the flow.
         /// </summary>
-        public readonly IList<ReferenceStep> ReferenceSteps;
+        public readonly IReadOnlyList<ReferenceStep> ReferenceSteps;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Flow"/> struct. 
@@ -38,12 +38,12 @@ namespace UseCaseCore.UcIntern
         /// <param name="postcondition">The postcondition of the flow.</param>
         /// <param name="nodes">The nodes of the flow</param>
         /// <param name="referenceSteps">The reference steps of the flow.</param>
-        public Flow(FlowIdentifier identifier, string postcondition, List<Node> nodes, List<ReferenceStep> referenceSteps)
+        public Flow(FlowIdentifier identifier, string postcondition, IReadOnlyList<Node> nodes, IReadOnlyList<ReferenceStep> referenceSteps)
         {
             this.Identifier = identifier;
             this.Postcondition = postcondition;
-            this.Nodes = nodes.AsReadOnly();
-            this.ReferenceSteps = referenceSteps.AsReadOnly();
+            this.Nodes = nodes;
+            this.ReferenceSteps = referenceSteps;
         }
 
         /// <summary>
@@ -87,10 +87,10 @@ namespace UseCaseCore.UcIntern
         /// <returns>A hash code for the current object.</returns>
         public override int GetHashCode()
         {
-            return BitShifter.ShiftAndWrap(this.Identifier.GetHashCode(), 3)
-                ^ BitShifter.ShiftAndWrap(this.Postcondition.GetHashCode(), 2)
-                ^ BitShifter.ShiftAndWrap(this.Nodes.GetHashCode(), 1)
-                ^ this.ReferenceSteps.GetHashCode();
+            return BitShifter.ShiftAndWrap(this.Identifier?.GetHashCode() ?? 0, 3)
+                ^ BitShifter.ShiftAndWrap(this.Postcondition?.GetHashCode() ?? 0, 2)
+                ^ BitShifter.ShiftAndWrap(this.Nodes?.GetHashCode() ?? 0, 1)
+                ^ this.ReferenceSteps?.GetHashCode() ?? 0;
         }
     }
 }

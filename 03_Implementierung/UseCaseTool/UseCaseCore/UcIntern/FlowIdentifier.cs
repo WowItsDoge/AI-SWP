@@ -20,6 +20,16 @@ namespace UseCaseCore.UcIntern
         public readonly int Id;
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="FlowIdentifier"/> class.
+        /// Will be removed when switched to a struct.
+        /// </summary>
+        public FlowIdentifier()
+        {
+            this.Type = default(FlowType);
+            this.Id = default(int);
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="FlowIdentifier"/> class. 
         /// </summary>
         /// <param name="type">The flow type.</param>
