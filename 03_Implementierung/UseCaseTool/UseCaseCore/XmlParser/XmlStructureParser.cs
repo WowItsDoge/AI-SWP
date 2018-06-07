@@ -238,7 +238,7 @@ namespace UseCaseCore.XmlParser
         private bool ValidateRucmRules()
         {
             bool currentValidationResult = true;
-            RucmRuleValidator rucmRuleValidator = new RucmRuleValidator(RuleValidation.RucmRules.RuleRepository.Rules);
+            RucmRuleValidator rucmRuleValidator = new RucmRuleValidator(RuleValidation.RucmRules.RucmRuleRepository.Rules);
             rucmRuleValidator.Validate(this.basicFlow);
             foreach (GlobalAlternativeFlow globalAlternativeFlow in this.globalAlternativeFlows)
             {

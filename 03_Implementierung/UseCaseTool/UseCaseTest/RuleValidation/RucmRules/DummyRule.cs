@@ -71,5 +71,21 @@ namespace UseCaseTest.RuleValidation.RucmRules
         {
             return this.errorList;
         }
+
+        public bool ContainsEndKeywordTest(string stepToCheck)
+        {
+            return this.ContainsEndKeyword(stepToCheck);
+        }
+
+        public bool ContainsConditionKeywordTest(string stepToCheck)
+        {
+            return this.ContainsConditionKeyword(stepToCheck);
+        }
+
+        public bool ContainsConditionEndKeywordTest(string stepToCheck)
+        {
+            return this.ContainsConditionEndKeyword(stepToCheck);
+        }
+
     }
 }
