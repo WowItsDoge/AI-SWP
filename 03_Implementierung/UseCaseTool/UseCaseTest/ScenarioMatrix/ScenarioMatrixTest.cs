@@ -162,7 +162,7 @@ namespace UseCaseTest.ScenarioMatrix
               { false, false, false, false, false, false }      // 6 O O O O O O
               };
 
-            int cycleDepth = 1;
+            uint cycleDepth = 1;
 
             Matrix<bool> m = new Matrix<bool>(matrixA);
             
@@ -220,7 +220,7 @@ namespace UseCaseTest.ScenarioMatrix
               { false, false, false, false, false, false }      // 6 O O O O O O
               };
 
-            int cycleDepth = 2;
+            uint cycleDepth = 2;
 
             Matrix<bool> m = new Matrix<bool>(matrixA);
             
@@ -297,7 +297,7 @@ namespace UseCaseTest.ScenarioMatrix
               { false, false, false, false, false }    // 5 O O O O O
             };
 
-            int cycleDepth = 1;
+            uint cycleDepth = 1;
 
             Matrix<bool> m = new Matrix<bool>(matrixB);
             
@@ -353,7 +353,7 @@ namespace UseCaseTest.ScenarioMatrix
               { false, false, false, false, false }    // 5 O O O O O
             };
 
-            int cycleDepth = 3;
+            uint cycleDepth = 3;
 
             Matrix<bool> m = new Matrix<bool>(matrixB);
 
@@ -449,7 +449,7 @@ namespace UseCaseTest.ScenarioMatrix
               { false, false, false, false, false, false }      // 6 O O O O O O
               };
 
-            int cycleDepth = 1;
+            uint cycleDepth = 1;
 
             Matrix<bool> m = new Matrix<bool>(matrixA);
 
@@ -507,7 +507,7 @@ namespace UseCaseTest.ScenarioMatrix
               { false, false, false, false, false, false }      // 6 O O O O O O
               };
 
-            int cycleDepth = 1;
+            uint cycleDepth = 1;
 
             Matrix<bool> m = new Matrix<bool>(matrixA);
 
@@ -564,20 +564,7 @@ namespace UseCaseTest.ScenarioMatrix
 
             Assert.AreEqual(sm.CycleDepth, 5);
         }
-
-        /// <summary>
-        /// Changing cycle depth to negative value
-        /// </summary>
-        [Test]
-        public void ScenarioMatrix_ChangeCycleDepth_NegativeValue()
-        {
-            ScenarioMatrix sm = new ScenarioMatrix(new UseCase(), 1);
-            sm.CycleDepth = -5;
-
-            Assert.AreEqual(sm.CycleDepth, 1);
-        }
-
-
+        
         /// <summary>
         /// Testing Graph A with Cycle Depth 1 & 2
         /// </summary>
@@ -593,7 +580,7 @@ namespace UseCaseTest.ScenarioMatrix
               { false, false, false, false, false, false }      // 6 O O O O O O
               };
 
-            int cycleDepth = 1;
+            uint cycleDepth = 1;
 
             Matrix<bool> m = new Matrix<bool>(matrixA);
 
