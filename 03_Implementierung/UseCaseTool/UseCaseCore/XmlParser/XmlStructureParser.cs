@@ -142,17 +142,23 @@ namespace UseCaseCore.XmlParser
                 this.useCaseFile = WordprocessingDocument.Open(this.useCaseFilePath, true);
                 SimplifyMarkupSettings settings = new SimplifyMarkupSettings
                 {
-                    RemoveComments = true,
+                    AcceptRevisions = false,
                     RemoveContentControls = true,
+                    RemoveSmartTags = true,
+                    RemoveRsidInfo = true,
+                    RemoveComments = true,
                     RemoveEndAndFootNotes = true,
+                    ReplaceTabsWithSpaces = true,
                     RemoveFieldCodes = false,
-                    RemoveLastRenderedPageBreak = true,
                     RemovePermissions = true,
                     RemoveProof = true,
-                    RemoveRsidInfo = true,
-                    RemoveSmartTags = true,
                     RemoveSoftHyphens = true,
-                    ReplaceTabsWithSpaces = true,
+                    RemoveLastRenderedPageBreak = true,
+                    RemoveBookmarks = true,
+                    RemoveWebHidden = true,
+                    RemoveGoBackBookmark = true,
+                    RemoveMarkupForDocumentComparison = true,
+                    NormalizeXml = true,
                 };
                 MarkupSimplifier.SimplifyMarkup(this.useCaseFile, settings);
                 return true;
@@ -334,9 +340,9 @@ namespace UseCaseCore.XmlParser
         /// <returns>Returns a string with the parsed RUCM property.</returns>
         private string ParseRucmProperty(string propertyName)
         {
-            string xPathFilter = "//*/text()[normalize-space(.)='" + propertyName + "']/parent::*";
-            XmlNode root = this.useCaseXml.DocumentElement;
-            XmlNodeList propertyNode = root.SelectNodes(xPathFilter);
+            XmlNodeList propertyNode = null;
+            propertyNode = this.GetXmlNodeList(propertyName);
+
             if (propertyNode.Count == 0)
             {
                 return string.Empty;
@@ -367,7 +373,7 @@ namespace UseCaseCore.XmlParser
         private void GetBasicFlow()
         {
             XmlNodeList basicFlowNode = null;
-            basicFlowNode = this.GetXmlNodeList(FlowType.Basic);
+            basicFlowNode = this.GetXmlNodeList("Basic Flow");
 
             if (basicFlowNode.Count == 0)
             {
@@ -403,7 +409,7 @@ namespace UseCaseCore.XmlParser
         private void GetGlobalAlternativeFlows()
         {
             XmlNodeList globalAlternativeFlowNodes = null;
-            globalAlternativeFlowNodes = this.GetXmlNodeList(FlowType.GlobalAlternative);
+            globalAlternativeFlowNodes = this.GetXmlNodeList("Global Alternative Flows");
 
             if (globalAlternativeFlowNodes.Count == 0)
             {
@@ -451,7 +457,7 @@ namespace UseCaseCore.XmlParser
         private void GetSpecificAlternativeFlows()
         {
             XmlNodeList specificAlternativeFlowNodes = null;
-            specificAlternativeFlowNodes = this.GetXmlNodeList(FlowType.SpecificAlternative);
+            specificAlternativeFlowNodes = this.GetXmlNodeList("Specific Alternative Flows");
 
             if (specificAlternativeFlowNodes.Count == 0)
             {
@@ -502,7 +508,7 @@ namespace UseCaseCore.XmlParser
         private void GetBoundedAlternativeFlows()
         {
             XmlNodeList boundedAlternativeFlowNodes = null;
-            boundedAlternativeFlowNodes = this.GetXmlNodeList(FlowType.BoundedAlternative);
+            boundedAlternativeFlowNodes = this.GetXmlNodeList("Bounded Alternative Flows");
 
             if (boundedAlternativeFlowNodes.Count == 0)
             {
@@ -566,40 +572,25 @@ namespace UseCaseCore.XmlParser
         /// <summary>
         /// Get the xml node list for specified flow type
         /// </summary>
-        /// <param name="flowType">Specified the FlowType to identified the search words</param>
+        /// <param name="searchWord">Defines the search word with which you want to search</param>
         /// <returns>Returns the XmlNodeList with the founded Node.</returns>
-        private XmlNodeList GetXmlNodeList(FlowType flowType)
+        private XmlNodeList GetXmlNodeList(string searchWord)
         {
             XmlNode root = this.useCaseXml.DocumentElement;
             XmlNodeList flowNodeList = null;
 
-            List<string> searchWords = new List<string>();
-            switch (flowType)
+            List<string> searchWordList = new List<string>();
+            int charPosition = searchWord.Length;
+            while (charPosition > 0)
             {
-                case FlowType.Basic:
-                    searchWords.Add("Basic Flow");
-                    searchWords.Add("Basic");
-                    break;
-                case FlowType.BoundedAlternative:
-                    searchWords.Add("Bounded Alternative Flows");
-                    searchWords.Add("Bounded Alternative");
-                    searchWords.Add("Bounded");
-                    break;
-                case FlowType.GlobalAlternative:
-                    searchWords.Add("Global Alternative Flows");
-                    searchWords.Add("Global Alternative");
-                    searchWords.Add("Global");
-                    break;
-                case FlowType.SpecificAlternative:
-                    searchWords.Add("Specific Alternative Flows");
-                    searchWords.Add("Specific Alternative");
-                    searchWords.Add("Specific");
-                    break;
+                searchWord = searchWord.Substring(0, charPosition);
+                searchWordList.Add(searchWord);
+                charPosition = searchWord.LastIndexOf(' ');
             }
 
-            for (int i = 1; i <= searchWords.Count; i++)
+            for (int i = 1; i <= searchWordList.Count; i++)
             {
-                string xPathFilter = "//*/text()[normalize-space(.)='" + searchWords[i - 1] + "']/parent::*";
+                string xPathFilter = "//*/text()[normalize-space(.)='" + searchWordList[i - 1] + "']/parent::*";
                 flowNodeList = root.SelectNodes(xPathFilter);
                 if (flowNodeList.Count > 0)
                 {
