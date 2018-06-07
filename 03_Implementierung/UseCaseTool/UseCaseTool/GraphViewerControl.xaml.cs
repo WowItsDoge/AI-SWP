@@ -19,6 +19,7 @@ namespace UseCaseTool
     using System.Windows.Navigation;
     using System.Windows.Shapes;
     using System.Reflection;
+    using UseCaseCore.UcIntern;
 
     /// <summary>
     /// Interaction logic for GraphViewerControl
@@ -41,9 +42,6 @@ namespace UseCaseTool
 
             // create a graph object 
             graph = new Microsoft.Msagl.Drawing.Graph("graph");
-
-            // create the graph content 
-            UpdateGraphView();
 
             // bind the graph to the viewer 
             viewer.Graph = graph;
@@ -72,19 +70,68 @@ namespace UseCaseTool
             viewer.DrawingPanel.Invalidate();
         }
 
-        public void UpdateGraphView()
+        public void UpdateGraphView(UseCase useCase)
         {
             graph = new Microsoft.Msagl.Drawing.Graph("graph");
             viewer.Graph = graph;
 
-            graph.AddEdge("A", "B");
-            graph.AddEdge("B", "C");
-            graph.AddEdge("A", "C").Attr.Color = Microsoft.Msagl.Drawing.Color.Green;
-            graph.FindNode("A").Attr.FillColor = Microsoft.Msagl.Drawing.Color.Magenta;
-            graph.FindNode("B").Attr.FillColor = Microsoft.Msagl.Drawing.Color.MistyRose;
-            Microsoft.Msagl.Drawing.Node c = graph.FindNode("C");
-            c.Attr.FillColor = Microsoft.Msagl.Drawing.Color.PaleGreen;
-            c.Attr.Shape = Microsoft.Msagl.Drawing.Shape.Ellipse;
+            for (int n1 = 0; n1 < useCase.Nodes.Count; n1++)
+            {
+                for (int n2 = 0; n2 < useCase.Nodes.Count; n2++)
+                {
+                    if (IsConnected(n1, n2, useCase))
+                    {
+                        string nodeTitle1 = GetNodeTitle(useCase.Nodes[n1], n1);
+                        string nodeTitle2 = GetNodeTitle(useCase.Nodes[n2], n2);
+
+                        var edge = graph.AddEdge(nodeTitle1, nodeTitle2);
+                        edge.Attr.Color = Microsoft.Msagl.Drawing.Color.Green;
+
+                        var node1 = graph.FindNode(nodeTitle1);
+                        SetNodeStyle(node1);
+
+                        var node2 = graph.FindNode(nodeTitle2);
+                        SetNodeStyle(node2);
+                    }
+                }
+            }
+        }
+
+        private static void SetNodeStyle(Microsoft.Msagl.Drawing.Node node)
+        {
+            node.Attr.FillColor = Microsoft.Msagl.Drawing.Color.Green;
+            node.Attr.Shape = Microsoft.Msagl.Drawing.Shape.Ellipse;
+        }
+
+        private static string GetNodeTitle(Node node, int nodeId)
+        {
+            return nodeId + ": " + node.StepDescription;
+        }
+
+        private static bool IsConnected(Node node1, Node node2, UseCase useCase)
+        {
+            int id1 = GetNodeId(node1, useCase);
+            int id2 = GetNodeId(node2, useCase);
+
+            return IsConnected(id1, id2, useCase);
+        }
+
+        private static bool IsConnected(int nodeId1, int nodeId2, UseCase useCase)
+        {
+            return useCase.EdgeMatrix[nodeId1, nodeId2];
+        }
+
+        private static int GetNodeId(Node node, UseCase useCase)
+        {
+            for (int i = 0; i < useCase.Nodes.Count; i++)
+            {
+                if (node.Equals(useCase.Nodes[i]))
+                {
+                    return i;
+                }
+            }
+
+            return -1;
         }
     }
 }
