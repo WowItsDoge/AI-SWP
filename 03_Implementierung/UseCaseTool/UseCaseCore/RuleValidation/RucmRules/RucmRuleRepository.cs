@@ -1,4 +1,4 @@
-﻿// <copyright file="RuleRepository.cs" company="Team B">
+﻿// <copyright file="RucmRuleRepository.cs" company="Team B">
 //      Team B. All rights reserved.
 // </copyright>
 
@@ -9,12 +9,12 @@ namespace UseCaseCore.RuleValidation.RucmRules
     /// <summary>
     /// The class containing all the RUCM rules used by this application.
     /// </summary>
-    public static class RuleRepository
+    public static class RucmRuleRepository
     {
         /// <summary>
-        /// Initializes static members of the <see cref="RuleRepository"/> class.
+        /// Initializes static members of the <see cref="RucmRuleRepository"/> class.
         /// </summary>
-        static RuleRepository()
+        static RucmRuleRepository()
         {
             Rules = new List<IRule>
             {
