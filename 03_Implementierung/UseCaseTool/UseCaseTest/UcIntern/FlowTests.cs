@@ -29,7 +29,7 @@ namespace UseCaseTest.UcIntern
         public void Setup()
         {
             flowIdentifier1 = new FlowIdentifier(FlowType.Basic, 0);
-            flowIdentifier2 = new FlowIdentifier(FlowType.Basic, 1);
+            flowIdentifier2 = new FlowIdentifier(FlowType.BoundedAlternative, 1);
 
             referenceStep1 = new ReferenceStep(flowIdentifier1, 0);
             referenceStep2 = new ReferenceStep(flowIdentifier2, 1);

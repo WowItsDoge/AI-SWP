@@ -83,7 +83,7 @@ namespace UseCaseTest.UcIntern
         }
 
         /// <summary>
-        /// Compares two flow identifier with different type.
+        /// Compares two flow identifiers with different type.
         /// </summary>
         [Test]
         public void CompareFlowIdentifiersDifferentType()
@@ -101,7 +101,7 @@ namespace UseCaseTest.UcIntern
         }
 
         /// <summary>
-        /// Compares two flow identifier with different id.
+        /// Compares two flow identifiers with different id.
         /// </summary>
         [Test]
         public void CompareFlowIdentifiersDifferentId()
@@ -126,7 +126,7 @@ namespace UseCaseTest.UcIntern
         {
             // Arrange
             FlowIdentifier fi1 = new FlowIdentifier(),
-                fi2 = new FlowIdentifier(FlowType.GlobalAlternative, 4);
+                fi2 = new FlowIdentifier(FlowType.SpecificAlternative, 4);
 
             // Act
 

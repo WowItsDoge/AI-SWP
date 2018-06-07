@@ -69,6 +69,8 @@
     <Compile Include="UcIntern\FlowIdentifierTests.cs" />
     <Compile Include="UcIntern\FlowTests.cs" />
     <Compile Include="UcIntern\MatrixTests.cs" />
+    <Compile Include="UcIntern\NodeTests.cs" />
+    <Compile Include="UcIntern\ReferenceStepTests.cs" />
     <Compile Include="UcIntern\RowTests.cs" />
     <Compile Include="XmlParser\FlowTests.cs" />
   </ItemGroup>
