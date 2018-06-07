@@ -230,7 +230,7 @@ namespace UseCaseTool
         /// <param name="e">The e</param>
         private void NumericUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double?> e)
         {
-            controller.ChangeCycleDepth((int)CycleDepth.Value);
+            controller.ChangeCycleDepth((uint)CycleDepth.Value);
         }
 
 

@@ -54,7 +54,7 @@ namespace UseCaseCore.Controller
         /// </summary>
         private Brush backgroundColor = new SolidColorBrush(Color.FromArgb(255, 65, 177, 255));
 
-        private int currentCycleDepth = 1;
+        private uint currentCycleDepth = 1;
 
         private Visibility visibilityOk = Visibility.Hidden;
         private Visibility visibilityFail = Visibility.Hidden;
@@ -300,7 +300,7 @@ namespace UseCaseCore.Controller
             else
             {
                 this.BackgroundColor2 = Brushes.Red;
-                this.VisibilityFail1 = Visibility.Visible;
+                this.VisibilityFail2 = Visibility.Visible;
             }
 
             if (!this.backgroundWorkerGetErrorReport.IsBusy)
@@ -325,7 +325,7 @@ namespace UseCaseCore.Controller
 
         private void backgroundWorkerGenerateMatrix_DoWork(object sender, DoWorkEventArgs e)
         {
-            matrix = new ScenarioMatrix(useCase, 1);
+            matrix = new ScenarioMatrix(useCase, currentCycleDepth);
             matrix.ScenariosCreated += Matrix_scenariosCreated;
             if (matrix.CreateScenarios())
             {
@@ -383,12 +383,15 @@ namespace UseCaseCore.Controller
             //ToDo...
         }
 
-        public void ChangeCycleDepth(int depth)
+        public void ChangeCycleDepth(uint depth)
         {
             if(depth != currentCycleDepth & depth >= 0)
             {
-
-            }           
+                currentCycleDepth = depth;
+                this.backgroundWorkerGenerateMatrix = new BackgroundWorker();
+                this.backgroundWorkerGenerateMatrix.DoWork += new DoWorkEventHandler(backgroundWorkerGenerateMatrix_DoWork);
+                this.backgroundWorkerGenerateMatrix.WorkerSupportsCancellation = true;
+            }
         }
 
 
