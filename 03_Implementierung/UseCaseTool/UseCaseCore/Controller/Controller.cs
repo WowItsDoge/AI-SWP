@@ -268,12 +268,25 @@ namespace UseCaseCore.Controller
         }
 
 
+        private void ResetPreviousContent()
+        {
+            this.BackgroundColor1 = Brushes.Gray;
+            //ToDo
+            //...
+
+        }
+
         /// <summary>
         /// Tell the system path and file name of the XML UseCase file. The string para-meter contains the path to the new file.
         /// </summary>
         /// <param name="filePath">The currently selected path</param>
         public void CurrentXmlFilePath(string filePath)
         {
+            if (currentFilePath != "")
+            {
+                this.ResetPreviousContent();
+            }           
+            
             currentFilePath = filePath;
 
             this.backgroundWorkerLoadFile.DoWork += new DoWorkEventHandler(backgroundWorkerLoadFile_DoWork);
@@ -288,7 +301,8 @@ namespace UseCaseCore.Controller
 
         private void backgroundWorkerLoadFile_DoWork(object sender, DoWorkEventArgs e)
         {
-            if (this.xmlParser.LoadXmlFile(currentFilePath))
+            // bool test = this.xmlParser.LoadXmlFile(currentFilePath);
+            if(this.xmlParser.LoadXmlFile(currentFilePath))
             {
                 this.BackgroundColor1 = Brushes.LimeGreen;
                 this.VisibilityOk1 = Visibility.Visible;
@@ -403,7 +417,7 @@ namespace UseCaseCore.Controller
             {
                 backgroundWorkerLoadFile.CancelAsync();
             }
-            if (backgroundWorkerLoadFile.IsBusy)
+            if (backgroundWorkerValidFile.IsBusy)
             {
                 backgroundWorkerValidFile.CancelAsync();
             }
@@ -446,9 +460,15 @@ namespace UseCaseCore.Controller
             if(depth != currentCycleDepth & depth >= 0)
             {
                 currentCycleDepth = depth;
-                this.backgroundWorkerGenerateMatrix = new BackgroundWorker();
-                this.backgroundWorkerGenerateMatrix.DoWork += new DoWorkEventHandler(backgroundWorkerGenerateMatrix_DoWork);
-                this.backgroundWorkerGenerateMatrix.WorkerSupportsCancellation = true;
+                matrix.CycleDepth = currentCycleDepth;
+                //this.backgroundWorkerGenerateMatrix = new BackgroundWorker();
+                //this.backgroundWorkerGenerateMatrix.DoWork += new DoWorkEventHandler(backgroundWorkerGenerateMatrix_DoWork);
+                //this.backgroundWorkerGenerateMatrix.WorkerSupportsCancellation = true;
+
+                if (!this.backgroundWorkerGenerateMatrix.IsBusy)
+                {
+                    this.backgroundWorkerGenerateMatrix.RunWorkerAsync();
+                }
             }
         }
 

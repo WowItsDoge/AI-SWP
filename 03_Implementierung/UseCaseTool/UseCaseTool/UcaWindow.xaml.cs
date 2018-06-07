@@ -102,7 +102,7 @@ namespace UseCaseTool
         /// <param name="e">The e</param>
         private void CloseClick(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show("Programm wirklich schließen?", "Bestätigung", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (MessageBox.Show("Wollen Sie das Programm wirklich schließen?", "Bestätigung", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 this.Close();
             }
