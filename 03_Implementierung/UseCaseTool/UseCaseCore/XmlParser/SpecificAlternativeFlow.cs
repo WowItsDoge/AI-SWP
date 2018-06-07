@@ -21,7 +21,7 @@ namespace UseCaseCore.XmlParser
         /// </summary>
         public SpecificAlternativeFlow() : base()
         {
-            this.referenceStep = null;
+
         }
 
         /// <summary>

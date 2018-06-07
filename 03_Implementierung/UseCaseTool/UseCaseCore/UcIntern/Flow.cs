@@ -87,7 +87,7 @@ namespace UseCaseCore.UcIntern
         /// <returns>A hash code for the current object.</returns>
         public override int GetHashCode()
         {
-            return BitShifter.ShiftAndWrap(this.Identifier?.GetHashCode() ?? 0, 3)
+            return BitShifter.ShiftAndWrap(this.Identifier.GetHashCode(), 3)
                 ^ BitShifter.ShiftAndWrap(this.Postcondition?.GetHashCode() ?? 0, 2)
                 ^ BitShifter.ShiftAndWrap(this.Nodes?.GetHashCode() ?? 0, 1)
                 ^ this.ReferenceSteps?.GetHashCode() ?? 0;

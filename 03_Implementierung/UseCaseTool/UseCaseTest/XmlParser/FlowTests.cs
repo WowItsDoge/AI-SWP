@@ -88,7 +88,7 @@ namespace UseCaseTest.XmlParser
             // Arrange
             string standardPostcondition = string.Empty;
             int emptyListCount = 0;
-            ReferenceStep standardReferenceStep = null;
+            ReferenceStep standardReferenceStep = new ReferenceStep();
             SpecificAlternativeFlow testSpecificAlternativeFlow = new SpecificAlternativeFlow();
 
             // Act
@@ -154,8 +154,8 @@ namespace UseCaseTest.XmlParser
             testBoundedAlternativeFlowSteps.Add("ABORT.");
             string testPostcondition = "ATM customer funds have not been withdrawn. The system is shut down.";
             BoundedAlternativeFlow testBoundedAlternativeFlow = null;
-            FlowIdentifier testFlowIdentifier = null;
-            ReferenceStep testReferenceStep = null;
+            FlowIdentifier testFlowIdentifier = new FlowIdentifier();
+            ReferenceStep testReferenceStep = new ReferenceStep();
             List<BoundedAlternativeFlow> testBoundedAlternativeFlows = new List<BoundedAlternativeFlow>();
             List<ReferenceStep> testReferenceSteps = new List<ReferenceStep>();
 
@@ -244,8 +244,8 @@ namespace UseCaseTest.XmlParser
             testSpecificAlternativeFlowSteps.Add("ABORT.");
             string testPostcondition = "ATM customer funds have not been withdrawn. The system is idle.The system is displaying a Welcome message.";
             SpecificAlternativeFlow testSpecificAlternativeFlow = null;
-            FlowIdentifier testFlowIdentifier = null;
-            ReferenceStep testReferenceStep = null;
+            FlowIdentifier testFlowIdentifier = new FlowIdentifier();
+            ReferenceStep testReferenceStep = new ReferenceStep();
             List<SpecificAlternativeFlow> testSpecificAlternativeFlows = new List<SpecificAlternativeFlow>();
             List<ReferenceStep> testReferenceSteps = new List<ReferenceStep>();
 

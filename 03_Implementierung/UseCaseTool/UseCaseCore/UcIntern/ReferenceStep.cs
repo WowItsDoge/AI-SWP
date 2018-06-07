@@ -7,7 +7,7 @@ namespace UseCaseCore.UcIntern
     /// <summary>
     /// A reference step describes one specific step across all flows and therefor has a flow identifier and a step number.
     /// </summary>
-    public class ReferenceStep
+    public struct ReferenceStep
     {
         /// <summary>
         /// Gets the identifier of the flow the reference step points to.
