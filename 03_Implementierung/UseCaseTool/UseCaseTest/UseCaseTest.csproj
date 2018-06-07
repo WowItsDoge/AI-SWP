@@ -58,7 +58,9 @@
     <Compile Include="RuleValidation\Errors\FlowErrorTest.cs" />
     <Compile Include="RuleValidation\Errors\GeneralErrorTest.cs" />
     <Compile Include="RuleValidation\Errors\StepErrorTest.cs" />
+    <Compile Include="RuleValidation\RucmRules\RucmRuleRepositoryTest.cs" />
     <Compile Include="RuleValidation\RucmRules\DummyRule.cs" />
+    <Compile Include="RuleValidation\RucmRules\RucmRuleTest.cs" />
     <Compile Include="RuleValidation\RucmRules\RucmRule_24_25Test.cs" />
     <Compile Include="RuleValidation\RucmRuleValidatorTest.cs" />
     <Compile Include="ScenarioMatrix\ScenarioMatrixTest.cs" />
