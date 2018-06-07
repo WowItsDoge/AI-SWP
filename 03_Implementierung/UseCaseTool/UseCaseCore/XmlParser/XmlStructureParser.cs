@@ -11,6 +11,7 @@ namespace UseCaseCore.XmlParser
     using OpenXmlPowerTools;
     using RuleValidation;
     using UcIntern;
+    using System.IO;
 
     /// <summary>
     /// The xml structure parser instance.
@@ -122,6 +123,24 @@ namespace UseCaseCore.XmlParser
         {
             try
             {
+                /// https://msdn.microsoft.com/de-de/library/office/ff478541.aspx
+                ///Package filePackage = Package.Open(path, FileMode.Open, FileAccess.ReadWrite);
+                ///this.useCaseFile = WordprocessingDocument.Open(filePackage);
+
+                /// copy file to windows temp folder to fix the problem with write access if file is opened
+                string destinationFile = Path.Combine(Path.GetTempPath(), "UseCaseXMLFile.docm");
+                try
+                {
+                    File.Copy(path, destinationFile, true);
+                }
+                catch (IOException ex)
+                {
+                    Debug.WriteLine(ex.Message.ToString());
+                    this.errorMessage = ex.Message.ToString();
+                    return false;
+                }
+                path = destinationFile;
+
                 this.useCaseFile = WordprocessingDocument.Open(path, true);
                 SimplifyMarkupSettings settings = new SimplifyMarkupSettings
                 {
