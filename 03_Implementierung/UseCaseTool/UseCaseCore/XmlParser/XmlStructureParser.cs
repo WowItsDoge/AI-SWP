@@ -355,21 +355,18 @@ namespace UseCaseCore.XmlParser
         /// <summary>
         /// Gets the basic flow.
         /// </summary>
-        /// <returns>True if a basic flow could be parsed from the xml. False otherwise.</returns>
-        private bool GetBasicFlow()
+        private void GetBasicFlow()
         {
             string xPathFilter = "//*/text()[normalize-space(.)='Basic Flow']/parent::*";
             XmlNode root = this.useCaseXml.DocumentElement;
             XmlNodeList basicFlowNode = root.SelectNodes(xPathFilter);
             if (basicFlowNode.Count == 0)
             {
-                return false;
                 throw new Exception("Error: No Basic Flow found");
             }
 
             if (basicFlowNode.Count > 1)
             {
-                return false;
                 throw new Exception("Error: Document contains more than one Basic Flow");
             }
 
@@ -384,11 +381,9 @@ namespace UseCaseCore.XmlParser
                 }
 
                 this.basicFlow.SetPostcondition(basicFlowStepContent.ChildNodes[2].InnerText);
-                return true;
             }
             catch
             {
-                return false;
                 throw new Exception("Error: content not found");
             }
         }
@@ -396,15 +391,14 @@ namespace UseCaseCore.XmlParser
         /// <summary>
         /// Gets the global alternative flows.
         /// </summary>
-        /// <returns>True if a global alternative flow could be parsed from the xml. False otherwise.</returns>
-        private bool GetGlobalAlternativeFlows()
+        private void GetGlobalAlternativeFlows()
         {
             string xPathFilter = "//*/text()[normalize-space(.)='Global Alternative Flows']/parent::*";
             XmlNode root = this.useCaseXml.DocumentElement;
             XmlNodeList globalAlternativeFlowNodes = root.SelectNodes(xPathFilter);
             if (globalAlternativeFlowNodes.Count == 0)
             {
-                return false;
+                throw new Exception("Error: No Global Alternative Flow found");
             }
 
             try
@@ -435,12 +429,9 @@ namespace UseCaseCore.XmlParser
                     globalAlternativFlow.SetId(i);
                     this.globalAlternativeFlows.Add(globalAlternativFlow);
                 }
-
-                return true;
             }
             catch
             {
-                return false;
                 throw new Exception("Error: content not found");
             }
         }
@@ -448,15 +439,14 @@ namespace UseCaseCore.XmlParser
         /// <summary>
         /// Gets the specific alternative flows.
         /// </summary>
-        /// <returns>Returns true if the specific alternative flow could be parsed from the xml. False otherwise.</returns>
-        private bool GetSpecificAlternativeFlows()
+        private void GetSpecificAlternativeFlows()
         {
             string xPathFilter = "//*/text()[normalize-space(.)='Specific Alternative Flows']/parent::*";
             XmlNode root = this.useCaseXml.DocumentElement;
             XmlNodeList specificAlternativeFlowNodes = root.SelectNodes(xPathFilter);
             if (specificAlternativeFlowNodes.Count == 0)
             {
-                return false;
+                throw new Exception("Error: No Specific Alternative Flow found");
             }
 
             try
@@ -472,7 +462,7 @@ namespace UseCaseCore.XmlParser
                         {
                             case 2:
                                 string unparsedReferenceStep = specificAlternativeFlowStepContent.ChildNodes[1].InnerText;
-                                int referenceStepNumber = int.Parse(unparsedReferenceStep.Replace("RFS Basic Flow ", ""));
+                                int referenceStepNumber = int.Parse(unparsedReferenceStep.Replace("RFS Basic Flow ", string.Empty));
                                 FlowIdentifier flowIdentifier = new FlowIdentifier(FlowType.SpecificAlternative, i);
                                 ReferenceStep referenceStep = new ReferenceStep(flowIdentifier, referenceStepNumber);
                                 specificAlternativFlow.AddReferenceStep(referenceStep);
@@ -490,12 +480,9 @@ namespace UseCaseCore.XmlParser
                     specificAlternativFlow.SetPostcondition(specificAlternativeFlowStepContent.ChildNodes[2].InnerText);
                     this.specificAlternativeFlows.Add(specificAlternativFlow);
                 }
-
-                return true;
             }
             catch
             {
-                return false;
                 throw new Exception("Error: content not found");
             }
         }
@@ -503,15 +490,14 @@ namespace UseCaseCore.XmlParser
         /// <summary>
         /// Gets the bounded alternative flows.
         /// </summary>
-        /// <returns>Returns true if the bounded alternative flow could be parsed from the xml. False otherwise.</returns>
-        private bool GetBoundedAlternativeFlows()
+        private void GetBoundedAlternativeFlows()
         {
             string xPathFilter = "//*/text()[normalize-space(.)='Bounded Alternative Flows']/parent::*";
             XmlNode root = this.useCaseXml.DocumentElement;
             XmlNodeList boundedAlternativeFlowNodes = root.SelectNodes(xPathFilter);
             if (boundedAlternativeFlowNodes.Count == 0)
             {
-                return false;
+                throw new Exception("Error: No Bounded Alternative Flow found");
             }
 
             try
@@ -527,7 +513,7 @@ namespace UseCaseCore.XmlParser
                         {
                             case 2:
                                 string unparsedReferenceStep = boundedAlternativeFlowStepContent.ChildNodes[1].InnerText;
-                                string referenceStepNumbers = unparsedReferenceStep.Replace("RFS Basic Flow ", "");
+                                string referenceStepNumbers = unparsedReferenceStep.Replace("RFS Basic Flow ", string.Empty);
                                 if (referenceStepNumbers.Contains("-") == true)
                                 {
                                     int stepStartNumber = int.Parse(referenceStepNumbers.Split('-')[0]);
@@ -546,6 +532,7 @@ namespace UseCaseCore.XmlParser
                                     ReferenceStep referenceStep = new ReferenceStep(flowIdentifier, referenceStepNumber);
                                     boundedAlternativFlow.AddReferenceStep(referenceStep);
                                 }
+
                                 break;
                             case 3:
                                 boundedAlternativFlow.AddStep(boundedAlternativeFlowStepContent.ChildNodes[2].InnerText);
@@ -560,12 +547,9 @@ namespace UseCaseCore.XmlParser
                     boundedAlternativFlow.SetPostcondition(boundedAlternativeFlowStepContent.ChildNodes[2].InnerText);
                     this.boundedAlternativeFlows.Add(boundedAlternativFlow);
                 }
-
-                return true;
             }
             catch
             {
-                return false;
                 throw new Exception("Error: content not found");
             }
         }
