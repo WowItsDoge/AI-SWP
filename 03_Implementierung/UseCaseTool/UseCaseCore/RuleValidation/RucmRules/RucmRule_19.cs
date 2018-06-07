@@ -33,13 +33,13 @@ namespace UseCaseCore.RuleValidation.RucmRules
                 var rfs = flow.GetReferenceStep();
                 if (rfs == null)
                 {
-                    errors.Add(new FlowError(0, "Geben Sie im Feld RFS genau einen Referenzschritt an!", "Es wurde kein RFS gefunden."));
+                    this.errors.Add(new FlowError(0, "Geben Sie im Feld RFS genau einen Referenzschritt an!", "Es wurde kein RFS gefunden."));
                 }
                 else
                 {
-                    if (rfs.Step > referencedBasicFlow.GetSteps().Count)
+                    if (rfs.Step > referencedBasicFlow.GetSteps().Count || rfs.Step == 0)
                     {
-                        errors.Add(new FlowError(0, "Bitte überprüfen Sie die Nummer des Referenzschrittes!", "Es wurde kein zum RFS passender Step gefunden."));
+                        this.errors.Add(new FlowError(0, "Bitte überprüfen Sie die Nummer des Referenzschrittes!", string.Format("Es wurde kein zum RFS {0} passender Step gefunden.", rfs.Step)));
                     }
                 }
             }
@@ -47,17 +47,17 @@ namespace UseCaseCore.RuleValidation.RucmRules
             {
                 var flow = (BoundedAlternativeFlow)flowToCheck;
                 var referenceSteps = flow.GetReferenceSteps();
-                if (referenceSteps == null || referenceSteps.Count == 0)
+                if (referenceSteps.Count == 0)
                 {
-                    errors.Add(new FlowError(0, "Geben Sie im Feld RFS mindestens einen Referenzschritt an!", "Es wurde kein RFS gefunden."));
+                    this.errors.Add(new FlowError(0, "Geben Sie im Feld RFS mindestens einen Referenzschritt an!", "Es wurde kein RFS gefunden."));
                 }
                 else
                 {
                     foreach (var rfs in referenceSteps)
                     {
-                        if (rfs.Step > referencedBasicFlow.GetSteps().Count)
+                        if (rfs.Step > referencedBasicFlow.GetSteps().Count || rfs.Step == 0)
                         {
-                            errors.Add(new FlowError(0, "Bitte überprüfen Sie die Nummer des Referenzschrittes!", "Es wurde kein zum RFS passender Step gefunden."));
+                            this.errors.Add(new FlowError(0, "Bitte überprüfen Sie die Nummer des Referenzschrittes!", string.Format("Es wurde kein zum RFS {0} passender Step gefunden.", rfs.Step)));
                         }
                     }
                 }
