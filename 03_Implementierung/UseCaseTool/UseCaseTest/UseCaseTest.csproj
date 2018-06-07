@@ -65,10 +65,15 @@
     <Compile Include="RuleValidation\RucmRuleValidatorTest.cs" />
     <Compile Include="ScenarioMatrix\ScenarioMatrixTest.cs" />
     <Compile Include="ScenarioMatrix\ScenarioTest.cs" />
+    <Compile Include="UcIntern\TestUseCase.cs" />
     <Compile Include="UcIntern\BitShifterTests.cs" />
     <Compile Include="UcIntern\ConditionTests.cs" />
     <Compile Include="UcIntern\EntryTests.cs" />
+    <Compile Include="UcIntern\FlowIdentifierTests.cs" />
+    <Compile Include="UcIntern\FlowTests.cs" />
     <Compile Include="UcIntern\MatrixTests.cs" />
+    <Compile Include="UcIntern\NodeTests.cs" />
+    <Compile Include="UcIntern\ReferenceStepTests.cs" />
     <Compile Include="UcIntern\RowTests.cs" />
     <Compile Include="XmlParser\FlowTests.cs" />
   </ItemGroup>

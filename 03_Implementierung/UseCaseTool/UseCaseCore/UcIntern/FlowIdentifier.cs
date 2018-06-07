@@ -7,7 +7,7 @@ namespace UseCaseCore.UcIntern
     /// <summary>
     /// A flow identifier identifies one flow with a type and a number. As there is only one basic flow the number should not be accounted for the basic flow type.
     /// </summary>
-    public class FlowIdentifier
+    public struct FlowIdentifier
     {
         /// <summary>
         /// Gets the flow type.
@@ -20,7 +20,7 @@ namespace UseCaseCore.UcIntern
         public readonly int Id;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FlowIdentifier"/> class. 
+        /// Initializes a new instance of the <see cref="FlowIdentifier"/> struct. 
         /// </summary>
         /// <param name="type">The flow type.</param>
         /// <param name="id">The flow id.</param>

@@ -311,13 +311,23 @@ namespace UseCaseCore.Controller
 
         private void backgroundWorkerGenerateGraph_DoWork(object sender, DoWorkEventArgs e)
         {
-            //ToDo...
+            
         }
 
         private void backgroundWorkerGenerateMatrix_DoWork(object sender, DoWorkEventArgs e)
         {
             matrix = new ScenarioMatrix(useCase, 1);
             matrix.ScenariosCreated += Matrix_scenariosCreated;
+            if (matrix.CreateScenarios())
+            {
+                this.BackgroundColor3 = Brushes.LimeGreen;
+                this.VisibilityOk3 = Visibility.Visible;
+
+            }
+            else
+            {
+
+            }
         }
 
         /// <summary>
@@ -348,7 +358,7 @@ namespace UseCaseCore.Controller
         /// <param name="filePath">destination path for the matrix</param>
         public void MatrixFilePath(string filePath)
         {
-            // this.matrix.Export(filePath);
+            this.matrix.Export(filePath);
         }
 
         /// <summary>
