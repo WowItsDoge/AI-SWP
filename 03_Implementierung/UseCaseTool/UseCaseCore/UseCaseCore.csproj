@@ -81,6 +81,7 @@
     <Compile Include="RuleValidation\RucmRules\IRule.cs" />
     <Compile Include="RuleValidation\RucmRules\RucmRule.cs" />
     <Compile Include="RuleValidation\RucmRules\RucmRuleKeyWords.cs" />
+    <Compile Include="RuleValidation\RucmRules\RucmRule_19.cs" />
     <Compile Include="RuleValidation\RucmRules\RucmRule_24_25.cs" />
     <Compile Include="RuleValidation\RucmRules\RucmRuleRepository.cs" />
     <Compile Include="RuleValidation\RucmRuleValidator.cs" />

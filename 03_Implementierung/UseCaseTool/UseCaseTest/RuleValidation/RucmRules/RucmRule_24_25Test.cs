@@ -23,7 +23,7 @@ namespace UseCaseTest.RuleValidation
         /// Tests the Check of the rules.
         /// </summary>
         [Test]
-        public void CheckTest()
+        public void Check2425Test()
         {
             var basicFlow = new BasicFlow();
             basicFlow.AddStep("Der erste Schritt");

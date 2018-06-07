@@ -117,7 +117,7 @@ namespace UseCaseCore.RuleValidation.RucmRules
         /// <param name="referencedStepId">the id of the step to check.</param>
         /// <param name="step">the step to check.</param>
         /// <param name="referencedBasicFlow">The referenced basic flow</param>
-        /// <return>True if the keyword is used right.</return>
+        /// <returns>True if the keyword is used right.</returns>
         private bool CheckForCorrectUsage(int referencedStepId, string step, Flow referencedBasicFlow)
         {
             var result = false;
