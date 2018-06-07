@@ -448,54 +448,126 @@ namespace UseCaseCore.XmlParser
         /// <summary>
         /// Gets the specific alternative flows.
         /// </summary>
-        /// <returns>Returns the specific alternative flow.</returns>
-        private List<SpecificAlternativeFlow> GetSpecificAlternativeFlows()
+        /// <returns>Returns true if the specific alternative flow could be parsed from the xml. False otherwise.</returns>
+        private bool GetSpecificAlternativeFlows()
         {
-            SpecificAlternativeFlow specificAlternative = new SpecificAlternativeFlow();
-            FlowIdentifier flowidentifier = new FlowIdentifier(FlowType.SpecificAlternative, 1);
-            ReferenceStep referenceStep = new ReferenceStep(flowidentifier, 8);
-            specificAlternative.AddReferenceStep(referenceStep);
-            specificAlternative.AddStep("The system displays an apology message MEANWHILE the system ejects the ATM card.");
-            specificAlternative.AddStep("ABORT.");
-            specificAlternative.SetPostcondition("ATM customer funds have not been withdrawn. The system is idle.The system is displaying a Welcome message.");
-            this.specificAlternativeFlows.Add(specificAlternative);
-            return this.specificAlternativeFlows;
+            string xPathFilter = "//*/text()[normalize-space(.)='Specific Alternative Flows']/parent::*";
+            XmlNode root = this.useCaseXml.DocumentElement;
+            XmlNodeList specificAlternativeFlowNodes = root.SelectNodes(xPathFilter);
+            if (specificAlternativeFlowNodes.Count == 0)
+            {
+                return false;
+            }
+
+            try
+            {
+                for (int i = 1; i <= specificAlternativeFlowNodes.Count; i++)
+                {
+                    SpecificAlternativeFlow specificAlternativFlow = new SpecificAlternativeFlow();
+                    XmlNode specificAlternativeFlowContent = specificAlternativeFlowNodes[i - 1].ParentNode.ParentNode.ParentNode.ParentNode;
+                    XmlNode specificAlternativeFlowStepContent = specificAlternativeFlowContent;
+                    while (specificAlternativeFlowStepContent.ChildNodes[1].InnerText != "Postcondition")
+                    {
+                        switch (specificAlternativeFlowStepContent.ChildNodes.Count)
+                        {
+                            case 2:
+                                string unparsedReferenceStep = specificAlternativeFlowStepContent.ChildNodes[1].InnerText;
+                                int referenceStepNumber = int.Parse(unparsedReferenceStep.Replace("RFS Basic Flow ", ""));
+                                FlowIdentifier flowIdentifier = new FlowIdentifier(FlowType.SpecificAlternative, i);
+                                ReferenceStep referenceStep = new ReferenceStep(flowIdentifier, referenceStepNumber);
+                                specificAlternativFlow.AddReferenceStep(referenceStep);
+                                break;
+                            case 3:
+                                specificAlternativFlow.AddStep(specificAlternativeFlowStepContent.ChildNodes[2].InnerText);
+                                break;
+                            default:
+                                break;
+                        }
+
+                        specificAlternativeFlowStepContent = specificAlternativeFlowStepContent.NextSibling;
+                    }
+
+                    specificAlternativFlow.SetPostcondition(specificAlternativeFlowStepContent.ChildNodes[2].InnerText);
+                    this.specificAlternativeFlows.Add(specificAlternativFlow);
+                }
+
+                return true;
+            }
+            catch
+            {
+                return false;
+                throw new Exception("Error: content not found");
+            }
         }
 
         /// <summary>
         /// Gets the bounded alternative flows.
         /// </summary>
-        /// <returns>Returns the bounded alternative flow.</returns>
-        private List<BoundedAlternativeFlow> GetBoundedAlternativeFlows()
+        /// <returns>Returns true if the bounded alternative flow could be parsed from the xml. False otherwise.</returns>
+        private bool GetBoundedAlternativeFlows()
         {
-            BoundedAlternativeFlow boundedAlternative0 = new BoundedAlternativeFlow();
-            FlowIdentifier flowidentifier0 = new FlowIdentifier(FlowType.BoundedAlternative, 1);
-            ReferenceStep referenceStep0 = new ReferenceStep(flowidentifier0, 5);
-            boundedAlternative0.AddStep("The system displays an apology message MEANWHILE the system ejects the ATM card.");
-            boundedAlternative0.AddStep("The system shuts down.");
-            boundedAlternative0.AddStep("ABORT.");
-            boundedAlternative0.SetPostcondition("ATM customer funds have not been withdrawn. The system is shut down.");
+            string xPathFilter = "//*/text()[normalize-space(.)='Bounded Alternative Flows']/parent::*";
+            XmlNode root = this.useCaseXml.DocumentElement;
+            XmlNodeList boundedAlternativeFlowNodes = root.SelectNodes(xPathFilter);
+            if (boundedAlternativeFlowNodes.Count == 0)
+            {
+                return false;
+            }
 
-            BoundedAlternativeFlow boundedAlternative1 = new BoundedAlternativeFlow();
-            FlowIdentifier flowidentifier1 = new FlowIdentifier(FlowType.BoundedAlternative, 2);
-            ReferenceStep referenceStep1 = new ReferenceStep(flowidentifier1, 6);
-            boundedAlternative1.AddStep("The system displays an apology message MEANWHILE the system ejects the ATM card.");
-            boundedAlternative1.AddStep("The system shuts down.");
-            boundedAlternative1.AddStep("ABORT.");
-            boundedAlternative1.SetPostcondition("ATM customer funds have not been withdrawn. The system is shut down.");
+            try
+            {
+                for (int i = 1; i <= boundedAlternativeFlowNodes.Count; i++)
+                {
+                    BoundedAlternativeFlow boundedAlternativFlow = new BoundedAlternativeFlow();
+                    XmlNode boundedAlternativeFlowContent = boundedAlternativeFlowNodes[i - 1].ParentNode.ParentNode.ParentNode.ParentNode;
+                    XmlNode boundedAlternativeFlowStepContent = boundedAlternativeFlowContent;
+                    while (boundedAlternativeFlowStepContent.ChildNodes[1].InnerText != "Postcondition")
+                    {
+                        switch (boundedAlternativeFlowStepContent.ChildNodes.Count)
+                        {
+                            case 2:
+                                string unparsedReferenceStep = boundedAlternativeFlowStepContent.ChildNodes[1].InnerText;
+                                string referenceStepNumbers = unparsedReferenceStep.Replace("RFS Basic Flow ", "");
+                                if (referenceStepNumbers.Contains("-") == true)
+                                {
+                                    int stepStartNumber = int.Parse(referenceStepNumbers.Split('-')[0]);
+                                    int stepEndNumber = int.Parse(referenceStepNumbers.Split('-')[1]);
+                                    for (int n = stepStartNumber; n <= stepEndNumber; n++)
+                                    {
+                                        FlowIdentifier flowIdentifier = new FlowIdentifier(FlowType.SpecificAlternative, i);
+                                        ReferenceStep referenceStep = new ReferenceStep(flowIdentifier, n);
+                                        boundedAlternativFlow.AddReferenceStep(referenceStep);
+                                    }
+                                }
+                                else
+                                {
+                                    int referenceStepNumber = int.Parse(referenceStepNumbers);
+                                    FlowIdentifier flowIdentifier = new FlowIdentifier(FlowType.SpecificAlternative, i);
+                                    ReferenceStep referenceStep = new ReferenceStep(flowIdentifier, referenceStepNumber);
+                                    boundedAlternativFlow.AddReferenceStep(referenceStep);
+                                }
+                                break;
+                            case 3:
+                                boundedAlternativFlow.AddStep(boundedAlternativeFlowStepContent.ChildNodes[2].InnerText);
+                                break;
+                            default:
+                                break;
+                        }
 
-            BoundedAlternativeFlow boundedAlternative2 = new BoundedAlternativeFlow();
-            FlowIdentifier flowidentifier2 = new FlowIdentifier(FlowType.BoundedAlternative, 3);
-            ReferenceStep referenceStep2 = new ReferenceStep(flowidentifier2, 7);
-            boundedAlternative2.AddStep("The system displays an apology message MEANWHILE the system ejects the ATM card.");
-            boundedAlternative2.AddStep("The system shuts down.");
-            boundedAlternative2.AddStep("ABORT.");
-            boundedAlternative2.SetPostcondition("ATM customer funds have not been withdrawn. The system is shut down.");
+                        boundedAlternativeFlowStepContent = boundedAlternativeFlowStepContent.NextSibling;
+                    }
 
-            this.boundedAlternativeFlows.Add(boundedAlternative0);
-            this.boundedAlternativeFlows.Add(boundedAlternative1);
-            this.boundedAlternativeFlows.Add(boundedAlternative2);
-            return this.boundedAlternativeFlows;
+                    boundedAlternativFlow.SetPostcondition(boundedAlternativeFlowStepContent.ChildNodes[2].InnerText);
+                    this.boundedAlternativeFlows.Add(boundedAlternativFlow);
+                }
+
+                return true;
+            }
+            catch
+            {
+                return false;
+                throw new Exception("Error: content not found");
+            }
         }
     }
 }

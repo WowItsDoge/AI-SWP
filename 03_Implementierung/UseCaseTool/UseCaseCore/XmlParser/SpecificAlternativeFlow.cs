@@ -21,7 +21,6 @@ namespace UseCaseCore.XmlParser
         /// </summary>
         public SpecificAlternativeFlow() : base()
         {
-
         }
 
         /// <summary>
