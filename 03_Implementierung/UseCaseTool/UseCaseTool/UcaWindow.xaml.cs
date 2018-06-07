@@ -154,7 +154,7 @@ namespace UseCaseTool
         {
             SaveFileDialog saveFileDialogReport = new SaveFileDialog();
 
-            saveFileDialogReport.Filter = "PDF files (*.pdf)|*.pdf";
+            saveFileDialogReport.Filter = "Textdatei (*.txt)|*.txt";
             saveFileDialogReport.RestoreDirectory = true;
 
             saveFileDialogReport.ShowDialog();
