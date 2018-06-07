@@ -20,7 +20,7 @@ namespace UseCaseCore.UcIntern
         public readonly int Id;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FlowIdentifier"/> class. 
+        /// Initializes a new instance of the <see cref="FlowIdentifier"/> struct. 
         /// </summary>
         /// <param name="type">The flow type.</param>
         /// <param name="id">The flow id.</param>
