@@ -311,7 +311,7 @@ namespace UseCaseCore.Controller
 
         private void backgroundWorkerGenerateGraph_DoWork(object sender, DoWorkEventArgs e)
         {
-            //ToDo...
+            
         }
 
         private void backgroundWorkerGenerateMatrix_DoWork(object sender, DoWorkEventArgs e)
