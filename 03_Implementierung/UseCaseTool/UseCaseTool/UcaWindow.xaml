@@ -26,7 +26,7 @@
 
         <Grid x:Name="GridColumn0" Grid.Column="0" Grid.Row="1" Grid.RowSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Button x:Name="openButton" Content="Öffnen" HorizontalAlignment="Left" Height="28" Margin="10,10,0,0" VerticalAlignment="Top" Width="125" Click="OpenButtonClick" Style="{StaticResource AccentedSquareButtonStyle}"/>
-            <Button x:Name="cancelButton" Content="Abbrechen" HorizontalAlignment="Left" Height="28" Margin="151,10,0,0" VerticalAlignment="Top" Width="125" IsEnabled="False" Style="{StaticResource AccentedSquareButtonStyle}"/>
+            <Button x:Name="cancelButton" Content="Abbrechen" HorizontalAlignment="Left" Height="28" Margin="151,10,0,0" VerticalAlignment="Top" Width="125" Click="CancelButtonClick" IsEnabled="{Binding Path=ButtonEnabled}" Style="{StaticResource AccentedSquareButtonStyle}"/>
             <Button x:Name="sidebarHide" HorizontalAlignment="Left" Margin="290,-10,-10,-10" VerticalAlignment="Stretch" Height="20" Click="SidebarHideClick" BorderThickness="0" Background="#41B1E1" Content="Seitenleiste ausblenden" FontWeight="Medium" Foreground="White" VerticalContentAlignment="Bottom">
                 <Button.LayoutTransform>
                     <RotateTransform Angle="90"/>
@@ -71,7 +71,7 @@
                     <Grid Background="#FFE5E5E5">
                         <UseCaseTool:MatrixControl x:Name="MatrixControl"/>
                         <Label x:Name="cycleDepth" Content="Zyklustiefe:" HorizontalAlignment="Right" Margin="0,0,60,5" VerticalAlignment="Bottom" Width="100" FontSize="16" Height="29"/>
-                        <Controls:NumericUpDown x:Name="CycleDepth" HorizontalAlignment="Right" Value="1" Minimum="1" Maximum="20" Interval="1" Margin="0,0,5,5" VerticalAlignment="Bottom" Height="15" ValueChanged="NumericUpDown_ValueChanged"/>
+                        <Controls:NumericUpDown x:Name="CycleDepth" HorizontalAlignment="Right" Value="1" Minimum="1" Maximum="20" Interval="1" Margin="0,0,0,0" VerticalAlignment="Bottom" Height="15" ValueChanged="NumericUpDownValueChanged" IsEnabled="{Binding Path=MatrixCycleDepthEnabled}"/>
                     </Grid>
                 </TabItem>
                 <TabItem Header="Graph" KeyUp="TabItem_KeyUp">
@@ -88,31 +88,31 @@
                             <UseCaseTool:GraphViewerControl x:Name="GraphControl"  Margin="0,0,0,0"/>
                         </ScrollViewer>
 
-                        <Button x:Name="zoomAll" HorizontalAlignment="Left" Height="25" Margin="5,10,0,0" VerticalAlignment="Top" Width="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Grid.Row="0" ToolTip="Gesamtansicht">
+                        <Button x:Name="zoomAll" HorizontalAlignment="Left" Height="25" Margin="5,10,0,0" VerticalAlignment="Top" Width="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Grid.Row="0" ToolTip="Gesamtansicht" IsEnabled="{Binding Path=GraphButtonsEnabled}">
                             <StackPanel>
                                 <Image Source="/images/home.png"/>
                             </StackPanel>
                         </Button>
 
-                        <Button x:Name="selectArea" HorizontalAlignment="Left" Height="25" Margin="5,40,0,0" VerticalAlignment="Top" Width="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" ToolTip="Ausgewählten Bereich vergrößern">
+                        <Button x:Name="selectArea" HorizontalAlignment="Left" Height="25" Margin="5,40,0,0" VerticalAlignment="Top" Width="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" ToolTip="Ausgewählten Bereich vergrößern" IsEnabled="{Binding Path=GraphButtonsEnabled}">
                             <StackPanel>
                                 <Image Source="/images/select.png"/>
                             </StackPanel>
                         </Button>
 
-                        <Button x:Name="moveHand" HorizontalAlignment="Left" Height="25" Margin="5,70,0,0" VerticalAlignment="Top" Width="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" ToolTip="Frei bewegen">
+                        <Button x:Name="moveHand" HorizontalAlignment="Left" Height="25" Margin="5,70,0,0" VerticalAlignment="Top" Width="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" ToolTip="Frei bewegen" IsEnabled="{Binding Path=GraphButtonsEnabled}">
                             <StackPanel>
                                 <Image Source="/images/hand.png"/>
                             </StackPanel>
                         </Button>
 
-                        <Button x:Name="zoomIn" HorizontalAlignment="Left" Height="25" Margin="5,100,0,0" VerticalAlignment="Top" Width="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Click="ZoomIn_Click" ToolTip="Ansicht vergrößern">
+                        <Button x:Name="zoomIn" HorizontalAlignment="Left" Height="25" Margin="5,100,0,0" VerticalAlignment="Top" Width="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Click="ZoomIn_Click" ToolTip="Ansicht vergrößern" IsEnabled="{Binding Path=GraphButtonsEnabled}">
                             <StackPanel>
                                 <Image Source="/images/plus.png"/>
                             </StackPanel>
                         </Button>
 
-                        <Button x:Name="zoomOut" HorizontalAlignment="Left" Height="25" Margin="5,125,0,0" VerticalAlignment="Top" Width="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Click="ZoomOut_Click" ToolTip="Ansicht verkleinern">
+                        <Button x:Name="zoomOut" HorizontalAlignment="Left" Height="25" Margin="5,125,0,0" VerticalAlignment="Top" Width="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Click="ZoomOut_Click" ToolTip="Ansicht verkleinern" IsEnabled="{Binding Path=GraphButtonsEnabled}">
                             <StackPanel>
                                 <Image Source="/images/minus.png"/>
                             </StackPanel>

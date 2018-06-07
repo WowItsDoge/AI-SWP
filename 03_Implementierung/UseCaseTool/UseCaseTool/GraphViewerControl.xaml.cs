@@ -189,7 +189,7 @@ namespace UseCaseTool
         /// </summary>
         /// <param name="node">the node</param>
         /// <param name="nodeId">the id</param>
-        /// <returns></returns>
+        /// <returns>the graph node title</returns>
         private static string GetNodeTitle(Node node, int nodeId)
         {
             return nodeId + ": " + node.StepDescription;
@@ -200,8 +200,8 @@ namespace UseCaseTool
         /// </summary>
         /// <param name="node1">the first node to compare</param>
         /// <param name="node2">the second node to compare</param>
-        /// <param name="useCase">the usecase</param>
-        /// <returns></returns>
+        /// <param name="useCase">the use case</param>
+        /// <returns>true, if both nodes are connected</returns>
         private static bool IsConnected(Node node1, Node node2, UseCase useCase)
         {
             int id1 = GetNodeId(node1, useCase);
@@ -216,7 +216,7 @@ namespace UseCaseTool
         /// <param name="nodeId1">the id of node 1</param>
         /// <param name="nodeId2">the id of node 2</param>
         /// <param name="useCase">the use case object</param>
-        /// <returns></returns>
+        /// <returns>true, if both nodes are connected</returns>
         private static bool IsConnected(int nodeId1, int nodeId2, UseCase useCase)
         {
             return useCase.EdgeMatrix[nodeId1, nodeId2];
@@ -227,7 +227,7 @@ namespace UseCaseTool
         /// </summary>
         /// <param name="node">the node object</param>
         /// <param name="useCase">the use case object</param>
-        /// <returns></returns>
+        /// <returns>the node id</returns>
         private static int GetNodeId(Node node, UseCase useCase)
         {
             for (int i = 0; i < useCase.Nodes.Count; i++)
@@ -258,9 +258,9 @@ namespace UseCaseTool
         /// <param name="e">the event args</param>
         private void Viewer_Invalidated(object sender, System.Windows.Forms.InvalidateEventArgs e)
         {
-            if (GraphVisualisationChanged != null)
+            if (this.GraphVisualisationChanged != null)
             {
-                GraphVisualisationChanged(this, null);
+                this.GraphVisualisationChanged(this, null);
             }
         }
     }
