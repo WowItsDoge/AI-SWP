@@ -23,11 +23,11 @@ namespace UseCaseCore.Controller
     {
         private string currentFilePath = "";
 
-        private BackgroundWorker backgroundWorkerLoadFile;
-        private BackgroundWorker backgroundWorkerValidFile;
-        private BackgroundWorker backgroundWorkerGetErrorReport;
-        private BackgroundWorker backgroundWorkerGenerateMatrix;
-        private BackgroundWorker backgroundWorkerGenerateGraph;
+        private BackgroundWorker backgroundWorkerLoadFile = new BackgroundWorker();
+        private BackgroundWorker backgroundWorkerValidFile = new BackgroundWorker();
+        private BackgroundWorker backgroundWorkerGetErrorReport = new BackgroundWorker();
+        private BackgroundWorker backgroundWorkerGenerateMatrix = new BackgroundWorker();
+        private BackgroundWorker backgroundWorkerGenerateGraph = new BackgroundWorker();
 
         /// <summary>
         /// Creates an instance of the xml structure parser class
@@ -54,7 +54,7 @@ namespace UseCaseCore.Controller
         /// </summary>
         private Brush backgroundColor = new SolidColorBrush(Color.FromArgb(255, 65, 177, 255));
 
-        private int currentCycleDepth = 1;
+        private uint currentCycleDepth = 1;
 
         private Visibility visibilityOk = Visibility.Hidden;
         private Visibility visibilityFail = Visibility.Hidden;
@@ -68,6 +68,48 @@ namespace UseCaseCore.Controller
         /// Fires when new scenarios were created
         /// </summary>
         public event Action<UseCase> GraphCreated;
+
+        private bool cancelButtonEnabled = false;
+        public bool ButtonEnabled
+        {
+            get
+            {
+                return cancelButtonEnabled;
+            }
+            set
+            {
+                cancelButtonEnabled = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool matrixCycleDepthEnabled = false;
+        public bool MatrixCycleDepthEnabled
+        {
+            get
+            {
+                return matrixCycleDepthEnabled;
+            }
+            set
+            {
+                matrixCycleDepthEnabled = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool graphButtonsEnabled = false;
+        public bool GraphButtonsEnabled
+        {
+            get
+            {
+                return graphButtonsEnabled;
+            }
+            set
+            {
+                graphButtonsEnabled = value;
+                OnPropertyChanged();
+            }
+        }
 
         public Brush BackgroundColor1
         {
@@ -234,7 +276,6 @@ namespace UseCaseCore.Controller
         {
             currentFilePath = filePath;
 
-            this.backgroundWorkerLoadFile = new BackgroundWorker();
             this.backgroundWorkerLoadFile.DoWork += new DoWorkEventHandler(backgroundWorkerLoadFile_DoWork);
             this.backgroundWorkerLoadFile.WorkerSupportsCancellation = true;
 
@@ -251,8 +292,8 @@ namespace UseCaseCore.Controller
             {
                 this.BackgroundColor1 = Brushes.LimeGreen;
                 this.VisibilityOk1 = Visibility.Visible;
+                this.ButtonEnabled = true;
 
-                this.backgroundWorkerValidFile = new BackgroundWorker();
                 this.backgroundWorkerValidFile.DoWork += new DoWorkEventHandler(backgroundWorkerValidFile_DoWork);
                 this.backgroundWorkerValidFile.WorkerSupportsCancellation = true;
 
@@ -270,22 +311,24 @@ namespace UseCaseCore.Controller
 
         private void backgroundWorkerValidFile_DoWork(object sender, DoWorkEventArgs e)
         {
-            this.backgroundWorkerGetErrorReport = new BackgroundWorker();
-            this.backgroundWorkerGetErrorReport.DoWork += new DoWorkEventHandler(backgroundWorkerGetErrorReport_DoWork);
-            this.backgroundWorkerGetErrorReport.WorkerSupportsCancellation = true;
-
             if (this.xmlParser.ParseXmlFile(out this.useCase))
             {
                 this.BackgroundColor2 = Brushes.LimeGreen;
                 this.VisibilityOk2 = Visibility.Visible;
 
-                this.backgroundWorkerGenerateGraph = new BackgroundWorker();
+                this.backgroundWorkerGetErrorReport.DoWork += new DoWorkEventHandler(backgroundWorkerGetErrorReport_DoWork);
+                this.backgroundWorkerGetErrorReport.WorkerSupportsCancellation = true;
+
                 this.backgroundWorkerGenerateGraph.DoWork += new DoWorkEventHandler(backgroundWorkerGenerateGraph_DoWork);
                 this.backgroundWorkerGenerateGraph.WorkerSupportsCancellation = true;
 
-                this.backgroundWorkerGenerateMatrix = new BackgroundWorker();
                 this.backgroundWorkerGenerateMatrix.DoWork += new DoWorkEventHandler(backgroundWorkerGenerateMatrix_DoWork);
                 this.backgroundWorkerGenerateMatrix.WorkerSupportsCancellation = true;
+
+                if (!this.backgroundWorkerGetErrorReport.IsBusy)
+                {
+                    this.backgroundWorkerGetErrorReport.RunWorkerAsync();
+                }
 
                 if (!this.backgroundWorkerGenerateGraph.IsBusy)
                 {
@@ -300,7 +343,7 @@ namespace UseCaseCore.Controller
             else
             {
                 this.BackgroundColor2 = Brushes.Red;
-                this.VisibilityFail1 = Visibility.Visible;
+                this.VisibilityFail2 = Visibility.Visible;
             }
 
             if (!this.backgroundWorkerGetErrorReport.IsBusy)
@@ -319,18 +362,18 @@ namespace UseCaseCore.Controller
         private void backgroundWorkerGenerateGraph_DoWork(object sender, DoWorkEventArgs e)
         {
             this.GraphCreated(this.useCase);
-
-
+            this.GraphButtonsEnabled = true;
         }
 
         private void backgroundWorkerGenerateMatrix_DoWork(object sender, DoWorkEventArgs e)
         {
-            matrix = new ScenarioMatrix(useCase, 1);
+            matrix = new ScenarioMatrix(useCase, currentCycleDepth);
             matrix.ScenariosCreated += Matrix_scenariosCreated;
             if (matrix.CreateScenarios())
             {
                 this.BackgroundColor3 = Brushes.LimeGreen;
                 this.VisibilityOk3 = Visibility.Visible;
+                this.MatrixCycleDepthEnabled = true;
             }
             else
             {
@@ -356,11 +399,26 @@ namespace UseCaseCore.Controller
         /// </summary>
         public void CancelProcess()
         {
-            backgroundWorkerLoadFile.CancelAsync();
-            backgroundWorkerValidFile.CancelAsync();
-            backgroundWorkerGetErrorReport.CancelAsync();
-            backgroundWorkerGenerateMatrix.CancelAsync();
-            backgroundWorkerGenerateGraph.CancelAsync();
+            if(backgroundWorkerLoadFile.IsBusy)
+            {
+                backgroundWorkerLoadFile.CancelAsync();
+            }
+            if (backgroundWorkerLoadFile.IsBusy)
+            {
+                backgroundWorkerValidFile.CancelAsync();
+            }
+            if (backgroundWorkerGetErrorReport.IsBusy)
+            {
+                backgroundWorkerGetErrorReport.CancelAsync();
+            }
+            if (backgroundWorkerGenerateMatrix.IsBusy)
+            {
+                backgroundWorkerGenerateMatrix.CancelAsync();
+            }
+            if (backgroundWorkerGenerateGraph.IsBusy)
+            {
+                backgroundWorkerGenerateGraph.CancelAsync();
+            }
         }
 
         /// <summary>
@@ -383,12 +441,15 @@ namespace UseCaseCore.Controller
             //ToDo...
         }
 
-        public void ChangeCycleDepth(int depth)
+        public void ChangeCycleDepth(uint depth)
         {
             if(depth != currentCycleDepth & depth >= 0)
             {
-
-            }           
+                currentCycleDepth = depth;
+                this.backgroundWorkerGenerateMatrix = new BackgroundWorker();
+                this.backgroundWorkerGenerateMatrix.DoWork += new DoWorkEventHandler(backgroundWorkerGenerateMatrix_DoWork);
+                this.backgroundWorkerGenerateMatrix.WorkerSupportsCancellation = true;
+            }
         }
 
 

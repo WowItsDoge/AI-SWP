@@ -90,6 +90,7 @@
     <Compile Include="UcIntern\BitShifter.cs" />
     <Compile Include="UcIntern\Condition.cs" />
     <Compile Include="UcIntern\Entry.cs" />
+    <Compile Include="UcIntern\ExternalEdge.cs" />
     <Compile Include="UcIntern\Flow.cs" />
     <Compile Include="UcIntern\FlowIdentifier.cs" />
     <Compile Include="UcIntern\FlowType.cs" />

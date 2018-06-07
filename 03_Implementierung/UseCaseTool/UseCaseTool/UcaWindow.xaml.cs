@@ -82,8 +82,17 @@ namespace UseCaseTool
             {
                 selectedFile.Text = openXmlFileDialog.FileName;
                 this.controller.CurrentXmlFilePath(openXmlFileDialog.FileName);
-                ////selectedFile.TextAlignment = TextAlignment.Right;
             }
+        }
+
+        /// <summary>
+        /// Button to cancel the process
+        /// </summary>
+        /// <param name="sender">The sender</param>
+        /// <param name="e">The e</param>
+        private void CancelButtonClick(object sender, RoutedEventArgs e)
+        {
+            controller.CancelProcess();
         }
 
         /// <summary>
@@ -228,9 +237,10 @@ namespace UseCaseTool
         /// </summary>
         /// <param name="sender">The sender</param>
         /// <param name="e">The e</param>
-        private void NumericUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double?> e)
+        private void NumericUpDownValueChanged(object sender, RoutedPropertyChangedEventArgs<double?> e)
         {
-            controller.ChangeCycleDepth((int)CycleDepth.Value);
+            controller.ChangeCycleDepth((uint)CycleDepth.Value);
+
         }
 
 

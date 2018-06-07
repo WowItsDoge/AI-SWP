@@ -11,6 +11,7 @@ namespace UseCaseCore.XmlParser
     using OpenXmlPowerTools;
     using RuleValidation;
     using UcIntern;
+    using System.IO;
 
     /// <summary>
     /// The xml structure parser instance.
@@ -122,6 +123,24 @@ namespace UseCaseCore.XmlParser
         {
             try
             {
+                /// https://msdn.microsoft.com/de-de/library/office/ff478541.aspx
+                ///Package filePackage = Package.Open(path, FileMode.Open, FileAccess.ReadWrite);
+                ///this.useCaseFile = WordprocessingDocument.Open(filePackage);
+
+                /// copy file to windows temp folder to fix the problem with write access if file is opened
+                string destinationFile = Path.Combine(Path.GetTempPath(), "UseCaseXMLFile.docm");
+                try
+                {
+                    File.Copy(path, destinationFile, true);
+                }
+                catch (IOException ex)
+                {
+                    Debug.WriteLine(ex.Message.ToString());
+                    this.errorMessage = ex.Message.ToString();
+                    return false;
+                }
+                path = destinationFile;
+
                 this.useCaseFile = WordprocessingDocument.Open(path, true);
                 SimplifyMarkupSettings settings = new SimplifyMarkupSettings
                 {
@@ -331,13 +350,13 @@ namespace UseCaseCore.XmlParser
             if (propertyNode.Count == 0)
             {
                 return string.Empty;
-                throw new Exception("Error: count = 0");
+                throw new Exception("Error: Use-Case property not found");
             }
 
             if (propertyNode.Count > 1)
             {
                 return string.Empty;
-                throw new Exception("Error: count > 1");
+                throw new Exception("Error: More than one Use-Case property found");
             }
 
             try
@@ -357,9 +376,9 @@ namespace UseCaseCore.XmlParser
         /// </summary>
         private void GetBasicFlow()
         {
-            string xPathFilter = "//*/text()[normalize-space(.)='Basic Flow']/parent::*";
-            XmlNode root = this.useCaseXml.DocumentElement;
-            XmlNodeList basicFlowNode = root.SelectNodes(xPathFilter);
+            XmlNodeList basicFlowNode = null;
+            basicFlowNode = GetXmlNodeList(FlowType.Basic);
+
             if (basicFlowNode.Count == 0)
             {
                 throw new Exception("Error: No Basic Flow found");
@@ -393,9 +412,9 @@ namespace UseCaseCore.XmlParser
         /// </summary>
         private void GetGlobalAlternativeFlows()
         {
-            string xPathFilter = "//*/text()[normalize-space(.)='Global Alternative Flows']/parent::*";
-            XmlNode root = this.useCaseXml.DocumentElement;
-            XmlNodeList globalAlternativeFlowNodes = root.SelectNodes(xPathFilter);
+            XmlNodeList globalAlternativeFlowNodes = null;
+            globalAlternativeFlowNodes = GetXmlNodeList(FlowType.GlobalAlternative);
+
             if (globalAlternativeFlowNodes.Count == 0)
             {
                 throw new Exception("Error: No Global Alternative Flow found");
@@ -441,9 +460,9 @@ namespace UseCaseCore.XmlParser
         /// </summary>
         private void GetSpecificAlternativeFlows()
         {
-            string xPathFilter = "//*/text()[normalize-space(.)='Specific Alternative Flows']/parent::*";
-            XmlNode root = this.useCaseXml.DocumentElement;
-            XmlNodeList specificAlternativeFlowNodes = root.SelectNodes(xPathFilter);
+            XmlNodeList specificAlternativeFlowNodes = null;
+            specificAlternativeFlowNodes = GetXmlNodeList(FlowType.SpecificAlternative);
+
             if (specificAlternativeFlowNodes.Count == 0)
             {
                 throw new Exception("Error: No Specific Alternative Flow found");
@@ -492,9 +511,9 @@ namespace UseCaseCore.XmlParser
         /// </summary>
         private void GetBoundedAlternativeFlows()
         {
-            string xPathFilter = "//*/text()[normalize-space(.)='Bounded Alternative Flows']/parent::*";
-            XmlNode root = this.useCaseXml.DocumentElement;
-            XmlNodeList boundedAlternativeFlowNodes = root.SelectNodes(xPathFilter);
+            XmlNodeList boundedAlternativeFlowNodes = null;
+            boundedAlternativeFlowNodes = GetXmlNodeList(FlowType.BoundedAlternative);
+
             if (boundedAlternativeFlowNodes.Count == 0)
             {
                 throw new Exception("Error: No Bounded Alternative Flow found");
@@ -520,7 +539,7 @@ namespace UseCaseCore.XmlParser
                                     int stepEndNumber = int.Parse(referenceStepNumbers.Split('-')[1]);
                                     for (int n = stepStartNumber; n <= stepEndNumber; n++)
                                     {
-                                        FlowIdentifier flowIdentifier = new FlowIdentifier(FlowType.SpecificAlternative, i);
+                                        FlowIdentifier flowIdentifier = new FlowIdentifier(FlowType.BoundedAlternative, i);
                                         ReferenceStep referenceStep = new ReferenceStep(flowIdentifier, n);
                                         boundedAlternativFlow.AddReferenceStep(referenceStep);
                                     }
@@ -528,7 +547,7 @@ namespace UseCaseCore.XmlParser
                                 else
                                 {
                                     int referenceStepNumber = int.Parse(referenceStepNumbers);
-                                    FlowIdentifier flowIdentifier = new FlowIdentifier(FlowType.SpecificAlternative, i);
+                                    FlowIdentifier flowIdentifier = new FlowIdentifier(FlowType.BoundedAlternative, i);
                                     ReferenceStep referenceStep = new ReferenceStep(flowIdentifier, referenceStepNumber);
                                     boundedAlternativFlow.AddReferenceStep(referenceStep);
                                 }
@@ -553,5 +572,48 @@ namespace UseCaseCore.XmlParser
                 throw new Exception("Error: content not found");
             }
         }
+
+        private XmlNodeList GetXmlNodeList(FlowType flowType)
+        {
+            XmlNode root = this.useCaseXml.DocumentElement;
+            XmlNodeList flowNodeList = null;
+
+            List<string> searchWords = new List<string>();
+            switch (flowType)
+            {
+                case FlowType.Basic:
+                    searchWords.Add("Basic Flow");
+                    searchWords.Add("Basic");
+                    break;
+                case FlowType.BoundedAlternative:
+                    searchWords.Add("Bounded Alternative Flows");
+                    searchWords.Add("Bounded Alternative");
+                    searchWords.Add("Bounded");
+                    break;
+                case FlowType.GlobalAlternative:
+                    searchWords.Add("Global Alternative Flows");
+                    searchWords.Add("Global Alternative");
+                    searchWords.Add("Global");
+                    break;
+                case FlowType.SpecificAlternative:
+                    searchWords.Add("Specific Alternative Flows");
+                    searchWords.Add("Specific Alternative");
+                    searchWords.Add("Specific");
+                    break;
+            }
+
+            for (int i = 1; i <= searchWords.Count; i++)
+            {
+                string xPathFilter = "//*/text()[normalize-space(.)='" + searchWords[i - 1] + "']/parent::*";
+                flowNodeList = root.SelectNodes(xPathFilter);
+                if (flowNodeList.Count > 0)
+                {
+                    break;
+                }
+            }
+
+            return flowNodeList;
+        }
+
     }
 }
