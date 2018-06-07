@@ -71,7 +71,7 @@
                     <Grid Background="#FFE5E5E5">
                         <UseCaseTool:MatrixControl x:Name="MatrixControl"/>
                         <Label x:Name="cycleDepth" Content="Zyklustiefe:" HorizontalAlignment="Right" Margin="0,0,60,5" VerticalAlignment="Bottom" Width="100" FontSize="16" Height="29"/>
-                        <Controls:NumericUpDown HorizontalAlignment="Right" Value="1" Minimum="1" Maximum="20" Interval="1" Margin="0,0,5,5" VerticalAlignment="Bottom" Height="15"/>
+                        <Controls:NumericUpDown x:Name="CycleDepth" HorizontalAlignment="Right" Value="1" Minimum="1" Maximum="20" Interval="1" Margin="0,0,5,5" VerticalAlignment="Bottom" Height="15" ValueChanged="NumericUpDown_ValueChanged"/>
                     </Grid>
                 </TabItem>
                 <TabItem Header="Graph" KeyUp="TabItem_KeyUp">
@@ -85,7 +85,7 @@
                         </Grid.ColumnDefinitions>
 
                         <ScrollViewer HorizontalAlignment="Stretch" Grid.Column="0" VerticalAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Visible">
-                            <UseCaseTool:GraphViewerControl x:Name="GraphView"  Margin="0,0,0,0"/>
+                            <UseCaseTool:GraphViewerControl x:Name="GraphControl"  Margin="0,0,0,0"/>
                         </ScrollViewer>
 
                         <Button x:Name="zoomAll" HorizontalAlignment="Left" Height="25" Margin="5,10,0,0" VerticalAlignment="Top" Width="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Grid.Row="0" ToolTip="Gesamtansicht">

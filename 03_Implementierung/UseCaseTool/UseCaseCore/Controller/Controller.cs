@@ -54,6 +54,8 @@ namespace UseCaseCore.Controller
         /// </summary>
         private Brush backgroundColor = new SolidColorBrush(Color.FromArgb(255, 65, 177, 255));
 
+        private uint currentCycleDepth = 1;
+
         private Visibility visibilityOk = Visibility.Hidden;
         private Visibility visibilityFail = Visibility.Hidden;
 
@@ -61,6 +63,11 @@ namespace UseCaseCore.Controller
         /// Fires when new scenarios were created
         /// </summary>
         public event Action<List<Scenario>> ScenariosCreated;
+
+        /// <summary>
+        /// Fires when new scenarios were created
+        /// </summary>
+        public event Action<UseCase> GraphCreated;
 
         public Brush BackgroundColor1
         {
@@ -293,7 +300,7 @@ namespace UseCaseCore.Controller
             else
             {
                 this.BackgroundColor2 = Brushes.Red;
-                this.VisibilityFail1 = Visibility.Visible;
+                this.VisibilityFail2 = Visibility.Visible;
             }
 
             if (!this.backgroundWorkerGetErrorReport.IsBusy)
@@ -311,22 +318,24 @@ namespace UseCaseCore.Controller
 
         private void backgroundWorkerGenerateGraph_DoWork(object sender, DoWorkEventArgs e)
         {
-            
+            this.GraphCreated(this.useCase);
+
+
         }
 
         private void backgroundWorkerGenerateMatrix_DoWork(object sender, DoWorkEventArgs e)
         {
-            matrix = new ScenarioMatrix(useCase, 1);
+            matrix = new ScenarioMatrix(useCase, currentCycleDepth);
             matrix.ScenariosCreated += Matrix_scenariosCreated;
             if (matrix.CreateScenarios())
             {
                 this.BackgroundColor3 = Brushes.LimeGreen;
                 this.VisibilityOk3 = Visibility.Visible;
-
             }
             else
             {
-
+                this.BackgroundColor3 = Brushes.Red;
+                this.VisibilityFail3 = Visibility.Visible;
             }
         }
 
@@ -342,7 +351,10 @@ namespace UseCaseCore.Controller
             }
         }
 
-        public void CancelProgress()
+        /// <summary>
+        /// Cancel process
+        /// </summary>
+        public void CancelProcess()
         {
             backgroundWorkerLoadFile.CancelAsync();
             backgroundWorkerValidFile.CancelAsync();
@@ -370,6 +382,18 @@ namespace UseCaseCore.Controller
         {
             //ToDo...
         }
+
+        public void ChangeCycleDepth(uint depth)
+        {
+            if(depth != currentCycleDepth & depth >= 0)
+            {
+                currentCycleDepth = depth;
+                this.backgroundWorkerGenerateMatrix = new BackgroundWorker();
+                this.backgroundWorkerGenerateMatrix.DoWork += new DoWorkEventHandler(backgroundWorkerGenerateMatrix_DoWork);
+                this.backgroundWorkerGenerateMatrix.WorkerSupportsCancellation = true;
+            }
+        }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)

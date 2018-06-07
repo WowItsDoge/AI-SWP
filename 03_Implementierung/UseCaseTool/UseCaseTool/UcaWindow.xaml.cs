@@ -42,6 +42,7 @@ namespace UseCaseTool
         {
             this.DataContext = this.controller;
             this.controller.ScenariosCreated += Controller_ScenariosCreated;
+            this.controller.GraphCreated += Controller_GraphCreated;
             this.InitializeComponent();
         }
 
@@ -52,6 +53,15 @@ namespace UseCaseTool
         private void Controller_ScenariosCreated(System.Collections.Generic.List<UseCaseCore.ScenarioMatrix.Scenario> obj)
         {
             this.MatrixControl.Draw(obj);
+        }
+
+        /// <summary>
+        /// When new Graph was created, draw it with Graph Control
+        /// </summary>
+        /// <param name="obj"></param>
+        private void Controller_GraphCreated(UseCaseCore.UcIntern.UseCase useCase)
+        {
+            this.GraphControl.UpdateGraphView(useCase);
         }
 
         /// <summary>
@@ -189,7 +199,7 @@ namespace UseCaseTool
         /// <param name="e">The e</param>
         private void ZoomIn_Click(object sender, RoutedEventArgs e)
         {
-            GraphView.Zoom(1.2);
+            GraphControl.Zoom(1.2);
         }
 
         /// <summary>
@@ -199,18 +209,33 @@ namespace UseCaseTool
         /// <param name="e">The e</param>
         private void ZoomOut_Click(object sender, RoutedEventArgs e)
         {
-            GraphView.Zoom(0.8);
+            GraphControl.Zoom(0.8);
         }
 
+        /// <summary>
+        /// Chance view with key up
+        /// </summary>
+        /// <param name="sender">The sender</param>
+        /// <param name="e">The e</param>
         private void TabItem_KeyUp(object sender, KeyEventArgs e)
         {
-            GraphView.Move(10, 0);
+            GraphControl.Move(10, 0);
+        }
+
+
+        /// <summary>
+        /// Chance cycle depth value
+        /// </summary>
+        /// <param name="sender">The sender</param>
+        /// <param name="e">The e</param>
+        private void NumericUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double?> e)
+        {
+            controller.ChangeCycleDepth((uint)CycleDepth.Value);
         }
 
 
         //ToDo...
         // - Cancel Button
-        // - Zyklustiefe ergänzen
         // - Anzeige Mängelbericht
         // - ... 
 
