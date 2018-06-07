@@ -7,6 +7,7 @@ namespace UseCaseTool
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Reflection;
     using System.Text;
     using System.Threading.Tasks;
     using System.Windows;
@@ -18,7 +19,6 @@ namespace UseCaseTool
     using System.Windows.Media.Imaging;
     using System.Windows.Navigation;
     using System.Windows.Shapes;
-    using System.Reflection;
     using UseCaseCore.UcIntern;
 
     /// <summary>
@@ -26,8 +26,14 @@ namespace UseCaseTool
     /// </summary>
     public partial class GraphViewerControl : UserControl
     {
+        /// <summary>
+        /// reference to the viewer control
+        /// </summary>
         private Microsoft.Msagl.GraphViewerGdi.GViewer viewer;
 
+        /// <summary>
+        /// reference to the visible graph
+        /// </summary>
         private Microsoft.Msagl.Drawing.Graph graph;
 
         /// <summary>
@@ -38,10 +44,10 @@ namespace UseCaseTool
             this.InitializeComponent();
 
             // create a viewer object 
-            viewer = new Microsoft.Msagl.GraphViewerGdi.GViewer();
+            this.viewer = new Microsoft.Msagl.GraphViewerGdi.GViewer();
 
             // create a graph object 
-            graph = new Microsoft.Msagl.Drawing.Graph("graph");
+            this.graph = new Microsoft.Msagl.Drawing.Graph("graph");
 
             /*
             // example graph
@@ -55,46 +61,56 @@ namespace UseCaseTool
             */
 
             // bind the graph to the viewer 
-            viewer.Graph = graph;
-            viewer.Dock = System.Windows.Forms.DockStyle.Fill;
-            viewer.OutsideAreaBrush = System.Drawing.Brushes.White;
-            viewer.ToolBarIsVisible = false;
+            this.viewer.Graph = this.graph;
+            this.viewer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.viewer.OutsideAreaBrush = System.Drawing.Brushes.White;
+            this.viewer.ToolBarIsVisible = false;
 
             // display the windows form control in the wpf view
-            GraphView.Child = viewer;
+            this.GraphView.Child = this.viewer;
 
             // on graph view update
-            viewer.Invalidated += Viewer_Invalidated;
+            this.viewer.Invalidated += this.Viewer_Invalidated;
         }
 
-        private void Viewer_Invalidated(object sender, System.Windows.Forms.InvalidateEventArgs e)
-        {
-            if (GraphVisualisationChanged != null)
-            {
-                GraphVisualisationChanged(this, null);
-            }
-        }
+        /// <summary>
+        /// Event handler when the graph visualization was changed
+        /// </summary>
+        public event EventHandler GraphVisualisationChanged;
 
+        /// <summary>
+        /// zooms the graph in the viewer control
+        /// </summary>
+        /// <param name="delta">the zoom value</param>
         public void Zoom(double delta)
         {
-            viewer.ZoomF *= delta;
+            this.viewer.ZoomF *= delta;
         }
 
+        /// <summary>
+        /// moves the graph in the viewer control
+        /// </summary>
+        /// <param name="x">the horizontal position delta</param>
+        /// <param name="y">the vertical position delta</param>
         public void Move(double x, double y)
         {
-            double[][] currentTransform = GetTransformMatrix();
+            double[][] currentTransform = this.GetTransformMatrix();
 
-            viewer.Transform = new Microsoft.Msagl.Core.Geometry.Curves.PlaneTransformation(
+            this.viewer.Transform = new Microsoft.Msagl.Core.Geometry.Curves.PlaneTransformation(
                 currentTransform[0][0], currentTransform[0][1], currentTransform[0][2] + x,
                 currentTransform[1][0], currentTransform[1][1], currentTransform[1][2] + y);
 
-            viewer.DrawingPanel.Invalidate();
+            this.viewer.DrawingPanel.Invalidate();
         }
 
+        /// <summary>
+        /// displays the graph
+        /// </summary>
+        /// <param name="useCase">the use case to display</param>
         public void UpdateGraphView(UseCase useCase)
         {
-            graph = new Microsoft.Msagl.Drawing.Graph("graph");
-            viewer.Graph = graph;
+            this.graph = new Microsoft.Msagl.Drawing.Graph("graph");
+            this.viewer.Graph = this.graph;
 
             for (int n1 = 0; n1 < useCase.Nodes.Count; n1++)
             {
@@ -105,13 +121,13 @@ namespace UseCaseTool
                         string nodeTitle1 = GetNodeTitle(useCase.Nodes[n1], n1);
                         string nodeTitle2 = GetNodeTitle(useCase.Nodes[n2], n2);
 
-                        var edge = graph.AddEdge(nodeTitle1, nodeTitle2);
+                        var edge = this.graph.AddEdge(nodeTitle1, nodeTitle2);
                         edge.Attr.Color = Microsoft.Msagl.Drawing.Color.Green;
 
-                        var node1 = graph.FindNode(nodeTitle1);
+                        var node1 = this.graph.FindNode(nodeTitle1);
                         SetNodeStyle(node1);
 
-                        var node2 = graph.FindNode(nodeTitle2);
+                        var node2 = this.graph.FindNode(nodeTitle2);
                         SetNodeStyle(node2);
                     }
                 }
@@ -127,48 +143,65 @@ namespace UseCaseTool
             return new Tuple<double, double>(-1000, 1000);
         }
 
+        /// <summary>
+        /// Get the vertical graph range
+        /// </summary>
+        /// <returns>the minimum and maximum y value</returns>
         public Tuple<double, double> GetGraphRangeY()
         {
             return new Tuple<double, double>(-1000, 1000);
         }
 
+        /// <summary>
+        /// Get the current graph x position
+        /// </summary>
+        /// <returns>graph x position</returns>
         public double GetGraphX()
         {
-            var transformMatrix = GetTransformMatrix();
+            var transformMatrix = this.GetTransformMatrix();
 
             return transformMatrix[0][2];
         }
 
+        /// <summary>
+        /// Get the current graph y position
+        /// </summary>
+        /// <returns>graph y position</returns>
         public double GetGraphY()
         {
-            var transformMatrix = GetTransformMatrix();
+            var transformMatrix = this.GetTransformMatrix();
 
             return transformMatrix[1][2];
         }
 
-        public event EventHandler GraphVisualisationChanged;
-
         /// <summary>
-        /// Returns the transform matrix of the graph viewer.
+        /// Set the style of a graph node
         /// </summary>
-        /// <returns></returns>
-        private double[][] GetTransformMatrix()
-        {
-            return (double[][])typeof(Microsoft.Msagl.Core.Geometry.Curves.PlaneTransformation)
-                .GetField("elements", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(viewer.Transform);
-        }
-
+        /// <param name="node">the microsoft drawing node</param>
         private static void SetNodeStyle(Microsoft.Msagl.Drawing.Node node)
         {
             node.Attr.FillColor = Microsoft.Msagl.Drawing.Color.Green;
             node.Attr.Shape = Microsoft.Msagl.Drawing.Shape.Ellipse;
         }
 
+        /// <summary>
+        /// Generates the title for a graph node
+        /// </summary>
+        /// <param name="node">the node</param>
+        /// <param name="nodeId">the id</param>
+        /// <returns>the graph node title</returns>
         private static string GetNodeTitle(Node node, int nodeId)
         {
             return nodeId + ": " + node.StepDescription;
         }
 
+        /// <summary>
+        /// Returns true if both nodes are connected
+        /// </summary>
+        /// <param name="node1">the first node to compare</param>
+        /// <param name="node2">the second node to compare</param>
+        /// <param name="useCase">the use case</param>
+        /// <returns>true, if both nodes are connected</returns>
         private static bool IsConnected(Node node1, Node node2, UseCase useCase)
         {
             int id1 = GetNodeId(node1, useCase);
@@ -177,11 +210,24 @@ namespace UseCaseTool
             return IsConnected(id1, id2, useCase);
         }
 
+        /// <summary>
+        /// returns true if both nodes are connected
+        /// </summary>
+        /// <param name="nodeId1">the id of node 1</param>
+        /// <param name="nodeId2">the id of node 2</param>
+        /// <param name="useCase">the use case object</param>
+        /// <returns>true, if both nodes are connected</returns>
         private static bool IsConnected(int nodeId1, int nodeId2, UseCase useCase)
         {
             return useCase.EdgeMatrix[nodeId1, nodeId2];
         }
 
+        /// <summary>
+        /// returns the node id
+        /// </summary>
+        /// <param name="node">the node object</param>
+        /// <param name="useCase">the use case object</param>
+        /// <returns>the node id</returns>
         private static int GetNodeId(Node node, UseCase useCase)
         {
             for (int i = 0; i < useCase.Nodes.Count; i++)
@@ -193,6 +239,29 @@ namespace UseCaseTool
             }
 
             return -1;
+        }
+
+        /// <summary>
+        /// Returns the transform matrix of the graph viewer.
+        /// </summary>
+        /// <returns>the transform matrix</returns>
+        private double[][] GetTransformMatrix()
+        {
+            return (double[][])typeof(Microsoft.Msagl.Core.Geometry.Curves.PlaneTransformation)
+                .GetField("elements", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(this.viewer.Transform);
+        }
+
+        /// <summary>
+        /// The graph invalidation
+        /// </summary>
+        /// <param name="sender">the sender</param>
+        /// <param name="e">the event args</param>
+        private void Viewer_Invalidated(object sender, System.Windows.Forms.InvalidateEventArgs e)
+        {
+            if (this.GraphVisualisationChanged != null)
+            {
+                this.GraphVisualisationChanged(this, null);
+            }
         }
     }
 }

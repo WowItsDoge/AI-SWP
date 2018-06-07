@@ -26,7 +26,7 @@ namespace UseCaseCore.ScenarioMatrix
         /// <summary>
         ///  Sets the cycle depth that defines how many times an alternative flow may be repeated
         /// </summary>
-        private int cycleDepth;
+        private uint cycleDepth;
 
         /// <summary>
         /// Sets the Use Case from which the scenarios get created
@@ -38,7 +38,7 @@ namespace UseCaseCore.ScenarioMatrix
         /// </summary>
         /// <param name="uc"> UseCase from which the scenarios get created </param>
         /// <param name="cycleDepth"> CycleDepth defined by the GUI </param>
-        public ScenarioMatrix(UseCase uc, int cycleDepth = 1)
+        public ScenarioMatrix(UseCase uc, uint cycleDepth = 1)
         {
             this.uc = uc;
             this.scenarios = new List<Scenario>();
@@ -62,7 +62,7 @@ namespace UseCaseCore.ScenarioMatrix
         /// <summary>
         /// Gets or sets CycleDepth
         /// </summary>
-        public int CycleDepth
+        public uint CycleDepth
         {
             get
             {
@@ -71,12 +71,6 @@ namespace UseCaseCore.ScenarioMatrix
 
             set
             {
-                // If negative cycledepth or same value return
-                if (value < 0 || value == this.CycleDepth)
-                {
-                    return;
-                }
-
                 this.cycleDepth = value;
                 this.CreateScenarios();
             }
@@ -205,7 +199,7 @@ namespace UseCaseCore.ScenarioMatrix
         /// <param name="startnode"> Node from which the traversing starts </param>
         /// <param name="s"> scenario up to the current node </param>
         /// <param name="cycleDepth"> maximum cycle depth for the scenarios </param>
-        private void TraverseGraphRec(Matrix<bool> matrix, int startnode, Scenario s, int cycleDepth)
+        private void TraverseGraphRec(Matrix<bool> matrix, int startnode, Scenario s, uint cycleDepth)
         { 
             int stepsFound = 0;
             Scenario savedScenario = new Scenario(s);
