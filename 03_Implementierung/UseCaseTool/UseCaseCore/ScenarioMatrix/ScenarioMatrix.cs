@@ -89,6 +89,11 @@ namespace UseCaseCore.ScenarioMatrix
         /// <returns> Returns true if successful </returns>
         public bool Export(string path)
         {
+            if(path == null)
+            {
+                return false;
+            }
+
             bool exportResult = false;
             try
             {
@@ -143,9 +148,23 @@ namespace UseCaseCore.ScenarioMatrix
             s.Description += "Step 1, ";
 
             this.TraverseGraphRec(this.uc.EdgeMatrix, 0, s, this.CycleDepth);
+            this.EnmuerateScenarioIds();
 
             this.CreateMatrix();
             return true;
+        }
+
+        /// <summary>
+        /// Gives every Scenario an ID > 1
+        /// </summary>
+        private void EnmuerateScenarioIds()
+        {
+            int i = 1;
+            foreach (Scenario s in this.scenarios) 
+            {
+                s.ID = i;
+                i++;
+            }
         }
 
         /// <summary>

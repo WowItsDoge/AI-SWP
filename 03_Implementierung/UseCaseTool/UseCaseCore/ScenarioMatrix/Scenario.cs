@@ -28,6 +28,11 @@ namespace UseCaseCore.ScenarioMatrix
         private List<Node> nodes;
 
         /// <summary>
+        /// Id of the scenario
+        /// </summary>
+        private int id;
+
+        /// <summary>
         /// Initializes a new instance of the Scenario class
         /// </summary>
         public Scenario()
@@ -63,6 +68,25 @@ namespace UseCaseCore.ScenarioMatrix
         {
             get { return this.description; }
             set { this.description = value; }
-        }        
+        }
+        
+        /// <summary>
+        /// Gets or sets the scenario id
+        /// </summary>
+        public int ID
+        {
+            get { return id; }
+            set { id = value; }
+        }
+
+        private string comment;
+
+        public string Comment
+        {
+            get { return comment; }
+            set { comment = value; }
+        }
+
+
     }
 }
