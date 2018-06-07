@@ -6,12 +6,12 @@ namespace UseCaseCore.XmlParser
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.IO;
     using System.Xml;
     using DocumentFormat.OpenXml.Packaging;
     using OpenXmlPowerTools;
     using RuleValidation;
     using UcIntern;
-    using System.IO;
 
     /// <summary>
     /// The xml structure parser instance.
@@ -123,11 +123,11 @@ namespace UseCaseCore.XmlParser
         {
             try
             {
-                /// https://msdn.microsoft.com/de-de/library/office/ff478541.aspx
-                ///Package filePackage = Package.Open(path, FileMode.Open, FileAccess.ReadWrite);
-                ///this.useCaseFile = WordprocessingDocument.Open(filePackage);
+                //// https://msdn.microsoft.com/de-de/library/office/ff478541.aspx
+                //// Package filePackage = Package.Open(path, FileMode.Open, FileAccess.ReadWrite);
+                //// this.useCaseFile = WordprocessingDocument.Open(filePackage);
 
-                /// copy file to windows temp folder to fix the problem with write access if file is opened
+                //// copy file to windows temp folder to fix the problem with write access if file is opened
                 string destinationFile = Path.Combine(Path.GetTempPath(), "UseCaseXMLFile.docm");
                 try
                 {
@@ -139,6 +139,7 @@ namespace UseCaseCore.XmlParser
                     this.errorMessage = ex.Message.ToString();
                     return false;
                 }
+
                 path = destinationFile;
 
                 this.useCaseFile = WordprocessingDocument.Open(path, true);
@@ -377,7 +378,7 @@ namespace UseCaseCore.XmlParser
         private void GetBasicFlow()
         {
             XmlNodeList basicFlowNode = null;
-            basicFlowNode = GetXmlNodeList(FlowType.Basic);
+            basicFlowNode = this.GetXmlNodeList(FlowType.Basic);
 
             if (basicFlowNode.Count == 0)
             {
@@ -413,7 +414,7 @@ namespace UseCaseCore.XmlParser
         private void GetGlobalAlternativeFlows()
         {
             XmlNodeList globalAlternativeFlowNodes = null;
-            globalAlternativeFlowNodes = GetXmlNodeList(FlowType.GlobalAlternative);
+            globalAlternativeFlowNodes = this.GetXmlNodeList(FlowType.GlobalAlternative);
 
             if (globalAlternativeFlowNodes.Count == 0)
             {
@@ -461,7 +462,7 @@ namespace UseCaseCore.XmlParser
         private void GetSpecificAlternativeFlows()
         {
             XmlNodeList specificAlternativeFlowNodes = null;
-            specificAlternativeFlowNodes = GetXmlNodeList(FlowType.SpecificAlternative);
+            specificAlternativeFlowNodes = this.GetXmlNodeList(FlowType.SpecificAlternative);
 
             if (specificAlternativeFlowNodes.Count == 0)
             {
@@ -512,7 +513,7 @@ namespace UseCaseCore.XmlParser
         private void GetBoundedAlternativeFlows()
         {
             XmlNodeList boundedAlternativeFlowNodes = null;
-            boundedAlternativeFlowNodes = GetXmlNodeList(FlowType.BoundedAlternative);
+            boundedAlternativeFlowNodes = this.GetXmlNodeList(FlowType.BoundedAlternative);
 
             if (boundedAlternativeFlowNodes.Count == 0)
             {
@@ -573,6 +574,11 @@ namespace UseCaseCore.XmlParser
             }
         }
 
+        /// <summary>
+        /// Get the xml node list for specified flow type
+        /// </summary>
+        /// <param name="flowType">Specified the FlowType to identified the search words</param>
+        /// <returns>Returns the XmlNodeList with the founded Node.</returns>
         private XmlNodeList GetXmlNodeList(FlowType flowType)
         {
             XmlNode root = this.useCaseXml.DocumentElement;
@@ -614,6 +620,5 @@ namespace UseCaseCore.XmlParser
 
             return flowNodeList;
         }
-
     }
 }
