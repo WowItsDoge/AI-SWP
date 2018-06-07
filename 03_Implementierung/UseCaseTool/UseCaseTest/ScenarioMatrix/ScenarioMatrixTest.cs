@@ -192,9 +192,9 @@ namespace UseCaseTest.ScenarioMatrix
             expectedScenario2.Add(n3);
             expectedScenario2.Add(n4);
             
-            UseCase uc = new UseCase();
-            uc.EdgeMatrix = m;
-            uc.Nodes = nodes;
+            TestUseCase uc = new TestUseCase();
+            uc.SetEdgeMatrix(m);
+            uc.SetNodes(nodes);
 
             ScenarioMatrix sm = new ScenarioMatrix(uc, cycleDepth);
             sm.CreateScenarios();
@@ -266,10 +266,10 @@ namespace UseCaseTest.ScenarioMatrix
             expectedScenario4.Add(n5);
             expectedScenario4.Add(n2);
             expectedScenario4.Add(n6);
-            
-            UseCase uc = new UseCase();
-            uc.EdgeMatrix = m;
-            uc.Nodes = nodes;
+
+            TestUseCase uc = new TestUseCase();
+            uc.SetEdgeMatrix(m);
+            uc.SetNodes(nodes);
 
             ScenarioMatrix sm = new ScenarioMatrix(uc, cycleDepth);
             sm.CreateScenarios();
@@ -325,9 +325,9 @@ namespace UseCaseTest.ScenarioMatrix
             expectedScenario2.Add(n3);
             expectedScenario2.Add(n5);
 
-            UseCase uc = new UseCase();
-            uc.EdgeMatrix = m;
-            uc.Nodes = nodes;
+            TestUseCase uc = new TestUseCase();
+            uc.SetEdgeMatrix(m);
+            uc.SetNodes(nodes);
 
             ScenarioMatrix sm = new ScenarioMatrix(uc, cycleDepth);
             sm.CreateScenarios();
@@ -415,9 +415,9 @@ namespace UseCaseTest.ScenarioMatrix
             expectedScenario6.Add(n2);
             expectedScenario6.Add(n4);
 
-            UseCase uc = new UseCase();
-            uc.EdgeMatrix = m;
-            uc.Nodes = nodes;
+            TestUseCase uc = new TestUseCase();
+            uc.SetEdgeMatrix(m);
+            uc.SetNodes(nodes);
 
             ScenarioMatrix sm = new ScenarioMatrix(uc, cycleDepth);
             sm.CreateScenarios();
@@ -467,10 +467,10 @@ namespace UseCaseTest.ScenarioMatrix
             nodes.Add(n4);
             nodes.Add(n5);
             nodes.Add(n6);
-            
-            UseCase uc = new UseCase();
-            uc.EdgeMatrix = m;
-            uc.Nodes = nodes;
+
+            TestUseCase uc = new TestUseCase();
+            uc.SetEdgeMatrix(m);
+            uc.SetNodes(nodes);
 
             ScenarioMatrix sm = new ScenarioMatrix(uc, cycleDepth);
             sm.CreateScenarios();
@@ -526,9 +526,9 @@ namespace UseCaseTest.ScenarioMatrix
             nodes.Add(n5);
             nodes.Add(n6);
 
-            UseCase uc = new UseCase();
-            uc.EdgeMatrix = m;
-            uc.Nodes = nodes;
+            TestUseCase uc = new TestUseCase();
+            uc.SetEdgeMatrix(m);
+            uc.SetNodes(nodes);
 
             ScenarioMatrix sm = new ScenarioMatrix(uc, cycleDepth);
             sm.CreateScenarios();
@@ -640,9 +640,9 @@ namespace UseCaseTest.ScenarioMatrix
             expectedScenario4.Add(n2);
             expectedScenario4.Add(n6);
 
-            UseCase uc = new UseCase();
-            uc.EdgeMatrix = m;
-            uc.Nodes = nodes;
+            TestUseCase uc = new TestUseCase();
+            uc.SetEdgeMatrix(m);
+            uc.SetNodes(nodes);
 
             ScenarioMatrix sm = new ScenarioMatrix(uc, cycleDepth);
             sm.CreateScenarios();
@@ -668,8 +668,8 @@ namespace UseCaseTest.ScenarioMatrix
         [Test]
         public void ScenarioMatrix_UseCase_IsEmpty()
         {
-            UseCase uc = new UseCase();
-            uc.Nodes = new List<Node>();
+            TestUseCase uc = new TestUseCase();
+            uc.SetNodes(new List<Node>());
 
             ScenarioMatrix sm = new ScenarioMatrix(uc);
             bool retVal = sm.CreateScenarios();
@@ -687,18 +687,20 @@ namespace UseCaseTest.ScenarioMatrix
             Node n1 = new Node("Schritt 1", new FlowIdentifier(FlowType.Basic, 1));
             Node n2 = new Node("Schritt 2", new FlowIdentifier(FlowType.Basic, 1));
 
-            UseCase uc1 = new UseCase();
-            uc1.Nodes = new List<Node>();
-            uc1.Nodes.Add(n1);
+            TestUseCase uc1 = new TestUseCase();
+            List<Node> nodes = new List<Node>();
+            nodes.Add(n1);
+            uc1.SetNodes(nodes);
 
             ScenarioMatrix sm = new ScenarioMatrix(uc1);
 
             Assert.AreEqual(sm.UC.Nodes.Count, 1);
 
-            UseCase uc2 = new UseCase();
-            uc2.Nodes = new List<Node>();
-            uc2.Nodes.Add(n1);
-            uc2.Nodes.Add(n2);
+            TestUseCase uc2 = new TestUseCase();
+            nodes = new List<Node>();
+            nodes.Add(n1);
+            nodes.Add(n2);
+            uc2.SetNodes(nodes);
 
             sm.UC = uc2;
 
