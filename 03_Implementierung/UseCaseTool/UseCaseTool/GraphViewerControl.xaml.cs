@@ -43,6 +43,17 @@ namespace UseCaseTool
             // create a graph object 
             graph = new Microsoft.Msagl.Drawing.Graph("graph");
 
+            /*
+            // example graph
+            graph.AddEdge("A", "B");
+            graph.AddEdge("B", "C");
+            graph.AddEdge("A", "C").Attr.Color = Microsoft.Msagl.Drawing.Color.Green;
+            graph.FindNode("A").Attr.FillColor = Microsoft.Msagl.Drawing.Color.Magenta;
+            graph.FindNode("B").Attr.FillColor = Microsoft.Msagl.Drawing.Color.MistyRose;
+            Microsoft.Msagl.Drawing.Node c = graph.FindNode("C");
+            c.Attr.FillColor = Microsoft.Msagl.Drawing.Color.PaleGreen;
+            */
+
             // bind the graph to the viewer 
             viewer.Graph = graph;
             viewer.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -51,6 +62,17 @@ namespace UseCaseTool
 
             // display the windows form control in the wpf view
             GraphView.Child = viewer;
+
+            // on graph view update
+            viewer.Invalidated += Viewer_Invalidated;
+        }
+
+        private void Viewer_Invalidated(object sender, System.Windows.Forms.InvalidateEventArgs e)
+        {
+            if (GraphVisualisationChanged != null)
+            {
+                GraphVisualisationChanged(this, null);
+            }
         }
 
         public void Zoom(double delta)
@@ -60,8 +82,7 @@ namespace UseCaseTool
 
         public void Move(double x, double y)
         {
-            double[][] currentTransform = (double[][])typeof(Microsoft.Msagl.Core.Geometry.Curves.PlaneTransformation)
-                .GetField("elements", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(viewer.Transform);
+            double[][] currentTransform = GetTransformMatrix();
 
             viewer.Transform = new Microsoft.Msagl.Core.Geometry.Curves.PlaneTransformation(
                 currentTransform[0][0], currentTransform[0][1], currentTransform[0][2] + x,
@@ -95,6 +116,46 @@ namespace UseCaseTool
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Get the horizontal graph range
+        /// </summary>
+        /// <returns>the minimum and maximum x value</returns>
+        public Tuple<double, double> GetGraphRangeX()
+        {
+            return new Tuple<double, double>(-1000, 1000);
+        }
+
+        public Tuple<double, double> GetGraphRangeY()
+        {
+            return new Tuple<double, double>(-1000, 1000);
+        }
+
+        public double GetGraphX()
+        {
+            var transformMatrix = GetTransformMatrix();
+
+            return transformMatrix[0][2];
+        }
+
+        public double GetGraphY()
+        {
+            var transformMatrix = GetTransformMatrix();
+
+            return transformMatrix[1][2];
+        }
+
+        public event EventHandler GraphVisualisationChanged;
+
+        /// <summary>
+        /// Returns the transform matrix of the graph viewer.
+        /// </summary>
+        /// <returns></returns>
+        private double[][] GetTransformMatrix()
+        {
+            return (double[][])typeof(Microsoft.Msagl.Core.Geometry.Curves.PlaneTransformation)
+                .GetField("elements", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(viewer.Transform);
         }
 
         private static void SetNodeStyle(Microsoft.Msagl.Drawing.Node node)
