@@ -81,7 +81,7 @@ namespace UseCaseCore.XmlParser
         /// <summary>
         /// Creates an instance of the UseCase class
         /// </summary>
-        private UseCase useCaseOutParameter = new UseCase();
+        private UseCase outgoingUseCase = new UseCase();
 
         /// <summary>
         /// The word processing document for the use case file.
@@ -92,6 +92,11 @@ namespace UseCaseCore.XmlParser
         /// The loaded xml document.
         /// </summary>
         private XmlDocument useCaseXml;
+
+        /// <summary>
+        /// The file path of the UseCase File
+        /// </summary>
+        private string useCaseFilePath;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="XmlStructureParser" /> class.
@@ -112,37 +117,29 @@ namespace UseCaseCore.XmlParser
             this.boundedAlternativeFlows = new List<BoundedAlternativeFlow>();
             this.useCaseFile = null;
             this.useCaseXml = new XmlDocument();
+            this.useCaseFilePath = string.Empty;
         }
 
         /// <summary>
         /// Loads external (word) xml file, which is stored on a storage medium. The absolute path to the file must be passed as parameter.
         /// </summary>
-        /// <param name="path">Specifies the path for the xml file the user wants to load.</param>
+        /// <param name="filePath">Specifies the path for the xml file the user wants to load.</param>
         /// <returns>Returns true if the file exists and could be loaded, otherwise false.</returns>
-        public bool LoadXmlFile(string path)
+        public bool LoadXmlFile(string filePath)
         {
+            // nur zum debuggen, da bei 2x hintereinander einlesen der UseCase Datei die LoadXmlFile()-Funktion von der Oberfläche 2x hintereinander aufgerufen wird
+            // dieser 2x aufruf muss noch verhindert werden, dann sollte auch die ausnahme/error nichtmehr auftreten...
+            Debug.WriteLine("XMLParser --> LoadXmlFile(...) Funktion aufgerufen");
+
             try
             {
-                //// https://msdn.microsoft.com/de-de/library/office/ff478541.aspx
-                //// Package filePackage = Package.Open(path, FileMode.Open, FileAccess.ReadWrite);
-                //// this.useCaseFile = WordprocessingDocument.Open(filePackage);
-
                 //// copy file to windows temp folder to fix the problem with write access if file is opened
-                string destinationFile = Path.Combine(Path.GetTempPath(), "UseCaseXMLFile.docm");
-                try
-                {
-                    File.Copy(path, destinationFile, true);
-                }
-                catch (IOException ex)
-                {
-                    Debug.WriteLine(ex.Message.ToString());
-                    this.errorMessage = ex.Message.ToString();
-                    return false;
-                }
+                string fileName = filePath.Substring(filePath.LastIndexOf("\\") + 1);
+                string newFilePath = Path.Combine(Path.GetTempPath(), fileName);
+                File.Copy(filePath, newFilePath, true);
+                this.useCaseFilePath = newFilePath;
 
-                path = destinationFile;
-
-                this.useCaseFile = WordprocessingDocument.Open(path, true);
+                this.useCaseFile = WordprocessingDocument.Open(this.useCaseFilePath, true);
                 SimplifyMarkupSettings settings = new SimplifyMarkupSettings
                 {
                     RemoveComments = true,
@@ -198,55 +195,49 @@ namespace UseCaseCore.XmlParser
                 this.useCaseXml.LoadXml(this.useCaseFile.MainDocumentPart.Document.InnerXml);
                 if (this.useCaseXml.DocumentElement.ChildNodes == null)
                 {
-                    this.useCaseFile.Close();
                     useCase = null;
                     this.errorMessage = "Use case document corrupted (no child nodes found!)";
-                    return false;
-                }
-
-                try
-                {
-                    this.useCaseName = this.ParseRucmProperty("Use Case Name");
-                    this.briefDescription = this.ParseRucmProperty("Brief Description");
-                    this.precondition = this.ParseRucmProperty("Precondition");
-                    this.primaryActor = this.ParseRucmProperty("Primary Actor");
-                    this.secondaryActor = this.ParseRucmProperty("Secondary Actors");
-                    this.dependency = this.ParseRucmProperty("Dependency");
-                    this.generalization = this.ParseRucmProperty("Generalization");
-                    this.GetBasicFlow();
-                    this.GetGlobalAlternativeFlows();
-                    this.GetSpecificAlternativeFlows();
-                    this.GetBoundedAlternativeFlows();
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex.Message.ToString());
                     this.useCaseFile.Close();
-                    useCase = null;
-                    this.errorMessage = ex.Message.ToString();
+                    ////File.Delete(this.useCaseFilePath); erst wieder einkommentieren wenn 2x nacheinander datei öffnen vom Controller-Team gefixt wurde, da sonst die quelldatei gelöscht wird!
                     return false;
                 }
 
-                bool validationResult = this.ValidateRucmRules();
-                this.useCaseFile.Close();
-                if (validationResult == true)
+                this.useCaseName = this.ParseRucmProperty("Use Case Name");
+                this.briefDescription = this.ParseRucmProperty("Brief Description");
+                this.precondition = this.ParseRucmProperty("Precondition");
+                this.primaryActor = this.ParseRucmProperty("Primary Actor");
+                this.secondaryActor = this.ParseRucmProperty("Secondary Actors");
+                this.dependency = this.ParseRucmProperty("Dependency");
+                this.generalization = this.ParseRucmProperty("Generalization");
+                this.GetBasicFlow();
+                this.GetGlobalAlternativeFlows();
+                this.GetSpecificAlternativeFlows();
+                this.GetBoundedAlternativeFlows();
+
+                bool rucmValidationResult = this.ValidateRucmRules();
+
+                if (rucmValidationResult == true)
                 {
-                    this.SetUseCaseOutParameter();
+                    this.SetOutgoingUseCaseParameter();
                 }
                 else
                 {
                     this.errorMessage = "RUCM rule validation failed!";
                 }
 
-                useCase = this.useCaseOutParameter;
-                return validationResult;
+                this.useCaseFile.Close();
+                ////File.Delete(this.useCaseFilePath); erst wieder einkommentieren wenn 2x nacheinander datei öffnen vom Controller-Team gefixt wurde, da sonst die quelldatei gelöscht wird!
+
+                useCase = this.outgoingUseCase;
+                return rucmValidationResult;
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message.ToString());
-                this.useCaseFile.Close();
                 useCase = null;
+                Debug.WriteLine(ex.Message.ToString());
                 this.errorMessage = ex.Message.ToString();
+                this.useCaseFile.Close();
+                ////File.Delete(this.useCaseFilePath); erst wieder einkommentieren wenn 2x nacheinander datei öffnen vom Controller-Team gefixt wurde, da sonst die quelldatei gelöscht wird!
                 return false;
             }
         }
@@ -302,40 +293,38 @@ namespace UseCaseCore.XmlParser
         /// <summary>
         /// This function sets the parsed values for the use case.
         /// </summary>
-        /// <returns>Returns the use case with the values you set.</returns>
-        private UseCase SetUseCaseOutParameter()
+        private void SetOutgoingUseCaseParameter()
         {
-            this.useCaseOutParameter.UseCaseName = this.useCaseName;
-            this.useCaseOutParameter.BriefDescription = this.briefDescription;
-            this.useCaseOutParameter.Precondition = this.precondition;
-            this.useCaseOutParameter.PrimaryActor = this.primaryActor;
-            this.useCaseOutParameter.SecondaryActors = this.secondaryActor;
-            this.useCaseOutParameter.Dependency = this.dependency;
-            this.useCaseOutParameter.Generalization = this.generalization;
-            this.useCaseOutParameter.SetBasicFlow(this.basicFlow.GetSteps(), this.basicFlow.GetPostcondition());
+            this.outgoingUseCase.UseCaseName = this.useCaseName;
+            this.outgoingUseCase.BriefDescription = this.briefDescription;
+            this.outgoingUseCase.Precondition = this.precondition;
+            this.outgoingUseCase.PrimaryActor = this.primaryActor;
+            this.outgoingUseCase.SecondaryActors = this.secondaryActor;
+            this.outgoingUseCase.Dependency = this.dependency;
+            this.outgoingUseCase.Generalization = this.generalization;
+            this.outgoingUseCase.SetBasicFlow(this.basicFlow.GetSteps(), this.basicFlow.GetPostcondition());
             int i = 0;
             foreach (GlobalAlternativeFlow globalAlternativeFlow in this.globalAlternativeFlows)
             {
                 i++;
-                this.useCaseOutParameter.AddGlobalAlternativeFlow(i, globalAlternativeFlow.GetSteps(), globalAlternativeFlow.GetPostcondition());
+                this.outgoingUseCase.AddGlobalAlternativeFlow(i, globalAlternativeFlow.GetSteps(), globalAlternativeFlow.GetPostcondition());
             }
 
             i = 0;
             foreach (SpecificAlternativeFlow specificAlternativeFlow in this.specificAlternativeFlows)
             {
                 i++;
-                this.useCaseOutParameter.AddSpecificAlternativeFlow(i, specificAlternativeFlow.GetSteps(), specificAlternativeFlow.GetPostcondition(), specificAlternativeFlow.GetReferenceStep());
+                this.outgoingUseCase.AddSpecificAlternativeFlow(i, specificAlternativeFlow.GetSteps(), specificAlternativeFlow.GetPostcondition(), specificAlternativeFlow.GetReferenceStep());
             }
 
             i = 0;
             foreach (BoundedAlternativeFlow boundedAlternativeFlow in this.boundedAlternativeFlows)
             {
                 i++;
-                this.useCaseOutParameter.AddBoundedAlternativeFlow(i, boundedAlternativeFlow.GetSteps(), boundedAlternativeFlow.GetPostcondition(), boundedAlternativeFlow.GetReferenceSteps());
+                this.outgoingUseCase.AddBoundedAlternativeFlow(i, boundedAlternativeFlow.GetSteps(), boundedAlternativeFlow.GetPostcondition(), boundedAlternativeFlow.GetReferenceSteps());
             }
 
-            this.useCaseOutParameter.BuildGraph();
-            return this.useCaseOutParameter;
+            this.outgoingUseCase.BuildGraph();
         }
 
         /// <summary>

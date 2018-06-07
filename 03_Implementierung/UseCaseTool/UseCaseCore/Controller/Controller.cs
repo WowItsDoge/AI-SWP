@@ -277,7 +277,7 @@ namespace UseCaseCore.Controller
         }
 
         /// <summary>
-        /// Tell the system path and file name of the XML UseCase file. The string para-meter contains the path to the new file.
+        /// Tell the system path and file name of the XML UseCase file. The string parameter contains the path to the new file.
         /// </summary>
         /// <param name="filePath">The currently selected path</param>
         public void CurrentXmlFilePath(string filePath)
@@ -302,7 +302,13 @@ namespace UseCaseCore.Controller
         private void backgroundWorkerLoadFile_DoWork(object sender, DoWorkEventArgs e)
         {
             // bool test = this.xmlParser.LoadXmlFile(currentFilePath);
-            if(this.xmlParser.LoadXmlFile(currentFilePath))
+
+            //// Anmerkung Christopher: LoadXmlFile()-Funktion wird 2x hintereinander aufgerufen,
+            //// wenn bei bereits geöffneten Programm nochmal eine UseCase-Datei eingelesen werden soll.
+            //// Sieht man ganz schön im "Ausgabefenster" wenn das Programm läuft (XMLParser gibt jedesmal Meldung aus, wenn LoadXmlFile()-Funktion aufgerufen wird).
+            //// Sofern das mit dem 2 maligen Aufrufen der LoadXmlFile()-Funktion gefixt ist, sollte dann auch der erneute Einlesevorgang (beim 2., 3., 4., ... mal) funktionieren (aktuell wird ja noch eine Exception im "XMLParser" geworfen)
+
+            if (this.xmlParser.LoadXmlFile(currentFilePath))
             {
                 this.BackgroundColor1 = Brushes.LimeGreen;
                 this.VisibilityOk1 = Visibility.Visible;
