@@ -6,6 +6,7 @@ namespace UseCaseTool
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
@@ -19,63 +20,42 @@ namespace UseCaseTool
     using System.Windows.Navigation;
     using System.Windows.Shapes;
     using UseCaseCore.ScenarioMatrix;
+    using UseCaseCore.UcIntern;
 
     /// <summary>
     /// Interaction logic for MatrixControl.xaml
     /// </summary>
     public partial class MatrixControl : UserControl
     {
+
+
         /// <summary>
         /// Initializes a new instance of the MatrixControl class
         /// </summary>
         public MatrixControl()
         {
-            this.InitializeComponent();                        
+            this.InitializeComponent();
+            this.scenarios = new List<Scenario>();
+            this.matrixGrid.ItemsSource = this.Scenarios;
         }
+
+        private List<Scenario> scenarios;
         
+        public List<Scenario> Scenarios
+        {
+            get { return scenarios; }
+            set { scenarios = value; }
+        }
+                
         /// <summary>
         /// Draws the scenario matrix
         /// </summary>
         /// <param name="scenarios"> scenarios to be drawn in the matrix </param>
         public void Draw(List<Scenario> scenarios)
         {
-            int i = 1;
-            foreach (Scenario s in scenarios)
-            {
-                this.AddTableRow(s, i);
-                i++;
-            }
+            this.Scenarios.Clear();
+            this.Scenarios.AddRange(scenarios);
         }
-
-        /// <summary>
-        /// Adds a table row with a given scenario to the scenario matrix
-        /// </summary>
-        /// <param name="s"> scenario to be included in the matrix table </param>
-        /// <param name="i"> scenario number </param>
-        private void AddTableRow(Scenario s, int i)
-        {            
-            var rowGroup = this.MatrixTable.RowGroups.Last();
-
-            if (rowGroup != null)
-            {
-                TableRow row = new TableRow();
-
-                TableCell cell = new TableCell();
-                cell.BorderThickness = new Thickness(1);
-                cell.BorderBrush = Brushes.Black;
-
-                cell.Blocks.Add(new Paragraph(new Run("Szenario " + i.ToString())));
-                row.Cells.Add(cell);
-
-                cell = new TableCell();
-                cell.BorderThickness = new Thickness(1);
-                cell.BorderBrush = Brushes.Black;
-                cell.Blocks.Add(new Paragraph(new Run(s.Description)));
-                
-                row.Cells.Add(cell);
-                
-                rowGroup.Rows.Add(row);
-            }
-        }
+        
     }
 }
