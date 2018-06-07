@@ -10,6 +10,16 @@ namespace UseCaseCore.UcIntern
     public struct Node
     {
         /// <summary>
+        /// Gets the description text of the step.
+        /// </summary>
+        public readonly string StepDescription;
+
+        /// <summary>
+        /// Gets the identifier of the flow the node belongs to.
+        /// </summary>
+        public readonly FlowIdentifier Identifier;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Node"/> struct.
         /// </summary>
         /// <param name="stepDescription">The description text of the step.</param>
@@ -19,16 +29,6 @@ namespace UseCaseCore.UcIntern
             this.StepDescription = stepDescription;
             this.Identifier = identifier;
         }
-
-        /// <summary>
-        /// Gets the description text of the step.
-        /// </summary>
-        public string StepDescription { get; }
-
-        /// <summary>
-        /// Gets the identifier of the flow the node belongs to.
-        /// </summary>
-        public FlowIdentifier Identifier { get; }
 
         /// <summary>
         /// Tests if <paramref name="x"/> is equal to <paramref name="y"/>.
@@ -69,7 +69,7 @@ namespace UseCaseCore.UcIntern
         /// <returns>A hash code for the current object.</returns>
         public override int GetHashCode()
         {
-            return BitShifter.ShiftAndWrap(this.StepDescription.GetHashCode(), 1)
+            return BitShifter.ShiftAndWrap(this.StepDescription?.GetHashCode() ?? 0, 1)
                 ^ this.Identifier.GetHashCode();
         }
     }

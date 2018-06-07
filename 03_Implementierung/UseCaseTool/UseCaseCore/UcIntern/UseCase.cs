@@ -26,7 +26,7 @@ namespace UseCaseCore.UcIntern
         /// </summary>
         public UseCase()
         {
-            this.Nodes = new List<Node>();
+            List<Node> nodes = new List<Node>();
 
             List<Node> basicNodes = new List<Node>();
             FlowIdentifier basicId = new FlowIdentifier(FlowType.Basic, 0);
@@ -35,7 +35,7 @@ namespace UseCaseCore.UcIntern
             basicNodes.Add(new Node("Step 3", basicId));
             foreach (Node node in basicNodes)
             {
-                this.Nodes.Add(node);
+                nodes.Add(node);
             }
 
             this.BasicFlow = new Flow(basicId, "Postcondition Basic", basicNodes, new List<ReferenceStep>());
@@ -45,24 +45,29 @@ namespace UseCaseCore.UcIntern
             specificNodes.Add(new Node("Specific Step 1", specificId));
             foreach (Node node in specificNodes)
             {
-                this.Nodes.Add(node);
+                nodes.Add(node);
             }
 
-            this.SpecificAlternativeFlows = new List<Flow>();
-            this.SpecificAlternativeFlows.Add(new Flow(specificId, "Postcondition Specific", specificNodes, new List<ReferenceStep>() { new ReferenceStep(basicId, 1) }));
+            this.Nodes = nodes.AsReadOnly();
 
-            this.GlobalAlternativeFlows = new List<Flow>();
-            this.BoundedAlternativeFlows = new List<Flow>();
+            List<Flow> specificAlternativeFlows = new List<Flow>();
+            specificAlternativeFlows.Add(new Flow(specificId, "Postcondition Specific", specificNodes, new List<ReferenceStep>() { new ReferenceStep(basicId, 1) }));
+            this.SpecificAlternativeFlows = specificAlternativeFlows.AsReadOnly();
+
+            this.GlobalAlternativeFlows = new List<Flow>().AsReadOnly();
+            this.BoundedAlternativeFlows = new List<Flow>().AsReadOnly();
 
             this.EdgeMatrix = new Matrix<bool>(4, false);
             this.EdgeMatrix[0, 1] = true; // 0 -> 1
             this.EdgeMatrix[1, 2] = true; // 1 -> 2
             this.EdgeMatrix[0, 3] = true; // 0 -> Specific 0
             this.EdgeMatrix[3, 2] = true; // Specific 0 -> 2
+            this.EdgeMatrix = this.EdgeMatrix.AsReadonly();
 
             this.ConditionMatrix = new Matrix<Condition?>(4, null);
             this.ConditionMatrix[0, 3] = new Condition("Wahr", true);
             this.ConditionMatrix[0, 1] = new Condition("Wahr", false);
+            this.ConditionMatrix = this.ConditionMatrix.AsReadonly();
         }
 
         /// <summary>
@@ -102,57 +107,43 @@ namespace UseCaseCore.UcIntern
 
         /// <summary>
         /// Gets or sets all nodes of the graph.
-        /// <para/>
-        /// Do not set the nodes outside of the module UC-Intern!
         /// </summary>
-        public List<Node> Nodes { get; set; }
+        public IReadOnlyList<Node> Nodes { get; protected set; }
 
         /// <summary>
         /// Gets or sets an edge matrix that describes the edges between all nodes of the graph. All edges are always directional.
         /// The row or column number of an entry corresponds to the node with the same number in the node list.
         /// An edge always points from the row node to the column node.This matrix only describes if an edge exists and its direction.
-        /// <para/>
-        /// Do not set the nodes outside of the module UC-Intern.
         /// </summary>
-        public Matrix<bool> EdgeMatrix { get; set; }
+        public Matrix<bool> EdgeMatrix { get; protected set; }
 
         /// <summary>
         /// Gets or sets an edge matrix that describes the edges between all nodes of the graph which have a condition.
         /// It is build like the normal edge matrix but only has an entry for an edge if that edge has a condition that must be matched for the edge to become valid.
         /// For an edge to become valid all conditions(if the list consists of more than one) must be matched!
         /// All other entries are ""null"". ""null"" does not mean that no edge exists there but only that no edge with a condition exists there.
-        /// <para/>
-        /// Do not set the condition matrix outside of the module UC-Intern.
         /// </summary>
-        public Matrix<Condition?> ConditionMatrix { get; set; }
+        public Matrix<Condition?> ConditionMatrix { get; protected set; }
 
         /// <summary>
         /// Gets or sets the basic flow.
-        /// <para/>
-        /// Do not set the basic flow outside of the module UC-Intern.
         /// </summary>
-        public Flow BasicFlow { get; set; }
+        public Flow BasicFlow { get; protected set; }
 
         /// <summary>
         /// Gets or sets the specific alternative flow list.
-        /// <para/>
-        /// Do not set or alter the specific alternative flow list outside the module UC-Intern.
         /// </summary>
-        public List<Flow> SpecificAlternativeFlows { get; set; }
+        public IReadOnlyList<Flow> SpecificAlternativeFlows { get; protected set; }
 
         /// <summary>
         /// Gets or sets the global alternative flow list.
-        /// <para/>
-        /// Do not set or alter the global alternative flow list outside the module UC-Intern.
         /// </summary>
-        public List<Flow> GlobalAlternativeFlows { get; set; }
+        public IReadOnlyList<Flow> GlobalAlternativeFlows { get; protected set; }
 
         /// <summary>
         /// Gets or sets the bounded alternative flow list.
-        /// <para/>
-        /// Do not set or alter the bounded alternative flow list outside the module UC-Intern.
         /// </summary>
-        public List<Flow> BoundedAlternativeFlows { get; set; }
+        public IReadOnlyList<Flow> BoundedAlternativeFlows { get; protected set; }
 
         /// <summary>
         /// Sets a basic flow for the use-case. It consists of a list of steps numbered by their position in the list and a postcondition as string.
