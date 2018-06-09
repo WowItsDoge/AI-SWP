@@ -197,7 +197,7 @@ namespace UseCaseTest.UcIntern
         }
 
         /// <summary>
-        /// Returns the hash of two differing flow objects.
+        /// Tests the hash of two differing flow objects.
         /// </summary>
         [Test]
         public void GetHashOfDifferentObjects()

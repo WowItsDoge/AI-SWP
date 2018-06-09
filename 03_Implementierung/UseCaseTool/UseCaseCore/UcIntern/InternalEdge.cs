@@ -1,4 +1,4 @@
-﻿// <copyright file="ExternalEdge.cs" company="Team B">
+﻿// <copyright file="InternalEdge.cs" company="Team B">
 //      Team B. All rights reserved.
 // </copyright>
 
@@ -8,32 +8,30 @@ namespace UseCaseCore.UcIntern
     /// An instance of this class represents an edge between two nodes.
     /// <para/>
     /// This class is used by the <see cref="GraphBuilder"/>  to specify edges between two steps.
-    /// Because the <see cref="GraphBuilder"/> creates the edges by analyzing small blocks of nodes it can happen that an edge must be created that points to a
-    /// node that is not in the block that is analyzed. To specify such an edge this class is used. It holds the step number for the current block of nodes and the
-    /// reference step to the step where it points to. Remember to increase the step number if the analyzed block was contained in a larger block of nodes.
+    /// This class is used to identify an edge between two nodes from the same node list using their index.
     /// <para/>
     /// The edge always points from the source to the target.
     /// </summary>
-    public struct ExternalEdge
+    public struct InternalEdge
     {
         /// <summary>
-        /// The number of the step in the current block.
+        /// The source node.
         /// </summary>
-        public readonly int SourceStepNumber;
+        public readonly int SourceStep;
 
         /// <summary>
-        /// The target of this edge.
+        /// The target node.
         /// </summary>
-        public readonly ReferenceStep TargetStep;
+        public readonly int TargetStep;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ExternalEdge"/> struct.
+        /// Initializes a new instance of the <see cref="InternalEdge"/> struct.
         /// </summary>
-        /// <param name="sourceStepNumber">The number of the source step.</param>
-        /// <param name="targetStep">The target step.</param>
-        public ExternalEdge(int sourceStepNumber, ReferenceStep targetStep)
+        /// <param name="sourceStep">The number of the source step.</param>
+        /// <param name="targetStep">The number of the target step.</param>
+        public InternalEdge(int sourceStep, int targetStep)
         {
-            this.SourceStepNumber = sourceStepNumber;
+            this.SourceStep = sourceStep;
             this.TargetStep = targetStep;
         }
 
@@ -43,9 +41,9 @@ namespace UseCaseCore.UcIntern
         /// <param name="x">The first object to be compared.</param>
         /// <param name="y">The second object to be compared.</param>
         /// <returns>If <paramref name="x"/> is equal to <paramref name="y"/>.</returns>
-        public static bool operator ==(ExternalEdge x, ExternalEdge y)
+        public static bool operator ==(InternalEdge x, InternalEdge y)
         {
-            return x.SourceStepNumber == y.SourceStepNumber
+            return x.SourceStep == y.SourceStep
                 && x.TargetStep == y.TargetStep;
         }
 
@@ -55,7 +53,7 @@ namespace UseCaseCore.UcIntern
         /// <param name="x">The first object to be compared.</param>
         /// <param name="y">The second object to be compared.</param>
         /// <returns>If <paramref name="x"/> is not equal to <paramref name="y"/>.</returns>
-        public static bool operator !=(ExternalEdge x, ExternalEdge y)
+        public static bool operator !=(InternalEdge x, InternalEdge y)
         {
             return !(x == y);
         }
@@ -67,7 +65,7 @@ namespace UseCaseCore.UcIntern
         /// <returns>true if the specified object is equal to the current object; otherwise, false.</returns>
         public override bool Equals(object obj)
         {
-            return obj is ExternalEdge && this == (ExternalEdge)obj;
+            return obj is InternalEdge && this == (InternalEdge)obj;
         }
 
         /// <summary>
@@ -76,18 +74,18 @@ namespace UseCaseCore.UcIntern
         /// <returns>A hash code for the current object.</returns>
         public override int GetHashCode()
         {
-            return BitShifter.ShiftAndWrap(this.SourceStepNumber.GetHashCode(), 1)
+            return BitShifter.ShiftAndWrap(this.SourceStep.GetHashCode(), 1)
                 ^ this.TargetStep.GetHashCode();
         }
 
         /// <summary>
-        /// Returns a new <see cref="ExternalEdge"/> instance with the source step number of the current one incresed by <paramref name="incrementValue"/>.
+        /// Returns a new <see cref="InternalEdge"/> instance with the source and target step of the current one incresed by <paramref name="incrementValue"/>.
         /// </summary>
-        /// <param name="incrementValue">The value to add to the current source step number value.</param>
-        /// <returns>A new <see cref="ExternalEdge"/> with the source step number of this instance increased by <paramref name="incrementValue"/>.</returns>
-        public ExternalEdge NewWithIncreasedSourceStepNumber(int incrementValue)
+        /// <param name="incrementValue">The value to add to the current source and target step value.</param>
+        /// <returns>A new <see cref="InternalEdge"/> with the source and target step of this instance increased by <paramref name="incrementValue"/>.</returns>
+        public InternalEdge NewWithIncreasedSourceTargetStep(int incrementValue)
         {
-            return new ExternalEdge(this.SourceStepNumber + incrementValue, this.TargetStep);
+            return new InternalEdge(this.SourceStep + incrementValue, this.TargetStep + incrementValue);
         }
     }
 }

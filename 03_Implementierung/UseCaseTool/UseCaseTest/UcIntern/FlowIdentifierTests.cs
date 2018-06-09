@@ -119,7 +119,7 @@ namespace UseCaseTest.UcIntern
         }
 
         /// <summary>
-        /// Returns the hash of two differing flow identifier objects.
+        /// Tests the hash of two differing flow identifier objects.
         /// </summary>
         [Test]
         public void GetHashOfDifferentObjects()

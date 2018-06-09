@@ -131,7 +131,7 @@ namespace UseCaseTest.UcIntern
         }
 
         /// <summary>
-        /// Returns the hash of two differing node objects.
+        /// Tests the hash of two differing node objects.
         /// </summary>
         [Test]
         public void GetHashOfDifferentObjects()

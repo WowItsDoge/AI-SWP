@@ -5,11 +5,13 @@
 namespace UseCaseCore.UcIntern
 {
     using System.Collections.Generic;
+    using System.Linq;
+    using System.Text.RegularExpressions;
 
     /// <summary>
     /// This class transforms the use case description consisting of the different flow types into a graph representation.
     /// </summary>
-    public class GraphBuilder
+    public static class GraphBuilder
     {
         /// <summary>
         /// Builds the graph.
@@ -21,7 +23,7 @@ namespace UseCaseCore.UcIntern
         /// <param name="nodes">The nodes of all flows.</param>
         /// <param name="edgeMatrix">The edge matrix for the nodes.</param>
         /// <param name="conditionMatrix">The condition matrix for the flows.</param>
-        public void BuildGraph(
+        public static void BuildGraph(
             Flow basicFlow,
             IReadOnlyList<Flow> specificAlternativeFlows,
             IReadOnlyList<Flow> globalAlternativeFlows,
@@ -39,11 +41,54 @@ namespace UseCaseCore.UcIntern
         /// Sets the edges in a block of nodes.
         /// </summary>
         /// <param name="nodes">The nodes to wire.</param>
-        /// <param name="edgeMatrix">The matrix with the edges.</param>
-        public void SetEdgesInNodeBlock(IReadOnlyList<Node> nodes, out Matrix<bool> edgeMatrix)
+        /// <param name="edgeMatrix">The matrix with the edges for the given nodes.</param>
+        /// <param name="externalEdges">A list of edges whose target is located outside the given nodes.</param>
+        /// <param name="possibleInvalidIfEdges">A list of edges between the given nodes that may be invalid, because they represent an edge for an if statement without an else statement in this node list for the case the condition is false. These edge may be invalid if the else/elseif is located in another block of nodes/alternative flow.</param>
+        public static void SetEdgesInNodeBlock(IReadOnlyList<Node> nodes, out Matrix<bool> edgeMatrix, out List<ExternalEdge> externalEdges, out List<InternalEdge> possibleInvalidIfEdges)
         {
-            // out of external edges
-            edgeMatrix = null;
+            // Initialize out varibles
+            edgeMatrix = new Matrix<bool>(nodes.Count, false);
+            externalEdges = new List<ExternalEdge>();
+            possibleInvalidIfEdges = new List<InternalEdge>();
+        }
+
+        /// <summary>
+        /// Returns the type of a step.
+        /// </summary>
+        /// <param name="stepDescription">The description of the step.</param>
+        /// <returns>The type of the step.</returns>
+        public static StepType GetStepType(string stepDescription)
+        {
+            foreach (StepType stepType in StepType.All)
+            {
+                if (stepDescription.IsEqualsToAtLeastOnePatternOfStepType(stepType))
+                {
+                    return stepType;
+                }
+            }
+
+            return StepType.Normal;
+        }
+
+        /// <summary>
+        /// Tests if a string is equal to at least one keyword asociated with the specified step type.
+        /// </summary>
+        /// <param name="testString">The string to test.</param>
+        /// <param name="stepType">The type specifying the keywords.</param>
+        /// <returns>If at least one pattern for the step type matches to the test string.</returns>
+        public static bool IsEqualsToAtLeastOnePatternOfStepType(this string testString, StepType stepType)
+        {
+            foreach (string pattern in stepType.Patterns)
+            {
+                Regex regex = new Regex(pattern);
+
+                if (regex.IsMatch(testString))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

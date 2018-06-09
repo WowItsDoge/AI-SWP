@@ -136,7 +136,7 @@ namespace UseCaseTest.UcIntern
         }
 
         /// <summary>
-        /// Returns the hash of two differing condition objects.
+        /// Tests the hash of two differing condition objects.
         /// </summary>
         [Test]
         public void GetHashOfDifferentObjects()
@@ -149,6 +149,25 @@ namespace UseCaseTest.UcIntern
 
             // Assert
             Assert.AreNotEqual(ee1.GetHashCode(), ee2.GetHashCode());
+        }
+
+        /// <summary>
+        /// Creates an external edge and tests if the method for creating a new instance with incremented value works.
+        /// </summary>
+        [Test]
+        public void GetNewExternalEdgeWithIncrementedSourceStepNumber()
+        {
+            // Arrange
+            int oldValue = 3,
+                incrementValue = 53,
+                expectedValue = oldValue + incrementValue;
+            ExternalEdge ee = new ExternalEdge(oldValue, this.referenceStep1);
+
+            // Act
+            ExternalEdge newExtenalEdge = ee.NewWithIncreasedSourceStepNumber(incrementValue);
+
+            // Assert
+            Assert.AreEqual(expectedValue, newExtenalEdge.SourceStepNumber);
         }
     }
 }

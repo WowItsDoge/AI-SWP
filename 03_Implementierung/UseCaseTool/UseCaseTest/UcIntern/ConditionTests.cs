@@ -119,7 +119,7 @@ namespace UseCaseTest.UcIntern
         }
 
         /// <summary>
-        /// Returns the hash of two differing condition objects.
+        /// Tests the hash of two differing condition objects.
         /// </summary>
         [Test]
         public void GetHashOfDifferentObjects()

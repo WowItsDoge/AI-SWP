@@ -95,10 +95,12 @@
     <Compile Include="UcIntern\FlowIdentifier.cs" />
     <Compile Include="UcIntern\FlowType.cs" />
     <Compile Include="UcIntern\GraphBuilder.cs" />
+    <Compile Include="UcIntern\InternalEdge.cs" />
     <Compile Include="UcIntern\Matrix.cs" />
     <Compile Include="UcIntern\Node.cs" />
     <Compile Include="UcIntern\ReferenceStep.cs" />
     <Compile Include="UcIntern\Row.cs" />
+    <Compile Include="UcIntern\StepType.cs" />
     <Compile Include="UcIntern\UseCase.cs" />
     <Compile Include="XmlParser\BasicFlow.cs" />
     <Compile Include="XmlParser\BoundedAlternativeFlow.cs" />
