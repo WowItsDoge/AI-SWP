@@ -44,12 +44,43 @@ namespace UseCaseCore.UcIntern
         /// <param name="edgeMatrix">The matrix with the edges for the given nodes.</param>
         /// <param name="externalEdges">A list of edges whose target is located outside the given nodes.</param>
         /// <param name="possibleInvalidIfEdges">A list of edges between the given nodes that may be invalid, because they represent an edge for an if statement without an else statement in this node list for the case the condition is false. These edge may be invalid if the else/elseif is located in another block of nodes/alternative flow.</param>
-        public static void SetEdgesInNodeBlock(IReadOnlyList<Node> nodes, out Matrix<bool> edgeMatrix, out List<ExternalEdge> externalEdges, out List<InternalEdge> possibleInvalidIfEdges)
+        /// <param name="exitSteps">A list of steps of the given block that whose edges lead out of the block to the next step of the outer block.</param>
+        public static void SetEdgesInNodeBlock(
+            IReadOnlyList<Node> nodes,
+            out Matrix<bool> edgeMatrix,
+            out List<ExternalEdge> externalEdges,
+            out List<InternalEdge> possibleInvalidIfEdges,
+            out List<int> exitSteps)
         {
             // Initialize out varibles
             edgeMatrix = new Matrix<bool>(nodes.Count, false);
             externalEdges = new List<ExternalEdge>();
             possibleInvalidIfEdges = new List<InternalEdge>();
+            exitSteps = new List<int>();
+
+            // Cycle through all steps and handle their edges (except for the last one)
+            for (int stepPos = 0; stepPos < nodes.Count - 1; stepPos++)
+            {
+                StepType stepType = GraphBuilder.GetStepType(nodes[stepPos].StepDescription);
+
+                if (stepType.Equals(StepType.If))
+                {
+                }
+                else if (stepType.Equals(StepType.Do))
+                {
+                }
+                else if (stepType.Equals(StepType.Resume))
+                {
+                }
+                else if (stepType.Equals(StepType.Abort))
+                {
+                }
+                else
+                {
+                    // Treat it as a normal/unmatched step
+                    edgeMatrix[stepPos, stepPos + 1] = true;
+                }
+            }
         }
 
         /// <summary>
@@ -67,7 +98,7 @@ namespace UseCaseCore.UcIntern
                 }
             }
 
-            return StepType.Normal;
+            return StepType.Unmatched;
         }
 
         /// <summary>

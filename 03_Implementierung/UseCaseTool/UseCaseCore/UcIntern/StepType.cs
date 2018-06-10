@@ -14,49 +14,49 @@ namespace UseCaseCore.UcIntern
     public class StepType
     {
         /// <summary>
-        /// A normal step
+        /// A step without a pattern. It can not be matched.
         /// </summary>
-        public static readonly StepType Normal = new StepType(0, new string[0]);
+        public static readonly StepType Unmatched = new StepType(0, new string[0]);
 
         /// <summary>
         /// The starting step of an if-statement.
         /// </summary>
-        public static readonly StepType If = new StepType(1, new[] { @"\b\b" });
+        public static readonly StepType If = new StepType(1, new[] { @"(.*)\bIF\b(.*)\bTHEN\b" });
 
         /// <summary>
         /// The else step of an if-statement.
         /// </summary>
-        public static readonly StepType Else = new StepType(2, new[] { @"\b\b" });
+        public static readonly StepType Else = new StepType(2, new[] { @"\bELSE\b" });
 
         /// <summary>
         /// An else if step of an if-statment.
         /// </summary>
-        public static readonly StepType ElseIf = new StepType(3, new[] { @"\b\b" });
+        public static readonly StepType ElseIf = new StepType(3, new[] { @"\bELSEIF\b(.*)\bTHEN\b" });
 
         /// <summary>
         /// The do step of an do-while-statement.
         /// </summary>
-        public static readonly StepType Do = new StepType(4, new[] { @"\b\b" });
+        public static readonly StepType Do = new StepType(4, new[] { @"\bDO\b" });
 
         /// <summary>
         /// The while step of an do-while-statement.
         /// </summary>
-        public static readonly StepType While = new StepType(5, new[] { @"\b\b" });
+        public static readonly StepType While = new StepType(5, new[] { @"(.*)\bWHILE\b(.*)" });
 
         /// <summary>
         /// A resume step.
         /// </summary>
-        public static readonly StepType Resume = new StepType(6, new[] { @"\b\b" });
+        public static readonly StepType Resume = new StepType(6, new[] { @"\bRESUME\b(.*)" });
 
         /// <summary>
         /// An abort step.
         /// </summary>
-        public static readonly StepType Abort = new StepType(7, new[] { @"\b\b" });
+        public static readonly StepType Abort = new StepType(7, new[] { @"\bABORT\b" });
 
         /// <summary>
         /// An abort step.
         /// </summary>
-        public static readonly StepType ValidatesThat = new StepType(8, new[] { @"\b\b" });
+        public static readonly StepType ValidatesThat = new StepType(8, new[] { @"(.*)\bVALIDATES THAT\b(.*)" });
 
         /// <summary>
         /// The regex patterns that match this type.

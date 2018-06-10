@@ -382,5 +382,147 @@ namespace UseCaseTest.UcIntern
                 }
             }
         }
+
+        /// <summary>
+        /// Compares a matrix with an object instance.
+        /// </summary>
+        [Test]
+        public void CompareMatrixToObject()
+        {
+            // Arrange
+            Matrix<object> m = new Matrix<object>(1, 2, null);
+
+            // Act
+
+            // Assert
+            Assert.IsFalse(m.Equals(new object()));
+        }
+
+        /// <summary>
+        /// Compares a matrix with null.
+        /// </summary>
+        [Test]
+        public void CompareMatrixToNull()
+        {
+            // Arrange
+            Matrix<object> m = new Matrix<object>(5, null);
+
+            // Act
+
+            // Assert
+            Assert.IsFalse(m.Equals(null));
+        }
+
+        /// <summary>
+        /// Compares two matrices that are equal.
+        /// </summary>
+        [Test]
+        public void CompareEqualMatrixs()
+        {
+            // Arrange
+            Matrix<object> m1 = new Matrix<object>(5, null),
+                m2 = new Matrix<object>(5, null);
+            object o = new object();
+            m1[1, 1] = o;
+            m2[1, 1] = o;
+
+            // Act
+
+            // Assert
+            Assert.IsTrue(m1.Equals(m2));
+        }
+
+        /// <summary>
+        /// Compares two matrices with different row count.
+        /// </summary>
+        [Test]
+        public void CompareEntriesDifferentRowCount()
+        {
+            // Arrange
+            Matrix<object> m1 = new Matrix<object>(4, 2, null),
+                m2 = new Matrix<object>(5, 2, null);
+            object o = new object();
+            m1[1, 1] = o;
+            m2[1, 1] = o;
+
+            // Act
+
+            // Assert
+            Assert.IsFalse(m1.Equals(m2));
+        }
+
+        /// <summary>
+        /// Compares two matrices with different column count.
+        /// </summary>
+        [Test]
+        public void CompareEntriesDifferentColumnCount()
+        {
+            // Arrange
+            Matrix<object> m1 = new Matrix<object>(5, 4, null),
+                m2 = new Matrix<object>(5, 6, null);
+            object o = new object();
+            m1[1, 1] = o;
+            m2[1, 1] = o;
+
+            // Act
+
+            // Assert
+            Assert.IsFalse(m1.Equals(m2));
+        }
+
+        /// <summary>
+        /// Compares two matrices with different standard return object.
+        /// </summary>
+        [Test]
+        public void CompareEntriesDifferentStandardReturnObject()
+        {
+            // Arrange
+            Matrix<object> m1 = new Matrix<object>(5, new object()),
+                m2 = new Matrix<object>(5, new object());
+            object o = new object();
+            m1[1, 1] = o;
+            m2[1, 1] = o;
+
+            // Act
+
+            // Assert
+            Assert.IsFalse(m1.Equals(m2));
+        }
+
+        /// <summary>
+        /// Compares two matrices with different entry.
+        /// </summary>
+        [Test]
+        public void CompareEntriesDifferentEntry()
+        {
+            // Arrange
+            Matrix<object> m1 = new Matrix<object>(5, null),
+                m2 = new Matrix<object>(5, null);
+            m1[1, 1] = new object();
+            m2[1, 1] = new object();
+
+            // Act
+
+            // Assert
+            Assert.IsFalse(m1.Equals(m2));
+        }
+
+        /// <summary>
+        /// Tests the hash of two differing matrix objects.
+        /// </summary>
+        [Test]
+        public void GetHashOfDifferentObjects()
+        {
+            // Arrange
+            Matrix<object> m1 = new Matrix<object>(9, 3, new object()),
+                m2 = new Matrix<object>(3, 6, new object());
+            m1[1, 1] = new object();
+            m2[1, 2] = new object();
+
+            // Act
+
+            // Assert
+            Assert.AreNotEqual(m1.GetHashCode(), m2.GetHashCode());
+        }
     }
 }

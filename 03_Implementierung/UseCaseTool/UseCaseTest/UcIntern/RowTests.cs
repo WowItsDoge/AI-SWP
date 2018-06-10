@@ -416,5 +416,128 @@ namespace UseCaseTest.UcIntern
                 return 1;
             }
         }
+
+        /// <summary>
+        /// Compares a row with an object instance.
+        /// </summary>
+        [Test]
+        public void CompareRowToObject()
+        {
+            // Arrange
+            Row<object> r = new Row<object>(5, null);
+
+            // Act
+
+            // Assert
+            Assert.IsFalse(r.Equals(new object()));
+        }
+
+        /// <summary>
+        /// Compares a row with null.
+        /// </summary>
+        [Test]
+        public void CompareRowToNull()
+        {
+            // Arrange
+            Row<object> r = new Row<object>(5, null);
+
+            // Act
+
+            // Assert
+            Assert.IsFalse(r.Equals(null));
+        }
+
+        /// <summary>
+        /// Compares two rows that are equal.
+        /// </summary>
+        [Test]
+        public void CompareEqualRows()
+        {
+            // Arrange
+            Row<object> r1 = new Row<object>(5, null),
+                r2 = new Row<object>(5, null);
+            object o = new object();
+            r1[1] = o;
+            r2[1] = o;
+
+            // Act
+
+            // Assert
+            Assert.IsTrue(r1.Equals(r2));
+        }
+
+        /// <summary>
+        /// Compares two rows with different column count.
+        /// </summary>
+        [Test]
+        public void CompareEntriesDifferentColumnCount()
+        {
+            // Arrange
+            Row<object> r1 = new Row<object>(4, null),
+                r2 = new Row<object>(5, null);
+            object o = new object();
+            r1[1] = o;
+            r2[1] = o;
+
+            // Act
+
+            // Assert
+            Assert.IsFalse(r1.Equals(r2));
+        }
+
+        /// <summary>
+        /// Compares two rows with different standard return object.
+        /// </summary>
+        [Test]
+        public void CompareEntriesDifferentStandardReturnObject()
+        {
+            // Arrange
+            Row<object> r1 = new Row<object>(5, new object()),
+                r2 = new Row<object>(5, new object());
+            object o = new object();
+            r1[1] = o;
+            r2[1] = o;
+
+            // Act
+
+            // Assert
+            Assert.IsFalse(r1.Equals(r2));
+        }
+
+        /// <summary>
+        /// Compares two rows with different entries.
+        /// </summary>
+        [Test]
+        public void CompareEntriesDifferentEntries()
+        {
+            // Arrange
+            Row<object> r1 = new Row<object>(5, null),
+                r2 = new Row<object>(5, null);
+            r1[1] = new object();
+            r2[2] = new object();
+
+            // Act
+
+            // Assert
+            Assert.IsFalse(r1.Equals(r2));
+        }
+
+        /// <summary>
+        /// Tests the hash of two differing row objects.
+        /// </summary>
+        [Test]
+        public void GetHashOfDifferentObjects()
+        {
+            // Arrange
+            Row<object> r1 = new Row<object>(6, null),
+                r2 = new Row<object>(5, new object());
+            r1[1] = new object();
+            r2[2] = new object();
+
+            // Act
+
+            // Assert
+            Assert.AreNotEqual(r1.GetHashCode(), r2.GetHashCode());
+        }
     }
 }

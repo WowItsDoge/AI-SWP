@@ -67,6 +67,7 @@
     <Compile Include="ScenarioMatrix\ScenarioMatrixTest.cs" />
     <Compile Include="ScenarioMatrix\ScenarioTest.cs" />
     <Compile Include="UcIntern\ExternalEdgeTests.cs" />
+    <Compile Include="UcIntern\GraphBuilderTests.cs" />
     <Compile Include="UcIntern\InternalEdgeTests.cs" />
     <Compile Include="UcIntern\StepTypeTests.cs" />
     <Compile Include="UcIntern\TestUseCase.cs" />

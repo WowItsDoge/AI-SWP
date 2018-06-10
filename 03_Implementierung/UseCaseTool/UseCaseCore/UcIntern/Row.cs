@@ -186,6 +186,35 @@ namespace UseCaseCore.UcIntern
         }
 
         /// <summary>
+        /// Determines whether the specified object is equal to the current object.
+        /// </summary>
+        /// <param name="obj">The object to compare with the current object.</param>
+        /// <returns>true if the specified object is equal to the current object; otherwise, false.</returns>
+        public override bool Equals(object obj)
+        {
+            if (obj == null || this.GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            Row<T> entry = (Row<T>)obj;
+
+            // Use Equals to compare instance variables.
+            return object.Equals(this.ColumnCount, entry.ColumnCount) && object.Equals(this.StandardReturnObject, entry.StandardReturnObject) && this.Entries.SequenceEqual(entry.Entries);
+        }
+
+        /// <summary>
+        /// Serves as the default hash function.
+        /// </summary>
+        /// <returns>A hash code for the current object.</returns>
+        public override int GetHashCode()
+        {
+            return BitShifter.ShiftAndWrap(this.ColumnCount.GetHashCode(), 1)
+                ^ BitShifter.ShiftAndWrap(this.StandardReturnObject?.GetHashCode() ?? 1, 1)
+                ^ this.Entries?.GetHashCode() ?? 0;
+        }
+
+        /// <summary>
         /// Tests if the index is out of the column range and throws an exception if so.
         /// </summary>
         /// <param name="columnIndex">The index to be tested for the valid range.</param>

@@ -6,6 +6,7 @@ namespace UseCaseCore.UcIntern
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     /// <summary>
     /// This special matrix is used to describe the edges in the graph.
@@ -176,6 +177,39 @@ namespace UseCaseCore.UcIntern
             }
 
             return new Matrix<T>(this.RowCount, this.ColumnCount, readonlyRows, this.StandardReturnObject);
+        }
+
+        /// <summary>
+        /// Determines whether the specified object is equal to the current object.
+        /// </summary>
+        /// <param name="obj">The object to compare with the current object.</param>
+        /// <returns>true if the specified object is equal to the current object; otherwise, false.</returns>
+        public override bool Equals(object obj)
+        {
+            if (obj == null || this.GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            Matrix<T> entry = (Matrix<T>)obj;
+
+            // Use Equals to compare instance variables.
+            return object.Equals(this.RowCount, entry.RowCount)
+                && object.Equals(this.ColumnCount, entry.ColumnCount)
+                && object.Equals(this.StandardReturnObject, entry.StandardReturnObject)
+                && this.Rows.SequenceEqual(entry.Rows);
+        }
+
+        /// <summary>
+        /// Serves as the default hash function.
+        /// </summary>
+        /// <returns>A hash code for the current object.</returns>
+        public override int GetHashCode()
+        {
+            return BitShifter.ShiftAndWrap(this.RowCount.GetHashCode(), 2)
+                ^ BitShifter.ShiftAndWrap(this.ColumnCount.GetHashCode(), 1)
+                ^ BitShifter.ShiftAndWrap(this.StandardReturnObject?.GetHashCode() ?? 1, 1)
+                ^ this.Rows?.GetHashCode() ?? 0;
         }
 
         /// <summary>
