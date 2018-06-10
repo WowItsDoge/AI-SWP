@@ -45,8 +45,12 @@ namespace UseCaseCore.UcIntern
 
         /// <summary>
         /// A resume step.
+        /// <para/>
+        /// Two ore one matching groups.
+        /// For one group it specifies the step in the basic flow to resume to.
+        /// For two groups it specifies the flow in the first group and the step in the flow in the second group.
         /// </summary>
-        public static readonly StepType Resume = new StepType(6, new[] { @"\bRESUME\b(.*)" });
+        public static readonly StepType Resume = new StepType(6, new[] { @"\bRESUME\b ([^ ]*) ([0-9]+)| ([0-9]+)" });
 
         /// <summary>
         /// An abort step.

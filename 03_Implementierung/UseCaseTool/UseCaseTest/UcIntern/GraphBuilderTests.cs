@@ -58,12 +58,84 @@ namespace UseCaseTest.UcIntern
                     { false, false, true },
                     { false, false, false }
                 });
+            List<ExternalEdge> expectedExternalEdges = new List<ExternalEdge>();
+            List<InternalEdge> expectedPossibleInvalidIfEdges = new List<InternalEdge>();
+            List<int> ExpectedExitSteps = new List<int>();
+            ExpectedExitSteps.Add(2);
 
             // Act
             GraphBuilder.SetEdgesInNodeBlock(nodes, out var edgeMatrix, out var externalEdges, out var possibleInvalidIfEdges, out var exitSteps);
 
             // Assert
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedExternalEdges, externalEdges);
+            Assert.AreEqual(expectedPossibleInvalidIfEdges, possibleInvalidIfEdges);
+            Assert.AreEqual(ExpectedExitSteps, exitSteps);
+        }
+
+        /// <summary>
+        /// Tests the edge creation of a linear flow with an abort step.
+        /// </summary>
+        [Test]
+        public void WireAbortFlow()
+        {
+            // Arrange
+            List<Node> nodes = new List<Node>();
+            nodes.Add(new Node("The use case starts.", flowIdentifierBasic));
+            nodes.Add(new Node("ABORT", flowIdentifierBasic));
+            nodes.Add(new Node("The use case starts.", flowIdentifierBasic));
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(
+                new bool[,]
+                {
+                    { false, true, false },
+                    { false, false, false },
+                    { false, false, false }
+                });
+            List<ExternalEdge> expectedExternalEdges = new List<ExternalEdge>();
+            List<InternalEdge> expectedPossibleInvalidIfEdges = new List<InternalEdge>();
+            List<int> ExpectedExitSteps = new List<int>();
+
+            // Act
+            GraphBuilder.SetEdgesInNodeBlock(nodes, out var edgeMatrix, out var externalEdges, out var possibleInvalidIfEdges, out var exitSteps);
+
+            // Assert
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedExternalEdges, externalEdges);
+            Assert.AreEqual(expectedPossibleInvalidIfEdges, possibleInvalidIfEdges);
+            Assert.AreEqual(ExpectedExitSteps, exitSteps);
+        }
+
+        /// <summary>
+        /// Tests the edge creation of a linear flow with a resume step.
+        /// </summary>
+        [Test]
+        public void WireResumeFlow()
+        {
+            // Arrange
+            List<Node> nodes = new List<Node>();
+            nodes.Add(new Node("The use case starts.", flowIdentifierBasic));
+            nodes.Add(new Node("RESUME 12 ", flowIdentifierBasic));
+            nodes.Add(new Node("The use case starts.", flowIdentifierBasic));
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(
+                new bool[,]
+                {
+                    { false, true, false },
+                    { false, false, false },
+                    { false, false, false }
+                });
+            List<ExternalEdge> expectedExternalEdges = new List<ExternalEdge>();
+            expectedExternalEdges.Add(new ExternalEdge(1, new ReferenceStep(new FlowIdentifier(FlowType.Basic, 0), 12)));
+            List<InternalEdge> expectedPossibleInvalidIfEdges = new List<InternalEdge>();
+            List<int> ExpectedExitSteps = new List<int>();
+
+            // Act
+            GraphBuilder.SetEdgesInNodeBlock(nodes, out var edgeMatrix, out var externalEdges, out var possibleInvalidIfEdges, out var exitSteps);
+
+            // Assert
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedExternalEdges, externalEdges);
+            Assert.AreEqual(expectedPossibleInvalidIfEdges, possibleInvalidIfEdges);
+            Assert.AreEqual(ExpectedExitSteps, exitSteps);
         }
 
         // --------------------------------------------------------------------------------------------- GetStepType
@@ -468,6 +540,40 @@ namespace UseCaseTest.UcIntern
 
             // Assert
             Assert.IsFalse(GraphBuilder.IsEqualsToAtLeastOnePatternOfStepType(stepDescription, stepType));
+        }
+
+        // --------------------------------------------------------------------------------------------- GetMatchingPatternForStepType
+
+        /// <summary>
+        /// Tests if a pattern is returned for a valid if statement when compared to the if step type.
+        /// </summary>
+        [Test]
+        public void PatternFromIfStepTypeReturnedForValidIfStatement()
+        {
+            // Arrange
+            string stepDescription = "IF Hans can fly THEN";
+            StepType stepType = StepType.If;
+
+            // Act
+
+            // Assert
+            Assert.IsNotNull(GraphBuilder.GetMatchingPatternForStepType(stepDescription, stepType));
+        }
+
+        /// <summary>
+        /// Tests if null is returned for a not if statement when compared to the if step type.
+        /// </summary>
+        [Test]
+        public void PatternFromIfStepTypeReturnedForinvalidIfStatement()
+        {
+            // Arrange
+            string stepDescription = "ELSEIF Hans can fly THEN";
+            StepType stepType = StepType.If;
+
+            // Act
+
+            // Assert
+            Assert.IsNull(GraphBuilder.GetMatchingPatternForStepType(stepDescription, stepType));
         }
     }
 }
