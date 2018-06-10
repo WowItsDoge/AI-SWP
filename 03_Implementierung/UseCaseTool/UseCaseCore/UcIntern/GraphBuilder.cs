@@ -84,7 +84,6 @@ namespace UseCaseCore.UcIntern
                 else
                 {
                     // Treat it as a normal/unmatched step
-
                     if (stepPos < (nodes.Count - 1))
                     {
                         // Not the last step.
@@ -103,7 +102,7 @@ namespace UseCaseCore.UcIntern
         /// Analyzes the step and returns the external edge for that resume step.
         /// </summary>
         /// <param name="stepDescription">The description of a resume step.</param>
-        /// <param name="currentStep">The step number of the given resume step.</param>
+        /// <param name="resumeStepNumber">The step number of the given resume step.</param>
         /// <returns>The external edge for the given resume step.</returns>
         public static ExternalEdge GetExternalEdgeForResumeStep(string stepDescription, int resumeStepNumber)
         {
