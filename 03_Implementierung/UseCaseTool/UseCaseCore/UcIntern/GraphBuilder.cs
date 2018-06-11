@@ -22,80 +22,247 @@ namespace UseCaseCore.UcIntern
         /// <param name="specificAlternativeFlows">The specific alternative flows.</param>
         /// <param name="globalAlternativeFlows">The global alternative flows.</param>
         /// <param name="boundedAlternativeFlows">The bounded alternative flows.</param>
-        /// <param name="nodes">The nodes of all flows.</param>
-        /// <param name="edgeMatrix">The edge matrix for the nodes.</param>
+        /// <param name="steps">The steps of all flows.</param>
+        /// <param name="edgeMatrix">The edge matrix for the steps.</param>
         /// <param name="conditionMatrix">The condition matrix for the flows.</param>
         public static void BuildGraph(
             Flow basicFlow,
             IReadOnlyList<Flow> specificAlternativeFlows,
             IReadOnlyList<Flow> globalAlternativeFlows,
             IReadOnlyList<Flow> boundedAlternativeFlows,
-            out IReadOnlyList<Node> nodes,
+            out IReadOnlyList<Node> steps,
             out Matrix<bool> edgeMatrix,
             out Matrix<Condition?> conditionMatrix)
         {
-            nodes = null;
+            steps = null;
             edgeMatrix = null;
             conditionMatrix = null;
         }
 
         /// <summary>
-        /// Sets the edges in a block of nodes.
+        /// Sets the edges in a block of steps.
         /// </summary>
-        /// <param name="nodes">The nodes to wire.</param>
-        /// <param name="edgeMatrix">The matrix with the edges for the given nodes.</param>
-        /// <param name="externalEdges">A list of edges whose target is located outside the given nodes.</param>
-        /// <param name="possibleInvalidIfEdges">A list of edges between the given nodes that may be invalid, because they represent an edge for an if statement without an else statement in this node list for the case the condition is false. These edge may be invalid if the else/elseif is located in another block of nodes/alternative flow.</param>
+        /// <param name="steps">The steps to wire.</param>
+        /// <param name="edgeMatrix">The matrix with the edges for the given steps.</param>
+        /// <param name="externalEdges">A list of edges whose target is located outside the given steps.</param>
+        /// <param name="possibleInvalidIfEdges">A list of edges between the given steps that may be invalid, because they represent an edge for an if statement without an else statement in this step list for the case the condition is false. These edge may be invalid if the else/elseif is located in another block of steps/alternative flow.</param>
         /// <param name="exitSteps">A list of steps of the given block that whose edges lead out of the block to the next step of the outer block. These are not abort edges!</param>
-        public static void SetEdgesInNodeBlock(
-            IReadOnlyList<Node> nodes,
+        public static void SetEdgesInStepBlock(
+            IReadOnlyList<Node> steps,
             out Matrix<bool> edgeMatrix,
             out List<ExternalEdge> externalEdges,
             out List<InternalEdge> possibleInvalidIfEdges,
             out List<int> exitSteps)
         {
             // Initialize out varibles
-            edgeMatrix = new Matrix<bool>(nodes.Count, false);
+            edgeMatrix = new Matrix<bool>(steps.Count, false);
             externalEdges = new List<ExternalEdge>();
             possibleInvalidIfEdges = new List<InternalEdge>();
             exitSteps = new List<int>();
 
             // Cycle through all steps and handle their edges.
-            for (int stepPos = 0; stepPos < nodes.Count; stepPos++)
+            for (int stepIndex = 0; stepIndex < steps.Count; stepIndex++)
             {
-                string stepDescription = nodes[stepPos].StepDescription;
+                string stepDescription = steps[stepIndex].StepDescription;
                 StepType stepType = GraphBuilder.GetStepType(stepDescription);
 
-                if (stepType.Equals(StepType.If))
+                if (stepType == StepType.If)
+                {
+                    SetEdgesInIfStatement(steps, ref edgeMatrix, ref externalEdges, ref possibleInvalidIfEdges, ref stepIndex);
+
+                    // Revert the step index by one to one position before the end if so that in the next cycle it points to the end if step.
+                    stepIndex--;
+                }
+                else if (stepType == StepType.Else)
                 {
                 }
-                else if (stepType.Equals(StepType.Do))
+                else if (stepType == StepType.ElseIf)
                 {
                 }
-                else if (stepType.Equals(StepType.Resume))
+                else if (stepType == StepType.Do)
                 {
-                    externalEdges.Add(GraphBuilder.GetExternalEdgeForResumeStep(stepDescription, stepPos));
+                }
+                else if (stepType == StepType.Resume)
+                {
+                    externalEdges.Add(GraphBuilder.GetExternalEdgeForResumeStep(stepDescription, stepIndex));
                     break;
                 }
-                else if (stepType.Equals(StepType.Abort))
+                else if (stepType == StepType.Abort)
                 {
                     break;
                 }
                 else
                 {
                     // Treat it as a normal/unmatched step
-                    if (stepPos < (nodes.Count - 1))
+                    if (stepIndex < (steps.Count - 1))
                     {
                         // Not the last step.
-                        edgeMatrix[stepPos, stepPos + 1] = true;
+                        edgeMatrix[stepIndex, stepIndex + 1] = true;
                     }
                     else
                     {
                         // The last step.
-                        exitSteps.Add(stepPos);
+                        exitSteps.Add(stepIndex);
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Wires an if block. The if block starts at <paramref name="stepIndex"/> in steps. The complete wiring is made and stepIndex finally is set to the index of the end if step.
+        /// The given lists/matrices are correctly updated.
+        /// <para/>
+        /// To visualize what is assumed a block if talking about it:
+        /// <para/>
+        /// IF
+        /// <para/>
+        /// Nested block step
+        /// <para/>
+        /// ELSE
+        /// </summary>
+        /// <param name="steps">See <paramref name="steps"/> in <see cref="SetEdgesInstepBlock"/>.</param>
+        /// <param name="edgeMatrix">See <paramref name="edgeMatrix"/> in <see cref="SetEdgesInstepBlock"/>.</param>
+        /// <param name="externalEdges">See <paramref name="externalEdges"/> in <see cref="SetEdgesInstepBlock"/>.</param>
+        /// <param name="possibleInvalidIfEdges">See <paramref name="possibleInvalidIfEdges"/> in <see cref="SetEdgesInstepBlock"/>.</param>
+        /// <param name="stepIndex">On call the current index in the steps where the if start step is located and after the call the index of the end if step.</param>
+        public static void SetEdgesInIfStatement(
+            IReadOnlyList<Node> steps,
+            ref Matrix<bool> edgeMatrix,
+            ref List<ExternalEdge> externalEdges,
+            ref List<InternalEdge> possibleInvalidIfEdges,
+            ref int stepIndex)
+        {
+            List<int> importantIfSteps = GraphBuilder.GetImportantIfStatementSteps(steps, stepIndex);
+
+            // Handle nested blocks
+            int ifStepIndex = importantIfSteps.First(),
+                endIfStepIndex = importantIfSteps.Last();
+
+            for (int blockIndex = 0; blockIndex < importantIfSteps.Count - 1; blockIndex++)
+            {
+                int blockStartIndex = importantIfSteps[blockIndex],
+                    blockEndIndex = importantIfSteps[blockIndex + 1],
+                    blockSize = blockEndIndex - blockStartIndex - 1;
+
+                // Set edge from if to start of block
+                if (blockIndex > 0)
+                {
+                    edgeMatrix[ifStepIndex, blockStartIndex] = true;
+                }
+
+                if (blockSize > 0)
+                {
+                    // Set edge into the nested block
+                    edgeMatrix[blockStartIndex, blockStartIndex + 1] = true;
+
+                    List<Node> nestedSteps = steps.Skip(blockStartIndex + 1).Take(blockSize).ToList();
+
+                    GraphBuilder.SetEdgesInStepBlock(nestedSteps, out var nestedEdgeMatrix, out var nestedExternalEdges, out var nestedIndexsibleInvalidIfEdges, out var nestedExitSteps);
+
+                    // Unite matrices
+                    GraphBuilder.InsertMatrix(ref edgeMatrix, blockStartIndex + 1, blockStartIndex + 1, nestedEdgeMatrix);
+
+                    // Unite externalEdges
+                    externalEdges.AddRange(nestedExternalEdges.ConvertAll((edge) => edge.NewWithIncreasedSourceStepNumber(blockStartIndex + 1)));
+
+                    // Unite possible invalid if edges
+                    possibleInvalidIfEdges.AddRange(nestedIndexsibleInvalidIfEdges.ConvertAll((edge) => edge.NewWithIncreasedSourceTargetStep(blockStartIndex + 1)));
+
+                    // Wire exit steps to end if step
+                    foreach (int exitStep in nestedExitSteps)
+                    {
+                        edgeMatrix[exitStep + blockStartIndex + 1, endIfStepIndex] = true;
+                    }
+                }
+                else
+                {
+                    // Wire block start step to endif step
+                    edgeMatrix[blockStartIndex, endIfStepIndex] = true;
+                }
+            }
+
+            // If there are no else if or else blocks it might be that they are located in alternative flows or that there are none.
+            // To be safe assume that there are none, create the edge and list that edge as possible invalid.
+            if (importantIfSteps.Count <= 2)
+            {
+                edgeMatrix[ifStepIndex, endIfStepIndex] = true;
+
+                possibleInvalidIfEdges.Add(new InternalEdge(ifStepIndex, endIfStepIndex));
+            }
+
+            // Set current step index to end if step.
+            stepIndex = endIfStepIndex;
+        }
+
+        /// <summary>
+        /// Inserts <paramref name="sourceMatrix"/> into <paramref name="targetMatrix"/>. The values in <paramref name="targetMatrix"/> are overriden. Make sure the dimensions match!
+        /// <paramref name="sourceMatrix"/> is completely inserted into <paramref name="targetMatrix"/>.
+        /// </summary>
+        /// <typeparam name="T">The matrix content type.</typeparam>
+        /// <param name="targetMatrix">The target matrix where to insert <paramref name="sourceMatrix"/>.</param>
+        /// <param name="targetRow">The row in <paramref name="targetMatrix"/> where to start insterting.</param>
+        /// <param name="targetColumn">The column in <paramref name="targetMatrix"/> where to start inserting.</param>
+        /// <param name="sourceMatrix">The source matrix to insert into <paramref name="targetMatrix"/>.</param>
+        public static void InsertMatrix<T>(ref Matrix<T> targetMatrix, int targetRow, int targetColumn, Matrix<T> sourceMatrix)
+        {
+            for (int sourceRow = 0; sourceRow < sourceMatrix.RowCount; sourceRow++)
+            {
+                for (int sourceColumn = 0; sourceColumn < sourceMatrix.ColumnCount; sourceColumn++)
+                {
+                    targetMatrix[targetRow + sourceRow, targetColumn + sourceColumn] = sourceMatrix[sourceRow, sourceColumn];
+                }
+            }
+        }
+
+        /// <summary>
+        /// Searches the important steps in an if statement starting in <paramref name="steps"/> at index <paramref name="startStep"/>.
+        /// The important steps are if, else if, else and end if.
+        /// </summary>
+        /// <param name="steps">The steps containing the if statement.</param>
+        /// <param name="startStep">The index of the step in <paramref name="steps"/> where to start the search. Must be an if step!</param>
+        /// <returns>The indices of the important steps. Index 0 is the if step and the following are optional elseif steps with an optional else step as second to last index and an endif step as last index.</returns>
+        public static List<int> GetImportantIfStatementSteps(IReadOnlyList<Node> steps, int startStep)
+        {
+            List<int> importantSteps = new List<int>();
+            importantSteps.Add(startStep);
+
+            // If this number is greater than 0 the index is currently in a nested if of the given depth.
+            int numberNestedIfStatements = 0;
+
+            for (int stepIndex = startStep + 1; stepIndex < steps.Count; stepIndex++)
+            {
+                StepType stepType = GraphBuilder.GetStepType(steps[stepIndex].StepDescription);
+
+                if (stepType == StepType.If)
+                {
+                    numberNestedIfStatements++;
+                    continue;
+                }
+
+                if (numberNestedIfStatements > 0)
+                {
+                    // In nested if statement.
+                    if (stepType == StepType.EndIf)
+                    {
+                        numberNestedIfStatements--;
+                    }
+                }
+                else
+                {
+                    // In root if statment.
+                    if (stepType == StepType.ElseIf || stepType == StepType.Else || stepType == StepType.EndIf)
+                    {
+                        importantSteps.Add(stepIndex);
+                    }
+
+                    if (stepType == StepType.EndIf)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            return importantSteps;
         }
 
         /// <summary>

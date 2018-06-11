@@ -34,14 +34,19 @@ namespace UseCaseCore.UcIntern
         public static readonly StepType ElseIf = new StepType(3, new[] { @"\bELSEIF\b(.*)\bTHEN\b" });
 
         /// <summary>
+        /// An endif step of an if-statment.
+        /// </summary>
+        public static readonly StepType EndIf = new StepType(4, new[] { @"\bENDIF\b" });
+
+        /// <summary>
         /// The do step of an do-while-statement.
         /// </summary>
-        public static readonly StepType Do = new StepType(4, new[] { @"\bDO\b" });
+        public static readonly StepType Do = new StepType(5, new[] { @"\bDO\b" });
 
         /// <summary>
         /// The while step of an do-while-statement.
         /// </summary>
-        public static readonly StepType While = new StepType(5, new[] { @"(.*)\bWHILE\b(.*)" });
+        public static readonly StepType While = new StepType(6, new[] { @"(.*)\bWHILE\b(.*)" });
 
         /// <summary>
         /// A resume step.
@@ -50,17 +55,17 @@ namespace UseCaseCore.UcIntern
         /// For one group it specifies the step in the basic flow to resume to.
         /// For two groups it specifies the flow in the first group and the step in the flow in the second group.
         /// </summary>
-        public static readonly StepType Resume = new StepType(6, new[] { @"\bRESUME\b ([^ ]*) ([0-9]+)| ([0-9]+)" });
+        public static readonly StepType Resume = new StepType(7, new[] { @"\bRESUME\b ([^ ]*) ([0-9]+)| ([0-9]+)" });
 
         /// <summary>
         /// An abort step.
         /// </summary>
-        public static readonly StepType Abort = new StepType(7, new[] { @"\bABORT\b" });
+        public static readonly StepType Abort = new StepType(8, new[] { @"\bABORT\b" });
 
         /// <summary>
         /// An abort step.
         /// </summary>
-        public static readonly StepType ValidatesThat = new StepType(8, new[] { @"(.*)\bVALIDATES THAT\b(.*)" });
+        public static readonly StepType ValidatesThat = new StepType(9, new[] { @"(.*)\bVALIDATES THAT\b(.*)" });
 
         /// <summary>
         /// The regex patterns that match this type.
