@@ -4,6 +4,7 @@
 
 namespace UseCaseTest.UcIntern
 {
+    using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
@@ -293,8 +294,6 @@ namespace UseCaseTest.UcIntern
             // Act
             GraphBuilder.SetEdgesInStepBlock(nodes, out var edgeMatrix, out var externalEdges, out var possibleInvalidIfEdges, out var exitSteps);
 
-            this.PrintMatrix(edgeMatrix);
-
             // Assert
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
             Assert.AreEqual(expectedExternalEdges, externalEdges);
@@ -303,7 +302,7 @@ namespace UseCaseTest.UcIntern
         }
 
         /// <summary>
-        /// Tests the edge creation of an if flow like if-elseif-else-endif with blocks consising of Resume, Abort and other if statements inside the if statement.
+        /// Tests the edge creation of an if flow like if-elseif-else-endif with blocks consisting of Resume, Abort and other if statements inside the if statement.
         /// </summary>
         [Test]
         public void WireComplexNestedIfFlow()
@@ -346,7 +345,138 @@ namespace UseCaseTest.UcIntern
             // Act
             GraphBuilder.SetEdgesInStepBlock(nodes, out var edgeMatrix, out var externalEdges, out var possibleInvalidIfEdges, out var exitSteps);
 
-            this.PrintMatrix(edgeMatrix);
+            // Assert
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedExternalEdges, externalEdges);
+            Assert.AreEqual(expectedPossibleInvalidIfEdges, possibleInvalidIfEdges);
+            Assert.AreEqual(expectedExitSteps, exitSteps);
+        }
+
+        /// <summary>
+        /// Tests the edge creation of a splited if flow like else-endif in an alternative flow with with simple blocks inside the else statement.
+        /// </summary>
+        [Test]
+        public void WireSimpleElseFlow()
+        {
+            // Arrange
+            List<Node> nodes = new List<Node>();
+            nodes.Add(new Node("ELSE", flowIdentifierBasic));           // 0
+            nodes.Add(new Node("Step inside.", flowIdentifierBasic));   // 1
+            nodes.Add(new Node("ENDIF", flowIdentifierBasic));          // 2
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(
+                new bool[,]
+                {
+                    { false, true, false },
+                    { false, false, true },
+                    { false, false, false }
+                });
+            List<ExternalEdge> expectedExternalEdges = new List<ExternalEdge>();
+            List<InternalEdge> expectedPossibleInvalidIfEdges = new List<InternalEdge>();
+            List<int> expectedExitSteps = new List<int>();
+            expectedExitSteps.Add(2);
+
+            // Act
+            GraphBuilder.SetEdgesInStepBlock(nodes, out var edgeMatrix, out var externalEdges, out var possibleInvalidIfEdges, out var exitSteps);
+
+            // Assert
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedExternalEdges, externalEdges);
+            Assert.AreEqual(expectedPossibleInvalidIfEdges, possibleInvalidIfEdges);
+            Assert.AreEqual(expectedExitSteps, exitSteps);
+        }
+
+        /// <summary>
+        /// Tests the edge creation of a splited if flow like elseif-elseif-endif in an alternative flow with with simple blocks inside the else if statements.
+        /// </summary>
+        [Test]
+        public void WireSimpleElseIfFlow()
+        {
+            // Arrange
+            List<Node> nodes = new List<Node>();
+            nodes.Add(new Node("ELSEIF the crystal is blue THEN", flowIdentifierBasic));    // 0
+            nodes.Add(new Node("Dissolve it in water.", flowIdentifierBasic));              // 1
+            nodes.Add(new Node("ELSEIF the crystal is red THEN", flowIdentifierBasic));     // 2
+            nodes.Add(new Node("Burn it in fire.", flowIdentifierBasic));                   // 3
+            nodes.Add(new Node("ENDIF", flowIdentifierBasic));                              // 4
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(5, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[1, 4] = true;
+            expectedEdgeMatrix[2, 3] = true;
+            expectedEdgeMatrix[3, 4] = true;
+            List<ExternalEdge> expectedExternalEdges = new List<ExternalEdge>();
+            List<InternalEdge> expectedPossibleInvalidIfEdges = new List<InternalEdge>();
+            List<int> expectedExitSteps = new List<int>();
+            expectedExitSteps.Add(4);
+
+            // Act
+            GraphBuilder.SetEdgesInStepBlock(nodes, out var edgeMatrix, out var externalEdges, out var possibleInvalidIfEdges, out var exitSteps);
+
+            // Assert
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedExternalEdges, externalEdges);
+            Assert.AreEqual(expectedPossibleInvalidIfEdges, possibleInvalidIfEdges);
+            Assert.AreEqual(expectedExitSteps, exitSteps);
+        }
+
+        /// <summary>
+        /// Tests if an exception if thrown if a description is given that can create a loop.
+        /// </summary>
+        [Test]
+        public void TryWirePossibleEndlessLoopInWrongFlowDescription()
+        {
+            // Arrange
+            List<Node> nodes = new List<Node>();
+            nodes.Add(new Node("IF the crystal is blue THEN", flowIdentifierBasic));
+            nodes.Add(new Node("Dissolve it in water.", flowIdentifierBasic));
+            nodes.Add(new Node("IF the crystal is red THEN", flowIdentifierBasic));
+            nodes.Add(new Node("Burn it in fire.", flowIdentifierBasic));
+            nodes.Add(new Node("ENDIF", flowIdentifierBasic));
+
+            // Act
+
+            // Assert
+            Assert.Catch(
+                        typeof(Exception),
+                        () =>
+                        {
+                            GraphBuilder.SetEdgesInStepBlock(nodes, out var edgeMatrix, out var externalEdges, out var possibleInvalidIfEdges, out var exitSteps);
+                        });
+        }
+
+        /// <summary>
+        /// Tests the edge creation of a splited if flow like elseif-else-endif in an alternative flow with with complex blocks inside the else/else if statements.
+        /// </summary>
+        [Test]
+        public void WireComplexeElseIfElseFlow()
+        {
+            // Arrange
+            List<Node> nodes = new List<Node>();
+            nodes.Add(new Node("ELSEIF the crystal is green THEN", flowIdentifierBasic));  // 0
+                nodes.Add(new Node("IF the crystal glows THEN", flowIdentifierBasic));      // 1
+                    nodes.Add(new Node("Don't eat it!", flowIdentifierBasic));              // 2
+                nodes.Add(new Node("ELSE", flowIdentifierBasic));                           // 3
+                    nodes.Add(new Node("Eat it.", flowIdentifierBasic));                    // 4
+                nodes.Add(new Node("ENDIF", flowIdentifierBasic));                          // 5
+            nodes.Add(new Node("ELSE", flowIdentifierBasic));                               // 6
+                nodes.Add(new Node("RESUME 5", flowIdentifierBasic));                       // 7
+            nodes.Add(new Node("ENDIF", flowIdentifierBasic));                              // 8
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(9, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[1, 2] = true;
+            expectedEdgeMatrix[1, 3] = true;
+            expectedEdgeMatrix[2, 5] = true;
+            expectedEdgeMatrix[3, 4] = true;
+            expectedEdgeMatrix[4, 5] = true;
+            expectedEdgeMatrix[5, 8] = true;
+            expectedEdgeMatrix[6, 7] = true;
+            List<ExternalEdge> expectedExternalEdges = new List<ExternalEdge>();
+            expectedExternalEdges.Add(new ExternalEdge(7, new ReferenceStep(new FlowIdentifier(FlowType.Basic, 0), 5)));
+            List<InternalEdge> expectedPossibleInvalidIfEdges = new List<InternalEdge>();
+            List<int> expectedExitSteps = new List<int>();
+            expectedExitSteps.Add(8);
+
+            // Act
+            GraphBuilder.SetEdgesInStepBlock(nodes, out var edgeMatrix, out var externalEdges, out var possibleInvalidIfEdges, out var exitSteps);
 
             // Assert
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
