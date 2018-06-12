@@ -91,6 +91,10 @@ namespace UseCaseCore.UcIntern
                 }
                 else if (stepType == StepType.Do)
                 {
+                    GraphBuilder.SetEdgesInDoWhileStatement(steps, ref edgeMatrix, ref externalEdges, ref possibleInvalidIfEdges, ref stepIndex);
+
+                    // Revert the step index by one to one position beofre the while so that in the next cycle it points to the while step.
+                    stepIndex--;
                 }
                 else if (stepType == StepType.Resume)
                 {
@@ -192,7 +196,7 @@ namespace UseCaseCore.UcIntern
         /// <param name="edgeMatrix">See <paramref name="edgeMatrix"/> in <see cref="SetEdgesInstepBlock"/>.</param>
         /// <param name="externalEdges">See <paramref name="externalEdges"/> in <see cref="SetEdgesInstepBlock"/>.</param>
         /// <param name="possibleInvalidIfEdges">See <paramref name="possibleInvalidIfEdges"/> in <see cref="SetEdgesInstepBlock"/>.</param>
-        /// <param name="stepIndex">On call the current index in the steps where the if start step is located and after the call the index of the end if step.</param>
+        /// <param name="stepIndex">On call the current index in the steps where the else/else if start step is located and after the call the index of the end if step.</param>
         public static void SetEdgesInElseElseIfStatement(
             IReadOnlyList<Node> steps,
             ref Matrix<bool> edgeMatrix,
@@ -224,6 +228,47 @@ namespace UseCaseCore.UcIntern
 
             // Set current step index to end if step.
             stepIndex = endIfStepIndex;
+        }
+
+        /// <summary>
+        /// Wires an do-while block. The block starts at <paramref name="stepIndex"/> in steps. The complete wiring is made and <paramref name="stepIndex"/> finally is set to
+        /// the index of the while step.
+        /// The given lists/matrices are correctly updated.
+        /// </summary>
+        /// <param name="steps">See <paramref name="steps"/> in <see cref="SetEdgesInstepBlock"/>.</param>
+        /// <param name="edgeMatrix">See <paramref name="edgeMatrix"/> in <see cref="SetEdgesInstepBlock"/>.</param>
+        /// <param name="externalEdges">See <paramref name="externalEdges"/> in <see cref="SetEdgesInstepBlock"/>.</param>
+        /// <param name="possibleInvalidIfEdges">See <paramref name="possibleInvalidIfEdges"/> in <see cref="SetEdgesInstepBlock"/>.</param>
+        /// <param name="stepIndex">On call the current index in the steps where the do start step is located and after the call the index of the while step.</param>
+        public static void SetEdgesInDoWhileStatement(
+            IReadOnlyList<Node> steps,
+            ref Matrix<bool> edgeMatrix,
+            ref List<ExternalEdge> externalEdges,
+            ref List<InternalEdge> possibleInvalidIfEdges,
+            ref int stepIndex)
+        {
+            Tuple<int, int> importantDoWhileSteps = GraphBuilder.GetImportantDoWhileStatementSteps(steps, stepIndex);
+
+            // Handle nested block
+            int doStepIndex = importantDoWhileSteps.Item1,
+                whileStepIndex = importantDoWhileSteps.Item2,
+                blockSize = whileStepIndex - doStepIndex - 1;
+
+            if (blockSize > 0)
+            {
+                GraphBuilder.SetEdgesInNestedBlock(steps, ref edgeMatrix, ref externalEdges, ref possibleInvalidIfEdges, doStepIndex, whileStepIndex, whileStepIndex);
+            }
+            else
+            {
+                // Wire do step to while step
+                edgeMatrix[doStepIndex, whileStepIndex] = true;
+            }
+
+            // Set edge from while to do
+            edgeMatrix[whileStepIndex, doStepIndex] = true;
+
+            // Set current step index to end if step.
+            stepIndex = whileStepIndex;
         }
 
         /// <summary>
@@ -355,6 +400,52 @@ namespace UseCaseCore.UcIntern
             }
 
             return importantSteps;
+        }
+
+        /// <summary>
+        /// Searches the important steps in an do-while statement starting in <paramref name="steps"/> at index <paramref name="startStep"/>.
+        /// The important steps are do and while. The given <paramref name="startStep"/> is assumed a valid do statment step and added automatically to the start of the list.
+        /// It ends with the first while that does not belong to a nested do-while statement.
+        /// </summary>
+        /// <param name="steps">The steps containing the do-while statement.</param>
+        /// <param name="startStep">The index of the step in <paramref name="steps"/> where to start the search. Must be a do step!</param>
+        /// <returns>The indices of the important steps. Item 1 is the do step index and item 2 the while step index.</returns>
+        public static Tuple<int, int> GetImportantDoWhileStatementSteps(IReadOnlyList<Node> steps, int startStep)
+        {
+            // If this number is greater than 0 the index is currently in a nested do-while of the given depth.
+            int numberNestedDoWhileStatements = 0,
+                endStep = -1;
+
+            for (int stepIndex = startStep + 1; stepIndex < steps.Count; stepIndex++)
+            {
+                StepType stepType = GraphBuilder.GetStepType(steps[stepIndex].StepDescription);
+
+                if (stepType == StepType.Do)
+                {
+                    numberNestedDoWhileStatements++;
+                    continue;
+                }
+
+                if (numberNestedDoWhileStatements > 0)
+                {
+                    // In nested if statement.
+                    if (stepType == StepType.While)
+                    {
+                        numberNestedDoWhileStatements--;
+                    }
+                }
+                else
+                {
+                    // In root if statment.
+                    if (stepType == StepType.While)
+                    {
+                        endStep = stepIndex;
+                        break;
+                    }
+                }
+            }
+
+            return new Tuple<int, int>(startStep, endStep);
         }
 
         /// <summary>

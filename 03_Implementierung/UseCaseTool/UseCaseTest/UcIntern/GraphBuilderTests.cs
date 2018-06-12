@@ -485,6 +485,83 @@ namespace UseCaseTest.UcIntern
             Assert.AreEqual(expectedExitSteps, exitSteps);
         }
 
+        /// <summary>
+        /// Tests the edge creation of a simple do-while statement with a simple nested block.
+        /// </summary>
+        [Test]
+        public void WireSimpleDoWhileFlow()
+        {
+            // Arrange
+            List<Node> nodes = new List<Node>();
+            nodes.Add(new Node("DO", flowIdentifierBasic));                         // 0
+                nodes.Add(new Node("Stamp on the ground", flowIdentifierBasic));    // 1
+                nodes.Add(new Node("Jump in the air", flowIdentifierBasic));        // 2
+            nodes.Add(new Node("WHILE you are not tired", flowIdentifierBasic));    // 3
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(4, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[1, 2] = true;
+            expectedEdgeMatrix[2, 3] = true;
+            expectedEdgeMatrix[3, 0] = true;
+            List<ExternalEdge> expectedExternalEdges = new List<ExternalEdge>();
+            List<InternalEdge> expectedPossibleInvalidIfEdges = new List<InternalEdge>();
+            List<int> expectedExitSteps = new List<int>();
+            expectedExitSteps.Add(3);
+
+            // Act
+            GraphBuilder.SetEdgesInStepBlock(nodes, out var edgeMatrix, out var externalEdges, out var possibleInvalidIfEdges, out var exitSteps);
+
+            // Assert
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedExternalEdges, externalEdges);
+            Assert.AreEqual(expectedPossibleInvalidIfEdges, possibleInvalidIfEdges);
+            Assert.AreEqual(expectedExitSteps, exitSteps);
+        }
+
+        /// <summary>
+        /// Tests the edge creation of a simple do-while statement with a complex nested block.
+        /// </summary>
+        [Test]
+        public void WireComplexDoWhileFlow()
+        {
+            // Arrange
+            List<Node> nodes = new List<Node>();
+            nodes.Add(new Node("DO", flowIdentifierBasic));                         // 0
+                nodes.Add(new Node("DO", flowIdentifierBasic));                     // 1
+                    nodes.Add(new Node("Ask pin", flowIdentifierBasic));            // 2
+                nodes.Add(new Node("WHILE pin is false", flowIdentifierBasic));     // 3
+                nodes.Add(new Node("IF wants money THEN", flowIdentifierBasic));    // 4
+                    nodes.Add(new Node("Give money", flowIdentifierBasic));         // 5
+                nodes.Add(new Node("ENDIF", flowIdentifierBasic));                  // 6
+                nodes.Add(new Node("Return card", flowIdentifierBasic));            // 7
+            nodes.Add(new Node("WHILE power on", flowIdentifierBasic));             // 8
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(9, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[1, 2] = true;
+            expectedEdgeMatrix[2, 3] = true;
+            expectedEdgeMatrix[3, 4] = true;
+            expectedEdgeMatrix[3, 1] = true;
+            expectedEdgeMatrix[4, 5] = true;
+            expectedEdgeMatrix[4, 6] = true;
+            expectedEdgeMatrix[5, 6] = true;
+            expectedEdgeMatrix[6, 7] = true;
+            expectedEdgeMatrix[7, 8] = true;
+            expectedEdgeMatrix[8, 0] = true;
+            List<ExternalEdge> expectedExternalEdges = new List<ExternalEdge>();
+            List<InternalEdge> expectedPossibleInvalidIfEdges = new List<InternalEdge>();
+            expectedPossibleInvalidIfEdges.Add(new InternalEdge(4, 6));
+            List<int> expectedExitSteps = new List<int>();
+            expectedExitSteps.Add(8);
+
+            // Act
+            GraphBuilder.SetEdgesInStepBlock(nodes, out var edgeMatrix, out var externalEdges, out var possibleInvalidIfEdges, out var exitSteps);
+
+            // Assert
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedExternalEdges, externalEdges);
+            Assert.AreEqual(expectedPossibleInvalidIfEdges, possibleInvalidIfEdges);
+            Assert.AreEqual(expectedExitSteps, exitSteps);
+        }
+
         // --------------------------------------------------------------------------------------------- InsertMatrix
 
         /// <summary>
