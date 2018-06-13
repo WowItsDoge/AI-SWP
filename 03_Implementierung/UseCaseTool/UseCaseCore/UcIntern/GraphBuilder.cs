@@ -20,9 +20,9 @@ namespace UseCaseCore.UcIntern
         /// Builds the graph.
         /// </summary>
         /// <param name="basicFlow">The basic flow.</param>
-        /// <param name="specificAlternativeFlows">The specific alternative flows. Reference steps starting with 1.</param>
+        /// <param name="specificAlternativeFlowsUnnormalized">The specific alternative flows. Reference steps starting with 1.</param>
         /// <param name="globalAlternativeFlows">The global alternative flows.</param>
-        /// <param name="boundedAlternativeFlows">The bounded alternative flows. Reference steps starting with 1.</param>
+        /// <param name="boundedAlternativeFlowsUnnormalized">The bounded alternative flows. Reference steps starting with 1.</param>
         /// <param name="steps">The steps of all flows.</param>
         /// <param name="edgeMatrix">The edge matrix for the steps.</param>
         /// <param name="conditionMatrix">The condition matrix for the flows.</param>
