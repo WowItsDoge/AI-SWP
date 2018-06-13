@@ -345,25 +345,22 @@ namespace UseCaseCore.XmlParser
 
             if (propertyNode.Count == 0)
             {
-                return string.Empty;
-                throw new Exception("Error: Use-Case property not found");
+                throw new Exception("Error: Use-Case property " + "\"" + propertyName + "\"" + " not found");
             }
 
             if (propertyNode.Count > 1)
             {
-                return string.Empty;
-                throw new Exception("Error: More than one Use-Case property found");
+                throw new Exception("Error: More than one Use-Case property " + "\"" + propertyName + "\"" + " found");
             }
 
             try
             {
-                string propertyContent = propertyNode[0].ParentNode.ParentNode.ParentNode.ParentNode.ChildNodes[1].InnerText;
+                string propertyContent = propertyNode[0].ParentNode.ParentNode.ParentNode.ParentNode.ChildNodes[1].InnerText.Trim();
                 return propertyContent;
             }
             catch
             {
-                return string.Empty;
-                throw new Exception("Error: content not found");
+                throw new Exception("Error: Content for " + "\"" + propertyName + "\"" + " not found");
             }
         }
 
@@ -389,17 +386,17 @@ namespace UseCaseCore.XmlParser
             {
                 XmlNode basicFlowContent = basicFlowNode[0].ParentNode.ParentNode.ParentNode.ParentNode;
                 XmlNode basicFlowStepContent = basicFlowContent.NextSibling;
-                while (basicFlowStepContent.ChildNodes[1].InnerText != "Postcondition")
+                while (basicFlowStepContent.ChildNodes[1].InnerText.Trim().ToLower() != "Postcondition".ToLower())
                 {
-                    this.basicFlow.AddStep(basicFlowStepContent.ChildNodes[2].InnerText);
+                    this.basicFlow.AddStep(basicFlowStepContent.ChildNodes[2].InnerText.Trim());
                     basicFlowStepContent = basicFlowStepContent.NextSibling;
                 }
 
-                this.basicFlow.SetPostcondition(basicFlowStepContent.ChildNodes[2].InnerText);
+                this.basicFlow.SetPostcondition(basicFlowStepContent.ChildNodes[2].InnerText.Trim());
             }
             catch
             {
-                throw new Exception("Error: content not found");
+                throw new Exception("Error: Content for basic flow not found");
             }
         }
 
@@ -409,7 +406,7 @@ namespace UseCaseCore.XmlParser
         private void GetGlobalAlternativeFlows()
         {
             XmlNodeList globalAlternativeFlowNodes = null;
-            globalAlternativeFlowNodes = this.GetXmlNodeList("Global Alternative Flows");
+            globalAlternativeFlowNodes = this.GetXmlNodeList("Global Alternative Flow");
 
             if (globalAlternativeFlowNodes.Count == 0)
             {
@@ -423,15 +420,15 @@ namespace UseCaseCore.XmlParser
                     GlobalAlternativeFlow globalAlternativFlow = new GlobalAlternativeFlow();
                     XmlNode globalAlternativeFlowContent = globalAlternativeFlowNodes[i - 1].ParentNode.ParentNode.ParentNode.ParentNode;
                     XmlNode globlaAlternativeFlowStepContent = globalAlternativeFlowContent;
-                    while (globlaAlternativeFlowStepContent.ChildNodes[1].InnerText != "Postcondition")
+                    while (globlaAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim().ToLower() != "Postcondition".ToLower())
                     {
                         switch (globlaAlternativeFlowStepContent.ChildNodes.Count)
                         {
                             case 2:
-                                globalAlternativFlow.AddStep(globlaAlternativeFlowStepContent.ChildNodes[1].InnerText);
+                                globalAlternativFlow.AddStep(globlaAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim());
                                 break;
                             case 3:
-                                globalAlternativFlow.AddStep(globlaAlternativeFlowStepContent.ChildNodes[2].InnerText);
+                                globalAlternativFlow.AddStep(globlaAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim());
                                 break;
                             default:
                                 break;
@@ -440,14 +437,14 @@ namespace UseCaseCore.XmlParser
                         globlaAlternativeFlowStepContent = globlaAlternativeFlowStepContent.NextSibling;
                     }
 
-                    globalAlternativFlow.SetPostcondition(globlaAlternativeFlowStepContent.ChildNodes[2].InnerText);
+                    globalAlternativFlow.SetPostcondition(globlaAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim());
                     globalAlternativFlow.SetId(i);
                     this.globalAlternativeFlows.Add(globalAlternativFlow);
                 }
             }
             catch
             {
-                throw new Exception("Error: content not found");
+                throw new Exception("Error: Content for global alternative flow not found");
             }
         }
 
@@ -457,7 +454,7 @@ namespace UseCaseCore.XmlParser
         private void GetSpecificAlternativeFlows()
         {
             XmlNodeList specificAlternativeFlowNodes = null;
-            specificAlternativeFlowNodes = this.GetXmlNodeList("Specific Alternative Flows");
+            specificAlternativeFlowNodes = this.GetXmlNodeList("Specific Alternative Flow");
 
             if (specificAlternativeFlowNodes.Count == 0)
             {
@@ -471,19 +468,20 @@ namespace UseCaseCore.XmlParser
                     SpecificAlternativeFlow specificAlternativFlow = new SpecificAlternativeFlow();
                     XmlNode specificAlternativeFlowContent = specificAlternativeFlowNodes[i - 1].ParentNode.ParentNode.ParentNode.ParentNode;
                     XmlNode specificAlternativeFlowStepContent = specificAlternativeFlowContent;
-                    while (specificAlternativeFlowStepContent.ChildNodes[1].InnerText != "Postcondition")
+                    while (specificAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim().ToLower() != "Postcondition".ToLower())
                     {
                         switch (specificAlternativeFlowStepContent.ChildNodes.Count)
                         {
                             case 2:
-                                string unparsedReferenceStep = specificAlternativeFlowStepContent.ChildNodes[1].InnerText;
-                                int referenceStepNumber = int.Parse(unparsedReferenceStep.Replace("RFS Basic Flow ", string.Empty));
+                                string unparsedReferenceStep = specificAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim().ToLower();
+                                unparsedReferenceStep = TrimReferenceStepNumber(unparsedReferenceStep);
+                                int referenceStepNumber = int.Parse(unparsedReferenceStep);
                                 FlowIdentifier flowIdentifier = new FlowIdentifier(FlowType.SpecificAlternative, i);
                                 ReferenceStep referenceStep = new ReferenceStep(flowIdentifier, referenceStepNumber);
                                 specificAlternativFlow.AddReferenceStep(referenceStep);
                                 break;
                             case 3:
-                                specificAlternativFlow.AddStep(specificAlternativeFlowStepContent.ChildNodes[2].InnerText);
+                                specificAlternativFlow.AddStep(specificAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim());
                                 break;
                             default:
                                 break;
@@ -492,13 +490,13 @@ namespace UseCaseCore.XmlParser
                         specificAlternativeFlowStepContent = specificAlternativeFlowStepContent.NextSibling;
                     }
 
-                    specificAlternativFlow.SetPostcondition(specificAlternativeFlowStepContent.ChildNodes[2].InnerText);
+                    specificAlternativFlow.SetPostcondition(specificAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim());
                     this.specificAlternativeFlows.Add(specificAlternativFlow);
                 }
             }
             catch
             {
-                throw new Exception("Error: content not found");
+                throw new Exception("Error: Content for specified alternative flow not found");
             }
         }
 
@@ -508,7 +506,7 @@ namespace UseCaseCore.XmlParser
         private void GetBoundedAlternativeFlows()
         {
             XmlNodeList boundedAlternativeFlowNodes = null;
-            boundedAlternativeFlowNodes = this.GetXmlNodeList("Bounded Alternative Flows");
+            boundedAlternativeFlowNodes = this.GetXmlNodeList("Bounded Alternative Flow");
 
             if (boundedAlternativeFlowNodes.Count == 0)
             {
@@ -522,13 +520,13 @@ namespace UseCaseCore.XmlParser
                     BoundedAlternativeFlow boundedAlternativFlow = new BoundedAlternativeFlow();
                     XmlNode boundedAlternativeFlowContent = boundedAlternativeFlowNodes[i - 1].ParentNode.ParentNode.ParentNode.ParentNode;
                     XmlNode boundedAlternativeFlowStepContent = boundedAlternativeFlowContent;
-                    while (boundedAlternativeFlowStepContent.ChildNodes[1].InnerText != "Postcondition")
+                    while (boundedAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim().ToLower() != "Postcondition".ToLower())
                     {
                         switch (boundedAlternativeFlowStepContent.ChildNodes.Count)
                         {
                             case 2:
-                                string unparsedReferenceStep = boundedAlternativeFlowStepContent.ChildNodes[1].InnerText;
-                                string referenceStepNumbers = unparsedReferenceStep.Replace("RFS Basic Flow ", string.Empty);
+                                string unparsedReferenceStep = boundedAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim().ToLower();
+                                string referenceStepNumbers = TrimReferenceStepNumber(unparsedReferenceStep);
                                 if (referenceStepNumbers.Contains("-") == true)
                                 {
                                     int stepStartNumber = int.Parse(referenceStepNumbers.Split('-')[0]);
@@ -550,7 +548,7 @@ namespace UseCaseCore.XmlParser
 
                                 break;
                             case 3:
-                                boundedAlternativFlow.AddStep(boundedAlternativeFlowStepContent.ChildNodes[2].InnerText);
+                                boundedAlternativFlow.AddStep(boundedAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim());
                                 break;
                             default:
                                 break;
@@ -559,13 +557,13 @@ namespace UseCaseCore.XmlParser
                         boundedAlternativeFlowStepContent = boundedAlternativeFlowStepContent.NextSibling;
                     }
 
-                    boundedAlternativFlow.SetPostcondition(boundedAlternativeFlowStepContent.ChildNodes[2].InnerText);
+                    boundedAlternativFlow.SetPostcondition(boundedAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim());
                     this.boundedAlternativeFlows.Add(boundedAlternativFlow);
                 }
             }
             catch
             {
-                throw new Exception("Error: content not found");
+                throw new Exception("Error: Content for bounded alternative flow not found");
             }
         }
 
@@ -599,6 +597,20 @@ namespace UseCaseCore.XmlParser
             }
 
             return flowNodeList;
+        }
+
+        /// <summary>
+        /// Trim basic flow reference step number
+        /// </summary>
+        /// <param name="searchWord">Defines the search word with which you want to search</param>
+        /// <returns>Returns the basic flow reference step number</returns>
+        private string TrimReferenceStepNumber(string searchWord)
+        {
+            searchWord = searchWord.Replace("RFS".ToLower(), string.Empty);
+            searchWord = searchWord.Replace("Basic".ToLower(), string.Empty);
+            searchWord = searchWord.Replace("Flow".ToLower(), string.Empty);
+            searchWord = searchWord.Trim();
+            return searchWord;
         }
     }
 }
