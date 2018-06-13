@@ -413,7 +413,7 @@ namespace UseCaseCore.XmlParser
 
             if (globalAlternativeFlowNodes.Count == 0)
             {
-                throw new Exception("Error: No Global Alternative Flow found");
+                return;
             }
 
             try
@@ -461,7 +461,7 @@ namespace UseCaseCore.XmlParser
 
             if (specificAlternativeFlowNodes.Count == 0)
             {
-                throw new Exception("Error: No Specific Alternative Flow found");
+                return;
             }
 
             try
@@ -512,7 +512,7 @@ namespace UseCaseCore.XmlParser
 
             if (boundedAlternativeFlowNodes.Count == 0)
             {
-                throw new Exception("Error: No Bounded Alternative Flow found");
+                return;
             }
 
             try
