@@ -67,7 +67,11 @@ namespace UseCaseTest.UcIntern
             expectedExitSteps.Add(2);
 
             // Act
-            GraphBuilder.SetEdgesInStepBlock(nodes, out var edgeMatrix, out var externalEdges, out var possibleInvalidIfEdges, out var exitSteps);
+            Matrix<bool> edgeMatrix;
+            List<ExternalEdge> externalEdges;
+            List<InternalEdge> possibleInvalidIfEdges;
+            List<int> exitSteps;
+            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps);
 
             // Assert
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
@@ -99,7 +103,11 @@ namespace UseCaseTest.UcIntern
             List<int> expectedExitSteps = new List<int>();
 
             // Act
-            GraphBuilder.SetEdgesInStepBlock(nodes, out var edgeMatrix, out var externalEdges, out var possibleInvalidIfEdges, out var exitSteps);
+            Matrix<bool> edgeMatrix;
+            List<ExternalEdge> externalEdges;
+            List<InternalEdge> possibleInvalidIfEdges;
+            List<int> exitSteps;
+            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps);
 
             // Assert
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
@@ -132,7 +140,11 @@ namespace UseCaseTest.UcIntern
             List<int> expectedExitSteps = new List<int>();
 
             // Act
-            GraphBuilder.SetEdgesInStepBlock(nodes, out var edgeMatrix, out var externalEdges, out var possibleInvalidIfEdges, out var exitSteps);
+            Matrix<bool> edgeMatrix;
+            List<ExternalEdge> externalEdges;
+            List<InternalEdge> possibleInvalidIfEdges;
+            List<int> exitSteps;
+            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps);
 
             // Assert
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
@@ -168,7 +180,11 @@ namespace UseCaseTest.UcIntern
             expectedExitSteps.Add(3);
 
             // Act
-            GraphBuilder.SetEdgesInStepBlock(nodes, out var edgeMatrix, out var externalEdges, out var possibleInvalidIfEdges, out var exitSteps);
+            Matrix<bool> edgeMatrix;
+            List<ExternalEdge> externalEdges;
+            List<InternalEdge> possibleInvalidIfEdges;
+            List<int> exitSteps;
+            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps);
 
             // Assert
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
@@ -204,7 +220,11 @@ namespace UseCaseTest.UcIntern
             expectedExitSteps.Add(3);
 
             // Act
-            GraphBuilder.SetEdgesInStepBlock(nodes, out var edgeMatrix, out var externalEdges, out var possibleInvalidIfEdges, out var exitSteps);
+            Matrix<bool> edgeMatrix;
+            List<ExternalEdge> externalEdges;
+            List<InternalEdge> possibleInvalidIfEdges;
+            List<int> exitSteps;
+            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps);
 
             // Assert
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
@@ -243,7 +263,11 @@ namespace UseCaseTest.UcIntern
             expectedExitSteps.Add(5);
 
             // Act
-            GraphBuilder.SetEdgesInStepBlock(nodes, out var edgeMatrix, out var externalEdges, out var possibleInvalidIfEdges, out var exitSteps);
+            Matrix<bool> edgeMatrix;
+            List<ExternalEdge> externalEdges;
+            List<InternalEdge> possibleInvalidIfEdges;
+            List<int> exitSteps;
+            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps);
 
             // Assert
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
@@ -292,7 +316,11 @@ namespace UseCaseTest.UcIntern
             expectedExitSteps.Add(10);
 
             // Act
-            GraphBuilder.SetEdgesInStepBlock(nodes, out var edgeMatrix, out var externalEdges, out var possibleInvalidIfEdges, out var exitSteps);
+            Matrix<bool> edgeMatrix;
+            List<ExternalEdge> externalEdges;
+            List<InternalEdge> possibleInvalidIfEdges;
+            List<int> exitSteps;
+            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps);
 
             // Assert
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
@@ -343,7 +371,11 @@ namespace UseCaseTest.UcIntern
             expectedExitSteps.Add(10);
 
             // Act
-            GraphBuilder.SetEdgesInStepBlock(nodes, out var edgeMatrix, out var externalEdges, out var possibleInvalidIfEdges, out var exitSteps);
+            Matrix<bool> edgeMatrix;
+            List<ExternalEdge> externalEdges;
+            List<InternalEdge> possibleInvalidIfEdges;
+            List<int> exitSteps;
+            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps);
 
             // Assert
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
@@ -376,7 +408,11 @@ namespace UseCaseTest.UcIntern
             expectedExitSteps.Add(2);
 
             // Act
-            GraphBuilder.SetEdgesInStepBlock(nodes, out var edgeMatrix, out var externalEdges, out var possibleInvalidIfEdges, out var exitSteps);
+            Matrix<bool> edgeMatrix;
+            List<ExternalEdge> externalEdges;
+            List<InternalEdge> possibleInvalidIfEdges;
+            List<int> exitSteps;
+            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps);
 
             // Assert
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
@@ -409,7 +445,11 @@ namespace UseCaseTest.UcIntern
             expectedExitSteps.Add(4);
 
             // Act
-            GraphBuilder.SetEdgesInStepBlock(nodes, out var edgeMatrix, out var externalEdges, out var possibleInvalidIfEdges, out var exitSteps);
+            Matrix<bool> edgeMatrix;
+            List<ExternalEdge> externalEdges;
+            List<InternalEdge> possibleInvalidIfEdges;
+            List<int> exitSteps;
+            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps);
 
             // Assert
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
@@ -439,7 +479,11 @@ namespace UseCaseTest.UcIntern
                         typeof(Exception),
                         () =>
                         {
-                            GraphBuilder.SetEdgesInStepBlock(nodes, out var edgeMatrix, out var externalEdges, out var possibleInvalidIfEdges, out var exitSteps);
+                            Matrix<bool> edgeMatrix;
+                            List<ExternalEdge> externalEdges;
+                            List<InternalEdge> possibleInvalidIfEdges;
+                            List<int> exitSteps;
+                            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps);
                         });
         }
 
@@ -476,7 +520,11 @@ namespace UseCaseTest.UcIntern
             expectedExitSteps.Add(8);
 
             // Act
-            GraphBuilder.SetEdgesInStepBlock(nodes, out var edgeMatrix, out var externalEdges, out var possibleInvalidIfEdges, out var exitSteps);
+            Matrix<bool> edgeMatrix;
+            List<ExternalEdge> externalEdges;
+            List<InternalEdge> possibleInvalidIfEdges;
+            List<int> exitSteps;
+            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps);
 
             // Assert
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
@@ -508,7 +556,11 @@ namespace UseCaseTest.UcIntern
             expectedExitSteps.Add(3);
 
             // Act
-            GraphBuilder.SetEdgesInStepBlock(nodes, out var edgeMatrix, out var externalEdges, out var possibleInvalidIfEdges, out var exitSteps);
+            Matrix<bool> edgeMatrix;
+            List<ExternalEdge> externalEdges;
+            List<InternalEdge> possibleInvalidIfEdges;
+            List<int> exitSteps;
+            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps);
 
             // Assert
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
@@ -553,7 +605,11 @@ namespace UseCaseTest.UcIntern
             expectedExitSteps.Add(8);
 
             // Act
-            GraphBuilder.SetEdgesInStepBlock(nodes, out var edgeMatrix, out var externalEdges, out var possibleInvalidIfEdges, out var exitSteps);
+            Matrix<bool> edgeMatrix;
+            List<ExternalEdge> externalEdges;
+            List<InternalEdge> possibleInvalidIfEdges;
+            List<int> exitSteps;
+            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps);
 
             // Assert
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
