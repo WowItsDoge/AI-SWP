@@ -496,7 +496,11 @@ namespace UseCaseCore.UcIntern
 
             List<Node> nestedSteps = steps.Skip(blockStartIndex + 1).Take(blockSize).ToList();
 
-            GraphBuilder.SetEdgesInStepBlock(nestedSteps, out var nestedEdgeMatrix, out var nestedExternalEdges, out var nestedPossibleInvalidIfEdges, out var nestedExitSteps);
+            Matrix<bool> nestedEdgeMatrix;
+            List<ExternalEdge> nestedExternalEdges;
+            List<InternalEdge> nestedPossibleInvalidIfEdges;
+            List<int> nestedExitSteps;
+            GraphBuilder.SetEdgesInStepBlock(nestedSteps, out nestedEdgeMatrix, out nestedExternalEdges, out nestedPossibleInvalidIfEdges, out nestedExitSteps);
 
             // Unite matrices
             GraphBuilder.InsertMatrix(ref edgeMatrix, blockStartIndex + 1, blockStartIndex + 1, nestedEdgeMatrix);
