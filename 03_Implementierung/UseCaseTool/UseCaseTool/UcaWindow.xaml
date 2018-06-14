@@ -53,8 +53,8 @@
                     <Image x:Name="imageFail3" HorizontalAlignment="Left" Height="29" Margin="210,135,0,0" VerticalAlignment="Top" Width="30" Source="/images/fail.png" Visibility="{Binding Path=VisibilityFail3}"/>
 
                     <Label x:Name="labelGraphProgress" Content="Graph erstellt" HorizontalAlignment="Left" Margin="10,175,0,0" VerticalAlignment="Top" Width="236" FontSize="16" FontWeight="DemiBold" Background="{Binding Path=BackgroundColor4}" Foreground="White"/>
-                    <Image x:Name="imageOK4" HorizontalAlignment="Left" Height="29" Margin="210,135,0,0" VerticalAlignment="Top" Width="30" Source="/images/ok.png" Visibility="{Binding Path=VisibilityOk4}"/>
-                    <Image x:Name="imageFail4" HorizontalAlignment="Left" Height="29" Margin="210,135,0,0" VerticalAlignment="Top" Width="30" Source="/images/fail.png" Visibility="{Binding Path=VisibilityFail4}"/>
+                    <Image x:Name="imageOK4" HorizontalAlignment="Left" Height="29" Margin="210,175,0,0" VerticalAlignment="Top" Width="30" Source="/images/ok.png" Visibility="{Binding Path=VisibilityOk4}"/>
+                    <Image x:Name="imageFail4" HorizontalAlignment="Left" Height="29" Margin="210,175,0,0" VerticalAlignment="Top" Width="30" Source="/images/fail.png" Visibility="{Binding Path=VisibilityFail4}"/>
 
                 </Grid>
             </GroupBox>
@@ -83,7 +83,7 @@
                         <Controls:NumericUpDown x:Name="CycleDepth" HorizontalAlignment="Right" Value="1" Minimum="1" Maximum="20" Interval="1" Margin="0,0,0,0" VerticalAlignment="Bottom" Height="15" ValueChanged="NumericUpDownValueChanged" IsEnabled="{Binding Path=MatrixCycleDepthEnabled}"/>
                     </Grid>
                 </TabItem>
-                <TabItem Header="Graph" KeyUp="TabItem_KeyUp">
+                <TabItem Header="Graph">
                     <Grid Background="#FFE5E5E5">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
@@ -93,35 +93,35 @@
                             <ColumnDefinition Width="35"/>
                         </Grid.ColumnDefinitions>
 
-                        <ScrollViewer HorizontalAlignment="Stretch" Grid.Column="0" VerticalAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Visible">
-                            <UseCaseTool:GraphViewerControl x:Name="GraphControl"  Margin="0,0,0,0"/>
-                        </ScrollViewer>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
+                            <ScrollBar x:Name="ScrollbarX" Grid.Row="1" Grid.Column="0" Orientation="Horizontal" ValueChanged="ScrollbarX_ValueChanged"></ScrollBar>
+                            <ScrollBar x:Name="ScrollbarY" Grid.Row="0" Grid.Column="1" ValueChanged="ScrollbarY_ValueChanged"></ScrollBar>
 
-                        <Button x:Name="zoomAll" HorizontalAlignment="Left" Height="25" Margin="5,10,0,0" VerticalAlignment="Top" Width="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Grid.Row="0" ToolTip="Gesamtansicht" IsEnabled="{Binding Path=GraphButtonsEnabled}">
+                            <UseCaseTool:GraphViewerControl x:Name="GraphControl"  Margin="0,0,0,0" Grid.Row="0" Grid.Column="0"/>
+
+                        </Grid>
+
+                        <Button x:Name="zoomAll" HorizontalAlignment="Left" Height="25" Margin="5,10,0,0" VerticalAlignment="Top" Width="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Grid.Row="0"  Click="ZoomAll_Click" ToolTip="Gesamtansicht" IsEnabled="{Binding Path=GraphButtonsEnabled}">
                             <StackPanel>
                                 <Image Source="/images/home.png"/>
                             </StackPanel>
                         </Button>
 
-                        <Button x:Name="selectArea" HorizontalAlignment="Left" Height="25" Margin="5,40,0,0" VerticalAlignment="Top" Width="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" ToolTip="Ausgewählten Bereich vergrößern" IsEnabled="{Binding Path=GraphButtonsEnabled}">
-                            <StackPanel>
-                                <Image Source="/images/select.png"/>
-                            </StackPanel>
-                        </Button>
-
-                        <Button x:Name="moveHand" HorizontalAlignment="Left" Height="25" Margin="5,70,0,0" VerticalAlignment="Top" Width="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" ToolTip="Frei bewegen" IsEnabled="{Binding Path=GraphButtonsEnabled}">
-                            <StackPanel>
-                                <Image Source="/images/hand.png"/>
-                            </StackPanel>
-                        </Button>
-
-                        <Button x:Name="zoomIn" HorizontalAlignment="Left" Height="25" Margin="5,100,0,0" VerticalAlignment="Top" Width="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Click="ZoomIn_Click" ToolTip="Ansicht vergrößern" IsEnabled="{Binding Path=GraphButtonsEnabled}">
+                        <Button x:Name="zoomIn" HorizontalAlignment="Left" Height="25" Margin="5,50,0,0" VerticalAlignment="Top" Width="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Click="ZoomIn_Click" ToolTip="Ansicht vergrößern" IsEnabled="{Binding Path=GraphButtonsEnabled}">
                             <StackPanel>
                                 <Image Source="/images/plus.png"/>
                             </StackPanel>
                         </Button>
 
-                        <Button x:Name="zoomOut" HorizontalAlignment="Left" Height="25" Margin="5,125,0,0" VerticalAlignment="Top" Width="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Click="ZoomOut_Click" ToolTip="Ansicht verkleinern" IsEnabled="{Binding Path=GraphButtonsEnabled}">
+                        <Button x:Name="zoomOut" HorizontalAlignment="Left" Height="25" Margin="5,75,0,0" VerticalAlignment="Top" Width="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Click="ZoomOut_Click" ToolTip="Ansicht verkleinern" IsEnabled="{Binding Path=GraphButtonsEnabled}">
                             <StackPanel>
                                 <Image Source="/images/minus.png"/>
                             </StackPanel>

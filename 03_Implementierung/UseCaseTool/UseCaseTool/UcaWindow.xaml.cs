@@ -51,7 +51,7 @@ namespace UseCaseTool
         {
             this.DataContext = this.controller;
             this.controller.ScenariosCreated += this.Controller_ScenariosCreated;
-            this.controller.GraphCreated += this.Controller_GraphCreated;
+            this.controller.GraphCreated += Controller_GraphCreated;
             this.controller.WriteErrorReport += this.Controller_WriteErrorReport;
             this.InitializeComponent();
             
@@ -59,7 +59,7 @@ namespace UseCaseTool
             this.ErrorList = new List<IError>();
             errorGrid.ItemsSource = this.ErrorList;
         }
-        
+
         /// <summary>
         /// Gets or sets the list of errors
         /// </summary>
@@ -100,10 +100,39 @@ namespace UseCaseTool
         /// When new Graph was created, draw it with Graph Control
         /// </summary>
         /// <param name="useCase">The current useCase</param>
-        private void Controller_GraphCreated(UseCaseCore.UcIntern.UseCase useCase)
+        private bool Controller_GraphCreated(UseCaseCore.UcIntern.UseCase useCase)
         {
-            this.GraphControl.UpdateGraphView(useCase);
+            var success = this.GraphControl.UpdateGraphView(useCase);
+
+            //UpdateGraphScrollbar();
+
+            //GraphControl.GraphVisualisationChanged += GraphControl_GraphVisualisationChanged;
+
+            return success;
         }
+
+        /*
+        private void GraphControl_GraphVisualisationChanged(object sender, EventArgs e)
+        {
+            UpdateGraphScrollbar();
+        }
+
+        private void UpdateGraphScrollbar()
+        {
+            var rangeX = GraphControl.GetGraphRangeX();
+            var rangeY = GraphControl.GetGraphRangeY();
+
+            Dispatcher.Invoke(() => {
+                ScrollbarX.Minimum = rangeX.Item1;
+                ScrollbarX.Maximum = rangeX.Item2;
+                ScrollbarY.Minimum = rangeY.Item1;
+                ScrollbarY.Maximum = rangeY.Item2;
+
+                ScrollbarY.Value = GraphControl.GetGraphY();
+                ScrollbarX.Value = GraphControl.GetGraphX();
+            });
+        }
+        */
 
         /// <summary>
         /// Button to open the dialog with which you can select the file
@@ -239,7 +268,7 @@ namespace UseCaseTool
         /// <param name="e">The e</param>
         private void ChangeLanguageClick(object sender, RoutedEventArgs e)
         {
-            ////
+            //// wenn noch viel Zeit is...............
         }
 
         /// <summary>
@@ -249,7 +278,7 @@ namespace UseCaseTool
         /// <param name="e">The e</param>
         private void ZoomIn_Click(object sender, RoutedEventArgs e)
         {
-            GraphControl.Zoom(1.2);
+            this.GraphControl.Zoom(1.2);
         }
 
         /// <summary>
@@ -259,17 +288,7 @@ namespace UseCaseTool
         /// <param name="e">The e</param>
         private void ZoomOut_Click(object sender, RoutedEventArgs e)
         {
-            GraphControl.Zoom(0.8);
-        }
-
-        /// <summary>
-        /// Chance view with key up
-        /// </summary>
-        /// <param name="sender">The sender</param>
-        /// <param name="e">The e</param>
-        private void TabItem_KeyUp(object sender, KeyEventArgs e)
-        {
-            GraphControl.Move(10, 0);
+            this.GraphControl.Zoom(0.8);
         }
 
         /// <summary>
@@ -282,9 +301,24 @@ namespace UseCaseTool
             this.controller.ChangeCycleDepth((uint)CycleDepth.Value);
         }
 
+        private void ZoomAll_Click(object sender, RoutedEventArgs e)
+        {
+            this.GraphControl.UpdateGraphView();
+        }
+
+        private void ScrollbarX_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            GraphControl.SetPosition(ScrollbarX.Value, ScrollbarY.Value);
+        }
+
+        private void ScrollbarY_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            GraphControl.SetPosition(ScrollbarX.Value, ScrollbarY.Value);
+        }
+
+
         ////ToDo...
-        //// - Cancel Button
-        //// - Anzeige Mängelbericht
+        //// - Reset Mängelbericht
         //// - ... 
     }
 }

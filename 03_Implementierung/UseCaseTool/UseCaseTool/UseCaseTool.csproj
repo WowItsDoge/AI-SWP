@@ -166,11 +166,9 @@
     <Resource Include="Images\exit.png" />
     <Resource Include="Images\export.png" />
     <Resource Include="Images\folder_open.png" />
-    <Resource Include="Images\hand.png" />
     <Resource Include="Images\home.png" />
     <Resource Include="Images\language.png" />
     <Resource Include="Images\question.png" />
-    <Resource Include="Images\select.png" />
     <Resource Include="Images\world.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
