@@ -331,6 +331,7 @@ namespace UseCaseCore.Controller
 
         private void backgroundWorkerValidFile_DoWork(object sender, DoWorkEventArgs e)
         {
+            //delay(10000);
             if (this.xmlParser.ParseXmlFile(out this.useCase))
             {
                 this.BackgroundColor2 = Brushes.LimeGreen;
@@ -486,3 +487,11 @@ namespace UseCaseCore.Controller
         }
     }
 }
+
+
+
+//ToDo...
+// - Graph anzeigen
+// - Exeption wenn weitere Datei eingelesen wird!!!!!!!!!!!!!!!!!!!!!!
+// - Reset der Anzeige wenn weitere Datei eingelesen wird...
+// - ... 

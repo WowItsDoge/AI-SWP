@@ -243,7 +243,6 @@ namespace UseCaseTool
 
         }
 
-
         //ToDo...
         // - Cancel Button
         // - Anzeige Mängelbericht
