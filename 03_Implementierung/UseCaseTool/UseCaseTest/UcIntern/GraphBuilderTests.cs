@@ -401,7 +401,7 @@ namespace UseCaseTest.UcIntern
             List<Node> boundedSteps2 = new List<Node>();
             boundedSteps2.Add(new Node("DO", flowIdentifierBounded1));
             boundedSteps2.Add(new Node("Count peas", flowIdentifierBounded1));
-            boundedSteps2.Add(new Node("WHILE there are peas on the floor", flowIdentifierBounded1));
+            boundedSteps2.Add(new Node("UNTIL there are peas on the floor", flowIdentifierBounded1));
             boundedSteps2.Add(new Node("ABORT", flowIdentifierBounded1));
             List<ReferenceStep> boundedReferenceSteps2 = new List<ReferenceStep>();
             boundedReferenceSteps2.Add(new ReferenceStep(flowIdentifierBasic, 7));
@@ -974,17 +974,17 @@ namespace UseCaseTest.UcIntern
         }
 
         /// <summary>
-        /// Tests the edge creation of a simple do-while statement with a simple nested block.
+        /// Tests the edge creation of a simple do-until statement with a simple nested block.
         /// </summary>
         [Test]
-        public void WireSimpleDoWhileFlow()
+        public void WireSimpleDoUntilFlow()
         {
             // Arrange
             List<Node> nodes = new List<Node>();
             nodes.Add(new Node("DO", flowIdentifierBasic));                         // 0
                 nodes.Add(new Node("Stamp on the ground", flowIdentifierBasic));    // 1
                 nodes.Add(new Node("Jump in the air", flowIdentifierBasic));        // 2
-            nodes.Add(new Node("WHILE you are not tired", flowIdentifierBasic));    // 3
+            nodes.Add(new Node("UNTIL you are not tired", flowIdentifierBasic));    // 3
             Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(4, false);
             expectedEdgeMatrix[0, 1] = true;
             expectedEdgeMatrix[1, 2] = true;
@@ -1011,22 +1011,22 @@ namespace UseCaseTest.UcIntern
         }
 
         /// <summary>
-        /// Tests the edge creation of a simple do-while statement with a complex nested block.
+        /// Tests the edge creation of a simple do-until statement with a complex nested block.
         /// </summary>
         [Test]
-        public void WireComplexDoWhileFlow()
+        public void WireComplexDoUntilFlow()
         {
             // Arrange
             List<Node> nodes = new List<Node>();
             nodes.Add(new Node("DO", flowIdentifierBasic));                         // 0
                 nodes.Add(new Node("DO", flowIdentifierBasic));                     // 1
                     nodes.Add(new Node("Ask pin", flowIdentifierBasic));            // 2
-                nodes.Add(new Node("WHILE pin is false", flowIdentifierBasic));     // 3
+                nodes.Add(new Node("UNTIL pin is false", flowIdentifierBasic));     // 3
                 nodes.Add(new Node("IF wants money THEN", flowIdentifierBasic));    // 4
                     nodes.Add(new Node("Give money", flowIdentifierBasic));         // 5
                 nodes.Add(new Node("ENDIF", flowIdentifierBasic));                  // 6
                 nodes.Add(new Node("Return card", flowIdentifierBasic));            // 7
-            nodes.Add(new Node("WHILE power on", flowIdentifierBasic));             // 8
+            nodes.Add(new Node("UNTIL power on", flowIdentifierBasic));             // 8
             Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(9, false);
             expectedEdgeMatrix[0, 1] = true;
             expectedEdgeMatrix[1, 2] = true;
@@ -1272,14 +1272,14 @@ namespace UseCaseTest.UcIntern
         }
 
         /// <summary>
-        /// Tests if the correct type for an while statement is returned.
+        /// Tests if the correct type for an until statement is returned.
         /// </summary>
         [Test]
-        public void GetWhileType()
+        public void GetUntilType()
         {
             // Arrange
-            string stepDescription = "WHILE the light is read";
-            StepType expectedStepType = StepType.While;
+            string stepDescription = "UNTIL the light is read";
+            StepType expectedStepType = StepType.Until;
 
             // Act
 
@@ -1466,14 +1466,14 @@ namespace UseCaseTest.UcIntern
         }
 
         /// <summary>
-        /// Tests an while step against the while step type pattern.
+        /// Tests an until step against the until step type pattern.
         /// </summary>
         [Test]
-        public void StepEqualToWhilePattern()
+        public void StepEqualToUntilPattern()
         {
             // Arrange
-            string stepDescription = "WHILE Will is alive";
-            StepType stepType = StepType.While;
+            string stepDescription = "UNTIL Will is alive";
+            StepType stepType = StepType.Until;
 
             // Act
 
@@ -1482,14 +1482,14 @@ namespace UseCaseTest.UcIntern
         }
 
         /// <summary>
-        /// Tests a non while step against the while step type pattern.
+        /// Tests a non until step against the until step type pattern.
         /// </summary>
         [Test]
-        public void StepNotEqualToWhilePattern()
+        public void StepNotEqualToUntilPattern()
         {
             // Arrange
             string stepDescription = "ELSEIF Karl is happy THEN Hans is happy";
-            StepType stepType = StepType.While;
+            StepType stepType = StepType.Until;
 
             // Act
 

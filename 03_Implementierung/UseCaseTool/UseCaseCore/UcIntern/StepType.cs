@@ -39,14 +39,14 @@ namespace UseCaseCore.UcIntern
         public static readonly StepType EndIf = new StepType(4, new[] { @"\bENDIF\b" });
 
         /// <summary>
-        /// The do step of an do-while-statement.
+        /// The do step of an do-until-statement.
         /// </summary>
         public static readonly StepType Do = new StepType(5, new[] { @"\bDO\b" });
 
         /// <summary>
-        /// The while step of an do-while-statement.
+        /// The until step of an do-until-statement.
         /// </summary>
-        public static readonly StepType While = new StepType(6, new[] { @"(.*)\bWHILE\b(.*)" });
+        public static readonly StepType Until = new StepType(6, new[] { @"(.*)\bUNTIL\b(.*)" });
 
         /// <summary>
         /// A resume step.
