@@ -43,6 +43,7 @@ namespace UseCaseCore.ScenarioMatrix
             this.uc = uc;
             this.scenarios = new List<Scenario>();
             this.cycleDepth = cycleDepth;
+            
         }
 
         /// <summary>
@@ -98,7 +99,12 @@ namespace UseCaseCore.ScenarioMatrix
                     int i = 1;
                     foreach (Scenario s in this.scenarios)
                     {
+                        if(s.Comment != null || s.Comment == string.Empty)
+                        {
+                            sw.WriteLine("// " + s.Comment);                            
+                        }
                         sw.WriteLine("Scenario " + i.ToString() + ": " + s.Description);
+                        sw.WriteLine("");
                         i++;
                     }
 
@@ -148,6 +154,21 @@ namespace UseCaseCore.ScenarioMatrix
             return true;
         }
         
+        /// <summary>
+        /// Updates a Scenarios Comment
+        /// </summary>
+        /// <param name="newScenario"> new scenario to replace the old one </param>
+        public void UpdateScenarioComment(Scenario newScenario)
+        {
+            foreach(Scenario s in this.scenarios)
+            {
+                if(s.ID == newScenario.ID)
+                {
+                    s.Comment = newScenario.Comment;
+                }
+            }
+        }
+
         /// <summary>
         /// Returns the amount of Edges from node1 to node2 in a scenario
         /// </summary>
