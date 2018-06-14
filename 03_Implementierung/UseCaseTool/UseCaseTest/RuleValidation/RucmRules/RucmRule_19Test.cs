@@ -11,7 +11,7 @@ namespace UseCaseTest.RuleValidation
     using UseCaseCore.XmlParser;
 
     /// <summary>
-    /// Test class for the rucm rules 24 and 25.
+    /// Test class for the rucm rule 19
     /// </summary>
     [TestFixture]
     public class RucmRule_19Test

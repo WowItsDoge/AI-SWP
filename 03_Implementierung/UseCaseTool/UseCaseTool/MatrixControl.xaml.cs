@@ -55,6 +55,7 @@ namespace UseCaseTool
         {
             this.Scenarios.Clear();
             this.Scenarios.AddRange(scenarios);
+            Dispatcher.Invoke(() => { matrixGrid.Items.Refresh(); });
         }
         
     }
