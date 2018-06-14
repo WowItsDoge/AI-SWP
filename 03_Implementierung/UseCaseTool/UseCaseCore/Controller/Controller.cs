@@ -603,9 +603,21 @@ namespace UseCaseCore.Controller
         /// <param name="e">The e</param>
         private void BackgroundWorkerGetErrorReport_DoWork(object sender, DoWorkEventArgs e)
         {
-            this.ruleValidator.AddExternalError("Beispiel Fehler");
+            //this.ruleValidator.AddExternalError("Beispiel Fehler");
             ErrorReport errorReport = this.ruleValidator.GetErrorReport();
             List<IError> errorList = errorReport.GetErrorList;
+            if (errorList.Count == 0)
+            {
+                this.BackgroundColor5 = Brushes.LimeGreen;
+                this.VisibilityOk5 = Visibility.Visible;
+                this.MatrixCycleDepthEnabled = true;
+            }
+            else
+            {
+                this.BackgroundColor5 = Brushes.Red;
+                this.VisibilityFail5 = Visibility.Visible;
+            }
+
             if (this.WriteErrorReport != null)
             {
                 this.WriteErrorReport(errorList);
