@@ -47,6 +47,11 @@ namespace UseCaseTool
         private UseCase useCase;
 
         /// <summary>
+        /// If true, the graph is displayed with titles; if false, only the ids are displayed
+        /// </summary>
+        private bool displayGraphTitles;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="GraphViewerControl"/> class.
         /// </summary>
         public GraphViewerControl()
@@ -54,6 +59,8 @@ namespace UseCaseTool
             this.InitializeComponent();
 
             GraphViewerControl.nodeColors = new List<Tuple<string, Microsoft.Msagl.Drawing.Color>>();
+
+            this.displayGraphTitles = true;
 
             // create a viewer object 
             this.viewer = new Microsoft.Msagl.GraphViewerGdi.GViewer();
@@ -114,6 +121,9 @@ namespace UseCaseTool
 
             this.graph = new Microsoft.Msagl.Drawing.Graph("graph");
 
+            var layoutSettings = (Microsoft.Msagl.Layout.Layered.SugiyamaLayoutSettings)graph.LayoutAlgorithmSettings;
+            layoutSettings.EdgeRoutingSettings.EdgeRoutingMode = Microsoft.Msagl.Core.Routing.EdgeRoutingMode.Rectilinear;
+
             for (int n1 = 0; n1 < useCase.Nodes.Count; n1++)
             {
                 for (int n2 = 0; n2 < useCase.Nodes.Count; n2++)
@@ -136,14 +146,30 @@ namespace UseCaseTool
                 }
             }
 
+            var layout = new Microsoft.Msagl.Layout.MDS.MdsLayoutSettings();
+
             this.viewer.Graph = this.graph;
 
             return true;
         }
 
+        /// <summary>
+        /// This method changes the colors of the graph
+        /// </summary>
         public void ChangeGraphColors()
         {
             nodeColors.Clear();
+
+            UpdateGraphView(this.useCase);
+        }
+
+        /// <summary>
+        /// This method changes the graph titles
+        /// </summary>
+        /// <param name="displayGraphTitles"></param>
+        public void ChangeDisplayTitles(bool displayGraphTitles)
+        {
+            this.displayGraphTitles = displayGraphTitles;
 
             UpdateGraphView(this.useCase);
         }
@@ -212,8 +238,13 @@ namespace UseCaseTool
         /// <param name="node">the node</param>
         /// <param name="nodeId">the id</param>
         /// <returns>the graph node title</returns>
-        private static string GetNodeTitle(Node node, int nodeId)
+        private string GetNodeTitle(Node node, int nodeId)
         {
+            if (!this.displayGraphTitles)
+            {
+                return (nodeId + 1).ToString();
+            }
+
             return (nodeId + 1) + ": " + node.StepDescription;
         }
 
