@@ -165,6 +165,11 @@ namespace UseCaseTool
             return true;
         }
 
+        public bool UpdateGraphView()
+        {
+            return UpdateGraphView(this.useCase);
+        }
+
         /// <summary>
         /// This method changes the colors of the graph
         /// </summary>
@@ -172,7 +177,7 @@ namespace UseCaseTool
         {
             nodeColors.Clear();
 
-            UpdateGraphView(this.useCase);
+            UpdateGraphView();
         }
 
         /// <summary>
@@ -183,7 +188,7 @@ namespace UseCaseTool
         {
             this.displayGraphTitles = displayGraphTitles;
 
-            UpdateGraphView(this.useCase);
+            UpdateGraphView();
         }
 
         /// <summary>
