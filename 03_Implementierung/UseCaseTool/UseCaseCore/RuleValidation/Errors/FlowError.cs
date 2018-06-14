@@ -45,5 +45,10 @@ namespace UseCaseCore.RuleValidation.Errors
         {
             return "Error in Flow " + this.flowReferenceNumber + ": " + this.errorMessage + "\t" + this.resolveMessage + "\n";
         }
+
+        public override string ToString()
+        {
+            return "Error in Flow " + this.flowReferenceNumber + ": " + this.errorMessage + "\t" + this.resolveMessage + "\n";
+        }
     }
 }

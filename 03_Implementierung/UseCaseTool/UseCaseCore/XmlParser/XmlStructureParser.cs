@@ -489,16 +489,17 @@ namespace UseCaseCore.XmlParser
                             case 2:
                                 string unparsedReferenceStep = specificAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim().ToLower();
                                 //// help for rule 19
-                                if (unparsedReferenceStep.Contains("RFS".ToLower()) == false)   
+                                if (unparsedReferenceStep.Contains("RFS".ToLower()))   
                                 {
+                                    unparsedReferenceStep = this.TrimReferenceStepNumber(unparsedReferenceStep);
+                                    int referenceStepNumber = int.Parse(unparsedReferenceStep);
+                                    FlowIdentifier flowIdentifier = new FlowIdentifier(FlowType.Basic, 0);
+                                    ReferenceStep referenceStep = new ReferenceStep(flowIdentifier, referenceStepNumber);
+                                    specificAlternativFlow.AddReferenceStep(referenceStep);
                                     break;
                                 }
 
-                                unparsedReferenceStep = this.TrimReferenceStepNumber(unparsedReferenceStep);
-                                int referenceStepNumber = int.Parse(unparsedReferenceStep);
-                                FlowIdentifier flowIdentifier = new FlowIdentifier(FlowType.Basic, 0);
-                                ReferenceStep referenceStep = new ReferenceStep(flowIdentifier, referenceStepNumber);
-                                specificAlternativFlow.AddReferenceStep(referenceStep);
+                                specificAlternativFlow.AddStep(specificAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim());
                                 break;
                             case 3:
                                 specificAlternativFlow.AddStep(specificAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim());
