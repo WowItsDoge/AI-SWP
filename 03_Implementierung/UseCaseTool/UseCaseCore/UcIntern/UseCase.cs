@@ -214,7 +214,7 @@ namespace UseCaseCore.UcIntern
                 this.BasicFlow,
                 this.SpecificAlternativeFlows,
                 this.GlobalAlternativeFlows,
-                this.GlobalAlternativeFlows,
+                this.BoundedAlternativeFlows,
                 out nodes,
                 out edgeMatrix,
                 out conditionMatrix);
@@ -222,6 +222,47 @@ namespace UseCaseCore.UcIntern
             this.Nodes = nodes;
             this.EdgeMatrix = edgeMatrix;
             this.ConditionMatrix = conditionMatrix;
+            this.PrintEdges(edgeMatrix, true);
+        }
+
+        /// <summary>
+        /// Prints the edges of the matrix into the console, that are equal to the match object.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <param name="matchObject"></param>
+        public void PrintEdges<T>(Matrix<T> matrix, T matchObject)
+        {
+            for (int row = 0; row < matrix.RowCount; row++)
+            {
+                for (int column = 0; column < matrix.ColumnCount; column++)
+                {
+                    if (matrix[row, column].Equals(matchObject))
+                    {
+                        System.Console.WriteLine($"{row} -> {column}");
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Prints the edges of the matrix into the console, that are not equal to the match object.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <param name="matchObject"></param>
+        public void PrintEdgesInverse<T>(Matrix<T> matrix, T matchObject)
+        {
+            for (int row = 0; row < matrix.RowCount; row++)
+            {
+                for (int column = 0; column < matrix.ColumnCount; column++)
+                {
+                    if (!(matrix[row, column].Equals(matchObject)))
+                    {
+                        System.Console.WriteLine($"{row} -> {column}");
+                    }
+                }
+            }
         }
     }
 }

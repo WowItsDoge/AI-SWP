@@ -141,7 +141,14 @@ namespace UseCaseCore.UcIntern
 
                             foreach (int targetStep in targetSteps)
                             {
-                                edgeMatrix[sourceStep, targetStep] = true;
+                                try
+                                {
+                                    edgeMatrix[sourceStep, targetStep] = true;
+                                }
+                                catch(System.Exception)
+                                {
+
+                                }
                             }
                         }
 
@@ -261,7 +268,7 @@ namespace UseCaseCore.UcIntern
             // Cycle through all steps and handle their edges.
             int lastStepIndex = -1;
 
-            // If this is not null then the last step had a condition to continue and therefor provides it that way. Used for do-while statements.
+            // If this is not null then the last step had a condition to continue and therefor provides it that way. Used for do-until statements.
             Condition? conditionFromPreviousStep = null;
 
             for (int stepIndex = 0; stepIndex < steps.Count; stepIndex++)
@@ -292,9 +299,9 @@ namespace UseCaseCore.UcIntern
                 }
                 else if (stepType == StepType.Do)
                 {
-                    GraphBuilder.SetEdgesInDoWhileStatement(steps, ref edgeMatrix, ref externalEdges, ref possibleInvalidIfEdges, ref conditionMatrix, ref stepIndex, out conditionFromPreviousStep);
+                    GraphBuilder.SetEdgesInDoUntilStatement(steps, ref edgeMatrix, ref externalEdges, ref possibleInvalidIfEdges, ref conditionMatrix, ref stepIndex, out conditionFromPreviousStep);
 
-                    // Revert the step index by one to one position beofre the while so that in the next cycle it points to the while step.
+                    // Revert the step index by one to one position beofre the until so that in the next cycle it points to the until step.
                     stepIndex--;
                 }
                 else if (stepType == StepType.Resume)
@@ -319,8 +326,6 @@ namespace UseCaseCore.UcIntern
                         // The last step.
                         exitSteps.Add(new Tuple<int, Condition?>(stepIndex, new Condition(stepDescription, true)));
                     }
-
-                    break;
                 }
                 else
                 {
@@ -523,8 +528,8 @@ namespace UseCaseCore.UcIntern
         }
 
         /// <summary>
-        /// Wires an do-while block. The block starts at <paramref name="stepIndex"/> in steps. The complete wiring is made and <paramref name="stepIndex"/> finally is set to
-        /// the index of the while step.
+        /// Wires an do-until block. The block starts at <paramref name="stepIndex"/> in steps. The complete wiring is made and <paramref name="stepIndex"/> finally is set to
+        /// the index of the until step.
         /// The given lists/matrices are correctly updated.
         /// </summary>
         /// <param name="steps">See <paramref name="steps"/> in <see cref="SetEdgesInstepBlock"/>.</param>
@@ -532,9 +537,9 @@ namespace UseCaseCore.UcIntern
         /// <param name="externalEdges">See <paramref name="externalEdges"/> in <see cref="SetEdgesInstepBlock"/>.</param>
         /// <param name="possibleInvalidIfEdges">See <paramref name="possibleInvalidIfEdges"/> in <see cref="SetEdgesInstepBlock"/>.</param>
         /// <param name="conditionMatrix">See <paramref name="conditionMatrix"/> in <see cref="SetEdgesInstepBlock"/>.</param>
-        /// <param name="stepIndex">On call the current index in the steps where the do start step is located and after the call the index of the while step.</param>
-        /// <param name="exitCondition">A condition that belongs to the edge leading away from the while for that edge.</param>
-        public static void SetEdgesInDoWhileStatement(
+        /// <param name="stepIndex">On call the current index in the steps where the do start step is located and after the call the index of the until step.</param>
+        /// <param name="exitCondition">A condition that belongs to the edge leading away from the until for that edge.</param>
+        public static void SetEdgesInDoUntilStatement(
             IReadOnlyList<Node> steps,
             ref Matrix<bool> edgeMatrix,
             ref List<ExternalEdge> externalEdges,
@@ -543,12 +548,12 @@ namespace UseCaseCore.UcIntern
             ref int stepIndex,
             out Condition? exitCondition)
         {
-            Tuple<int, int> importantDoWhileSteps = GraphBuilder.GetImportantDoWhileStatementSteps(steps, stepIndex);
+            Tuple<int, int> importantDoUntilSteps = GraphBuilder.GetImportantDoUntilStatementSteps(steps, stepIndex);
 
             // Handle nested block
-            int doStepIndex = importantDoWhileSteps.Item1,
-                whileStepIndex = importantDoWhileSteps.Item2,
-                blockSize = whileStepIndex - doStepIndex - 1;
+            int doStepIndex = importantDoUntilSteps.Item1,
+                untilStepIndex = importantDoUntilSteps.Item2,
+                blockSize = untilStepIndex - doStepIndex - 1;
 
             if (blockSize > 0)
             {
@@ -559,23 +564,23 @@ namespace UseCaseCore.UcIntern
                     ref possibleInvalidIfEdges,
                     ref conditionMatrix,
                     doStepIndex,
-                    whileStepIndex, 
-                    whileStepIndex,
+                    untilStepIndex, 
+                    untilStepIndex,
                     null);
             }
             else
             {
-                // Wire do step to while step
-                edgeMatrix[doStepIndex, whileStepIndex] = true;
+                // Wire do step to until step
+                edgeMatrix[doStepIndex, untilStepIndex] = true;
             }
 
-            // Set edge from while to do
-            edgeMatrix[whileStepIndex, doStepIndex] = true;
-            conditionMatrix[whileStepIndex, doStepIndex] = new Condition(steps[whileStepIndex].StepDescription, true);
+            // Set edge from until to do
+            edgeMatrix[untilStepIndex, doStepIndex] = true;
+            conditionMatrix[untilStepIndex, doStepIndex] = new Condition(steps[untilStepIndex].StepDescription, false);
 
             // Set current step index to end if step.
-            stepIndex = whileStepIndex;
-            exitCondition = new Condition(steps[whileStepIndex].StepDescription, false);
+            stepIndex = untilStepIndex;
+            exitCondition = new Condition(steps[untilStepIndex].StepDescription, true);
         }
 
         /// <summary>
@@ -721,17 +726,17 @@ namespace UseCaseCore.UcIntern
         }
 
         /// <summary>
-        /// Searches the important steps in an do-while statement starting in <paramref name="steps"/> at index <paramref name="startStep"/>.
-        /// The important steps are do and while. The given <paramref name="startStep"/> is assumed a valid do statement step and added automatically to the start of the list.
-        /// It ends with the first while that does not belong to a nested do-while statement.
+        /// Searches the important steps in an do-until statement starting in <paramref name="steps"/> at index <paramref name="startStep"/>.
+        /// The important steps are do and until. The given <paramref name="startStep"/> is assumed a valid do statement step and added automatically to the start of the list.
+        /// It ends with the first until that does not belong to a nested do-until statement.
         /// </summary>
-        /// <param name="steps">The steps containing the do-while statement.</param>
+        /// <param name="steps">The steps containing the do-until statement.</param>
         /// <param name="startStep">The index of the step in <paramref name="steps"/> where to start the search. Must be a do step!</param>
-        /// <returns>The indices of the important steps. Item 1 is the do step index and item 2 the while step index.</returns>
-        public static Tuple<int, int> GetImportantDoWhileStatementSteps(IReadOnlyList<Node> steps, int startStep)
+        /// <returns>The indices of the important steps. Item 1 is the do step index and item 2 the until step index.</returns>
+        public static Tuple<int, int> GetImportantDoUntilStatementSteps(IReadOnlyList<Node> steps, int startStep)
         {
-            // If this number is greater than 0 the index is currently in a nested do-while of the given depth.
-            int numberNestedDoWhileStatements = 0,
+            // If this number is greater than 0 the index is currently in a nested do-until of the given depth.
+            int numberNestedDoUntilStatements = 0,
                 endStep = -1;
 
             for (int stepIndex = startStep + 1; stepIndex < steps.Count; stepIndex++)
@@ -740,22 +745,22 @@ namespace UseCaseCore.UcIntern
 
                 if (stepType == StepType.Do)
                 {
-                    numberNestedDoWhileStatements++;
+                    numberNestedDoUntilStatements++;
                     continue;
                 }
 
-                if (numberNestedDoWhileStatements > 0)
+                if (numberNestedDoUntilStatements > 0)
                 {
                     // In nested if statement.
-                    if (stepType == StepType.While)
+                    if (stepType == StepType.Until)
                     {
-                        numberNestedDoWhileStatements--;
+                        numberNestedDoUntilStatements--;
                     }
                 }
                 else
                 {
                     // In root if statment.
-                    if (stepType == StepType.While)
+                    if (stepType == StepType.Until)
                     {
                         endStep = stepIndex;
                         break;

@@ -475,9 +475,13 @@ namespace UseCaseCore.XmlParser
                         {
                             case 2:
                                 string unparsedReferenceStep = specificAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim().ToLower();
+                                if (unparsedReferenceStep.Contains("RFS".ToLower()) == false)   //// help for rule 19
+                                {
+                                    break;
+                                }
                                 unparsedReferenceStep = TrimReferenceStepNumber(unparsedReferenceStep);
                                 int referenceStepNumber = int.Parse(unparsedReferenceStep);
-                                FlowIdentifier flowIdentifier = new FlowIdentifier(FlowType.SpecificAlternative, i);
+                                FlowIdentifier flowIdentifier = new FlowIdentifier(FlowType.Basic, 0);
                                 ReferenceStep referenceStep = new ReferenceStep(flowIdentifier, referenceStepNumber);
                                 specificAlternativFlow.AddReferenceStep(referenceStep);
                                 break;
@@ -527,6 +531,10 @@ namespace UseCaseCore.XmlParser
                         {
                             case 2:
                                 string unparsedReferenceStep = boundedAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim().ToLower();
+                                if (unparsedReferenceStep.Contains("RFS".ToLower()) == false)   //// help for rule 19
+                                {
+                                    break;
+                                }
                                 string referenceStepNumbers = TrimReferenceStepNumber(unparsedReferenceStep);
                                 if (referenceStepNumbers.Contains("-") == true)
                                 {
@@ -534,7 +542,7 @@ namespace UseCaseCore.XmlParser
                                     int stepEndNumber = int.Parse(referenceStepNumbers.Split('-')[1]);
                                     for (int n = stepStartNumber; n <= stepEndNumber; n++)
                                     {
-                                        FlowIdentifier flowIdentifier = new FlowIdentifier(FlowType.BoundedAlternative, i);
+                                        FlowIdentifier flowIdentifier = new FlowIdentifier(FlowType.Basic, 0);
                                         ReferenceStep referenceStep = new ReferenceStep(flowIdentifier, n);
                                         boundedAlternativFlow.AddReferenceStep(referenceStep);
                                     }
@@ -542,7 +550,7 @@ namespace UseCaseCore.XmlParser
                                 else
                                 {
                                     int referenceStepNumber = int.Parse(referenceStepNumbers);
-                                    FlowIdentifier flowIdentifier = new FlowIdentifier(FlowType.BoundedAlternative, i);
+                                    FlowIdentifier flowIdentifier = new FlowIdentifier(FlowType.Basic, 0);
                                     ReferenceStep referenceStep = new ReferenceStep(flowIdentifier, referenceStepNumber);
                                     boundedAlternativFlow.AddReferenceStep(referenceStep);
                                 }

@@ -146,6 +146,38 @@ namespace UseCaseTest.RuleValidation
         }
 
         /// <summary>
+        /// Tests the reset funcion
+        /// </summary>
+        [Test]
+        public void ResetTest()
+        {
+            var dummyBasicFlow = new BasicFlow();
+
+            var dummy1 = new DummyRule(0);
+            var dummy2 = new DummyRule(1);
+            var dummy3 = new DummyRule(2);
+
+            // Test validation with 3 rules and 3 errors
+            var ruleList = new List<IRule> { dummy1, dummy2, dummy3 };
+            var rucmRuleValidator = new RucmRuleValidator(ruleList);
+            var result = rucmRuleValidator.Validate(dummyBasicFlow);
+
+            Assert.IsFalse(result);
+            Assert.IsTrue(rucmRuleValidator.GetErrorReport().GetErrorList.Count == 3);
+
+            // Test the reset
+            rucmRuleValidator.Reset();
+
+            Assert.IsTrue(rucmRuleValidator.GetErrorReport().GetErrorList.Count == 0);
+
+            // And validate again
+            result = rucmRuleValidator.Validate(dummyBasicFlow);
+
+            Assert.IsFalse(result);
+            Assert.IsTrue(rucmRuleValidator.GetErrorReport().GetErrorList.Count == 3);
+        }
+
+        /// <summary>
         /// Generates a temporary filename
         /// </summary>
         /// <returns>a temp file name</returns>
