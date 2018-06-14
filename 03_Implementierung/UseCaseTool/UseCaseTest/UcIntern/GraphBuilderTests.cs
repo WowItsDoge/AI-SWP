@@ -279,7 +279,6 @@ namespace UseCaseTest.UcIntern
         [Test]
         public void BuildBasicWithBounded()
         {
-            return;
             // Arrange
             List<Node> allSteps = new List<Node>();
 
@@ -333,7 +332,7 @@ namespace UseCaseTest.UcIntern
 
             // Act
             GraphBuilder.BuildGraph(basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
-
+            this.PrintEdges(edgeMatrix, true);
             // Assert
             Assert.AreEqual(allSteps, steps);
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
@@ -342,7 +341,6 @@ namespace UseCaseTest.UcIntern
         [Test]
         public void BuildComplexGraph()
         {
-            return;
             // Arrange
             List<Node> allSteps = new List<Node>();
 
