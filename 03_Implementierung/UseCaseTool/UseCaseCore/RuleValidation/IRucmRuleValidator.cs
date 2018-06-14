@@ -41,7 +41,7 @@ namespace UseCaseCore.RuleValidation
         bool Export(string path);
 
         /// <summary>
-        /// Resets the Rucm rule validator.
+        /// Resets the RUCM rule validator.
         /// </summary>
         void Reset();
     }

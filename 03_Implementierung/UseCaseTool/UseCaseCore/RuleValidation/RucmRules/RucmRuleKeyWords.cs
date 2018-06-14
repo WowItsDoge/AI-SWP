@@ -43,5 +43,15 @@ namespace UseCaseCore.RuleValidation.RucmRules
         /// The keyword for ending an if statement
         /// </summary>
         public const string EndifKeyWord = "ENDIF";
+
+        /// <summary>
+        /// The starting keyword for a loop
+        /// </summary>
+        public const string DoKeyWord = "DO";
+
+        /// <summary>
+        /// The ending keyword for a loop
+        /// </summary>
+        public const string UntilKeyWord = "UNTIL";
     }
 }
