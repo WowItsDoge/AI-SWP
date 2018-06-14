@@ -222,7 +222,6 @@ namespace UseCaseCore.UcIntern
             this.Nodes = nodes;
             this.EdgeMatrix = edgeMatrix;
             this.ConditionMatrix = conditionMatrix;
-            this.PrintEdges(edgeMatrix, true);
         }
 
         /// <summary>
