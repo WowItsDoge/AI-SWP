@@ -121,13 +121,14 @@ namespace UseCaseTool
                         string nodeTitle2 = GetNodeTitle(useCase.Nodes[n2], n2);
 
                         var edge = this.graph.AddEdge(nodeTitle1, nodeTitle2);
-                        edge.Attr.Color = Microsoft.Msagl.Drawing.Color.Gray;
 
                         var node1 = this.graph.FindNode(nodeTitle1);
                         SetNodeStyle(node1);
 
                         var node2 = this.graph.FindNode(nodeTitle2);
                         SetNodeStyle(node2);
+
+                        edge.Attr.Color = node1.Attr.FillColor;
                     }
                 }
             }
@@ -201,7 +202,7 @@ namespace UseCaseTool
         /// <returns>the graph node title</returns>
         private static string GetNodeTitle(Node node, int nodeId)
         {
-            return nodeId + ": " + node.StepDescription;
+            return (nodeId + 1) + ": " + node.StepDescription;
         }
 
         /// <summary>
