@@ -134,10 +134,6 @@ namespace UseCaseCore.XmlParser
         /// <returns>Returns true if the file exists and could be loaded, otherwise false.</returns>
         public bool LoadXmlFile(string filePath)
         {
-            // nur zum debuggen, da bei 2x hintereinander einlesen der UseCase Datei die LoadXmlFile()-Funktion von der Oberfläche 2x hintereinander aufgerufen wird
-            // dieser 2x aufruf muss noch verhindert werden, dann sollte auch die ausnahme/error nichtmehr auftreten...
-            Debug.WriteLine("XMLParser --> LoadXmlFile(...) Funktion aufgerufen");
-
             try
             {
                 //// copy file to windows temp folder to fix the problem with write access if file is opened
@@ -212,7 +208,7 @@ namespace UseCaseCore.XmlParser
                     useCase = null;
                     this.errorMessage = "Use case document corrupted (no child nodes found!)";
                     this.useCaseFile.Close();
-                    ////File.Delete(this.useCaseFilePath); erst wieder einkommentieren wenn 2x nacheinander datei öffnen vom Controller-Team gefixt wurde, da sonst die quelldatei gelöscht wird!
+                    File.Delete(this.useCaseFilePath);
                     return false;
                 }
 
@@ -240,7 +236,7 @@ namespace UseCaseCore.XmlParser
                 }
 
                 this.useCaseFile.Close();
-                ////File.Delete(this.useCaseFilePath); erst wieder einkommentieren wenn 2x nacheinander datei öffnen vom Controller-Team gefixt wurde, da sonst die quelldatei gelöscht wird!
+                File.Delete(this.useCaseFilePath);
 
                 useCase = this.outgoingUseCase;
                 return rucmValidationResult;
@@ -251,7 +247,7 @@ namespace UseCaseCore.XmlParser
                 Debug.WriteLine(ex.Message.ToString());
                 this.errorMessage = ex.Message.ToString();
                 this.useCaseFile.Close();
-                ////File.Delete(this.useCaseFilePath); erst wieder einkommentieren wenn 2x nacheinander datei öffnen vom Controller-Team gefixt wurde, da sonst die quelldatei gelöscht wird!
+                File.Delete(this.useCaseFilePath);
                 return false;
             }
         }
@@ -263,12 +259,12 @@ namespace UseCaseCore.XmlParser
         private bool ValidateRucmRules()
         {
             bool currentValidationResult = true;
-            rucmRuleValidator.Validate(this.basicFlow);
+            this.rucmRuleValidator.Validate(this.basicFlow);
             foreach (GlobalAlternativeFlow globalAlternativeFlow in this.globalAlternativeFlows)
             {
                 if (currentValidationResult == true)
                 {
-                    currentValidationResult = rucmRuleValidator.Validate(globalAlternativeFlow, this.basicFlow);
+                    currentValidationResult = this.rucmRuleValidator.Validate(globalAlternativeFlow, this.basicFlow);
                 }
                 else
                 {
@@ -280,7 +276,7 @@ namespace UseCaseCore.XmlParser
             {
                 if (currentValidationResult == true)
                 {
-                    currentValidationResult = rucmRuleValidator.Validate(specificAlternativeFlow, this.basicFlow);
+                    currentValidationResult = this.rucmRuleValidator.Validate(specificAlternativeFlow, this.basicFlow);
                 }
                 else
                 {
@@ -292,7 +288,7 @@ namespace UseCaseCore.XmlParser
             {
                 if (currentValidationResult == true)
                 {
-                    currentValidationResult = rucmRuleValidator.Validate(boundedAlternativeFlow, this.basicFlow);
+                    currentValidationResult = this.rucmRuleValidator.Validate(boundedAlternativeFlow, this.basicFlow);
                 }
                 else
                 {
@@ -406,6 +402,7 @@ namespace UseCaseCore.XmlParser
                         default:
                             break;
                     }
+
                     basicFlowStepContent = basicFlowStepContent.NextSibling;
                 }
 
