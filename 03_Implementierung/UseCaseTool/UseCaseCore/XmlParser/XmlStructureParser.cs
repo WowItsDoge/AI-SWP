@@ -168,8 +168,8 @@ namespace UseCaseCore.XmlParser
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message.ToString());
                 this.errorMessage = ex.Message.ToString();
+                File.Delete(this.useCaseFilePath);
                 return false;
             }
         }
@@ -244,7 +244,6 @@ namespace UseCaseCore.XmlParser
             catch (Exception ex)
             {
                 useCase = null;
-                Debug.WriteLine(ex.Message.ToString());
                 this.errorMessage = ex.Message.ToString();
                 this.useCaseFile.Close();
                 File.Delete(this.useCaseFilePath);
