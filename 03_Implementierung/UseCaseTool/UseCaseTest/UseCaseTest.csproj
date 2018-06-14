@@ -63,6 +63,7 @@
     <Compile Include="RuleValidation\RucmRules\RucmRuleTest.cs" />
     <Compile Include="RuleValidation\RucmRules\RucmRule_19Test.cs" />
     <Compile Include="RuleValidation\RucmRules\RucmRule_24_25Test.cs" />
+    <Compile Include="RuleValidation\RucmRules\RucmRule_26Test.cs" />
     <Compile Include="RuleValidation\RucmRuleValidatorTest.cs" />
     <Compile Include="ScenarioMatrix\ScenarioMatrixTest.cs" />
     <Compile Include="ScenarioMatrix\ScenarioTest.cs" />
