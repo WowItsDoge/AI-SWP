@@ -319,8 +319,6 @@ namespace UseCaseCore.UcIntern
                         // The last step.
                         exitSteps.Add(new Tuple<int, Condition?>(stepIndex, new Condition(stepDescription, true)));
                     }
-
-                    break;
                 }
                 else
                 {
