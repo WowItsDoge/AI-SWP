@@ -42,9 +42,9 @@ namespace UseCaseTool
         private static List<Tuple<string, Microsoft.Msagl.Drawing.Color>> nodeColors;
 
         /// <summary>
-        /// List of flow id and flow color palette
+        /// List of flow id, flow color palette, last color id used
         /// </summary>
-        private static List<Tuple<int, string[]>> flowIdPalette;
+        private static List<Tuple<int, string[], int>> flowIdPalette;
 
         /// <summary>
         /// Reference to the use case object
@@ -70,7 +70,7 @@ namespace UseCaseTool
 
             GraphViewerControl.nodeColors = new List<Tuple<string, Microsoft.Msagl.Drawing.Color>>();
 
-            GraphViewerControl.flowIdPalette = new List<Tuple<int, string[]>>();
+            GraphViewerControl.flowIdPalette = new List<Tuple<int, string[], int>>();
 
             this.displayGraphTitles = true;
 
@@ -172,7 +172,7 @@ namespace UseCaseTool
                         var node2 = this.graph.FindNode(nodeTitle2);
                         SetNodeStyle(node2, nodeTitle2, useCase.Nodes[n2].Identifier.Id);
 
-                        edge.Attr.Color = GetNodeColor(nodeTitle1);
+                        edge.Attr.Color = GetNodeColor(nodeTitle1, useCase.Nodes[n1].Identifier.Id);
 
                         if (useCase.Nodes[n1].Identifier.Id == useCase.Nodes[n2].Identifier.Id)
                         {
@@ -263,7 +263,7 @@ namespace UseCaseTool
         /// <param name="node">the microsoft drawing node</param>
         private static void SetNodeStyle(Microsoft.Msagl.Drawing.Node node, string nodeTitle, int flowId)
         {
-            var backgroundColor = GetNodeColor(nodeTitle);
+            var backgroundColor = GetNodeColor(nodeTitle, flowId);
             var backgroundHex = MaterialDesignColors.MsaglColorToHex(backgroundColor);
             var foregroundHex = MaterialDesignColors.GetForegroundColor(backgroundHex);
             var foregroundColor = MaterialDesignColors.MsaglColorFromHex(foregroundHex);
@@ -390,7 +390,13 @@ namespace UseCaseTool
             }
         }
 
-        private static Microsoft.Msagl.Drawing.Color GetNodeColor(string nodeTitle)
+        /// <summary>
+        /// Returns the color for a use case item
+        /// </summary>
+        /// <param name="nodeTitle"></param>
+        /// <param name="flowId"></param>
+        /// <returns></returns>
+        private static Microsoft.Msagl.Drawing.Color GetNodeColor(string nodeTitle, int flowId)
         {
             // if the node color exists
             for (int i = 0; i < nodeColors.Count; i++)
@@ -403,10 +409,53 @@ namespace UseCaseTool
             }
 
             // if the node doens´t exists, generate a new color
-            var nodeColor = new Tuple<string, Microsoft.Msagl.Drawing.Color>(nodeTitle, MaterialDesignColors.RandomMsaglColor());
+            var colorHex = FlowPaletteGetNextColor(flowId);
+            var color = MaterialDesignColors.MsaglColorFromHex(colorHex);
+
+            var nodeColor = new Tuple<string, Microsoft.Msagl.Drawing.Color>(nodeTitle, color);
             nodeColors.Add(nodeColor);
 
             return nodeColor.Item2;
+        }
+
+        /// <summary>
+        /// Returns the id of a flow palette for a flow id
+        /// </summary>
+        /// <param name="flowId"></param>
+        /// <returns></returns>
+        private static int GetFlowPaletteId(int flowId)
+        {
+            for (int i = 0; i < flowIdPalette.Count; i++)
+            {
+                if (flowIdPalette[i].Item1 == flowId)
+                {
+                    return i;
+                }
+            }
+
+            // if the palette doesn´t exist for the flow id, create it
+            var flowPaletteId = flowIdPalette.Count;
+
+            flowIdPalette.Add(new Tuple<int, string[], int>(flowId, MaterialDesignColors.GetRandomPalette(), 0));
+
+            return flowPaletteId;
+        }
+
+        private static string FlowPaletteGetNextColor(int flowId)
+        {
+            // get the flow palette id for the flow id
+            var id = GetFlowPaletteId(flowId);
+
+            // get the color palette
+            string[] colorPalette = flowIdPalette[id].Item2;
+
+            // get the next color id
+            int colorId = (flowIdPalette[id].Item3 + 1) % (colorPalette.Length - 1);
+
+            // save the next color id
+            flowIdPalette[id] = new Tuple<int, string[], int>(flowId, colorPalette, colorId);
+
+            return colorPalette[colorId];
         }
     }
 }

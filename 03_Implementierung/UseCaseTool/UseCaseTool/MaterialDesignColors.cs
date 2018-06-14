@@ -921,6 +921,62 @@ namespace UseCaseTool
             return MsaglColorFromHex(colorHex);            
         }
 
+        public static string[] GetRandomPalette()
+        {
+            if (MaterialDesignColors.random == null)
+            {
+                MaterialDesignColors.random = new Random();
+            }
+
+            var colorNr = random.Next(0, 18);
+
+            switch (colorNr)
+            {
+                case 0:
+                    return Red;
+                case 1:
+                    return Pink;
+                case 2:
+                    return Purple;
+                case 3:
+                    return DeepPurple;
+                case 4:
+                    return Indigo;
+                case 5:
+                    return Blue;
+                case 6:
+                    return LightBlue;
+                case 7:
+                    return Cyan;
+                case 8:
+                    return Teal;
+                case 9:
+                    return Green;
+                case 10:
+                    return LightGreen;
+                case 11:
+                    return Lime;
+                case 12:
+                    return Yellow;
+                case 13:
+                    return Amber;
+                case 14:
+                    return Orange;
+                case 15:
+                    return DeepOrange;
+                case 16:
+                    return Brown;
+                case 17:
+                    return Gray;
+                case 18:
+                    return BlueGray;
+                default:
+                    break;
+            }
+
+            return null;
+        }
+
         /// <summary>
         /// Returns the foreground color for a background color.
         /// </summary>
