@@ -99,9 +99,15 @@ namespace UseCaseCore.XmlParser
         private string useCaseFilePath;
 
         /// <summary>
+        /// The RUCM rule validator is passed in the constructor
+        /// </summary>
+        private IRucmRuleValidator rucmRuleValidator;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="XmlStructureParser" /> class.
         /// </summary>
-        public XmlStructureParser()
+        /// <param name="rucmRuleValidator">The rule validator is passed in the constructor</param>
+        public XmlStructureParser(IRucmRuleValidator rucmRuleValidator)
         {
             this.errorMessage = string.Empty;
             this.useCaseName = string.Empty;
@@ -118,6 +124,7 @@ namespace UseCaseCore.XmlParser
             this.useCaseFile = null;
             this.useCaseXml = new XmlDocument();
             this.useCaseFilePath = string.Empty;
+            this.rucmRuleValidator = rucmRuleValidator;
         }
 
         /// <summary>
@@ -256,7 +263,6 @@ namespace UseCaseCore.XmlParser
         private bool ValidateRucmRules()
         {
             bool currentValidationResult = true;
-            RucmRuleValidator rucmRuleValidator = new RucmRuleValidator(RuleValidation.RucmRules.RucmRuleRepository.Rules);
             rucmRuleValidator.Validate(this.basicFlow);
             foreach (GlobalAlternativeFlow globalAlternativeFlow in this.globalAlternativeFlows)
             {
@@ -388,8 +394,18 @@ namespace UseCaseCore.XmlParser
                 XmlNode basicFlowContent = basicFlowNode[0].ParentNode.ParentNode.ParentNode.ParentNode;
                 XmlNode basicFlowStepContent = basicFlowContent.NextSibling;
                 while (basicFlowStepContent.ChildNodes[1].InnerText.Trim().ToLower() != "Postcondition".ToLower())
-                {
-                    this.basicFlow.AddStep(basicFlowStepContent.ChildNodes[2].InnerText.Trim());
+                {          
+                    switch (basicFlowStepContent.ChildNodes.Count)
+                    {
+                        case 2:
+                            this.basicFlow.AddStep(basicFlowStepContent.ChildNodes[1].InnerText.Trim());
+                            break;
+                        case 3:
+                            this.basicFlow.AddStep(basicFlowStepContent.ChildNodes[2].InnerText.Trim());
+                            break;
+                        default:
+                            break;
+                    }
                     basicFlowStepContent = basicFlowStepContent.NextSibling;
                 }
 
@@ -420,25 +436,25 @@ namespace UseCaseCore.XmlParser
                 {
                     GlobalAlternativeFlow globalAlternativFlow = new GlobalAlternativeFlow();
                     XmlNode globalAlternativeFlowContent = globalAlternativeFlowNodes[i - 1].ParentNode.ParentNode.ParentNode.ParentNode;
-                    XmlNode globlaAlternativeFlowStepContent = globalAlternativeFlowContent;
-                    while (globlaAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim().ToLower() != "Postcondition".ToLower())
+                    XmlNode globalAlternativeFlowStepContent = globalAlternativeFlowContent;
+                    while (globalAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim().ToLower() != "Postcondition".ToLower())
                     {
-                        switch (globlaAlternativeFlowStepContent.ChildNodes.Count)
+                        switch (globalAlternativeFlowStepContent.ChildNodes.Count)
                         {
                             case 2:
-                                globalAlternativFlow.AddStep(globlaAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim());
+                                globalAlternativFlow.AddStep(globalAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim());
                                 break;
                             case 3:
-                                globalAlternativFlow.AddStep(globlaAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim());
+                                globalAlternativFlow.AddStep(globalAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim());
                                 break;
                             default:
                                 break;
                         }
 
-                        globlaAlternativeFlowStepContent = globlaAlternativeFlowStepContent.NextSibling;
+                        globalAlternativeFlowStepContent = globalAlternativeFlowStepContent.NextSibling;
                     }
 
-                    globalAlternativFlow.SetPostcondition(globlaAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim());
+                    globalAlternativFlow.SetPostcondition(globalAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim());
                     globalAlternativFlow.SetId(i);
                     this.globalAlternativeFlows.Add(globalAlternativFlow);
                 }
