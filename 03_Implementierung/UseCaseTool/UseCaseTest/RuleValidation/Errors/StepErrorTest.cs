@@ -26,7 +26,7 @@ namespace UseCaseTest.RuleValidation.Errors
 
             var expectedResult = "Error in Step " + referenceStep + ": " + errorMessage + "\t" + resolveMessage + "\n";
 
-            Assert.IsTrue(stepError.GetErrorString() == expectedResult);
+            Assert.IsTrue(stepError.ToString() == expectedResult);
         }
     }
 }

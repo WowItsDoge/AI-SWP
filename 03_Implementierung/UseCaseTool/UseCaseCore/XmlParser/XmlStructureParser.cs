@@ -99,9 +99,15 @@ namespace UseCaseCore.XmlParser
         private string useCaseFilePath;
 
         /// <summary>
+        /// The RUCM rule validator is passed in the constructor
+        /// </summary>
+        private IRucmRuleValidator rucmRuleValidator;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="XmlStructureParser" /> class.
         /// </summary>
-        public XmlStructureParser()
+        /// <param name="rucmRuleValidator">The rule validator is passed in the constructor</param>
+        public XmlStructureParser(IRucmRuleValidator rucmRuleValidator)
         {
             this.errorMessage = string.Empty;
             this.useCaseName = string.Empty;
@@ -118,6 +124,7 @@ namespace UseCaseCore.XmlParser
             this.useCaseFile = null;
             this.useCaseXml = new XmlDocument();
             this.useCaseFilePath = string.Empty;
+            this.rucmRuleValidator = rucmRuleValidator;
         }
 
         /// <summary>
@@ -127,10 +134,6 @@ namespace UseCaseCore.XmlParser
         /// <returns>Returns true if the file exists and could be loaded, otherwise false.</returns>
         public bool LoadXmlFile(string filePath)
         {
-            // nur zum debuggen, da bei 2x hintereinander einlesen der UseCase Datei die LoadXmlFile()-Funktion von der Oberfläche 2x hintereinander aufgerufen wird
-            // dieser 2x aufruf muss noch verhindert werden, dann sollte auch die ausnahme/error nichtmehr auftreten...
-            Debug.WriteLine("XMLParser --> LoadXmlFile(...) Funktion aufgerufen");
-
             try
             {
                 //// copy file to windows temp folder to fix the problem with write access if file is opened
@@ -205,7 +208,7 @@ namespace UseCaseCore.XmlParser
                     useCase = null;
                     this.errorMessage = "Use case document corrupted (no child nodes found!)";
                     this.useCaseFile.Close();
-                    ////File.Delete(this.useCaseFilePath); erst wieder einkommentieren wenn 2x nacheinander datei öffnen vom Controller-Team gefixt wurde, da sonst die quelldatei gelöscht wird!
+                    File.Delete(this.useCaseFilePath);
                     return false;
                 }
 
@@ -233,7 +236,7 @@ namespace UseCaseCore.XmlParser
                 }
 
                 this.useCaseFile.Close();
-                ////File.Delete(this.useCaseFilePath); erst wieder einkommentieren wenn 2x nacheinander datei öffnen vom Controller-Team gefixt wurde, da sonst die quelldatei gelöscht wird!
+                File.Delete(this.useCaseFilePath);
 
                 useCase = this.outgoingUseCase;
                 return rucmValidationResult;
@@ -244,7 +247,7 @@ namespace UseCaseCore.XmlParser
                 Debug.WriteLine(ex.Message.ToString());
                 this.errorMessage = ex.Message.ToString();
                 this.useCaseFile.Close();
-                ////File.Delete(this.useCaseFilePath); erst wieder einkommentieren wenn 2x nacheinander datei öffnen vom Controller-Team gefixt wurde, da sonst die quelldatei gelöscht wird!
+                File.Delete(this.useCaseFilePath);
                 return false;
             }
         }
@@ -256,13 +259,12 @@ namespace UseCaseCore.XmlParser
         private bool ValidateRucmRules()
         {
             bool currentValidationResult = true;
-            RucmRuleValidator rucmRuleValidator = new RucmRuleValidator(RuleValidation.RucmRules.RucmRuleRepository.Rules);
-            rucmRuleValidator.Validate(this.basicFlow);
+            this.rucmRuleValidator.Validate(this.basicFlow);
             foreach (GlobalAlternativeFlow globalAlternativeFlow in this.globalAlternativeFlows)
             {
                 if (currentValidationResult == true)
                 {
-                    currentValidationResult = rucmRuleValidator.Validate(globalAlternativeFlow, this.basicFlow);
+                    currentValidationResult = this.rucmRuleValidator.Validate(globalAlternativeFlow, this.basicFlow);
                 }
                 else
                 {
@@ -274,7 +276,7 @@ namespace UseCaseCore.XmlParser
             {
                 if (currentValidationResult == true)
                 {
-                    currentValidationResult = rucmRuleValidator.Validate(specificAlternativeFlow, this.basicFlow);
+                    currentValidationResult = this.rucmRuleValidator.Validate(specificAlternativeFlow, this.basicFlow);
                 }
                 else
                 {
@@ -286,7 +288,7 @@ namespace UseCaseCore.XmlParser
             {
                 if (currentValidationResult == true)
                 {
-                    currentValidationResult = rucmRuleValidator.Validate(boundedAlternativeFlow, this.basicFlow);
+                    currentValidationResult = this.rucmRuleValidator.Validate(boundedAlternativeFlow, this.basicFlow);
                 }
                 else
                 {
@@ -388,8 +390,19 @@ namespace UseCaseCore.XmlParser
                 XmlNode basicFlowContent = basicFlowNode[0].ParentNode.ParentNode.ParentNode.ParentNode;
                 XmlNode basicFlowStepContent = basicFlowContent.NextSibling;
                 while (basicFlowStepContent.ChildNodes[1].InnerText.Trim().ToLower() != "Postcondition".ToLower())
-                {
-                    this.basicFlow.AddStep(basicFlowStepContent.ChildNodes[2].InnerText.Trim());
+                {          
+                    switch (basicFlowStepContent.ChildNodes.Count)
+                    {
+                        case 2:
+                            this.basicFlow.AddStep(basicFlowStepContent.ChildNodes[1].InnerText.Trim());
+                            break;
+                        case 3:
+                            this.basicFlow.AddStep(basicFlowStepContent.ChildNodes[2].InnerText.Trim());
+                            break;
+                        default:
+                            break;
+                    }
+
                     basicFlowStepContent = basicFlowStepContent.NextSibling;
                 }
 
@@ -420,25 +433,25 @@ namespace UseCaseCore.XmlParser
                 {
                     GlobalAlternativeFlow globalAlternativFlow = new GlobalAlternativeFlow();
                     XmlNode globalAlternativeFlowContent = globalAlternativeFlowNodes[i - 1].ParentNode.ParentNode.ParentNode.ParentNode;
-                    XmlNode globlaAlternativeFlowStepContent = globalAlternativeFlowContent;
-                    while (globlaAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim().ToLower() != "Postcondition".ToLower())
+                    XmlNode globalAlternativeFlowStepContent = globalAlternativeFlowContent;
+                    while (globalAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim().ToLower() != "Postcondition".ToLower())
                     {
-                        switch (globlaAlternativeFlowStepContent.ChildNodes.Count)
+                        switch (globalAlternativeFlowStepContent.ChildNodes.Count)
                         {
                             case 2:
-                                globalAlternativFlow.AddStep(globlaAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim());
+                                globalAlternativFlow.AddStep(globalAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim());
                                 break;
                             case 3:
-                                globalAlternativFlow.AddStep(globlaAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim());
+                                globalAlternativFlow.AddStep(globalAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim());
                                 break;
                             default:
                                 break;
                         }
 
-                        globlaAlternativeFlowStepContent = globlaAlternativeFlowStepContent.NextSibling;
+                        globalAlternativeFlowStepContent = globalAlternativeFlowStepContent.NextSibling;
                     }
 
-                    globalAlternativFlow.SetPostcondition(globlaAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim());
+                    globalAlternativFlow.SetPostcondition(globalAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim());
                     globalAlternativFlow.SetId(i);
                     this.globalAlternativeFlows.Add(globalAlternativFlow);
                 }
@@ -476,16 +489,17 @@ namespace UseCaseCore.XmlParser
                             case 2:
                                 string unparsedReferenceStep = specificAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim().ToLower();
                                 //// help for rule 19
-                                if (unparsedReferenceStep.Contains("RFS".ToLower()) == false)   
+                                if (unparsedReferenceStep.Contains("RFS".ToLower()))   
                                 {
+                                    unparsedReferenceStep = this.TrimReferenceStepNumber(unparsedReferenceStep);
+                                    int referenceStepNumber = int.Parse(unparsedReferenceStep);
+                                    FlowIdentifier flowIdentifier = new FlowIdentifier(FlowType.Basic, 0);
+                                    ReferenceStep referenceStep = new ReferenceStep(flowIdentifier, referenceStepNumber);
+                                    specificAlternativFlow.AddReferenceStep(referenceStep);
                                     break;
                                 }
 
-                                unparsedReferenceStep = this.TrimReferenceStepNumber(unparsedReferenceStep);
-                                int referenceStepNumber = int.Parse(unparsedReferenceStep);
-                                FlowIdentifier flowIdentifier = new FlowIdentifier(FlowType.Basic, 0);
-                                ReferenceStep referenceStep = new ReferenceStep(flowIdentifier, referenceStepNumber);
-                                specificAlternativFlow.AddReferenceStep(referenceStep);
+                                specificAlternativFlow.AddStep(specificAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim());
                                 break;
                             case 3:
                                 specificAlternativFlow.AddStep(specificAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim());

@@ -79,7 +79,7 @@
                 <TabItem Header="Szenariomatrix">
                     <Grid Background="#FFE5E5E5">
                         <UseCaseTool:MatrixControl x:Name="MatrixControl"/>
-                        <Label x:Name="cycleDepth" Content="Zyklustiefe:" HorizontalAlignment="Right" Margin="0,0,60,5" VerticalAlignment="Bottom" Width="100" FontSize="16" Height="29"/>
+                        <Label x:Name="cycleDepth" Content="Zyklustiefe:" HorizontalAlignment="Right" Margin="0,0,60,0" VerticalAlignment="Bottom" Width="100" FontSize="16" Height="29"/>
                         <Controls:NumericUpDown x:Name="CycleDepth" HorizontalAlignment="Right" Value="1" Minimum="1" Maximum="20" Interval="1" Margin="0,0,0,0" VerticalAlignment="Bottom" Height="15" ValueChanged="NumericUpDownValueChanged" IsEnabled="{Binding Path=MatrixCycleDepthEnabled}"/>
                     </Grid>
                 </TabItem>

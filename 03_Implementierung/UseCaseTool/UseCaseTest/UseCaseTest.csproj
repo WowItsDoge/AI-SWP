@@ -62,6 +62,7 @@
     <Compile Include="RuleValidation\RucmRules\DummyRule.cs" />
     <Compile Include="RuleValidation\RucmRules\RucmRuleTest.cs" />
     <Compile Include="RuleValidation\RucmRules\RucmRule_19Test.cs" />
+    <Compile Include="RuleValidation\RucmRules\RucmRule_23Test.cs" />
     <Compile Include="RuleValidation\RucmRules\RucmRule_24_25Test.cs" />
     <Compile Include="RuleValidation\RucmRules\RucmRule_26Test.cs" />
     <Compile Include="RuleValidation\RucmRuleValidatorTest.cs" />
