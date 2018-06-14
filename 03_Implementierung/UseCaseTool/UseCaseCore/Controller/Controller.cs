@@ -510,6 +510,15 @@ namespace UseCaseCore.Controller
         }
 
         /// <summary>
+        /// Update a Scenario with the hnew value from the GUI
+        /// </summary>
+        /// <param name="s"></param>
+        public void UpdateScenario(Scenario s)
+        {
+            this.matrix.UpdateScenarioComment(s);
+        }
+
+        /// <summary>
         /// process to reset previous content
         /// </summary>
         private void ResetPreviousContent()
@@ -656,7 +665,7 @@ namespace UseCaseCore.Controller
                 this.ScenariosCreated(obj);
             }
         }
-
+        
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
