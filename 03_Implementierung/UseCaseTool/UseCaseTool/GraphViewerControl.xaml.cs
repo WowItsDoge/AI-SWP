@@ -37,28 +37,24 @@ namespace UseCaseTool
         private Microsoft.Msagl.Drawing.Graph graph;
 
         /// <summary>
+        /// List of node title and node color elements
+        /// </summary>
+        private static List<Tuple<string, Microsoft.Msagl.Drawing.Color>> nodeColors;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="GraphViewerControl"/> class.
         /// </summary>
         public GraphViewerControl()
         {
             this.InitializeComponent();
 
+            GraphViewerControl.nodeColors = new List<Tuple<string, Microsoft.Msagl.Drawing.Color>>();
+
             // create a viewer object 
             this.viewer = new Microsoft.Msagl.GraphViewerGdi.GViewer();
 
             // create a graph object 
             this.graph = new Microsoft.Msagl.Drawing.Graph("graph");
-
-            /*
-            // example graph
-            graph.AddEdge("A", "B");
-            graph.AddEdge("B", "C");
-            graph.AddEdge("A", "C").Attr.Color = Microsoft.Msagl.Drawing.Color.Green;
-            graph.FindNode("A").Attr.FillColor = Microsoft.Msagl.Drawing.Color.Magenta;
-            graph.FindNode("B").Attr.FillColor = Microsoft.Msagl.Drawing.Color.MistyRose;
-            Microsoft.Msagl.Drawing.Node c = graph.FindNode("C");
-            c.Attr.FillColor = Microsoft.Msagl.Drawing.Color.PaleGreen;
-            */
 
             // bind the graph to the viewer 
             this.viewer.Graph = this.graph;
@@ -123,12 +119,12 @@ namespace UseCaseTool
                         var edge = this.graph.AddEdge(nodeTitle1, nodeTitle2);
 
                         var node1 = this.graph.FindNode(nodeTitle1);
-                        SetNodeStyle(node1);
+                        SetNodeStyle(node1, nodeTitle1);
 
                         var node2 = this.graph.FindNode(nodeTitle2);
-                        SetNodeStyle(node2);
+                        SetNodeStyle(node2, nodeTitle2);
 
-                        edge.Attr.Color = node1.Attr.FillColor;
+                        edge.Attr.Color = GetNodeColor(nodeTitle1);
                     }
                 }
             }
@@ -180,9 +176,9 @@ namespace UseCaseTool
         /// Set the style of a graph node
         /// </summary>
         /// <param name="node">the microsoft drawing node</param>
-        private static void SetNodeStyle(Microsoft.Msagl.Drawing.Node node)
+        private static void SetNodeStyle(Microsoft.Msagl.Drawing.Node node, string nodeTitle)
         {
-            var backgroundColor = MaterialDesignColors.RandomMsaglColor();
+            var backgroundColor = GetNodeColor(nodeTitle);
             var backgroundHex = MaterialDesignColors.MsaglColorToHex(backgroundColor);
             var foregroundHex = MaterialDesignColors.GetForegroundColor(backgroundHex);
             var foregroundColor = MaterialDesignColors.MsaglColorFromHex(foregroundHex);
@@ -272,6 +268,25 @@ namespace UseCaseTool
             {
                 this.GraphVisualisationChanged(this, null);
             }
+        }
+
+        private static Microsoft.Msagl.Drawing.Color GetNodeColor(string nodeTitle)
+        {
+            // if the node color exists
+            for (int i = 0; i < nodeColors.Count; i++)
+            {
+                if (nodeColors[i].Item1.Equals(nodeTitle))
+                {
+                    // return it
+                    return nodeColors[i].Item2;
+                }
+            }
+
+            // if the node doens´t exists, generate a new color
+            var nodeColor = new Tuple<string, Microsoft.Msagl.Drawing.Color>(nodeTitle, MaterialDesignColors.RandomMsaglColor());
+            nodeColors.Add(nodeColor);
+
+            return nodeColor.Item2;
         }
     }
 }
