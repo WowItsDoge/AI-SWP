@@ -64,6 +64,26 @@ namespace UseCaseTest.UcIntern
         }
 
         /// <summary>
+        /// Prints the edges of the matrix into the console, that are not equal to the match object.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <param name="matchObject"></param>
+        public void PrintEdgesInverse<T>(Matrix<T> matrix, T matchObject)
+        {
+            for (int row = 0; row < matrix.RowCount; row++)
+            {
+                for (int column = 0; column < matrix.ColumnCount; column++)
+                {
+                    if (!(matrix[row, column].Equals(matchObject)))
+                    {
+                        Debug.WriteLine($"{row} -> {column}");
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Setup method for private variables.
         /// </summary>
         [OneTimeSetUp]
@@ -300,12 +320,10 @@ namespace UseCaseTest.UcIntern
             expectedEdgeMatrix[3,6] = true;
             expectedEdgeMatrix[6,7] = true;
             expectedEdgeMatrix[7,0] = true;
-            expectedEdgeMatrix[0,8] = true;
-            expectedEdgeMatrix[3,8] = true;
+            expectedEdgeMatrix[6,8] = true;
             expectedEdgeMatrix[8,9] = true;
             expectedEdgeMatrix[9,5] = true;
-            expectedEdgeMatrix[0,10] = true;
-            expectedEdgeMatrix[3,10] = true;
+            expectedEdgeMatrix[8,10] = true;
             expectedEdgeMatrix[10,11] = true;
 
             List<Node> steps;
@@ -474,15 +492,16 @@ namespace UseCaseTest.UcIntern
                 });
             List<ExternalEdge> expectedExternalEdges = new List<ExternalEdge>();
             List<InternalEdge> expectedPossibleInvalidIfEdges = new List<InternalEdge>();
-            List<int> expectedExitSteps = new List<int>();
-            expectedExitSteps.Add(2);
+            List<Tuple<int, Condition?>> expectedExitSteps = new List<Tuple<int, Condition?>>();
+            expectedExitSteps.Add(new Tuple<int, Condition?>(2, null));
 
             // Act
             Matrix<bool> edgeMatrix;
             List<ExternalEdge> externalEdges;
             List<InternalEdge> possibleInvalidIfEdges;
-            List<int> exitSteps;
-            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps);
+            List<Tuple<int, Condition?>> exitSteps;
+            Matrix<Condition?> conditonMatrix;
+            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps, out conditonMatrix);
 
             // Assert
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
@@ -511,14 +530,15 @@ namespace UseCaseTest.UcIntern
                 });
             List<ExternalEdge> expectedExternalEdges = new List<ExternalEdge>();
             List<InternalEdge> expectedPossibleInvalidIfEdges = new List<InternalEdge>();
-            List<int> expectedExitSteps = new List<int>();
+            List<Tuple<int, Condition?>> expectedExitSteps = new List<Tuple<int, Condition?>>();
 
             // Act
             Matrix<bool> edgeMatrix;
             List<ExternalEdge> externalEdges;
             List<InternalEdge> possibleInvalidIfEdges;
-            List<int> exitSteps;
-            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps);
+            List<Tuple<int, Condition?>> exitSteps;
+            Matrix<Condition?> conditonMatrix;
+            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps, out conditonMatrix);
 
             // Assert
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
@@ -548,14 +568,15 @@ namespace UseCaseTest.UcIntern
             List<ExternalEdge> expectedExternalEdges = new List<ExternalEdge>();
             expectedExternalEdges.Add(new ExternalEdge(1, new ReferenceStep(new FlowIdentifier(FlowType.Basic, 0), 11)));
             List<InternalEdge> expectedPossibleInvalidIfEdges = new List<InternalEdge>();
-            List<int> expectedExitSteps = new List<int>();
+            List<Tuple<int, Condition?>> expectedExitSteps = new List<Tuple<int, Condition?>>();
 
             // Act
             Matrix<bool> edgeMatrix;
             List<ExternalEdge> externalEdges;
             List<InternalEdge> possibleInvalidIfEdges;
-            List<int> exitSteps;
-            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps);
+            List<Tuple<int, Condition?>> exitSteps;
+            Matrix<Condition?> conditonMatrix;
+            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps, out conditonMatrix);
 
             // Assert
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
@@ -587,15 +608,16 @@ namespace UseCaseTest.UcIntern
             List<ExternalEdge> expectedExternalEdges = new List<ExternalEdge>();
             List<InternalEdge> expectedPossibleInvalidIfEdges = new List<InternalEdge>();
             expectedPossibleInvalidIfEdges.Add(new InternalEdge(1, 3));
-            List<int> expectedExitSteps = new List<int>();
-            expectedExitSteps.Add(3);
+            List<Tuple<int, Condition?>> expectedExitSteps = new List<Tuple<int, Condition?>>();
+            expectedExitSteps.Add(new Tuple<int, Condition?>(3, null));
 
             // Act
             Matrix<bool> edgeMatrix;
             List<ExternalEdge> externalEdges;
             List<InternalEdge> possibleInvalidIfEdges;
-            List<int> exitSteps;
-            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps);
+            List<Tuple<int, Condition?>> exitSteps;
+            Matrix<Condition?> conditonMatrix;
+            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps, out conditonMatrix);
 
             // Assert
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
@@ -627,15 +649,16 @@ namespace UseCaseTest.UcIntern
             List<ExternalEdge> expectedExternalEdges = new List<ExternalEdge>();
             List<InternalEdge> expectedPossibleInvalidIfEdges = new List<InternalEdge>();
             expectedPossibleInvalidIfEdges.Add(new InternalEdge(1, 2));
-            List<int> expectedExitSteps = new List<int>();
-            expectedExitSteps.Add(3);
+            List<Tuple<int, Condition?>> expectedExitSteps = new List<Tuple<int, Condition?>>();
+            expectedExitSteps.Add(new Tuple<int, Condition?>(3, null));
 
             // Act
             Matrix<bool> edgeMatrix;
             List<ExternalEdge> externalEdges;
             List<InternalEdge> possibleInvalidIfEdges;
-            List<int> exitSteps;
-            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps);
+            List<Tuple<int, Condition?>> exitSteps;
+            Matrix<Condition?> conditonMatrix;
+            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps, out conditonMatrix);
 
             // Assert
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
@@ -658,27 +681,26 @@ namespace UseCaseTest.UcIntern
             nodes.Add(new Node("ELSE", flowIdentifierBasic));                           // 3
             nodes.Add(new Node("ENDIF", flowIdentifierBasic));                          // 4
             nodes.Add(new Node("The use case ends.", flowIdentifierBasic));             // 5
-            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(
-                new bool[,]
-                {
-                    { false, true, false, false, false, false },
-                    { false, false, true, true, true, false },
-                    { false, false, false, false, true, false },
-                    { false, false, false, false, true, false },
-                    { false, false, false, false, false, true },
-                    { false, false, false, false, false, false }
-                });
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(6, false);
+            expectedEdgeMatrix[0,1] = true;
+            expectedEdgeMatrix[1,2] = true;
+            expectedEdgeMatrix[1,4] = true;
+            expectedEdgeMatrix[2,3] = true;
+            expectedEdgeMatrix[2,4] = true;
+            expectedEdgeMatrix[3,4] = true;
+            expectedEdgeMatrix[4,5] = true;
             List<ExternalEdge> expectedExternalEdges = new List<ExternalEdge>();
             List<InternalEdge> expectedPossibleInvalidIfEdges = new List<InternalEdge>();
-            List<int> expectedExitSteps = new List<int>();
-            expectedExitSteps.Add(5);
+            List<Tuple<int, Condition?>> expectedExitSteps = new List<Tuple<int, Condition?>>();
+            expectedExitSteps.Add(new Tuple<int, Condition?>(5, null));
 
             // Act
             Matrix<bool> edgeMatrix;
             List<ExternalEdge> externalEdges;
             List<InternalEdge> possibleInvalidIfEdges;
-            List<int> exitSteps;
-            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps);
+            List<Tuple<int, Condition?>> exitSteps;
+            Matrix<Condition?> conditonMatrix;
+            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps, out conditonMatrix);
 
             // Assert
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
@@ -706,33 +728,33 @@ namespace UseCaseTest.UcIntern
             nodes.Add(new Node("Was soll das für eine Temperatur sein?", flowIdentifierBasic));     // 8
             nodes.Add(new Node("ENDIF", flowIdentifierBasic));                                      // 9
             nodes.Add(new Node("The use case ends.", flowIdentifierBasic));                         // 10
-            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(
-                new bool[,]
-                {
-                    { false, true, false, false, false, false, false, false, false, false, false },
-                    { false, false, true, true, false, true, false, true, false, false, false },
-                    { false, false, false, false, false, false, false, false, false, true, false },
-                    { false, false, false, false, true, false, false, false, false, false, false },
-                    { false, false, false, false, false, false, false, false, false, true, false },
-                    { false, false, false, false, false, false, true, false, false, false, false },
-                    { false, false, false, false, false, false, false, false, false, true, false },
-                    { false, false, false, false, false, false, false, false, true, false, false },
-                    { false, false, false, false, false, false, false, false, false, true, false },
-                    { false, false, false, false, false, false, false, false, false, false, true },
-                    { false, false, false, false, false, false, false, false, false, false, false },
-                });
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(11, false);
+            expectedEdgeMatrix[0,1] = true;
+            expectedEdgeMatrix[1,2] = true;
+            expectedEdgeMatrix[1,3] = true;
+            expectedEdgeMatrix[2,9] = true;
+            expectedEdgeMatrix[3,4] = true;
+            expectedEdgeMatrix[3,5] = true;
+            expectedEdgeMatrix[4,9] = true;
+            expectedEdgeMatrix[5,6] = true;
+            expectedEdgeMatrix[5,7] = true;
+            expectedEdgeMatrix[6,9] = true;
+            expectedEdgeMatrix[7,8] = true;
+            expectedEdgeMatrix[8,9] = true;
+            expectedEdgeMatrix[9,10] = true;
             List<ExternalEdge> expectedExternalEdges = new List<ExternalEdge>();
             List<InternalEdge> expectedPossibleInvalidIfEdges = new List<InternalEdge>();
-            List<int> expectedExitSteps = new List<int>();
-            expectedExitSteps.Add(10);
+            List<Tuple<int, Condition?>> expectedExitSteps = new List<Tuple<int, Condition?>>();
+            expectedExitSteps.Add(new Tuple<int, Condition?>(10, null));
 
             // Act
             Matrix<bool> edgeMatrix;
             List<ExternalEdge> externalEdges;
             List<InternalEdge> possibleInvalidIfEdges;
-            List<int> exitSteps;
-            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps);
-
+            List<Tuple<int, Condition?>> exitSteps;
+            Matrix<Condition?> conditonMatrix;
+            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps, out conditonMatrix);
+            PrintEdges(edgeMatrix, true);
             // Assert
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
             Assert.AreEqual(expectedExternalEdges, externalEdges);
@@ -759,34 +781,32 @@ namespace UseCaseTest.UcIntern
             nodes.Add(new Node("ABORT", flowIdentifierBasic));                                      // 8
             nodes.Add(new Node("ENDIF", flowIdentifierBasic));                                      // 9
             nodes.Add(new Node("The use case ends.", flowIdentifierBasic));                         // 10
-            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(
-                new bool[,]
-                {
-                    { false, true, false, false, false, false, false, false, false, false, false },
-                    { false, false, true, false, false, true, false, true, false, false, false },
-                    { false, false, false, true, true, false, false, false, false, false, false },
-                    { false, false, false, false, true, false, false, false, false, false, false },
-                    { false, false, false, false, false, false, false, false, false, true, false },
-                    { false, false, false, false, false, false, true, false, false, false, false },
-                    { false, false, false, false, false, false, false, false, false, false, false },
-                    { false, false, false, false, false, false, false, false, true, false, false },
-                    { false, false, false, false, false, false, false, false, false, false, false },
-                    { false, false, false, false, false, false, false, false, false, false, true },
-                    { false, false, false, false, false, false, false, false, false, false, false }
-                });
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(11, false);
+            expectedEdgeMatrix[0,1] = true;
+            expectedEdgeMatrix[1,2] = true;
+            expectedEdgeMatrix[1,5] = true;
+            expectedEdgeMatrix[2,3] = true;
+            expectedEdgeMatrix[2,4] = true;
+            expectedEdgeMatrix[3,4] = true;
+            expectedEdgeMatrix[4,9] = true;
+            expectedEdgeMatrix[5,6] = true;
+            expectedEdgeMatrix[5,7] = true;
+            expectedEdgeMatrix[7,8] = true;
+            expectedEdgeMatrix[9,10] = true;
             List<ExternalEdge> expectedExternalEdges = new List<ExternalEdge>();
             expectedExternalEdges.Add(new ExternalEdge(6, new ReferenceStep(new FlowIdentifier(FlowType.Basic, 0), 4)));
             List<InternalEdge> expectedPossibleInvalidIfEdges = new List<InternalEdge>();
             expectedPossibleInvalidIfEdges.Add(new InternalEdge(2, 4));
-            List<int> expectedExitSteps = new List<int>();
-            expectedExitSteps.Add(10);
+            List<Tuple<int, Condition?>> expectedExitSteps = new List<Tuple<int, Condition?>>();
+            expectedExitSteps.Add(new Tuple<int, Condition?>(10, null));
 
             // Act
             Matrix<bool> edgeMatrix;
             List<ExternalEdge> externalEdges;
             List<InternalEdge> possibleInvalidIfEdges;
-            List<int> exitSteps;
-            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps);
+            List<Tuple<int, Condition?>> exitSteps;
+            Matrix<Condition?> conditonMatrix;
+            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps, out conditonMatrix);
 
             // Assert
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
@@ -815,15 +835,16 @@ namespace UseCaseTest.UcIntern
                 });
             List<ExternalEdge> expectedExternalEdges = new List<ExternalEdge>();
             List<InternalEdge> expectedPossibleInvalidIfEdges = new List<InternalEdge>();
-            List<int> expectedExitSteps = new List<int>();
-            expectedExitSteps.Add(2);
+            List<Tuple<int, Condition?>> expectedExitSteps = new List<Tuple<int, Condition?>>();
+            expectedExitSteps.Add(new Tuple<int, Condition?>(2, null));
 
             // Act
             Matrix<bool> edgeMatrix;
             List<ExternalEdge> externalEdges;
             List<InternalEdge> possibleInvalidIfEdges;
-            List<int> exitSteps;
-            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps);
+            List<Tuple<int, Condition?>> exitSteps;
+            Matrix<Condition?> conditonMatrix;
+            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps, out conditonMatrix);
 
             // Assert
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
@@ -847,20 +868,23 @@ namespace UseCaseTest.UcIntern
             nodes.Add(new Node("ENDIF", flowIdentifierBasic));                              // 4
             Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(5, false);
             expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[0,2] = true;
             expectedEdgeMatrix[1, 4] = true;
             expectedEdgeMatrix[2, 3] = true;
+            expectedEdgeMatrix[2,4] = true;
             expectedEdgeMatrix[3, 4] = true;
             List<ExternalEdge> expectedExternalEdges = new List<ExternalEdge>();
             List<InternalEdge> expectedPossibleInvalidIfEdges = new List<InternalEdge>();
-            List<int> expectedExitSteps = new List<int>();
-            expectedExitSteps.Add(4);
+            List<Tuple<int, Condition?>> expectedExitSteps = new List<Tuple<int, Condition?>>();
+            expectedExitSteps.Add(new Tuple<int, Condition?>(4, null));
 
             // Act
             Matrix<bool> edgeMatrix;
             List<ExternalEdge> externalEdges;
             List<InternalEdge> possibleInvalidIfEdges;
-            List<int> exitSteps;
-            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps);
+            List<Tuple<int, Condition?>> exitSteps;
+            Matrix<Condition?> conditonMatrix;
+            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps, out conditonMatrix);
 
             // Assert
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
@@ -893,8 +917,9 @@ namespace UseCaseTest.UcIntern
                             Matrix<bool> edgeMatrix;
                             List<ExternalEdge> externalEdges;
                             List<InternalEdge> possibleInvalidIfEdges;
-                            List<int> exitSteps;
-                            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps);
+                            List<Tuple<int, Condition?>> exitSteps;
+                            Matrix<Condition?> conditonMatrix;
+                            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps, out conditonMatrix);
                         });
         }
 
@@ -906,7 +931,7 @@ namespace UseCaseTest.UcIntern
         {
             // Arrange
             List<Node> nodes = new List<Node>();
-            nodes.Add(new Node("ELSEIF the crystal is green THEN", flowIdentifierBasic));  // 0
+            nodes.Add(new Node("ELSEIF the crystal is green THEN", flowIdentifierBasic));   // 0
                 nodes.Add(new Node("IF the crystal glows THEN", flowIdentifierBasic));      // 1
                     nodes.Add(new Node("Don't eat it!", flowIdentifierBasic));              // 2
                 nodes.Add(new Node("ELSE", flowIdentifierBasic));                           // 3
@@ -917,6 +942,7 @@ namespace UseCaseTest.UcIntern
             nodes.Add(new Node("ENDIF", flowIdentifierBasic));                              // 8
             Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(9, false);
             expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[0,6] = true;
             expectedEdgeMatrix[1, 2] = true;
             expectedEdgeMatrix[1, 3] = true;
             expectedEdgeMatrix[2, 5] = true;
@@ -927,16 +953,17 @@ namespace UseCaseTest.UcIntern
             List<ExternalEdge> expectedExternalEdges = new List<ExternalEdge>();
             expectedExternalEdges.Add(new ExternalEdge(7, new ReferenceStep(new FlowIdentifier(FlowType.Basic, 0), 5)));
             List<InternalEdge> expectedPossibleInvalidIfEdges = new List<InternalEdge>();
-            List<int> expectedExitSteps = new List<int>();
-            expectedExitSteps.Add(8);
+            List<Tuple<int, Condition?>> expectedExitSteps = new List<Tuple<int, Condition?>>();
+            expectedExitSteps.Add(new Tuple<int, Condition?>(8, null));
 
             // Act
             Matrix<bool> edgeMatrix;
             List<ExternalEdge> externalEdges;
             List<InternalEdge> possibleInvalidIfEdges;
-            List<int> exitSteps;
-            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps);
-
+            List<Tuple<int, Condition?>> exitSteps;
+            Matrix<Condition?> conditionMatrix;
+            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps, out conditionMatrix);
+            
             // Assert
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
             Assert.AreEqual(expectedExternalEdges, externalEdges);
@@ -963,15 +990,16 @@ namespace UseCaseTest.UcIntern
             expectedEdgeMatrix[3, 0] = true;
             List<ExternalEdge> expectedExternalEdges = new List<ExternalEdge>();
             List<InternalEdge> expectedPossibleInvalidIfEdges = new List<InternalEdge>();
-            List<int> expectedExitSteps = new List<int>();
-            expectedExitSteps.Add(3);
+            List<Tuple<int, Condition?>> expectedExitSteps = new List<Tuple<int, Condition?>>();
+            expectedExitSteps.Add(new Tuple<int, Condition?>(3, null));
 
             // Act
             Matrix<bool> edgeMatrix;
             List<ExternalEdge> externalEdges;
             List<InternalEdge> possibleInvalidIfEdges;
-            List<int> exitSteps;
-            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps);
+            List<Tuple<int, Condition?>> exitSteps;
+            Matrix<Condition?> conditonMatrix;
+            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps, out conditonMatrix);
 
             // Assert
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
@@ -1012,15 +1040,16 @@ namespace UseCaseTest.UcIntern
             List<ExternalEdge> expectedExternalEdges = new List<ExternalEdge>();
             List<InternalEdge> expectedPossibleInvalidIfEdges = new List<InternalEdge>();
             expectedPossibleInvalidIfEdges.Add(new InternalEdge(4, 6));
-            List<int> expectedExitSteps = new List<int>();
-            expectedExitSteps.Add(8);
+            List<Tuple<int, Condition?>> expectedExitSteps = new List<Tuple<int, Condition?>>();
+            expectedExitSteps.Add(new Tuple<int, Condition?>(8, null));
 
             // Act
             Matrix<bool> edgeMatrix;
             List<ExternalEdge> externalEdges;
             List<InternalEdge> possibleInvalidIfEdges;
-            List<int> exitSteps;
-            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps);
+            List<Tuple<int, Condition?>> exitSteps;
+            Matrix<Condition?> conditonMatrix;
+            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps, out conditonMatrix);
 
             // Assert
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
