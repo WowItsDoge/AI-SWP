@@ -86,5 +86,13 @@ namespace UseCaseCore.RuleValidation
 
             return result;
         }
+
+        /// <summary>
+        /// Resets the Rucm rule validator.
+        /// </summary>
+        public void Reset()
+        {
+            this.errorReport = new ErrorReport();
+        }
     }
 }
