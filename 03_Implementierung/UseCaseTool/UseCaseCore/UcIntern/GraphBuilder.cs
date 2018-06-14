@@ -190,7 +190,7 @@ namespace UseCaseCore.UcIntern
         /// </summary>
         /// <param name="flows">A list of flows to wire individually.</param>
         /// <param name="firstFlowOffset">The offset the first flow will later have in the edge matrix. It is set as item 1 for the first flow of the returned list. For the next flow it is increased by the number of steps in the first flow and so on.</param>
-        /// <returns>A list of tuples with the informations given by <see cref="WireFlowIndividually(Flow, int)"/>.</returns>
+        /// <returns>A list of tuples with the information given by <see cref="WireFlowIndividually(Flow, int)"/>.</returns>
         public static List<Tuple<int, Flow, Matrix<bool>, List<ExternalEdge>, List<InternalEdge>, List<Tuple<int, Condition?>>, Matrix<Condition?>>> WireFlowListIndividually(
             IReadOnlyList<Flow> flows,
             int firstFlowOffset)
@@ -240,9 +240,9 @@ namespace UseCaseCore.UcIntern
         /// <param name="steps">The steps to wire.</param>
         /// <param name="edgeMatrix">The matrix with the edges for the given steps.</param>
         /// <param name="externalEdges">A list of edges whose target is located outside the given steps.</param>
-        /// <param name="possibleInvalidIfEdges">A list of edges between the given steps that may be invalid, because they represent an edge for an if statement without an else statement in this step list for the case the condition is false. These edge may be invalid if the else/elseif is located in another block of steps/alternative flow.</param>
+        /// <param name="possibleInvalidIfEdges">A list of edges between the given steps that may be invalid, because they represent an edge for an if statement without an else statement in this step list for the case the condition is false. These edge may be invalid if the else/else if is located in another block of steps/alternative flow.</param>
         /// <param name="exitSteps">A list of steps of the given block that whose edges lead out of the block to the next step of the outer block, with optional condition if not null. These are not abort edges!</param>
-        /// <param name="conditionMatrix">A matrix that holds the conditions for edges. If a edge has a condition for beeing taken then its corresponding edge in the condition matrix holds the condition.</param>
+        /// <param name="conditionMatrix">A matrix that holds the conditions for edges. If a edge has a condition for being taken then its corresponding edge in the condition matrix holds the condition.</param>
         public static void SetEdgesInStepBlock(
             IReadOnlyList<Node> steps,
             out Matrix<bool> edgeMatrix,
@@ -319,6 +319,7 @@ namespace UseCaseCore.UcIntern
                         // The last step.
                         exitSteps.Add(new Tuple<int, Condition?>(stepIndex, new Condition(stepDescription, true)));
                     }
+
                     break;
                 }
                 else
@@ -390,7 +391,8 @@ namespace UseCaseCore.UcIntern
 
                 if (blockSize > 0)
                 {
-                    GraphBuilder.SetEdgesInNestedBlock(steps,
+                    GraphBuilder.SetEdgesInNestedBlock(
+                        steps,
                         ref edgeMatrix,
                         ref externalEdges,
                         ref possibleInvalidIfEdges,
@@ -478,7 +480,8 @@ namespace UseCaseCore.UcIntern
 
                 if (blockSize > 0)
                 {
-                    GraphBuilder.SetEdgesInNestedBlock(steps,
+                    GraphBuilder.SetEdgesInNestedBlock(
+                        steps,
                         ref edgeMatrix,
                         ref externalEdges,
                         ref possibleInvalidIfEdges,
@@ -549,7 +552,8 @@ namespace UseCaseCore.UcIntern
 
             if (blockSize > 0)
             {
-                GraphBuilder.SetEdgesInNestedBlock(steps,
+                GraphBuilder.SetEdgesInNestedBlock(
+                    steps,
                     ref edgeMatrix,
                     ref externalEdges,
                     ref possibleInvalidIfEdges,
@@ -600,7 +604,7 @@ namespace UseCaseCore.UcIntern
         /// <param name="blockStartIndex">The index of the block start. (The step before the nested block begins)</param>
         /// <param name="blockEndIndex">The index of the block end. (The step after the nested block ends)</param>
         /// <param name="exitStepsTargetStep">The step to where create the edges if the nested block has exit steps.</param>
-        /// <param name="blockEntryCondition">The condition to be fullfiled to enter the nested block.</param>
+        /// <param name="blockEntryCondition">The condition to be fulfilled to enter the nested block.</param>
         public static void SetEdgesInNestedBlock(
             IReadOnlyList<Node> steps,
             ref Matrix<bool> edgeMatrix,
@@ -645,12 +649,12 @@ namespace UseCaseCore.UcIntern
         }
 
         /// <summary>
-        /// Inserts <paramref name="sourceMatrix"/> into <paramref name="targetMatrix"/>. The values in <paramref name="targetMatrix"/> are overriden. Make sure the dimensions match!
+        /// Inserts <paramref name="sourceMatrix"/> into <paramref name="targetMatrix"/>. The values in <paramref name="targetMatrix"/> are overridden. Make sure the dimensions match!
         /// <paramref name="sourceMatrix"/> is completely inserted into <paramref name="targetMatrix"/>.
         /// </summary>
         /// <typeparam name="T">The matrix content type.</typeparam>
         /// <param name="targetMatrix">The target matrix where to insert <paramref name="sourceMatrix"/>.</param>
-        /// <param name="targetRow">The row in <paramref name="targetMatrix"/> where to start insterting.</param>
+        /// <param name="targetRow">The row in <paramref name="targetMatrix"/> where to start inserting.</param>
         /// <param name="targetColumn">The column in <paramref name="targetMatrix"/> where to start inserting.</param>
         /// <param name="sourceMatrix">The source matrix to insert into <paramref name="targetMatrix"/>.</param>
         public static void InsertMatrix<T>(ref Matrix<T> targetMatrix, int targetRow, int targetColumn, Matrix<T> sourceMatrix)
@@ -666,12 +670,12 @@ namespace UseCaseCore.UcIntern
 
         /// <summary>
         /// Searches the important steps in an if statement starting in <paramref name="steps"/> at index <paramref name="startStep"/>.
-        /// The important steps are if, else if, else and end if. The given <paramref name="startStep"/> is assumed a valid if statment step and added automatically to the start of the list.
+        /// The important steps are if, else if, else and end if. The given <paramref name="startStep"/> is assumed a valid if statement step and added automatically to the start of the list.
         /// It ends with the first end if that does not belong to a nested if statement.
         /// </summary>
         /// <param name="steps">The steps containing the if statement.</param>
-        /// <param name="startStep">The index of the step in <paramref name="steps"/> where to start the search. Must be an if, elseif, else step!</param>
-        /// <returns>The indices of the important steps. Index 0 is the <paramref name="startStep"/> and the following are elseif and else steps and an endif step as last index.</returns>
+        /// <param name="startStep">The index of the step in <paramref name="steps"/> where to start the search. Must be an if, else if, else step!</param>
+        /// <returns>The indices of the important steps. Index 0 is the <paramref name="startStep"/> and the following are else if and else steps and an end if step as last index.</returns>
         public static List<int> GetImportantIfStatementSteps(IReadOnlyList<Node> steps, int startStep)
         {
             List<int> importantSteps = new List<int>();
@@ -718,7 +722,7 @@ namespace UseCaseCore.UcIntern
 
         /// <summary>
         /// Searches the important steps in an do-while statement starting in <paramref name="steps"/> at index <paramref name="startStep"/>.
-        /// The important steps are do and while. The given <paramref name="startStep"/> is assumed a valid do statment step and added automatically to the start of the list.
+        /// The important steps are do and while. The given <paramref name="startStep"/> is assumed a valid do statement step and added automatically to the start of the list.
         /// It ends with the first while that does not belong to a nested do-while statement.
         /// </summary>
         /// <param name="steps">The steps containing the do-while statement.</param>
@@ -799,7 +803,7 @@ namespace UseCaseCore.UcIntern
         }
 
         /// <summary>
-        /// Tests if a string is equal to at least one keyword asociated with the specified step type.
+        /// Tests if a string is equal to at least one keyword associated with the specified step type.
         /// </summary>
         /// <param name="testString">The string to test.</param>
         /// <param name="stepType">The type specifying the patterns.</param>

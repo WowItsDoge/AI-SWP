@@ -26,48 +26,9 @@ namespace UseCaseCore.UcIntern
         /// </summary>
         public UseCase()
         {
-            List<Node> nodes = new List<Node>();
-
-            List<Node> basicNodes = new List<Node>();
-            FlowIdentifier basicId = new FlowIdentifier(FlowType.Basic, 0);
-            basicNodes.Add(new Node("Step 1", basicId));
-            basicNodes.Add(new Node("Step 2", basicId));
-            basicNodes.Add(new Node("Step 3", basicId));
-            foreach (Node node in basicNodes)
-            {
-                nodes.Add(node);
-            }
-
-            this.BasicFlow = new Flow(basicId, "Postcondition Basic", basicNodes, new List<ReferenceStep>());
-
-            List<Node> specificNodes = new List<Node>();
-            FlowIdentifier specificId = new FlowIdentifier(FlowType.Basic, 0);
-            specificNodes.Add(new Node("Specific Step 1", specificId));
-            foreach (Node node in specificNodes)
-            {
-                nodes.Add(node);
-            }
-
-            this.Nodes = nodes.AsReadOnly();
-
-            List<Flow> specificAlternativeFlows = new List<Flow>();
-            specificAlternativeFlows.Add(new Flow(specificId, "Postcondition Specific", specificNodes, new List<ReferenceStep>() { new ReferenceStep(basicId, 1) }));
-            this.SpecificAlternativeFlows = specificAlternativeFlows.AsReadOnly();
-
-            this.GlobalAlternativeFlows = new List<Flow>().AsReadOnly();
-            this.BoundedAlternativeFlows = new List<Flow>().AsReadOnly();
-
-            this.EdgeMatrix = new Matrix<bool>(4, false);
-            this.EdgeMatrix[0, 1] = true; // 0 -> 1
-            this.EdgeMatrix[1, 2] = true; // 1 -> 2
-            this.EdgeMatrix[0, 3] = true; // 0 -> Specific 0
-            this.EdgeMatrix[3, 2] = true; // Specific 0 -> 2
-            this.EdgeMatrix = this.EdgeMatrix.AsReadonly();
-
-            this.ConditionMatrix = new Matrix<Condition?>(4, null);
-            this.ConditionMatrix[0, 3] = new Condition("Wahr", true);
-            this.ConditionMatrix[0, 1] = new Condition("Wahr", false);
-            this.ConditionMatrix = this.ConditionMatrix.AsReadonly();
+            this.SpecificAlternativeFlows = new List<Flow>();
+            this.GlobalAlternativeFlows = new List<Flow>();
+            this.BoundedAlternativeFlows = new List<Flow>();
         }
 
         /// <summary>
@@ -152,6 +113,15 @@ namespace UseCaseCore.UcIntern
         /// <param name="postcondition">The postcondition text of the flow.</param>
         public void SetBasicFlow(List<string> steps, string postcondition)
         {
+            List<Node> basicSteps = new List<Node>();
+            FlowIdentifier basicIdentifier = new FlowIdentifier(FlowType.Basic, 0);
+
+            foreach (string step in steps)
+            {
+                basicSteps.Add(new Node(step, basicIdentifier));
+            }
+
+            this.BasicFlow = new Flow(basicIdentifier, postcondition, basicSteps, new List<ReferenceStep>());
         }
 
         /// <summary>
@@ -164,6 +134,19 @@ namespace UseCaseCore.UcIntern
         /// <param name="referenceStep">The reference step of the specific flow.</param>
         public void AddSpecificAlternativeFlow(int id, List<string> steps, string postcondition, ReferenceStep referenceStep)
         {
+            List<Node> specificSteps = new List<Node>();
+            FlowIdentifier specificIdentifier = new FlowIdentifier(FlowType.SpecificAlternative, id);
+
+            foreach (string step in steps)
+            {
+                specificSteps.Add(new Node(step, specificIdentifier));
+            }
+
+            List<Flow> tempList = new List<Flow>();
+            tempList.AddRange(this.SpecificAlternativeFlows);
+            tempList.Add(new Flow(specificIdentifier, postcondition, specificSteps, new List<ReferenceStep>() { referenceStep }));
+
+            this.SpecificAlternativeFlows = tempList;
         }
 
         /// <summary>
@@ -175,6 +158,19 @@ namespace UseCaseCore.UcIntern
         /// <param name="postcondition">The postcondition text of the flow.</param>
         public void AddGlobalAlternativeFlow(int id, List<string> steps, string postcondition)
         {
+            List<Node> globalSteps = new List<Node>();
+            FlowIdentifier globalIdentifier = new FlowIdentifier(FlowType.GlobalAlternative, id);
+
+            foreach (string step in steps)
+            {
+                globalSteps.Add(new Node(step, globalIdentifier));
+            }
+
+            List<Flow> tempList = new List<Flow>();
+            tempList.AddRange(this.SpecificAlternativeFlows);
+            tempList.Add(new Flow(globalIdentifier, postcondition, globalSteps, new List<ReferenceStep>()));
+
+            this.GlobalAlternativeFlows = tempList;
         }
 
         /// <summary>
@@ -187,6 +183,19 @@ namespace UseCaseCore.UcIntern
         /// <param name="referenceSteps">The reference steps of the bounded flow.</param>
         public void AddBoundedAlternativeFlow(int id, List<string> steps, string postcondition, List<ReferenceStep> referenceSteps)
         {
+            List<Node> boundedSteps = new List<Node>();
+            FlowIdentifier boundedIdentifier = new FlowIdentifier(FlowType.BoundedAlternative, id);
+
+            foreach (string step in steps)
+            {
+                boundedSteps.Add(new Node(step, boundedIdentifier));
+            }
+
+            List<Flow> tempList = new List<Flow>();
+            tempList.AddRange(this.SpecificAlternativeFlows);
+            tempList.Add(new Flow(boundedIdentifier, postcondition, boundedSteps, referenceSteps));
+
+            this.BoundedAlternativeFlows = tempList;
         }
 
         /// <summary>
@@ -197,6 +206,22 @@ namespace UseCaseCore.UcIntern
         /// </summary>
         public void BuildGraph()
         {
+            List<Node> nodes;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            GraphBuilder.BuildGraph(
+                this.BasicFlow,
+                this.SpecificAlternativeFlows,
+                this.GlobalAlternativeFlows,
+                this.GlobalAlternativeFlows,
+                out nodes,
+                out edgeMatrix,
+                out conditionMatrix);
+
+            this.Nodes = nodes;
+            this.EdgeMatrix = edgeMatrix;
+            this.ConditionMatrix = conditionMatrix;
         }
     }
 }

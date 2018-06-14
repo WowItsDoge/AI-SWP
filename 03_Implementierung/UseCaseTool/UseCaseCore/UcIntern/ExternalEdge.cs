@@ -81,7 +81,7 @@ namespace UseCaseCore.UcIntern
         }
 
         /// <summary>
-        /// Returns a new <see cref="ExternalEdge"/> instance with the source step number of the current one incresed by <paramref name="incrementValue"/>.
+        /// Returns a new <see cref="ExternalEdge"/> instance with the source step number of the current one increased by <paramref name="incrementValue"/>.
         /// </summary>
         /// <param name="incrementValue">The value to add to the current source step number value.</param>
         /// <returns>A new <see cref="ExternalEdge"/> with the source step number of this instance increased by <paramref name="incrementValue"/>.</returns>

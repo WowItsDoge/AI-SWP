@@ -9,7 +9,7 @@ namespace UseCaseCore.UcIntern
     using System.Reflection;
 
     /// <summary>
-    /// This class descripes different kinds of steps.
+    /// This class describes different kinds of steps.
     /// </summary>
     public class StepType
     {
@@ -29,12 +29,12 @@ namespace UseCaseCore.UcIntern
         public static readonly StepType Else = new StepType(2, new[] { @"\bELSE\b" });
 
         /// <summary>
-        /// An else if step of an if-statment.
+        /// An else if step of an if-statement.
         /// </summary>
         public static readonly StepType ElseIf = new StepType(3, new[] { @"\bELSEIF\b(.*)\bTHEN\b" });
 
         /// <summary>
-        /// An endif step of an if-statment.
+        /// An endif step of an if-statement.
         /// </summary>
         public static readonly StepType EndIf = new StepType(4, new[] { @"\bENDIF\b" });
 
@@ -53,8 +53,8 @@ namespace UseCaseCore.UcIntern
         /// <para/>
         /// Two ore one matching groups.
         /// For two groups it specifies the step in the basic flow to resume to (both groups equal).
-        /// For three groups it specifies the flow in the secound group and the step in the flow in the third group (first group both combined).
-        /// Don't forget that C# puts the full match into an additonal group at index 0!
+        /// For three groups it specifies the flow in the second group and the step in the flow in the third group (first group both combined).
+        /// Don't forget that C# puts the full match into an additional group at index 0!
         /// </summary>
         public static readonly StepType Resume = new StepType(7, new[] { @"\bRESUME\b (([^ ]*) ([0-9]+)|([0-9]+))" });
 

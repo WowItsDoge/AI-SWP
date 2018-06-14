@@ -79,7 +79,7 @@ namespace UseCaseCore.UcIntern
         }
 
         /// <summary>
-        /// Returns a new <see cref="InternalEdge"/> instance with the source and target step of the current one incresed by <paramref name="incrementValue"/>.
+        /// Returns a new <see cref="InternalEdge"/> instance with the source and target step of the current one increased by <paramref name="incrementValue"/>.
         /// </summary>
         /// <param name="incrementValue">The value to add to the current source and target step value.</param>
         /// <returns>A new <see cref="InternalEdge"/> with the source and target step of this instance increased by <paramref name="incrementValue"/>.</returns>
