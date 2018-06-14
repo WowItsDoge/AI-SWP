@@ -167,14 +167,14 @@ namespace UseCaseTool
                         var edge = this.graph.AddEdge(nodeTitle1, nodeTitle2);
 
                         var node1 = this.graph.FindNode(nodeTitle1);
-                        SetNodeStyle(node1, nodeTitle1, useCase.Nodes[n1].Identifier.Id);
+                        SetNodeStyle(node1, nodeTitle1, useCase.Nodes[n1].Identifier.GetHashCode());
 
                         var node2 = this.graph.FindNode(nodeTitle2);
-                        SetNodeStyle(node2, nodeTitle2, useCase.Nodes[n2].Identifier.Id);
+                        SetNodeStyle(node2, nodeTitle2, useCase.Nodes[n2].Identifier.GetHashCode());
 
                         edge.Attr.Color = GetNodeColor(nodeTitle1, useCase.Nodes[n1].Identifier.Id);
 
-                        if (useCase.Nodes[n1].Identifier.Id == useCase.Nodes[n2].Identifier.Id)
+                        if (useCase.Nodes[n1].Identifier.Id == useCase.Nodes[n2].Identifier.GetHashCode())
                         {
                             graph.LayerConstraints.AddSequenceOfUpDownVerticalConstraint(node1, node2);
                         }
@@ -288,7 +288,8 @@ namespace UseCaseTool
                 return (nodeId + 1).ToString();
             }
 
-            return (nodeId + 1) + ": " + InsertLines(node.StepDescription);
+            return "id: " + (nodeId + 1) + " flowId: " + node.Identifier.Id + " flowType: " + node.Identifier.Type + "\r\n" + InsertLines(node.StepDescription) +
+                "\r\n hashcode: " + node.Identifier.GetHashCode();
         }
 
         /// <summary>
