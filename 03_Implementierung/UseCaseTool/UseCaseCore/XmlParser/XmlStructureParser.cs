@@ -475,11 +475,13 @@ namespace UseCaseCore.XmlParser
                         {
                             case 2:
                                 string unparsedReferenceStep = specificAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim().ToLower();
-                                if (unparsedReferenceStep.Contains("RFS".ToLower()) == false)   //// help for rule 19
+                                //// help for rule 19
+                                if (unparsedReferenceStep.Contains("RFS".ToLower()) == false)   
                                 {
                                     break;
                                 }
-                                unparsedReferenceStep = TrimReferenceStepNumber(unparsedReferenceStep);
+
+                                unparsedReferenceStep = this.TrimReferenceStepNumber(unparsedReferenceStep);
                                 int referenceStepNumber = int.Parse(unparsedReferenceStep);
                                 FlowIdentifier flowIdentifier = new FlowIdentifier(FlowType.Basic, 0);
                                 ReferenceStep referenceStep = new ReferenceStep(flowIdentifier, referenceStepNumber);
@@ -531,11 +533,13 @@ namespace UseCaseCore.XmlParser
                         {
                             case 2:
                                 string unparsedReferenceStep = boundedAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim().ToLower();
-                                if (unparsedReferenceStep.Contains("RFS".ToLower()) == false)   //// help for rule 19
+                                //// help for rule 19
+                                if (unparsedReferenceStep.Contains("RFS".ToLower()) == false)   
                                 {
                                     break;
                                 }
-                                string referenceStepNumbers = TrimReferenceStepNumber(unparsedReferenceStep);
+
+                                string referenceStepNumbers = this.TrimReferenceStepNumber(unparsedReferenceStep);
                                 if (referenceStepNumbers.Contains("-") == true)
                                 {
                                     int stepStartNumber = int.Parse(referenceStepNumbers.Split('-')[0]);
