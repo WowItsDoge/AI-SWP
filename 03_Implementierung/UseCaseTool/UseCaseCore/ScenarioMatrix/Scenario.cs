@@ -33,6 +33,11 @@ namespace UseCaseCore.ScenarioMatrix
         private int id;
 
         /// <summary>
+        /// User defined comment to a scenario
+        /// </summary>
+        private string comment;
+
+        /// <summary>
         /// Initializes a new instance of the Scenario class
         /// </summary>
         public Scenario()
@@ -75,18 +80,17 @@ namespace UseCaseCore.ScenarioMatrix
         /// </summary>
         public int ID
         {
-            get { return id; }
-            set { id = value; }
+            get { return this.id; }
+            set { this.id = value; }
         }
 
-        private string comment;
-
+        /// <summary>
+        /// Gets or sets the comment
+        /// </summary>
         public string Comment
         {
-            get { return comment; }
-            set { comment = value; }
-        }
-
-
+            get { return this.comment; }
+            set { this.comment = value; }
+        }        
     }
 }

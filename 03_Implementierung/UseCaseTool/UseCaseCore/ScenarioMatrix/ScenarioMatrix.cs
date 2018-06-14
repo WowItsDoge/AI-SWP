@@ -83,7 +83,7 @@ namespace UseCaseCore.ScenarioMatrix
         /// <returns> Returns true if successful </returns>
         public bool Export(string path)
         {
-            if(path == null)
+            if (path == null) 
             {
                 return false;
             }
@@ -147,20 +147,7 @@ namespace UseCaseCore.ScenarioMatrix
             this.CreateMatrix();
             return true;
         }
-
-        /// <summary>
-        /// Gives every Scenario an ID > 1
-        /// </summary>
-        private void EnmuerateScenarioIds()
-        {
-            int i = 1;
-            foreach (Scenario s in this.scenarios) 
-            {
-                s.ID = i;
-                i++;
-            }
-        }
-
+        
         /// <summary>
         /// Returns the amount of Edges from node1 to node2 in a scenario
         /// </summary>
@@ -180,7 +167,20 @@ namespace UseCaseCore.ScenarioMatrix
                 .Where(x => x.i > 0)
                 .Where(x => x.n.Equals(node2) && s.Nodes[x.i - 1].Equals(node1)).Count();            
         }
-        
+
+        /// <summary>
+        /// Gives every Scenario an ID > 1
+        /// </summary>
+        private void EnmuerateScenarioIds()
+        {
+            int i = 1;
+            foreach (Scenario s in this.scenarios)
+            {
+                s.ID = i;
+                i++;
+            }
+        }
+
         /// <summary>
         /// Creates the ScenarioMatrix
         /// </summary>

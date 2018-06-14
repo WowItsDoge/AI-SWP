@@ -47,12 +47,12 @@
     </Analyzer>
     <Analyzer AnalyzerId="StyleCop.CSharp.ReadabilityRules">
       <Rules>
-        <Rule Name="ParametersMustBeOnSameLineOrSeparateLines">
+        <Rule Name="ParameterMustFollowComma">
           <RuleSettings>
             <BooleanProperty Name="Enabled">False</BooleanProperty>
           </RuleSettings>
         </Rule>
-        <Rule Name="ParameterMustFollowComma">
+        <Rule Name="ParametersMustBeOnSameLineOrSeparateLines">
           <RuleSettings>
             <BooleanProperty Name="Enabled">False</BooleanProperty>
           </RuleSettings>
