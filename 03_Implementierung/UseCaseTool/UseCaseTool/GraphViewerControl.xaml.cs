@@ -288,8 +288,7 @@ namespace UseCaseTool
                 return (nodeId + 1).ToString();
             }
 
-            return "id: " + (nodeId + 1) + " flowId: " + node.Identifier.Id + " flowType: " + node.Identifier.Type + "\r\n" + InsertLines(node.StepDescription) +
-                "\r\n hashcode: " + node.Identifier.GetHashCode();
+            return "id: " + (nodeId + 1) + " flowId: " + node.Identifier.Id + " flowType: " + node.Identifier.Type + "\r\n" + InsertLines(node.StepDescription);
         }
 
         /// <summary>
