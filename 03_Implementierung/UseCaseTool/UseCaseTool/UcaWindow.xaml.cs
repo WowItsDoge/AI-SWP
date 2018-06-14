@@ -4,11 +4,13 @@
 
 namespace UseCaseTool
 {
+    using System.Collections.Generic;
     using System.Windows;
+    using System.Windows.Input;
     using MahApps.Metro.Controls;
     using Microsoft.Win32;
-    using System.Windows.Input;
     using UseCaseCore.Controller;
+    using UseCaseCore.RuleValidation.Errors;
 
     /// <summary>
     /// Interaction logic for MainWindow
@@ -24,7 +26,7 @@ namespace UseCaseTool
         /// Save the export directory
         /// </summary>
         private string importDirectory = string.Empty;
-        
+
         /// <summary>
         /// /// Save the export directory
         /// </summary>
@@ -41,15 +43,36 @@ namespace UseCaseTool
         public UcaWindow()
         {
             this.DataContext = this.controller;
-            this.controller.ScenariosCreated += Controller_ScenariosCreated;
-            this.controller.GraphCreated += Controller_GraphCreated;
+            this.controller.ScenariosCreated += this.Controller_ScenariosCreated;
+            this.controller.GraphCreated += this.Controller_GraphCreated;
+            this.controller.WriteErrorReport += this.Controller_WriteErrorReport;
             this.InitializeComponent();
+
+            this.ErrorList = new List<IError>();
+            myGrid.ItemsSource = this.ErrorList;
+        }
+
+        /// <summary>
+        /// Gets or sets the list of errors
+        /// </summary>
+        public List<IError> ErrorList { get; set; }
+
+        /// <summary>
+        /// Create the error list
+        /// </summary>
+        /// <param name="obj">Error list</param>
+        private void Controller_WriteErrorReport(List<UseCaseCore.RuleValidation.Errors.IError> obj)
+        {
+            foreach (var error in obj)
+            {
+                this.ErrorList.Add(error);
+            }
         }
 
         /// <summary>
         /// When new scenarios were created, draw them with the Matrix Control
         /// </summary>
-        /// <param name="obj"></param>
+        /// <param name="obj">The list of scenarios</param>
         private void Controller_ScenariosCreated(System.Collections.Generic.List<UseCaseCore.ScenarioMatrix.Scenario> obj)
         {
             this.MatrixControl.Draw(obj);
@@ -58,7 +81,7 @@ namespace UseCaseTool
         /// <summary>
         /// When new Graph was created, draw it with Graph Control
         /// </summary>
-        /// <param name="obj"></param>
+        /// <param name="useCase">The current useCase</param>
         private void Controller_GraphCreated(UseCaseCore.UcIntern.UseCase useCase)
         {
             this.GraphControl.UpdateGraphView(useCase);
@@ -80,7 +103,8 @@ namespace UseCaseTool
 
             if (openXmlFileDialog.FileName != string.Empty)
             {
-                selectedFile.Text = openXmlFileDialog.FileName;
+                var result = openXmlFileDialog.FileName.Substring(openXmlFileDialog.FileName.Length - 40);
+                selectedFile.Text = string.Concat(" ... ", result);
                 this.controller.CurrentXmlFilePath(openXmlFileDialog.FileName);
             }
         }
@@ -92,7 +116,7 @@ namespace UseCaseTool
         /// <param name="e">The e</param>
         private void CancelButtonClick(object sender, RoutedEventArgs e)
         {
-            controller.CancelProcess();
+            this.controller.CancelProcess();
         }
 
         /// <summary>
@@ -132,7 +156,6 @@ namespace UseCaseTool
         {
             mainGrid.ColumnDefinitions[0].Width = new GridLength(this.oldWidth);
             GridColumn0.Visibility = Visibility.Visible;
-
             sidebarShow.Visibility = Visibility.Collapsed;
             sidebarHide.Visibility = Visibility.Visible;
         }
@@ -182,7 +205,7 @@ namespace UseCaseTool
         }
 
         /// <summary>
-        /// Button to show infos
+        /// Button to show info
         /// </summary>
         /// <param name="sender">The sender</param>
         /// <param name="e">The e</param>
@@ -231,7 +254,6 @@ namespace UseCaseTool
             GraphControl.Move(10, 0);
         }
 
-
         /// <summary>
         /// Chance cycle depth value
         /// </summary>
@@ -239,14 +261,12 @@ namespace UseCaseTool
         /// <param name="e">The e</param>
         private void NumericUpDownValueChanged(object sender, RoutedPropertyChangedEventArgs<double?> e)
         {
-            controller.ChangeCycleDepth((uint)CycleDepth.Value);
-
+            this.controller.ChangeCycleDepth((uint)CycleDepth.Value);
         }
 
-        //ToDo...
-        // - Cancel Button
-        // - Anzeige Mängelbericht
-        // - ... 
-
+        ////ToDo...
+        //// - Cancel Button
+        //// - Anzeige Mängelbericht
+        //// - ... 
     }
 }

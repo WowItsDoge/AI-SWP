@@ -27,6 +27,15 @@ namespace UseCaseCore.RuleValidation.Errors
         /// Produces a string, continuing all the information of the error.
         /// </summary>
         /// <returns>A string with the error message.</returns>
+        public override string ToString()
+        {
+            return this.errorMessage + "\n";
+        }
+
+        /// <summary>
+        /// Produces a string, continuing all the information of the error.
+        /// </summary>
+        /// <returns>A string with the error message.</returns>
         public string GetErrorString()
         {
             return this.errorMessage + "\n";
