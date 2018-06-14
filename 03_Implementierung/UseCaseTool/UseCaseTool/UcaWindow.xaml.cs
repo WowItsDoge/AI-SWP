@@ -49,7 +49,7 @@ namespace UseCaseTool
             this.InitializeComponent();
 
             this.ErrorList = new List<IError>();
-            myGrid.ItemsSource = this.ErrorList;
+            errorGrid.ItemsSource = this.ErrorList;
         }
 
         /// <summary>
@@ -67,6 +67,7 @@ namespace UseCaseTool
             {
                 this.ErrorList.Add(error);
             }
+            Dispatcher.Invoke(() => { errorGrid.Items.Refresh(); });
         }
 
         /// <summary>

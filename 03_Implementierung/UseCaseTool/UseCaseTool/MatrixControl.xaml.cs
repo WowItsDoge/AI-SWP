@@ -27,8 +27,6 @@ namespace UseCaseTool
     /// </summary>
     public partial class MatrixControl : UserControl
     {
-
-
         /// <summary>
         /// Initializes a new instance of the MatrixControl class
         /// </summary>
@@ -39,6 +37,9 @@ namespace UseCaseTool
             this.matrixGrid.ItemsSource = this.Scenarios;
         }
 
+        /// <summary>
+        /// List of scenarios to be displayed
+        /// </summary>
         private List<Scenario> scenarios;
         
         public List<Scenario> Scenarios

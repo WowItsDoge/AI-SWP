@@ -69,7 +69,7 @@
             <TabControl x:Name="tabControl" HorizontalAlignment="Stretch" Margin="34,10,10,10" VerticalAlignment="Stretch">
                 <TabItem Header="Mängelbericht">
                     <Grid Background="#FFE5E5E5">
-                        <DataGrid AutoGenerateColumns="False" Name="myGrid" CanUserResizeColumns="True">
+                        <DataGrid AutoGenerateColumns="False" Name="errorGrid" CanUserResizeColumns="True">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Width="1*" Header="Mängel" IsReadOnly="True" Binding="{Binding}"/>
                             </DataGrid.Columns>
