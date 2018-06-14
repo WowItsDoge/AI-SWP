@@ -35,6 +35,17 @@ namespace UseCaseTool
             this.InitializeComponent();
             this.scenarios = new List<Scenario>();
             this.matrixGrid.ItemsSource = this.Scenarios;
+            this.matrixGrid.RowEditEnding += MatrixGrid_RowEditEnding;
+        }
+
+        public event Action<Scenario> MatrixChangedByUser;
+
+        private void MatrixGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
+        {
+            if(this.MatrixChangedByUser != null)
+            {
+                this.MatrixChangedByUser(((Scenario)e.Row.Item));
+            }
         }
 
         /// <summary>

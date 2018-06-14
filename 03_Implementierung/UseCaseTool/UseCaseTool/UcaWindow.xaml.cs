@@ -11,6 +11,8 @@ namespace UseCaseTool
     using Microsoft.Win32;
     using UseCaseCore.Controller;
     using UseCaseCore.RuleValidation.Errors;
+    using System;
+    using UseCaseCore.ScenarioMatrix;
 
     /// <summary>
     /// Interaction logic for MainWindow
@@ -38,6 +40,11 @@ namespace UseCaseTool
         private Controller controller = new Controller();
 
         /// <summary>
+        /// Event that fires when the Matrix in the GUI got changed by the user
+        /// </summary>
+        public event Action<Scenario> MatrixChangedByUser;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="UcaWindow"/> class.
         /// </summary>
         public UcaWindow()
@@ -47,11 +54,12 @@ namespace UseCaseTool
             this.controller.GraphCreated += this.Controller_GraphCreated;
             this.controller.WriteErrorReport += this.Controller_WriteErrorReport;
             this.InitializeComponent();
-
+            
+            this.MatrixControl.MatrixChangedByUser += MatrixControl_MatrixChangedByUser;
             this.ErrorList = new List<IError>();
             errorGrid.ItemsSource = this.ErrorList;
         }
-
+        
         /// <summary>
         /// Gets or sets the list of errors
         /// </summary>
@@ -77,6 +85,15 @@ namespace UseCaseTool
         private void Controller_ScenariosCreated(System.Collections.Generic.List<UseCaseCore.ScenarioMatrix.Scenario> obj)
         {
             this.MatrixControl.Draw(obj);
+        }
+
+        /// <summary>
+        /// Matrix on GUI got changed by user
+        /// </summary>
+        /// <param name="obj"></param>
+        private void MatrixControl_MatrixChangedByUser(UseCaseCore.ScenarioMatrix.Scenario obj)
+        {
+            this.controller.UpdateScenario(obj);
         }
 
         /// <summary>
