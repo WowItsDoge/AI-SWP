@@ -559,7 +559,9 @@ namespace UseCaseTest.ScenarioMatrix
         [Test]
         public void ScenarioMatrix_Change_CycleDepth()
         {
-            ScenarioMatrix sm = new ScenarioMatrix(new UseCase(), 1);
+            TestUseCase uc = new TestUseCase();
+            uc.SetNodes(new List<Node>());
+            ScenarioMatrix sm = new ScenarioMatrix(uc, 1);
             sm.CycleDepth = 5;
 
             Assert.AreEqual(sm.CycleDepth, 5);
