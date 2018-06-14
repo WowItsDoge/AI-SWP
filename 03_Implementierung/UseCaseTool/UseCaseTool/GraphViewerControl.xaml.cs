@@ -57,6 +57,11 @@ namespace UseCaseTool
         private bool displayGraphTitles;
 
         /// <summary>
+        /// The graph transform matrix after the initialization
+        /// </summary>
+        private double[][] initialTransform;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="GraphViewerControl"/> class.
         /// </summary>
         public GraphViewerControl()
@@ -119,6 +124,25 @@ namespace UseCaseTool
         }
 
         /// <summary>
+        /// sets the graph position in the viewer control
+        /// </summary>
+        /// <param name="x">the horizontal position</param>
+        /// <param name="y">the vertical position</param>
+        public void SetPosition(double x, double y)
+        {
+            if (this.initialTransform == null)
+            {
+                return;
+            }
+
+            this.viewer.Transform = new Microsoft.Msagl.Core.Geometry.Curves.PlaneTransformation(
+                initialTransform[0][0], initialTransform[0][1], initialTransform[0][2] + x,
+                initialTransform[1][0], initialTransform[1][1], initialTransform[1][2] + y);
+
+            this.viewer.DrawingPanel.Invalidate();
+        }
+
+        /// <summary>
         /// displays the graph
         /// </summary>
         /// <param name="useCase">the use case to display</param>
@@ -162,7 +186,14 @@ namespace UseCaseTool
 
             this.viewer.Graph = this.graph;
 
+            this.initialTransform = this.GetTransformMatrix();
+
             return true;
+        }
+
+        public bool UpdateGraphView()
+        {
+            return UpdateGraphView(this.useCase);
         }
 
         /// <summary>
@@ -172,7 +203,7 @@ namespace UseCaseTool
         {
             nodeColors.Clear();
 
-            UpdateGraphView(this.useCase);
+            UpdateGraphView();
         }
 
         /// <summary>
@@ -183,7 +214,7 @@ namespace UseCaseTool
         {
             this.displayGraphTitles = displayGraphTitles;
 
-            UpdateGraphView(this.useCase);
+            UpdateGraphView();
         }
 
         /// <summary>
