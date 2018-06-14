@@ -134,7 +134,7 @@ namespace UseCaseTool
         /// <param name="e">The e</param>
         private void CancelButtonClick(object sender, RoutedEventArgs e)
         {
-            this.controller.CancelProcess();
+            this.controller.CancelOperation();
         }
 
         /// <summary>
