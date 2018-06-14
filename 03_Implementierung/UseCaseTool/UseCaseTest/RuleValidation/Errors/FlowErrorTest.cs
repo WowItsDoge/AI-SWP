@@ -26,7 +26,7 @@ namespace UseCaseTest.RuleValidation.Errors
 
             var expectedResult = "Error in Flow " + referenceflow + ": " + errorMessage + "\t" + resolveMessage + "\n";
 
-            Assert.IsTrue(flowError.GetErrorString() == expectedResult);
+            Assert.IsTrue(flowError.ToString() == expectedResult);
         }
     }
 }

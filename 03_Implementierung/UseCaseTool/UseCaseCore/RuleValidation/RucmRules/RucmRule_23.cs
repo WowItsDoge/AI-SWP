@@ -71,7 +71,7 @@ namespace UseCaseCore.RuleValidation.RucmRules
                             doCounter--;
                             if (doCounter == 0)
                             {
-                                if (!stepsToCheck[j].StartsWith(RucmRuleKeyWords.UntilKeyWord) ||
+                                if (!stepsToCheck[j].StartsWith(RucmRuleKeyWords.UntilKeyWord) || 
                                     string.IsNullOrWhiteSpace(stepsToCheck[j].Replace(RucmRuleKeyWords.UntilKeyWord, string.Empty)))
                                 {
                                     this.errors.Add(new StepError(0, "Bitte verwenden Sie für UNTIL die Syntax \"UNTIL condition\"!", "Ungültige Verwendung von UNTIL."));

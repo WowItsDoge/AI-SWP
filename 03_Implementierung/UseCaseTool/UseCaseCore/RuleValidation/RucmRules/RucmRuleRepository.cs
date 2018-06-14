@@ -19,6 +19,7 @@ namespace UseCaseCore.RuleValidation.RucmRules
             Rules = new List<IRule>
             {
                 new RucmRule_19(),
+                new RucmRule_23(),
                 new RucmRule_24_25(),
                 new RucmRule_26()                
             };

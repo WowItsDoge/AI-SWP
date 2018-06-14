@@ -7,11 +7,14 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-        <DataGrid AutoGenerateColumns="False" Name="matrixGrid" CanUserResizeColumns="True">
+        <DataGrid AutoGenerateColumns="False" Name="matrixGrid" CanUserResizeColumns="True"
+                  ScrollViewer.CanContentScroll="True"
+                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                  ScrollViewer.HorizontalScrollBarVisibility="Auto">
             <DataGrid.Columns>
-                <DataGridTextColumn Width="1*" Header="Szenario" IsReadOnly="True" Binding="{Binding ID, UpdateSourceTrigger=PropertyChanged}"/>
-                <DataGridTextColumn Width="5*" Header="Beschreibung" Binding="{Binding Description, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True"/>
-                <DataGridTextColumn Width="3*" Header="Bemerkung" Binding="{Binding Comment, UpdateSourceTrigger=PropertyChanged}"/>
+                <DataGridTextColumn  Header="Szenario" IsReadOnly="True" Binding="{Binding ID, UpdateSourceTrigger=PropertyChanged}"/>
+                <DataGridTextColumn  Header="Beschreibung" Binding="{Binding Description, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True"/>
+                <DataGridTextColumn  Header="Bemerkung" Binding="{Binding Comment, UpdateSourceTrigger=PropertyChanged}"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

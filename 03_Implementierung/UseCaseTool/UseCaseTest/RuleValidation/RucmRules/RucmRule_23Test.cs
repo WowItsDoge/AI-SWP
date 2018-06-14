@@ -92,9 +92,10 @@ namespace UseCaseTest.RuleValidation
             result = rucmRule.Check(basicFlow);
             Assert.IsTrue(result.Count == 2);
 
-            // Check for a UNTIL without DO
+            // Check for a UNTIL on the end
             basicFlow = new BasicFlow();
             basicFlow.AddStep("Der erste Schritt");
+            basicFlow.AddStep("DO");
             basicFlow.AddStep("Der erste Schritt im Do");
             basicFlow.AddStep("Stop UNTIL");
             basicFlow.AddStep("Der zweite Schritt");
