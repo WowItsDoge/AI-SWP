@@ -90,7 +90,7 @@ namespace UseCaseTool
             this.GraphView.Child = this.viewer;
 
             // on graph view update
-            this.viewer.Invalidated += this.Viewer_Invalidated;
+            this.viewer.Paint += this.Viewer_Invalidated;
         }
 
         /// <summary>
@@ -382,7 +382,7 @@ namespace UseCaseTool
         /// </summary>
         /// <param name="sender">the sender</param>
         /// <param name="e">the event args</param>
-        private void Viewer_Invalidated(object sender, System.Windows.Forms.InvalidateEventArgs e)
+        private void Viewer_Invalidated(object sender, EventArgs e)
         {
             if (this.GraphVisualisationChanged != null)
             {
