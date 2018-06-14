@@ -414,6 +414,10 @@ namespace UseCaseTool
 
             BlueGrayStartWhite = 4;
             BlueGrayExceptionIds = new int[] { };
+
+            Black = "#000000";
+
+            White = "#FFFFFF";
         }
 
         /// <summary>
@@ -430,6 +434,8 @@ namespace UseCaseTool
         /// Gets SmallPaletteSize
         /// </summary>
         public static int SmallPaletteSize { get; private set; }
+
+        private static Random random { get; set; }
 
         #region Red
         /// <summary>
@@ -784,6 +790,297 @@ namespace UseCaseTool
             Color color = ColorFromHex(hexColor);
 
             return new Microsoft.Msagl.Drawing.Color(color.R, color.G, color.B);
+        }
+
+        /// <summary>
+        /// Converts a Microsoft Auto Graph Layout Color to hex color
+        /// </summary>
+        /// <param name="hexColor">Microsoft Auto Graph Layout Color</param>
+        /// <returns>Color in hex</returns>
+        public static string MsaglColorToHex(Microsoft.Msagl.Drawing.Color color)
+        {
+            return "#" + BitConverter.ToString(new byte[] { color.R }) +
+                BitConverter.ToString(new byte[] { color.G }) +
+                BitConverter.ToString(new byte[] { color.B });
+        }
+
+        public static Microsoft.Msagl.Drawing.Color RandomMsaglColor()
+        {
+            if (MaterialDesignColors.random == null)
+            {
+                MaterialDesignColors.random = new Random();
+            }
+
+            var colorNr = random.Next(0, 18);
+
+            var colorHex = White;
+            var paletteSelected = Green;
+            int paletteColor = 0;
+
+            switch (colorNr)
+            {
+                case 0:
+                    paletteSelected = Red;
+                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    colorHex = paletteSelected[paletteColor];
+                    break;
+                case 1:
+                    paletteSelected = Pink;
+                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    colorHex = paletteSelected[paletteColor];
+                    break;
+                case 2:
+                    paletteSelected = Purple;
+                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    colorHex = paletteSelected[paletteColor];
+                    break;
+                case 3:
+                    paletteSelected = DeepPurple;
+                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    colorHex = paletteSelected[paletteColor];
+                    break;
+                case 4:
+                    paletteSelected = Indigo;
+                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    colorHex = paletteSelected[paletteColor];
+                    break;
+                case 5:
+                    paletteSelected = Blue;
+                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    colorHex = paletteSelected[paletteColor];
+                    break;
+                case 6:
+                    paletteSelected = LightBlue;
+                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    colorHex = paletteSelected[paletteColor];
+                    break;
+                case 7:
+                    paletteSelected = Cyan;
+                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    colorHex = paletteSelected[paletteColor];
+                    break;
+                case 8:
+                    paletteSelected = Teal;
+                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    colorHex = paletteSelected[paletteColor];
+                    break;
+                case 9:
+                    paletteSelected = Green;
+                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    colorHex = paletteSelected[paletteColor];
+                    break;
+                case 10:
+                    paletteSelected = LightGreen;
+                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    colorHex = paletteSelected[paletteColor];
+                    break;
+                case 11:
+                    paletteSelected = Lime;
+                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    colorHex = paletteSelected[paletteColor];
+                    break;
+                case 12:
+                    paletteSelected = Yellow;
+                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    colorHex = paletteSelected[paletteColor];
+                    break;
+                case 13:
+                    paletteSelected = Amber;
+                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    colorHex = paletteSelected[paletteColor];
+                    break;
+                case 14:
+                    paletteSelected = Orange;
+                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    colorHex = paletteSelected[paletteColor];
+                    break;
+                case 15:
+                    paletteSelected = DeepOrange;
+                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    colorHex = paletteSelected[paletteColor];
+                    break;
+                case 16:
+                    paletteSelected = Brown;
+                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    colorHex = paletteSelected[paletteColor];
+                    break;
+                case 17:
+                    paletteSelected = Gray;
+                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    colorHex = paletteSelected[paletteColor];
+                    break;
+                case 18:
+                    paletteSelected = BlueGray;
+                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    colorHex = paletteSelected[paletteColor];
+                    break;
+                default:
+                    break;
+            }
+
+            return MsaglColorFromHex(colorHex);            
+        }
+
+        /// <summary>
+        /// Returns the foreground color for a background color.
+        /// </summary>
+        /// <param name="colorHex"></param>
+        /// <returns></returns>
+        public static string GetForegroundColor(string colorHex)
+        {
+            var colorId = GetColorId(colorHex, Red);
+            if (colorId >= 0)
+            {
+                return GetForegroundColor(colorId, RedStartWhite, RedExceptionIds);
+            }
+
+            colorId = GetColorId(colorHex, Pink);
+            if (colorId >= 0)
+            {
+                return GetForegroundColor(colorId, PinkStartWhite, PinkExceptionIds);
+            }
+
+            colorId = GetColorId(colorHex, Purple);
+            if (colorId >= 0)
+            {
+                return GetForegroundColor(colorId, PurpleStartWhite, PurpleExceptionIds);
+            }
+
+            colorId = GetColorId(colorHex, DeepPurple);
+            if (colorId >= 0)
+            {
+                return GetForegroundColor(colorId, DeepPurpleStartWhite, DeepPurpleExceptionIds);
+            }
+
+            colorId = GetColorId(colorHex, Indigo);
+            if (colorId >= 0)
+            {
+                return GetForegroundColor(colorId, IndigoStartWhite, IndigoExceptionIds);
+            }
+
+            colorId = GetColorId(colorHex, Blue);
+            if (colorId >= 0)
+            {
+                return GetForegroundColor(colorId, BlueStartWhite, BlueExceptionIds);
+            }
+
+            colorId = GetColorId(colorHex, LightBlue);
+            if (colorId >= 0)
+            {
+                return GetForegroundColor(colorId, LightBlueStartWhite, LightBlueExceptionIds);
+            }
+
+            colorId = GetColorId(colorHex, Cyan);
+            if (colorId >= 0)
+            {
+                return GetForegroundColor(colorId, CyanStartWhite, CyanExceptionIds);
+            }
+
+            colorId = GetColorId(colorHex, Teal);
+            if (colorId >= 0)
+            {
+                return GetForegroundColor(colorId, TealStartWhite, TealExceptionIds);
+            }
+
+            colorId = GetColorId(colorHex, Green);
+            if (colorId >= 0)
+            {
+                return GetForegroundColor(colorId, GreenStartWhite, GreenExceptionIds);
+            }
+
+            colorId = GetColorId(colorHex, LightGreen);
+            if (colorId >= 0)
+            {
+                return GetForegroundColor(colorId, LightGreenStartWhite, LightGreenExceptionIds);
+            }
+
+            colorId = GetColorId(colorHex, Lime);
+            if (colorId >= 0)
+            {
+                return GetForegroundColor(colorId, LimeStartWhite, LimeExceptionIds);
+            }
+
+            colorId = GetColorId(colorHex, Yellow);
+            if (colorId >= 0)
+            {
+                return GetForegroundColor(colorId, YellowStartWhite, YellowExceptionIds);
+            }
+
+            colorId = GetColorId(colorHex, Amber);
+            if (colorId >= 0)
+            {
+                return GetForegroundColor(colorId, AmberStartWhite, AmberExceptionIds);
+            }
+
+            colorId = GetColorId(colorHex, Orange);
+            if (colorId >= 0)
+            {
+                return GetForegroundColor(colorId, OrangeStartWhite, OrangeExceptionIds);
+            }
+
+            colorId = GetColorId(colorHex, DeepOrange);
+            if (colorId >= 0)
+            {
+                return GetForegroundColor(colorId, DeepOrangeStartWhite, DeepOrangeExceptionIds);
+            }
+
+            colorId = GetColorId(colorHex, Brown);
+            if (colorId >= 0)
+            {
+                return GetForegroundColor(colorId, BrownStartWhite, BrownExceptionIds);
+            }
+
+            colorId = GetColorId(colorHex, Gray);
+            if (colorId >= 0)
+            {
+                return GetForegroundColor(colorId, GrayStartWhite, GrayExceptionIds);
+            }
+
+            colorId = GetColorId(colorHex, BlueGray);
+            if (colorId >= 0)
+            {
+                return GetForegroundColor(colorId, BlueStartWhite, BlueExceptionIds);
+            }
+
+            return Black;
+        }
+
+        /// <summary>
+        /// Gets the foreground color for a background color
+        /// </summary>
+        /// <param name="colorId"></param>
+        /// <param name="colorStartWhite"></param>
+        /// <param name="colorExceptionIds"></param>
+        /// <returns></returns>
+        private static string GetForegroundColor(int colorId, int colorStartWhite, int[] colorExceptionIds)
+        {
+            if (colorId < colorStartWhite || colorExceptionIds.Contains(colorId))
+            {
+                return Black;
+            }
+            else
+            {
+                return White;
+            }
+        }
+
+        /// <summary>
+        /// Returns the array index of a color
+        /// </summary>
+        /// <param name="color"></param>
+        /// <param name="colors"></param>
+        /// <returns></returns>
+        private static int GetColorId(string color, string[] colors)
+        {
+            for (int i = 0; i < colors.Length; i++)
+            {
+                if (color.Equals(colors[i]))
+                {
+                    return i;
+                }
+            }
+
+            return -1;
         }
     }
 }
