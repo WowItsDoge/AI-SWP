@@ -42,6 +42,11 @@ namespace UseCaseTool
         private static List<Tuple<string, Microsoft.Msagl.Drawing.Color>> nodeColors;
 
         /// <summary>
+        /// List of flow id and flow color palette
+        /// </summary>
+        private static List<Tuple<int, string[]>> flowIdPalette;
+
+        /// <summary>
         /// Reference to the use case object
         /// </summary>
         private UseCase useCase;
@@ -59,6 +64,8 @@ namespace UseCaseTool
             this.InitializeComponent();
 
             GraphViewerControl.nodeColors = new List<Tuple<string, Microsoft.Msagl.Drawing.Color>>();
+
+            GraphViewerControl.flowIdPalette = new List<Tuple<int, string[]>>();
 
             this.displayGraphTitles = true;
 
@@ -122,7 +129,7 @@ namespace UseCaseTool
             this.graph = new Microsoft.Msagl.Drawing.Graph("graph");
 
             var layoutSettings = (Microsoft.Msagl.Layout.Layered.SugiyamaLayoutSettings)graph.LayoutAlgorithmSettings;
-            layoutSettings.EdgeRoutingSettings.EdgeRoutingMode = Microsoft.Msagl.Core.Routing.EdgeRoutingMode.Rectilinear;
+            layoutSettings.EdgeRoutingSettings.EdgeRoutingMode = Microsoft.Msagl.Core.Routing.EdgeRoutingMode.SplineBundling;
 
             for (int n1 = 0; n1 < useCase.Nodes.Count; n1++)
             {
@@ -136,12 +143,17 @@ namespace UseCaseTool
                         var edge = this.graph.AddEdge(nodeTitle1, nodeTitle2);
 
                         var node1 = this.graph.FindNode(nodeTitle1);
-                        SetNodeStyle(node1, nodeTitle1);
+                        SetNodeStyle(node1, nodeTitle1, useCase.Nodes[n1].Identifier.Id);
 
                         var node2 = this.graph.FindNode(nodeTitle2);
-                        SetNodeStyle(node2, nodeTitle2);
+                        SetNodeStyle(node2, nodeTitle2, useCase.Nodes[n2].Identifier.Id);
 
                         edge.Attr.Color = GetNodeColor(nodeTitle1);
+
+                        if (useCase.Nodes[n1].Identifier.Id == useCase.Nodes[n2].Identifier.Id)
+                        {
+                            graph.LayerConstraints.AddSequenceOfUpDownVerticalConstraint(node1, node2);
+                        }
                     }
                 }
             }
@@ -153,6 +165,11 @@ namespace UseCaseTool
             return true;
         }
 
+        public bool UpdateGraphView()
+        {
+            return UpdateGraphView(this.useCase);
+        }
+
         /// <summary>
         /// This method changes the colors of the graph
         /// </summary>
@@ -160,7 +177,7 @@ namespace UseCaseTool
         {
             nodeColors.Clear();
 
-            UpdateGraphView(this.useCase);
+            UpdateGraphView();
         }
 
         /// <summary>
@@ -171,7 +188,7 @@ namespace UseCaseTool
         {
             this.displayGraphTitles = displayGraphTitles;
 
-            UpdateGraphView(this.useCase);
+            UpdateGraphView();
         }
 
         /// <summary>
@@ -218,7 +235,7 @@ namespace UseCaseTool
         /// Set the style of a graph node
         /// </summary>
         /// <param name="node">the microsoft drawing node</param>
-        private static void SetNodeStyle(Microsoft.Msagl.Drawing.Node node, string nodeTitle)
+        private static void SetNodeStyle(Microsoft.Msagl.Drawing.Node node, string nodeTitle, int flowId)
         {
             var backgroundColor = GetNodeColor(nodeTitle);
             var backgroundHex = MaterialDesignColors.MsaglColorToHex(backgroundColor);
@@ -245,7 +262,37 @@ namespace UseCaseTool
                 return (nodeId + 1).ToString();
             }
 
-            return (nodeId + 1) + ": " + node.StepDescription;
+            return (nodeId + 1) + ": " + InsertLines(node.StepDescription);
+        }
+
+        /// <summary>
+        /// Inserts line breaks
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        private string InsertLines(string text)
+        {
+            int myLimit = 40;
+            string[] words = text.Split(' ');
+
+            StringBuilder newSentence = new StringBuilder();
+
+            string line = "";
+            foreach (string word in words)
+            {
+                if ((line + word).Length > myLimit)
+                {
+                    newSentence.AppendLine(line);
+                    line = "";
+                }
+
+                line += string.Format("{0} ", word);
+            }
+
+            if (line.Length > 0)
+                newSentence.AppendLine(line);
+
+            return newSentence.ToString();
         }
 
         /// <summary>

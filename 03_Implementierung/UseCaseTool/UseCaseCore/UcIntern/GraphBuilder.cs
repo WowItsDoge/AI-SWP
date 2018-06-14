@@ -101,24 +101,7 @@ namespace UseCaseCore.UcIntern
                     case FlowType.SpecificAlternative:
                     case FlowType.BoundedAlternative:
                         // The flow can be entered only at the first step or at multiple ones if it is an outsourced elseif-else statement.
-                        List<int> targetSteps = new List<int>();
-                        StepType firstStepType = GraphBuilder.GetStepType(flow.Nodes[0].StepDescription);
-                        if (firstStepType == StepType.ElseIf || firstStepType == StepType.Else)
-                        {
-                            // All steps that are else if or else steps.
-                            List<int> importantIfStementeSteps = GraphBuilder.GetImportantIfStatementSteps(flow.Nodes, 0);
-
-                            // Do not take the endif step.
-                            targetSteps.AddRange(
-                                importantIfStementeSteps
-                                .Take(importantIfStementeSteps.Count - 1)
-                                .Select((stepIndex) => stepIndex + flowOffset));
-                        }
-                        else
-                        {
-                            // Only the first step.
-                            targetSteps.Add(flowOffset);
-                        }
+                        int targetStep = flowOffset;
 
                         foreach (ReferenceStep referenceStep in flow.ReferenceSteps)
                         {
@@ -139,17 +122,7 @@ namespace UseCaseCore.UcIntern
                                 edgeMatrix[sourceStep, invalidTargetStep] = false;
                             }
 
-                            foreach (int targetStep in targetSteps)
-                            {
-                                try
-                                {
-                                    edgeMatrix[sourceStep, targetStep] = true;
-                                }
-                                catch(System.Exception)
-                                {
-
-                                }
-                            }
+                            edgeMatrix[sourceStep, targetStep] = true;
                         }
 
                         break;
