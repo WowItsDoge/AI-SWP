@@ -199,6 +199,7 @@ namespace UseCaseCore.XmlParser
             try
             {
                 this.useCaseXml.LoadXml(this.useCaseFile.MainDocumentPart.Document.InnerXml);
+                this.useCaseXml.Normalize(); //// TODO: useful?
                 if (this.useCaseXml.DocumentElement.ChildNodes == null)
                 {
                     useCase = null;

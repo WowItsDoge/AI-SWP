@@ -39,5 +39,10 @@ namespace UseCaseCore.RuleValidation
         /// <param name="path">Specifies the path where to put the file.</param>
         /// <returns>Returns true if the ErrorReport was exported without any problems, otherwise false.</returns>
         bool Export(string path);
+
+        /// <summary>
+        /// Resets the Rucm rule validator.
+        /// </summary>
+        void Reset();
     }
 }
