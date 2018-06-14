@@ -167,7 +167,7 @@ namespace UseCaseCore.UcIntern
             }
 
             List<Flow> tempList = new List<Flow>();
-            tempList.AddRange(this.SpecificAlternativeFlows);
+            tempList.AddRange(this.GlobalAlternativeFlows);
             tempList.Add(new Flow(globalIdentifier, postcondition, globalSteps, new List<ReferenceStep>()));
 
             this.GlobalAlternativeFlows = tempList;
@@ -192,7 +192,7 @@ namespace UseCaseCore.UcIntern
             }
 
             List<Flow> tempList = new List<Flow>();
-            tempList.AddRange(this.SpecificAlternativeFlows);
+            tempList.AddRange(this.BoundedAlternativeFlows);
             tempList.Add(new Flow(boundedIdentifier, postcondition, boundedSteps, referenceSteps));
 
             this.BoundedAlternativeFlows = tempList;

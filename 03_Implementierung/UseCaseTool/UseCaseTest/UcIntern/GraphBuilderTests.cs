@@ -118,9 +118,11 @@ namespace UseCaseTest.UcIntern
             List<Flow> globalFlows = new List<Flow>();
             List<Flow> boundedFlows = new List<Flow>();
 
-            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(3, false);
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
             expectedEdgeMatrix[0, 1] = true;
             expectedEdgeMatrix[1, 2] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
 
             List<Node> steps;
             Matrix<bool> edgeMatrix;
@@ -132,6 +134,7 @@ namespace UseCaseTest.UcIntern
             // Assert
             Assert.AreEqual(allSteps, steps);
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
         }
 
         [Test]
@@ -161,12 +164,16 @@ namespace UseCaseTest.UcIntern
             List<Flow> globalFlows = new List<Flow>();
             List<Flow> boundedFlows = new List<Flow>();
 
-            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(7, false);
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
             expectedEdgeMatrix[0, 1] = true;
             expectedEdgeMatrix[1, 2] = true;
             expectedEdgeMatrix[1, 4] = true;
             expectedEdgeMatrix[2, 3] = true;
             expectedEdgeMatrix[4, 5] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[1,2] = new Condition(allSteps[1].StepDescription, true);
+            expectedConditionMatrix[1,4] = new Condition(allSteps[1].StepDescription, false);
 
             List<Node> steps;
             Matrix<bool> edgeMatrix;
@@ -178,6 +185,7 @@ namespace UseCaseTest.UcIntern
             // Assert
             Assert.AreEqual(allSteps, steps);
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
         }
 
         [Test]
@@ -219,6 +227,10 @@ namespace UseCaseTest.UcIntern
             expectedEdgeMatrix[6, 7] = true;
             expectedEdgeMatrix[7, 3] = true;
 
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[1, 2] = new Condition(allSteps[1].StepDescription, true);
+            expectedConditionMatrix[1, 5] = new Condition(allSteps[1].StepDescription, false);
+
             List<Node> steps;
             Matrix<bool> edgeMatrix;
             Matrix<Condition?> conditionMatrix;
@@ -229,6 +241,7 @@ namespace UseCaseTest.UcIntern
             // Assert
             Assert.AreEqual(allSteps, steps);
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
         }
 
         [Test]
@@ -247,7 +260,7 @@ namespace UseCaseTest.UcIntern
             List<Flow> specificFlows = new List<Flow>();
 
             List<Node> globalSteps = new List<Node>();
-            globalSteps.Add(new Node("Global 1", flowIdentifierGlobal1));
+            globalSteps.Add(new Node("If global should be executed", flowIdentifierGlobal1));
             globalSteps.Add(new Node("RESUME 2", flowIdentifierGlobal1));
             List<Flow> globalFlows = new List<Flow>();
             globalFlows.Add(new Flow(flowIdentifierGlobal1, null, globalSteps, new List<ReferenceStep>()));
@@ -264,6 +277,8 @@ namespace UseCaseTest.UcIntern
             expectedEdgeMatrix[3, 4] = true;
             expectedEdgeMatrix[4, 1] = true;
 
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+
             List<Node> steps;
             Matrix<bool> edgeMatrix;
             Matrix<Condition?> conditionMatrix;
@@ -274,6 +289,7 @@ namespace UseCaseTest.UcIntern
             // Assert
             Assert.AreEqual(allSteps, steps);
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
         }
 
         [Test]
@@ -326,6 +342,8 @@ namespace UseCaseTest.UcIntern
             expectedEdgeMatrix[8,10] = true;
             expectedEdgeMatrix[10,11] = true;
 
+            //Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+
             List<Node> steps;
             Matrix<bool> edgeMatrix;
             Matrix<Condition?> conditionMatrix;
@@ -336,6 +354,7 @@ namespace UseCaseTest.UcIntern
             // Assert
             Assert.AreEqual(allSteps, steps);
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            //Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
         }
 
         [Test]
@@ -457,6 +476,7 @@ namespace UseCaseTest.UcIntern
             expectedEdgeMatrix[8, 13] = true;
             expectedEdgeMatrix[9, 13] = true;
 
+            //Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
 
             List<Node> steps;
             Matrix<bool> edgeMatrix;
@@ -468,6 +488,7 @@ namespace UseCaseTest.UcIntern
             // Assert
             Assert.AreEqual(allSteps, steps);
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            //Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
         }
 
         // --------------------------------------------------------------------------------------------- SetEdgesInNodeBlock

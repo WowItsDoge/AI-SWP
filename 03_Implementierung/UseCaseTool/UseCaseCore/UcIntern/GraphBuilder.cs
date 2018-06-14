@@ -120,15 +120,27 @@ namespace UseCaseCore.UcIntern
                             {
                                 int invalidTargetStep = sourceFlowOffset + invalidIfEdge.TargetStep;
                                 edgeMatrix[sourceStep, invalidTargetStep] = false;
+
+                                // If the block is empty than the edges for fulfilled and not fulfilled condition are the same.
+                                // In that case the invalid edge does not have a condition and thus its condition must be set to the fulfilled condition of the if/else if statement step.
+                                if (conditionMatrix[sourceStep, invalidTargetStep] != null)
+                                {
+                                    conditionMatrix[sourceStep, invalidTargetStep] = null;
+                                }
+                                else
+                                {
+                                    conditionMatrix[sourceStep, invalidTargetStep] = new Condition(steps[sourceStep].StepDescription, true);
+                                }
                             }
 
                             edgeMatrix[sourceStep, targetStep] = true;
+                            conditionMatrix[sourceStep, targetStep] = new Condition(steps[sourceStep].StepDescription, false);
                         }
 
                         break;
                     case FlowType.GlobalAlternative:
                         // Gets an edge from every step of the basic flow.
-                        // Basic flow is allways at offset 0.
+                        // Basic flow is always at offset 0.
                         for (int sourceStep = 0; sourceStep < basicFlow.Nodes.Count; sourceStep++)
                         {
                             edgeMatrix[sourceStep, flowOffset] = true;
@@ -598,6 +610,7 @@ namespace UseCaseCore.UcIntern
 
             // Set edge into the nested block
             edgeMatrix[blockStartIndex, blockStartIndex + 1] = true;
+            conditionMatrix[blockStartIndex, blockStartIndex + 1] = blockEntryCondition;
 
             List<Node> nestedSteps = steps.Skip(blockStartIndex + 1).Take(blockSize).ToList();
 
