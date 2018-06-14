@@ -110,7 +110,6 @@ namespace UseCaseTool
         public void UpdateGraphView(UseCase useCase)
         {
             this.graph = new Microsoft.Msagl.Drawing.Graph("graph");
-            this.viewer.Graph = this.graph;
 
             for (int n1 = 0; n1 < useCase.Nodes.Count; n1++)
             {
@@ -122,7 +121,7 @@ namespace UseCaseTool
                         string nodeTitle2 = GetNodeTitle(useCase.Nodes[n2], n2);
 
                         var edge = this.graph.AddEdge(nodeTitle1, nodeTitle2);
-                        edge.Attr.Color = Microsoft.Msagl.Drawing.Color.Green;
+                        edge.Attr.Color = Microsoft.Msagl.Drawing.Color.Gray;
 
                         var node1 = this.graph.FindNode(nodeTitle1);
                         SetNodeStyle(node1);
@@ -132,6 +131,8 @@ namespace UseCaseTool
                     }
                 }
             }
+
+            this.viewer.Graph = this.graph;
         }
 
         /// <summary>
@@ -180,8 +181,16 @@ namespace UseCaseTool
         /// <param name="node">the microsoft drawing node</param>
         private static void SetNodeStyle(Microsoft.Msagl.Drawing.Node node)
         {
-            node.Attr.FillColor = Microsoft.Msagl.Drawing.Color.Green;
-            node.Attr.Shape = Microsoft.Msagl.Drawing.Shape.Ellipse;
+            var backgroundColor = MaterialDesignColors.RandomMsaglColor();
+            var backgroundHex = MaterialDesignColors.MsaglColorToHex(backgroundColor);
+            var foregroundHex = MaterialDesignColors.GetForegroundColor(backgroundHex);
+            var foregroundColor = MaterialDesignColors.MsaglColorFromHex(foregroundHex);
+
+            node.Attr.FillColor = backgroundColor;
+            node.Attr.Shape = Microsoft.Msagl.Drawing.Shape.Box;
+            node.Attr.Color = MaterialDesignColors.MsaglColorFromHex(MaterialDesignColors.White);
+            node.Label.FontColor = foregroundColor;
+            node.Label.FontSize = 10;
         }
 
         /// <summary>
