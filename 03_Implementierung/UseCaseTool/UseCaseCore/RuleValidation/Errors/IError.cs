@@ -9,10 +9,5 @@ namespace UseCaseCore.RuleValidation.Errors
     /// </summary>
     public interface IError
     {
-        /// <summary>
-        /// Produces a string, continuing all the information of the error.
-        /// </summary>
-        /// <returns>A string with the error message.</returns>
-        string GetErrorString();
     }
 }

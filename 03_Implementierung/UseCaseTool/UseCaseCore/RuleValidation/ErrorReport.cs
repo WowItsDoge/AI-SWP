@@ -96,7 +96,7 @@ namespace UseCaseCore.RuleValidation
                         File.AppendAllText(path, GeneralErrorHeader);
                         foreach (var error in generalErrors)
                         {
-                            File.AppendAllText(path, error.GetErrorString());
+                            File.AppendAllText(path, error.ToString());
                         }
                     }
 
@@ -106,7 +106,7 @@ namespace UseCaseCore.RuleValidation
                         File.AppendAllText(path, FlowErrorHeader);
                         foreach (var error in flowErrors)
                         {
-                            File.AppendAllText(path, error.GetErrorString());
+                            File.AppendAllText(path, error.ToString());
                         }
                     }
 
@@ -116,7 +116,7 @@ namespace UseCaseCore.RuleValidation
                         File.AppendAllText(path, StepErrorHeader);
                         foreach (var error in stepErrors)
                         {
-                            File.AppendAllText(path, error.GetErrorString());
+                            File.AppendAllText(path, error.ToString());
                         }
                     }
                 }
