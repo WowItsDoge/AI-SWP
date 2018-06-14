@@ -222,7 +222,16 @@ namespace UseCaseCore.ScenarioMatrix
         /// <param name="cycleDepth"> maximum cycle depth for the scenarios </param>
         private void TraverseGraphRec(Matrix<bool> matrix, int startnode, Scenario s, uint cycleDepth)
         { 
-            int stepsFound = 0;
+            int stepsFound = CountEdgesPerRow(matrix, startnode);
+
+            // If no next steps were found for the current steps, the scenario is finished and can be added to the list
+            if (stepsFound == 0)
+            {
+                s.Description = Regex.Replace(s.Description, "(.*),", "$1"); // Remove last comma
+                this.scenarios.Add(s);
+                return;
+            }
+
             Scenario savedScenario = new Scenario(s);
 
             for (int i = 0; i < matrix.ColumnCount; i++)
@@ -237,21 +246,34 @@ namespace UseCaseCore.ScenarioMatrix
                     // Add current node to the scenario and increase of found steps from the previous node
                     s.Nodes.Add(this.uc.Nodes[i]);
                     s.Description += "Step" + (i + 1).ToString() + ", ";
-                    stepsFound++; 
 
                     this.TraverseGraphRec(matrix, i, s, cycleDepth);
+                    
+                    if (stepsFound < 2) return;
 
                     // Continue with old scenario 
-                    s = savedScenario;
+                    s = new Scenario(savedScenario);
                 }
             }
+        }
 
-            // If no next steps were found for the current steps, the scenario is finished and can be added to the list
-            if (stepsFound == 0)
+        /// <summary>
+        /// Counts amount of child nodes from a starting node (row in a matrix)
+        /// </summary>
+        /// <param name="matrix"> edge matrix of this use case </param>
+        /// <param name="row"> row representing the current node </param>
+        /// <returns> returns the amount of child nodes / edges </returns>
+        private static int CountEdgesPerRow(Matrix<bool> matrix, int row)
+        {
+            int amount = 0;
+            for (int i = 0; i < matrix.ColumnCount; i++)
             {
-                s.Description = Regex.Replace(s.Description, "(.*),", "$1"); // Remove last comma
-                this.scenarios.Add(s);
+                if (matrix[row, i] == true)
+                {
+                    amount++;
+                }
             }
+            return amount;
         }
     }
 }
