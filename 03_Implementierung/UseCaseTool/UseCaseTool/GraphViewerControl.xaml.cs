@@ -42,6 +42,11 @@ namespace UseCaseTool
         private static List<Tuple<string, Microsoft.Msagl.Drawing.Color>> nodeColors;
 
         /// <summary>
+        /// Reference to the use case object
+        /// </summary>
+        private UseCase useCase;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="GraphViewerControl"/> class.
         /// </summary>
         public GraphViewerControl()
@@ -103,8 +108,10 @@ namespace UseCaseTool
         /// displays the graph
         /// </summary>
         /// <param name="useCase">the use case to display</param>
-        public void UpdateGraphView(UseCase useCase)
+        public bool UpdateGraphView(UseCase useCase)
         {
+            this.useCase = useCase;
+
             this.graph = new Microsoft.Msagl.Drawing.Graph("graph");
 
             for (int n1 = 0; n1 < useCase.Nodes.Count; n1++)
@@ -130,6 +137,15 @@ namespace UseCaseTool
             }
 
             this.viewer.Graph = this.graph;
+
+            return true;
+        }
+
+        public void ChangeGraphColors()
+        {
+            nodeColors.Clear();
+
+            UpdateGraphView(this.useCase);
         }
 
         /// <summary>
