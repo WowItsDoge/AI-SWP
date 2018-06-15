@@ -8,7 +8,7 @@ namespace UseCaseTest.RuleValidation.RucmRules
     using System.Collections.Generic;
     using UseCaseCore.RuleValidation.Errors;
     using UseCaseCore.RuleValidation.RucmRules;
-    using UseCaseCore.XmlParser;
+    using UseCaseCore.UcIntern;
 
     /// <summary>
     /// A dummy rule for testing only
@@ -67,7 +67,8 @@ namespace UseCaseTest.RuleValidation.RucmRules
         /// <param name="flowToCheck">The flow to check for violations.</param>
         /// <param name="referencedBasicFlow">The referenced flow by the flow to check.</param>
         /// <returns>A list containing the errors that occurred during the check.</returns>
-        public override List<IError> Check(Flow flowToCheck, Flow referencedBasicFlow = null)
+        ////public override List<IError> Check(Flow flowToCheck, Flow referencedBasicFlow = null)
+        public override List<IError> Check(Flow flowToCheck, Flow referencedBasicFlow = new Flow())
         {
             return this.errorList;
         }

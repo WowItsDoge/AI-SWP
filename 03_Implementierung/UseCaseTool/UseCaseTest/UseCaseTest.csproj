@@ -120,7 +120,7 @@
     <None Include="XmlParser\Testdateien\UseCaseTemplateExample - Keine Fehler - 2.docm" />
     <None Include="XmlParser\Testdateien\UseCaseTemplateExample - Keine Fehler.docm" />
     <None Include="XmlParser\Testdateien\UseCaseTemplateExample - Keine Flows.docm" />
-    <None Include="XmlParser\Testdateien\UseCaseTemplateExample - Regel 19 Verletzt.docm" />
+    <None Include="XmlParser\Testdateien\UseCaseTemplateExample - Regel 19 verletzt.docm" />
     <None Include="XmlParser\Testdateien\UseCaseTemplateExample - Worst Case.docm" />
     <None Include="XmlParser\Testdateien\UseCaseTemplateExample - XML Kaputt.docm" />
     <None Include="XmlParser\Testdateien\UseCaseTemplateExample - Zwei Basic Flows.docm" />
