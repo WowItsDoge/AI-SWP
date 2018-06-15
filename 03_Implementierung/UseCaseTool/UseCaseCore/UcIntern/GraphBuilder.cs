@@ -19,7 +19,7 @@ namespace UseCaseCore.UcIntern
         /// <summary>
         /// Builds the graph.
         /// </summary>
-        /// <param name="basicFlow">The basic flow.</param>
+        /// <param name="basicFlow">The basic flow. It will be extended with a step, with an empty description, if the last step is a validates that or until step so that the condition does not get lost.</param>
         /// <param name="specificAlternativeFlowsUnnormalized">The specific alternative flows. Reference steps starting with 1.</param>
         /// <param name="globalAlternativeFlows">The global alternative flows.</param>
         /// <param name="boundedAlternativeFlowsUnnormalized">The bounded alternative flows. Reference steps starting with 1.</param>
@@ -27,7 +27,7 @@ namespace UseCaseCore.UcIntern
         /// <param name="edgeMatrix">The edge matrix for the steps.</param>
         /// <param name="conditionMatrix">The condition matrix for the flows.</param>
         public static void BuildGraph(
-            Flow basicFlow,
+            ref Flow basicFlow,
             IReadOnlyList<Flow> specificAlternativeFlowsUnnormalized,
             IReadOnlyList<Flow> globalAlternativeFlows,
             IReadOnlyList<Flow> boundedAlternativeFlowsUnnormalized,
@@ -35,6 +35,8 @@ namespace UseCaseCore.UcIntern
             out Matrix<bool> edgeMatrix,
             out Matrix<Condition?> conditionMatrix)
         {
+            basicFlow = GraphBuilder.ExtendBasicFlowIfNecessary(basicFlow);
+
             IReadOnlyList<Flow> specificAlternativeFlows = GraphBuilder.NormalizeReferenceSteps(specificAlternativeFlowsUnnormalized);
             IReadOnlyList<Flow> boundedAlternativeFlows = GraphBuilder.NormalizeReferenceSteps(boundedAlternativeFlowsUnnormalized);
 
@@ -144,11 +146,39 @@ namespace UseCaseCore.UcIntern
                         for (int sourceStep = 0; sourceStep < basicFlow.Nodes.Count; sourceStep++)
                         {
                             edgeMatrix[sourceStep, flowOffset] = true;
+                            conditionMatrix[sourceStep, flowOffset] = new Condition(individuallyWiredFlow.Item2.Nodes[0].StepDescription, true);
                         }
 
                         break;
                 }
             }
+        }
+
+        /// <summary>
+        /// Extends the basic flow with a step at the end if it ends with a validates that or until step.
+        /// This is because otherwise that last condition would get lost.
+        /// The added step will have an empty string as description.
+        /// </summary>
+        /// <param name="basicFlow">The basic flow to check the last step of.</param>
+        /// <returns>The extended basic flow like described above.</returns>
+        public static Flow ExtendBasicFlowIfNecessary(Flow basicFlow)
+        {
+            StepType lastStepType = GraphBuilder.GetStepType(basicFlow.Nodes.LastOrDefault().StepDescription ?? string.Empty);
+
+            if (lastStepType == StepType.Until || lastStepType == StepType.ValidatesThat)
+            {
+                List<Node> extendedNodes = new List<Node>();
+                extendedNodes.AddRange(basicFlow.Nodes);
+                extendedNodes.Add(new Node(string.Empty, basicFlow.Identifier));
+
+                return new Flow(
+                    basicFlow.Identifier,
+                    basicFlow.Postcondition,
+                    extendedNodes,
+                    basicFlow.ReferenceSteps);
+            }
+
+            return basicFlow;
         }
 
         /// <summary>
@@ -326,9 +356,9 @@ namespace UseCaseCore.UcIntern
                         // The last step.
                         exitSteps.Add(new Tuple<int, Condition?>(stepIndex, conditionFromPreviousStep));
                     }
-                }
 
-                conditionFromPreviousStep = null;
+                    conditionFromPreviousStep = null;
+                }
             }
         }
 

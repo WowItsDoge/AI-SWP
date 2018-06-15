@@ -111,9 +111,10 @@ namespace UseCaseCore.UcIntern
         /// </summary>
         /// <param name="steps">The steps of the flow.</param>
         /// <param name="postcondition">The postcondition text of the flow.</param>
-        public void SetBasicFlow(List<string> steps, string postcondition)
+        //// public void SetBasicFlow(List<string> steps, string postcondition)
+        public void SetBasicFlow(Flow basicFlow)
         {
-            List<Node> basicSteps = new List<Node>();
+            /*List<Node> basicSteps = new List<Node>();
             FlowIdentifier basicIdentifier = new FlowIdentifier(FlowType.Basic, 0);
 
             foreach (string step in steps)
@@ -121,7 +122,8 @@ namespace UseCaseCore.UcIntern
                 basicSteps.Add(new Node(step, basicIdentifier));
             }
 
-            this.BasicFlow = new Flow(basicIdentifier, postcondition, basicSteps, new List<ReferenceStep>());
+            this.BasicFlow = new Flow(basicIdentifier, postcondition, basicSteps, new List<ReferenceStep>());*/
+            this.BasicFlow = basicFlow;
         }
 
         /// <summary>
@@ -132,9 +134,10 @@ namespace UseCaseCore.UcIntern
         /// <param name="steps">The steps of the flow.</param>
         /// <param name="postcondition">The postcondition text of the flow.</param>
         /// <param name="referenceStep">The reference step of the specific flow.</param>
-        public void AddSpecificAlternativeFlow(int id, List<string> steps, string postcondition, ReferenceStep referenceStep)
+        //// public void AddSpecificAlternativeFlow(int id, List<string> steps, string postcondition, ReferenceStep referenceStep)
+        public void AddSpecificAlternativeFlow(List<Flow> specificAlternativeFlows)
         {
-            List<Node> specificSteps = new List<Node>();
+            /*List<Node> specificSteps = new List<Node>();
             FlowIdentifier specificIdentifier = new FlowIdentifier(FlowType.SpecificAlternative, id);
 
             foreach (string step in steps)
@@ -146,7 +149,8 @@ namespace UseCaseCore.UcIntern
             tempList.AddRange(this.SpecificAlternativeFlows);
             tempList.Add(new Flow(specificIdentifier, postcondition, specificSteps, new List<ReferenceStep>() { referenceStep }));
 
-            this.SpecificAlternativeFlows = tempList;
+            this.SpecificAlternativeFlows = tempList;*/
+            this.SpecificAlternativeFlows = specificAlternativeFlows;
         }
 
         /// <summary>
@@ -156,9 +160,10 @@ namespace UseCaseCore.UcIntern
         /// <param name="id">The unique id of the flow.</param>
         /// <param name="steps">The steps of the flow.</param>
         /// <param name="postcondition">The postcondition text of the flow.</param>
-        public void AddGlobalAlternativeFlow(int id, List<string> steps, string postcondition)
+        //// public void AddGlobalAlternativeFlow(int id, List<string> steps, string postcondition)
+        public void AddGlobalAlternativeFlow(List<Flow> globalAlternativeFlows)
         {
-            List<Node> globalSteps = new List<Node>();
+            /*List<Node> globalSteps = new List<Node>();
             FlowIdentifier globalIdentifier = new FlowIdentifier(FlowType.GlobalAlternative, id);
 
             foreach (string step in steps)
@@ -170,7 +175,8 @@ namespace UseCaseCore.UcIntern
             tempList.AddRange(this.GlobalAlternativeFlows);
             tempList.Add(new Flow(globalIdentifier, postcondition, globalSteps, new List<ReferenceStep>()));
 
-            this.GlobalAlternativeFlows = tempList;
+            this.GlobalAlternativeFlows = tempList;*/
+            this.GlobalAlternativeFlows = globalAlternativeFlows;
         }
 
         /// <summary>
@@ -181,9 +187,10 @@ namespace UseCaseCore.UcIntern
         /// <param name="steps">The steps of the flow.</param>
         /// <param name="postcondition">The postcondition text of the flow.</param>
         /// <param name="referenceSteps">The reference steps of the bounded flow.</param>
-        public void AddBoundedAlternativeFlow(int id, List<string> steps, string postcondition, List<ReferenceStep> referenceSteps)
+        //// public void AddBoundedAlternativeFlow(int id, List<string> steps, string postcondition, List<ReferenceStep> referenceSteps)
+        public void AddBoundedAlternativeFlow(List<Flow> boundedAlternativeFlow)
         {
-            List<Node> boundedSteps = new List<Node>();
+            /*List<Node> boundedSteps = new List<Node>();
             FlowIdentifier boundedIdentifier = new FlowIdentifier(FlowType.BoundedAlternative, id);
 
             foreach (string step in steps)
@@ -195,7 +202,8 @@ namespace UseCaseCore.UcIntern
             tempList.AddRange(this.BoundedAlternativeFlows);
             tempList.Add(new Flow(boundedIdentifier, postcondition, boundedSteps, referenceSteps));
 
-            this.BoundedAlternativeFlows = tempList;
+            this.BoundedAlternativeFlows = tempList;*/
+            this.BoundedAlternativeFlows = boundedAlternativeFlow;
         }
 
         /// <summary>
@@ -206,12 +214,13 @@ namespace UseCaseCore.UcIntern
         /// </summary>
         public void BuildGraph()
         {
+            Flow basicFlow = this.BasicFlow;
             List<Node> nodes;
             Matrix<bool> edgeMatrix;
             Matrix<Condition?> conditionMatrix;
 
             GraphBuilder.BuildGraph(
-                this.BasicFlow,
+                ref basicFlow,
                 this.SpecificAlternativeFlows,
                 this.GlobalAlternativeFlows,
                 this.BoundedAlternativeFlows,
@@ -219,6 +228,7 @@ namespace UseCaseCore.UcIntern
                 out edgeMatrix,
                 out conditionMatrix);
 
+            this.BasicFlow = basicFlow;
             this.Nodes = nodes;
             this.EdgeMatrix = edgeMatrix;
             this.ConditionMatrix = conditionMatrix;

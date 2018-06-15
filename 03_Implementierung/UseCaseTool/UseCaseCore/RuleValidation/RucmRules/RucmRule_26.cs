@@ -6,7 +6,7 @@ namespace UseCaseCore.RuleValidation.RucmRules
 {
     using System.Collections.Generic;
     using Errors;
-    using XmlParser;
+    using UcIntern;
 
     /// <summary>
     /// Checks the RUCM rule 26.
@@ -24,10 +24,10 @@ namespace UseCaseCore.RuleValidation.RucmRules
         /// <param name="flowToCheck">The flow to check for violations.</param>
         /// <param name="referencedBasicFlow">The referenced flow by the flow to check.</param>
         /// <returns>A list containing the errors that occurred during the check.</returns>
-        public override List<IError> Check(Flow flowToCheck, Flow referencedBasicFlow = null)
+        public override List<IError> Check(Flow flowToCheck, Flow referencedBasicFlow = new Flow())
         {
             this.errors = new List<IError>();
-            var postCondition = flowToCheck.GetPostcondition();
+            var postCondition = flowToCheck.Postcondition;
             if (string.IsNullOrWhiteSpace(postCondition))
             {
                 this.errors.Add(new FlowError(0, "Bitte geben Sie für jeden Flow eine eigene Nachbedingung an.", "Dieser Flow enthält keine Nachbedingung!"));
