@@ -6,6 +6,7 @@ namespace UseCaseCore.UcIntern
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     /// <summary>
     /// This special matrix is used to describe the edges in the graph.
@@ -67,7 +68,7 @@ namespace UseCaseCore.UcIntern
         {
             this.RowCount = multArray.GetLength(0);
             this.ColumnCount = multArray.GetLength(1);
-            this.StandardReturnObject = this.GetObjectFirstOccuringTheMost(multArray);
+            this.StandardReturnObject = this.GetObjectFirstContainedTheMost(multArray);
 
             this.Rows = new List<Row<T>>(this.RowCount);
             for (int pos = 0; pos < this.RowCount; pos++)
@@ -144,19 +145,6 @@ namespace UseCaseCore.UcIntern
         private List<Row<T>> Rows { get; }
 
         /// <summary>
-        /// Gets a row of the matrix with its index.
-        /// </summary>
-        /// <param name="index">The index of the row.</param>
-        /// <returns>The row that belongs to index.</returns>
-        public Row<T> this[int index]
-        {
-            get
-            {
-                return this.Rows[index];
-            }
-        }
-
-        /// <summary>
         /// Gets or sets an entry of the matrix.
         /// </summary>
         /// <param name="row">The index of the row.</param>
@@ -166,12 +154,12 @@ namespace UseCaseCore.UcIntern
         {
             get
             {
-                return this[row][column];
+                return this.Rows[row][column];
             }
 
             set
             {
-                this[row][column] = value;
+                this.Rows[row][column] = value;
             }
         }
 
@@ -192,12 +180,45 @@ namespace UseCaseCore.UcIntern
         }
 
         /// <summary>
-        /// Searches the columns and then the rows for the object occuring the
+        /// Determines whether the specified object is equal to the current object.
+        /// </summary>
+        /// <param name="obj">The object to compare with the current object.</param>
+        /// <returns>true if the specified object is equal to the current object; otherwise, false.</returns>
+        public override bool Equals(object obj)
+        {
+            if (obj == null || this.GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            Matrix<T> entry = (Matrix<T>)obj;
+
+            // Use Equals to compare instance variables.
+            return object.Equals(this.RowCount, entry.RowCount)
+                && object.Equals(this.ColumnCount, entry.ColumnCount)
+                && object.Equals(this.StandardReturnObject, entry.StandardReturnObject)
+                && this.Rows.SequenceEqual(entry.Rows);
+        }
+
+        /// <summary>
+        /// Serves as the default hash function.
+        /// </summary>
+        /// <returns>A hash code for the current object.</returns>
+        public override int GetHashCode()
+        {
+            return BitShifter.ShiftAndWrap(this.RowCount.GetHashCode(), 2)
+                ^ BitShifter.ShiftAndWrap(this.ColumnCount.GetHashCode(), 1)
+                ^ BitShifter.ShiftAndWrap(this.StandardReturnObject?.GetHashCode() ?? 1, 1)
+                ^ this.Rows?.GetHashCode() ?? 0;
+        }
+
+        /// <summary>
+        /// Searches the columns and then the rows for the object contained the
         /// most and found first.
         /// </summary>
         /// <param name="multArray">The matrix that is searched.</param>
-        /// <returns>The object occuring the most and found first.</returns>
-        private T GetObjectFirstOccuringTheMost(T[,] multArray)
+        /// <returns>The object contained the most and found first.</returns>
+        private T GetObjectFirstContainedTheMost(T[,] multArray)
         {
             List<T> objectsInContentArray = new List<T>();
             List<long> numberOccurancesOfObjectsInContentArray = new List<long>();

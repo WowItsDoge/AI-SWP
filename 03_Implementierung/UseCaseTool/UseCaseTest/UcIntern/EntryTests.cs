@@ -162,5 +162,99 @@ namespace UseCaseTest.UcIntern
                     Entry<object> entry = new Entry<object>(columnIndex, null);
                 });
         }
+
+        /// <summary>
+        /// Compares an entry with an object instance.
+        /// </summary>
+        [Test]
+        public void CompareEntryToObject()
+        {
+            // Arrange
+            Entry<object> e = new Entry<object>(0, null);
+
+            // Act
+
+            // Assert
+            Assert.IsFalse(e.Equals(new object()));
+        }
+
+        /// <summary>
+        /// Compares an entry with null.
+        /// </summary>
+        [Test]
+        public void CompareEntryToNull()
+        {
+            // Arrange
+            Entry<object> e = new Entry<object>(0, null);
+
+            // Act
+
+            // Assert
+            Assert.IsFalse(e.Equals(null));
+        }
+
+        /// <summary>
+        /// Compares two entries that are equal.
+        /// </summary>
+        [Test]
+        public void CompareEqualEntries()
+        {
+            // Arrange
+            Entry<object> e1 = new Entry<object>(0, null),
+                e2 = new Entry<object>(0, null);
+
+            // Act
+
+            // Assert
+            Assert.IsTrue(e1.Equals(e2));
+        }
+
+        /// <summary>
+        /// Compares two entries with different column index.
+        /// </summary>
+        [Test]
+        public void CompareEntriesDifferentColumnIndex()
+        {
+            // Arrange
+            Entry<object> e1 = new Entry<object>(1, null),
+                e2 = new Entry<object>(2, null);
+
+            // Act
+
+            // Assert
+            Assert.IsFalse(e1.Equals(e2));
+        }
+
+        /// <summary>
+        /// Compares two entries with different content.
+        /// </summary>
+        [Test]
+        public void CompareEntriesDifferentContent()
+        {
+            // Arrange
+            Entry<object> e1 = new Entry<object>(3, new object()),
+                e2 = new Entry<object>(3, new object());
+
+            // Act
+
+            // Assert
+            Assert.IsFalse(e1.Equals(e2));
+        }
+
+        /// <summary>
+        /// Tests the hash of two differing entry objects.
+        /// </summary>
+        [Test]
+        public void GetHashOfDifferentObjects()
+        {
+            // Arrange
+            Entry<object> e1 = new Entry<object>(7, new object()),
+                e2 = new Entry<object>(3, new object());
+
+            // Act
+
+            // Assert
+            Assert.AreNotEqual(e1.GetHashCode(), e2.GetHashCode());
+        }
     }
 }

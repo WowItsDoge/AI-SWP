@@ -26,43 +26,9 @@ namespace UseCaseCore.UcIntern
         /// </summary>
         public UseCase()
         {
-            this.Nodes = new List<Node>();
-
-            List<Node> basicNodes = new List<Node>();
-            FlowIdentifier basicId = new FlowIdentifier(FlowType.Basic, 0);
-            basicNodes.Add(new Node("Step 1", basicId));
-            basicNodes.Add(new Node("Step 2", basicId));
-            basicNodes.Add(new Node("Step 3", basicId));
-            foreach (Node node in basicNodes)
-            {
-                this.Nodes.Add(node);
-            }
-
-            this.BasicFlow = new Flow(basicId, "Postcondition Basic", basicNodes, new List<ReferenceStep>());
-
-            List<Node> specificNodes = new List<Node>();
-            FlowIdentifier specificId = new FlowIdentifier(FlowType.Basic, 0);
-            specificNodes.Add(new Node("Specific Step 1", specificId));
-            foreach (Node node in specificNodes)
-            {
-                this.Nodes.Add(node);
-            }
-
             this.SpecificAlternativeFlows = new List<Flow>();
-            this.SpecificAlternativeFlows.Add(new Flow(specificId, "Postcondition Specific", specificNodes, new List<ReferenceStep>() { new ReferenceStep(basicId, 1) }));
-
             this.GlobalAlternativeFlows = new List<Flow>();
             this.BoundedAlternativeFlows = new List<Flow>();
-
-            this.EdgeMatrix = new Matrix<bool>(4, false);
-            this.EdgeMatrix[0][1] = true; // 0 -> 1
-            this.EdgeMatrix[1][2] = true; // 1 -> 2
-            this.EdgeMatrix[0][3] = true; // 0 -> Specific 0
-            this.EdgeMatrix[3][2] = true; // Specific 0 -> 2
-
-            this.ConditionMatrix = new Matrix<Condition>(4, null);
-            this.ConditionMatrix[0][3] = new Condition("Wahr", true);
-            this.ConditionMatrix[0][1] = new Condition("Wahr", false);
         }
 
         /// <summary>
@@ -102,65 +68,62 @@ namespace UseCaseCore.UcIntern
 
         /// <summary>
         /// Gets or sets all nodes of the graph.
-        /// <para/>
-        /// Do not set the nodes outside of the module UC-Intern!
         /// </summary>
-        public List<Node> Nodes { get; set; }
+        public IReadOnlyList<Node> Nodes { get; protected set; }
 
         /// <summary>
         /// Gets or sets an edge matrix that describes the edges between all nodes of the graph. All edges are always directional.
         /// The row or column number of an entry corresponds to the node with the same number in the node list.
         /// An edge always points from the row node to the column node.This matrix only describes if an edge exists and its direction.
-        /// <para/>
-        /// Do not set the nodes outside of the module UC-Intern.
         /// </summary>
-        public Matrix<bool> EdgeMatrix { get; set; }
+        public Matrix<bool> EdgeMatrix { get; protected set; }
 
         /// <summary>
         /// Gets or sets an edge matrix that describes the edges between all nodes of the graph which have a condition.
         /// It is build like the normal edge matrix but only has an entry for an edge if that edge has a condition that must be matched for the edge to become valid.
         /// For an edge to become valid all conditions(if the list consists of more than one) must be matched!
         /// All other entries are ""null"". ""null"" does not mean that no edge exists there but only that no edge with a condition exists there.
-        /// <para/>
-        /// Do not set the condition matrix outside of the module UC-Intern.
         /// </summary>
-        public Matrix<Condition> ConditionMatrix { get; set; }
+        public Matrix<Condition?> ConditionMatrix { get; protected set; }
 
         /// <summary>
         /// Gets or sets the basic flow.
-        /// <para/>
-        /// Do not set the basic flow outside of the module UC-Intern.
         /// </summary>
-        public Flow BasicFlow { get; set; }
+        public Flow BasicFlow { get; protected set; }
 
         /// <summary>
         /// Gets or sets the specific alternative flow list.
-        /// <para/>
-        /// Do not set or alter the specific alternative flow list outside the module UC-Intern.
         /// </summary>
-        public List<Flow> SpecificAlternativeFlows { get; set; }
+        public IReadOnlyList<Flow> SpecificAlternativeFlows { get; protected set; }
 
         /// <summary>
         /// Gets or sets the global alternative flow list.
-        /// <para/>
-        /// Do not set or alter the global alternative flow list outside the module UC-Intern.
         /// </summary>
-        public List<Flow> GlobalAlternativeFlows { get; set; }
+        public IReadOnlyList<Flow> GlobalAlternativeFlows { get; protected set; }
 
         /// <summary>
         /// Gets or sets the bounded alternative flow list.
-        /// <para/>
-        /// Do not set or alter the bounded alternative flow list outside the module UC-Intern.
         /// </summary>
-        public List<Flow> BoundedAlternativeFlows { get; set; }
+        public IReadOnlyList<Flow> BoundedAlternativeFlows { get; protected set; }
 
         /// <summary>
         /// Sets a basic flow for the use-case. It consists of a list of steps numbered by their position in the list and a postcondition as string.
         /// </summary>
         /// <param name="steps">The steps of the flow.</param>
         /// <param name="postcondition">The postcondition text of the flow.</param>
-        public void SetBasicFlow(List<string> steps, string postcondition)
+        //// public void SetBasicFlow(List<string> steps, string postcondition)
+        public void SetBasicFlow(Flow basicFlow)
         {
+            /*List<Node> basicSteps = new List<Node>();
+            FlowIdentifier basicIdentifier = new FlowIdentifier(FlowType.Basic, 0);
+
+            foreach (string step in steps)
+            {
+                basicSteps.Add(new Node(step, basicIdentifier));
+            }
+
+            this.BasicFlow = new Flow(basicIdentifier, postcondition, basicSteps, new List<ReferenceStep>());*/
+            this.BasicFlow = basicFlow;
         }
 
         /// <summary>
@@ -171,8 +134,23 @@ namespace UseCaseCore.UcIntern
         /// <param name="steps">The steps of the flow.</param>
         /// <param name="postcondition">The postcondition text of the flow.</param>
         /// <param name="referenceStep">The reference step of the specific flow.</param>
-        public void AddSpecificAlternativeFlow(int id, List<string> steps, string postcondition, ReferenceStep referenceStep)
+        //// public void AddSpecificAlternativeFlow(int id, List<string> steps, string postcondition, ReferenceStep referenceStep)
+        public void AddSpecificAlternativeFlow(List<Flow> specificAlternativeFlows)
         {
+            /*List<Node> specificSteps = new List<Node>();
+            FlowIdentifier specificIdentifier = new FlowIdentifier(FlowType.SpecificAlternative, id);
+
+            foreach (string step in steps)
+            {
+                specificSteps.Add(new Node(step, specificIdentifier));
+            }
+
+            List<Flow> tempList = new List<Flow>();
+            tempList.AddRange(this.SpecificAlternativeFlows);
+            tempList.Add(new Flow(specificIdentifier, postcondition, specificSteps, new List<ReferenceStep>() { referenceStep }));
+
+            this.SpecificAlternativeFlows = tempList;*/
+            this.SpecificAlternativeFlows = specificAlternativeFlows;
         }
 
         /// <summary>
@@ -182,8 +160,23 @@ namespace UseCaseCore.UcIntern
         /// <param name="id">The unique id of the flow.</param>
         /// <param name="steps">The steps of the flow.</param>
         /// <param name="postcondition">The postcondition text of the flow.</param>
-        public void AddGlobalAlternativeFlow(int id, List<string> steps, string postcondition)
+        //// public void AddGlobalAlternativeFlow(int id, List<string> steps, string postcondition)
+        public void AddGlobalAlternativeFlow(List<Flow> globalAlternativeFlows)
         {
+            /*List<Node> globalSteps = new List<Node>();
+            FlowIdentifier globalIdentifier = new FlowIdentifier(FlowType.GlobalAlternative, id);
+
+            foreach (string step in steps)
+            {
+                globalSteps.Add(new Node(step, globalIdentifier));
+            }
+
+            List<Flow> tempList = new List<Flow>();
+            tempList.AddRange(this.GlobalAlternativeFlows);
+            tempList.Add(new Flow(globalIdentifier, postcondition, globalSteps, new List<ReferenceStep>()));
+
+            this.GlobalAlternativeFlows = tempList;*/
+            this.GlobalAlternativeFlows = globalAlternativeFlows;
         }
 
         /// <summary>
@@ -194,8 +187,23 @@ namespace UseCaseCore.UcIntern
         /// <param name="steps">The steps of the flow.</param>
         /// <param name="postcondition">The postcondition text of the flow.</param>
         /// <param name="referenceSteps">The reference steps of the bounded flow.</param>
-        public void AddBoundedAlternativeFlow(int id, List<string> steps, string postcondition, List<ReferenceStep> referenceSteps)
+        //// public void AddBoundedAlternativeFlow(int id, List<string> steps, string postcondition, List<ReferenceStep> referenceSteps)
+        public void AddBoundedAlternativeFlow(List<Flow> boundedAlternativeFlow)
         {
+            /*List<Node> boundedSteps = new List<Node>();
+            FlowIdentifier boundedIdentifier = new FlowIdentifier(FlowType.BoundedAlternative, id);
+
+            foreach (string step in steps)
+            {
+                boundedSteps.Add(new Node(step, boundedIdentifier));
+            }
+
+            List<Flow> tempList = new List<Flow>();
+            tempList.AddRange(this.BoundedAlternativeFlows);
+            tempList.Add(new Flow(boundedIdentifier, postcondition, boundedSteps, referenceSteps));
+
+            this.BoundedAlternativeFlows = tempList;*/
+            this.BoundedAlternativeFlows = boundedAlternativeFlow;
         }
 
         /// <summary>
@@ -206,6 +214,66 @@ namespace UseCaseCore.UcIntern
         /// </summary>
         public void BuildGraph()
         {
+            Flow basicFlow = this.BasicFlow;
+            List<Node> nodes;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            GraphBuilder.BuildGraph(
+                ref basicFlow,
+                this.SpecificAlternativeFlows,
+                this.GlobalAlternativeFlows,
+                this.BoundedAlternativeFlows,
+                out nodes,
+                out edgeMatrix,
+                out conditionMatrix);
+
+            this.BasicFlow = basicFlow;
+            this.Nodes = nodes;
+            this.EdgeMatrix = edgeMatrix;
+            this.ConditionMatrix = conditionMatrix;
+        }
+
+        /// <summary>
+        /// Prints the edges of the matrix into the console, that are equal to the match object.
+        /// Output: {row} -> {column}
+        /// </summary>
+        /// <typeparam name="T">The matrix contents type.</typeparam>
+        /// <param name="matrix">The matrix.</param>
+        /// <param name="matchObject">The object whose edges from the matrix will be printed.</param>
+        public void PrintEdges<T>(Matrix<T> matrix, T matchObject)
+        {
+            for (int row = 0; row < matrix.RowCount; row++)
+            {
+                for (int column = 0; column < matrix.ColumnCount; column++)
+                {
+                    if (matrix[row, column].Equals(matchObject))
+                    {
+                        System.Console.WriteLine($"{row} -> {column}");
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Prints the edges of the matrix into the console, that are not equal to the match object.
+        /// Output: {row} -> {column}
+        /// </summary>
+        /// <typeparam name="T">The matrix contents type.</typeparam>
+        /// <param name="matrix">The matrix.</param>
+        /// <param name="matchObject">The object whose edges from the matrix will not be printed.</param>
+        public void PrintEdgesInverse<T>(Matrix<T> matrix, T matchObject)
+        {
+            for (int row = 0; row < matrix.RowCount; row++)
+            {
+                for (int column = 0; column < matrix.ColumnCount; column++)
+                {
+                    if (!matrix[row, column].Equals(matchObject))
+                    {
+                        System.Console.WriteLine($"{row} -> {column}");
+                    }
+                }
+            }
         }
     }
 }

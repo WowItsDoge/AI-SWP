@@ -314,5 +314,230 @@ namespace UseCaseTest.UcIntern
                     Row<object> row = new Row<object>(columnCount, null);
                 });
         }
+
+        /// <summary>
+        /// Tests the memory saving behaviour of the row.
+        /// For that purpose the matrix is slowly filled and emptied again with a object different from the standard return object.
+        /// While doing that the entry count is monitored.
+        /// The test is executed for different types of generic arguments that are: ValueTypes, Nullable ValueTypes and ReferenceTypes
+        /// </summary>
+        [Test]
+        public void TestMemorySavingBehaviour()
+        {
+            this.TestMemorySavingBehaviour<bool>(false, true);
+            this.TestMemorySavingBehaviour<bool?>(null, true);
+            this.TestMemorySavingBehaviour<object>(new object(), new object());
+        }
+
+        /// <summary>
+        /// Tests the memory saving behaviour of the row.
+        /// For that purpose the row is slowly filled and emptied again with a object different from the standard return object.
+        /// While doing that the entry count is monitored.
+        /// Make sure the standard return object and the fill object differ.
+        /// </summary>
+        /// <typeparam name="T">The type of the row that is to be tested.</typeparam>
+        /// <param name="standardReturnObject">The object set as standard return object in the row.</param>
+        /// <param name="fillObject">The object with which the row is filled.</param>
+        public void TestMemorySavingBehaviour<T>(T standardReturnObject, T fillObject)
+        {
+            Assert.AreNotEqual(standardReturnObject, fillObject);
+
+            // Arrange
+            int columnCount = 2;
+            Row<T> row = new Row<T>(columnCount, standardReturnObject);
+
+            // Fill
+            for (int column = 0; column < row.ColumnCount; column++)
+            {
+                row[column] = fillObject;
+                Assert.AreEqual(column + 1, row.EntryCount);
+            }
+
+            // Empty
+            for (int column = 0; column < row.ColumnCount; column++)
+            {
+                row[column] = standardReturnObject;
+                Assert.AreEqual(row.ColumnCount - (column + 1), row.EntryCount);
+            }
+        }
+
+        /// <summary>
+        /// Sets the value in a row and changes it.
+        /// </summary>
+        [Test]
+        public void ReassignEntryToNewValue()
+        {
+            // Arrange
+            int oldValue = 2,
+                newValue = 51;
+            Row<int> row = new Row<int>(2, 0);
+
+            // Act
+            row[0] = oldValue;
+            row[0] = newValue;
+
+            // Assert
+            Assert.AreEqual(newValue, row[0]);
+        }
+
+        /// <summary>
+        /// Checks if the standard return object is identified correctly when setting it to a entry.
+        /// For the scenario imagine that you have an class instance whose Equals method returns true if executed with the standard return object.
+        /// This object is assigned to an entry. Now you get the element from the row and change it. For the test to succeed now the
+        /// standard return object is not allowed to have changed.
+        /// </summary>
+        [Test]
+        public void IdentifyStandardReturnObjectOnSet()
+        {
+            // Arrange
+            Test t = new Test() { i = 0 },
+                srt = new Test() { i = 0 };
+            Row<Test> row = new Row<Test>(2, srt);
+
+            // Act
+            row[0] = t;
+            row[0].i++;
+
+            // Assert
+            Assert.AreEqual(0, srt.i);
+        }
+
+        internal class Test
+        {
+            public int i;
+
+            public override bool Equals(object obj)
+            {
+                return obj is Test && i == ((Test)obj).i;
+            }
+
+            public override int GetHashCode()
+            {
+                return 1;
+            }
+        }
+
+        /// <summary>
+        /// Compares a row with an object instance.
+        /// </summary>
+        [Test]
+        public void CompareRowToObject()
+        {
+            // Arrange
+            Row<object> r = new Row<object>(5, null);
+
+            // Act
+
+            // Assert
+            Assert.IsFalse(r.Equals(new object()));
+        }
+
+        /// <summary>
+        /// Compares a row with null.
+        /// </summary>
+        [Test]
+        public void CompareRowToNull()
+        {
+            // Arrange
+            Row<object> r = new Row<object>(5, null);
+
+            // Act
+
+            // Assert
+            Assert.IsFalse(r.Equals(null));
+        }
+
+        /// <summary>
+        /// Compares two rows that are equal.
+        /// </summary>
+        [Test]
+        public void CompareEqualRows()
+        {
+            // Arrange
+            Row<object> r1 = new Row<object>(5, null),
+                r2 = new Row<object>(5, null);
+            object o = new object();
+            r1[1] = o;
+            r2[1] = o;
+
+            // Act
+
+            // Assert
+            Assert.IsTrue(r1.Equals(r2));
+        }
+
+        /// <summary>
+        /// Compares two rows with different column count.
+        /// </summary>
+        [Test]
+        public void CompareEntriesDifferentColumnCount()
+        {
+            // Arrange
+            Row<object> r1 = new Row<object>(4, null),
+                r2 = new Row<object>(5, null);
+            object o = new object();
+            r1[1] = o;
+            r2[1] = o;
+
+            // Act
+
+            // Assert
+            Assert.IsFalse(r1.Equals(r2));
+        }
+
+        /// <summary>
+        /// Compares two rows with different standard return object.
+        /// </summary>
+        [Test]
+        public void CompareEntriesDifferentStandardReturnObject()
+        {
+            // Arrange
+            Row<object> r1 = new Row<object>(5, new object()),
+                r2 = new Row<object>(5, new object());
+            object o = new object();
+            r1[1] = o;
+            r2[1] = o;
+
+            // Act
+
+            // Assert
+            Assert.IsFalse(r1.Equals(r2));
+        }
+
+        /// <summary>
+        /// Compares two rows with different entries.
+        /// </summary>
+        [Test]
+        public void CompareEntriesDifferentEntries()
+        {
+            // Arrange
+            Row<object> r1 = new Row<object>(5, null),
+                r2 = new Row<object>(5, null);
+            r1[1] = new object();
+            r2[2] = new object();
+
+            // Act
+
+            // Assert
+            Assert.IsFalse(r1.Equals(r2));
+        }
+
+        /// <summary>
+        /// Tests the hash of two differing row objects.
+        /// </summary>
+        [Test]
+        public void GetHashOfDifferentObjects()
+        {
+            // Arrange
+            Row<object> r1 = new Row<object>(6, null),
+                r2 = new Row<object>(5, new object());
+            r1[1] = new object();
+            r2[2] = new object();
+
+            // Act
+
+            // Assert
+            Assert.AreNotEqual(r1.GetHashCode(), r2.GetHashCode());
+        }
     }
 }

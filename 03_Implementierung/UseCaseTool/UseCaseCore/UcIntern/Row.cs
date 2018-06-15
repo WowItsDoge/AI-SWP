@@ -6,6 +6,7 @@ namespace UseCaseCore.UcIntern
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     /// <summary>
     /// The row of a matrix with its entries.
@@ -86,21 +87,21 @@ namespace UseCaseCore.UcIntern
         /// <summary>
         /// Gets or sets the content of an entry.
         /// </summary>
-        /// <param name="index">The index of the entry.</param>
+        /// <param name="columnIndex">The index of the entry.</param>
         /// <returns>The content of the entry.</returns>
         /// <exception cref="ArgumentOutOfRangeException">If the index is less than 0 or greater or equal to the column count.</exception>
         /// <exception cref="InvalidOperationException">If the row is readonly.</exception>
-        public T this[int index]
+        public T this[int columnIndex]
         {
             get
             {
-                this.TestIndex(index);
+                this.TestIndex(columnIndex);
 
-                Entry<T> entry = this.SearchEntry(index);
+                List<Entry<T>> entries = this.Entries.Where((e) => e.ColumnIndex == columnIndex).ToList();
 
-                if (entry != null)
+                if (entries.Count > 0)
                 {
-                    return entry.Content;
+                    return entries[0].Content;
                 }
                 else
                 {
@@ -110,16 +111,27 @@ namespace UseCaseCore.UcIntern
 
             set
             {
-                this.TestIndex(index);
+                this.TestIndex(columnIndex);
 
                 if (this.IsReadonly)
                 {
                     throw new InvalidOperationException("The row is readonly!");
                 }
 
-                Entry<T> entry = this.SearchEntry(index);
+                List<Entry<T>> entries = this.Entries.Where((e) => e.ColumnIndex == columnIndex).ToList();
 
-                if (entry == null)
+                if (entries.Count > 0)
+                {
+                    if (this.IsEqualToStandardReturnObject(value))
+                    {
+                        this.Entries.Remove(entries[0]);
+                    }
+                    else
+                    {
+                        entries[0].Content = value;
+                    }
+                }
+                else
                 {
                     if (this.IsEqualToStandardReturnObject(value))
                     {
@@ -127,20 +139,10 @@ namespace UseCaseCore.UcIntern
                     else
                     {
                         // Create a new entry and insert it into its correct position in the list.
-                        entry = new Entry<T>(index, value);
-                        int insertIndex = this.FindFreePositionForEntryInList(index);
-                        this.Entries.Insert(insertIndex, entry);
-                    }
-                }
-                else
-                {
-                    if (this.IsEqualToStandardReturnObject(value))
-                    {
-                        this.Entries.Remove(entry);
-                    }
-                    else
-                    {
-                        entry.Content = value;
+                        Entry<T> newEntry = new Entry<T>(columnIndex, value);
+                        List<Entry<T>> entriesWithSmallerColumnIndex = this.Entries.Where((e) => e.ColumnIndex < columnIndex).ToList();
+                        int insertIndex = entriesWithSmallerColumnIndex.Count;
+                        this.Entries.Insert(insertIndex, newEntry);
                     }
                 }
             }
@@ -166,8 +168,8 @@ namespace UseCaseCore.UcIntern
         /// Tests if the given object has the same value (if T is a value type)
         /// or reference (if T is not a value type) as the standard return object.
         /// </summary>
-        /// <param name="obj">The object for which equality is tested with the standard retrun object.</param>
-        /// <returns>If the obj is equal to the standard return object on the basis descibed above.</returns>
+        /// <param name="obj">The object for which equality is tested with the standard return object.</param>
+        /// <returns>If <paramref name="obj"/> is equal to the standard return object on the basis described above.</returns>
         public bool IsEqualToStandardReturnObject(T obj)
         {
             if (obj == null)
@@ -184,73 +186,45 @@ namespace UseCaseCore.UcIntern
         }
 
         /// <summary>
+        /// Determines whether the specified object is equal to the current object.
+        /// </summary>
+        /// <param name="obj">The object to compare with the current object.</param>
+        /// <returns>true if the specified object is equal to the current object; otherwise, false.</returns>
+        public override bool Equals(object obj)
+        {
+            if (obj == null || this.GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            Row<T> entry = (Row<T>)obj;
+
+            // Use Equals to compare instance variables.
+            return object.Equals(this.ColumnCount, entry.ColumnCount) && object.Equals(this.StandardReturnObject, entry.StandardReturnObject) && this.Entries.SequenceEqual(entry.Entries);
+        }
+
+        /// <summary>
+        /// Serves as the default hash function.
+        /// </summary>
+        /// <returns>A hash code for the current object.</returns>
+        public override int GetHashCode()
+        {
+            return BitShifter.ShiftAndWrap(this.ColumnCount.GetHashCode(), 1)
+                ^ BitShifter.ShiftAndWrap(this.StandardReturnObject?.GetHashCode() ?? 1, 1)
+                ^ this.Entries?.GetHashCode() ?? 0;
+        }
+
+        /// <summary>
         /// Tests if the index is out of the column range and throws an exception if so.
         /// </summary>
-        /// <param name="index">The index to be tested for the valid range.</param>
+        /// <param name="columnIndex">The index to be tested for the valid range.</param>
         /// <exception cref="ArgumentOutOfRangeException">If the index is less than 0 or greater or equal to the column count.</exception>
-        private void TestIndex(int index)
+        private void TestIndex(int columnIndex)
         {
-            if (index < 0 || index >= this.ColumnCount)
+            if (columnIndex < 0 || columnIndex >= this.ColumnCount)
             {
-                throw new ArgumentOutOfRangeException(nameof(index), "The index must be in the range 0 (included) to " + this.ColumnCount + " (excluded)!");
+                throw new ArgumentOutOfRangeException(nameof(columnIndex), "The index must be in the range 0 (included) to " + this.ColumnCount + " (excluded)!");
             }
-        }
-
-        /// <summary>
-        /// Searches for an entry for a specific index.
-        /// </summary>
-        /// <param name="index">The index to search for.</param>
-        /// <returns>The corresponding entry object or null if the index is not used.</returns>
-        private Entry<T> SearchEntry(int index)
-        {
-            Entry<T> returnEntry = null;
-
-            // Search for the first index that exceeds or is equal to the searched index.
-            // If the index is matched the selected entry contains valid content that can be returned.
-            // Otherwise there is no entry object for the index so the standard return object can be returned.
-            // In both cases the search can be aborted.
-            foreach (Entry<T> entry in this.Entries)
-            {
-                if (entry.ColumnIndex >= index)
-                {
-                    if (entry.ColumnIndex == index)
-                    {
-                        returnEntry = entry;
-                    }
-
-                    break;
-                }
-            }
-
-            return returnEntry;
-        }
-
-        /// <summary>
-        /// Finds the index index where to insert a new entry with an column index that not yet exists in the list.
-        /// </summary>
-        /// <param name="index">The new column index.</param>
-        /// <returns>The index where to insert the new entry and -1 if the index is column index is already in the list.</returns>
-        private int FindFreePositionForEntryInList(int index)
-        {
-            Entry<T> entry;
-            int pos;
-
-            for (pos = 0; pos < this.Entries.Count; pos++)
-            {
-                entry = this.Entries[pos];
-
-                if (entry.ColumnIndex >= index)
-                {
-                    if (entry.ColumnIndex == index)
-                    {
-                        return -1;
-                    }
-
-                    break;
-                }
-            }
-
-            return pos;
         }
     }
 }

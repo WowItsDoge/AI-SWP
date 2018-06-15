@@ -9,41 +9,88 @@ namespace UseCaseCore.UcIntern
     /// <summary>
     /// An object representing a flow with its unique identifier and its postcondition as a string.
     /// </summary>
-    public class Flow
+    public struct Flow
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Flow"/> class. 
+        /// Gets the identifier of the flow.
+        /// </summary>
+        public readonly FlowIdentifier Identifier;
+
+        /// <summary>
+        /// Gets the postcondition of the flow.
+        /// </summary>
+        public readonly string Postcondition;
+
+        /// <summary>
+        /// Gets the nodes of the flow.
+        /// </summary>
+        public readonly IReadOnlyList<Node> Nodes;
+
+        /// <summary>
+        /// Gets the reference steps of the flow.
+        /// </summary>
+        public readonly IReadOnlyList<ReferenceStep> ReferenceSteps;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Flow"/> struct. 
         /// </summary>
         /// <param name="identifier">The identifier of the flow.</param>
         /// <param name="postcondition">The postcondition of the flow.</param>
         /// <param name="nodes">The nodes of the flow</param>
         /// <param name="referenceSteps">The reference steps of the flow.</param>
-        public Flow(FlowIdentifier identifier, string postcondition, List<Node> nodes, List<ReferenceStep> referenceSteps)
+        public Flow(FlowIdentifier identifier, string postcondition, IReadOnlyList<Node> nodes, IReadOnlyList<ReferenceStep> referenceSteps)
         {
             this.Identifier = identifier;
             this.Postcondition = postcondition;
-            this.Nodes = nodes.AsReadOnly();
-            this.ReferenceSteps = referenceSteps.AsReadOnly();
+            this.Nodes = nodes;
+            this.ReferenceSteps = referenceSteps;
         }
 
         /// <summary>
-        /// Gets the identifier of the flow.
+        /// Tests if <paramref name="x"/> is equal to <paramref name="y"/>.
         /// </summary>
-        public FlowIdentifier Identifier { get; }
+        /// <param name="x">The first object to be compared.</param>
+        /// <param name="y">The second object to be compared.</param>
+        /// <returns>If <paramref name="x"/> is equal to <paramref name="y"/>.</returns>
+        public static bool operator ==(Flow x, Flow y)
+        {
+            return x.Identifier == y.Identifier
+                && x.Postcondition == y.Postcondition
+                && ReferenceEquals(x.Nodes, y.Nodes)
+                && ReferenceEquals(x.ReferenceSteps, y.ReferenceSteps);
+        }
 
         /// <summary>
-        /// Gets the postcondition of the flow.
+        /// Tests if <paramref name="x"/> is not equal to <paramref name="y"/>.
         /// </summary>
-        public string Postcondition { get; }
+        /// <param name="x">The first object to be compared.</param>
+        /// <param name="y">The second object to be compared.</param>
+        /// <returns>If <paramref name="x"/> is not equal to <paramref name="y"/>.</returns>
+        public static bool operator !=(Flow x, Flow y)
+        {
+            return !(x == y);
+        }
 
         /// <summary>
-        /// Gets the nodes of the flow.
+        /// Determines whether the specified object is equal to the current object.
         /// </summary>
-        public IList<Node> Nodes { get; }
+        /// <param name="obj">The object to compare with the current object.</param>
+        /// <returns>true if the specified object is equal to the current object; otherwise, false.</returns>
+        public override bool Equals(object obj)
+        {
+            return obj is Flow && this == (Flow)obj;
+        }
 
         /// <summary>
-        /// Gets the reference steps of the flow.
+        /// Serves as the default hash function.
         /// </summary>
-        public IList<ReferenceStep> ReferenceSteps { get; }
+        /// <returns>A hash code for the current object.</returns>
+        public override int GetHashCode()
+        {
+            return BitShifter.ShiftAndWrap(this.Identifier.GetHashCode(), 3)
+                ^ BitShifter.ShiftAndWrap(this.Postcondition?.GetHashCode() ?? 0, 2)
+                ^ BitShifter.ShiftAndWrap(this.Nodes?.GetHashCode() ?? 0, 1)
+                ^ this.ReferenceSteps?.GetHashCode() ?? 0;
+        }
     }
 }

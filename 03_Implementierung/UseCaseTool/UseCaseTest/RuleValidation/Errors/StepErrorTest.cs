@@ -5,6 +5,7 @@
 namespace UseCaseTest.RuleValidation.Errors
 {
     using NUnit.Framework;
+    using UseCaseCore.RuleValidation.Errors;
 
     /// <summary>
     /// Test class for the StepError
@@ -13,19 +14,19 @@ namespace UseCaseTest.RuleValidation.Errors
     public class StepErrorTest
     {
         /// <summary>
-        /// Tests the constructor of the class.
-        /// </summary>
-        [Test]
-        public void StepErrorConstrTest()
-        {
-        }
-
-        /// <summary>
         /// Produces a string, continuing all the information of the error.
         /// </summary>
         [Test]
-        public void GetErrorStringTest()
+        public void GetStepErrorStringTest()
         {
+            var errorMessage = "Das ist ein Fehler!";
+            var resolveMessage = "Zur Lösung bitte das machen...";
+            var referenceStep = 1;
+            var stepError = new StepError(referenceStep, resolveMessage, errorMessage);
+
+            var expectedResult = "Error in Step " + referenceStep + ": " + errorMessage + "\t" + resolveMessage + "\n";
+
+            Assert.IsTrue(stepError.ToString() == expectedResult);
         }
     }
 }

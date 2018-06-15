@@ -6,6 +6,7 @@ namespace UseCaseTool
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
@@ -19,6 +20,7 @@ namespace UseCaseTool
     using System.Windows.Navigation;
     using System.Windows.Shapes;
     using UseCaseCore.ScenarioMatrix;
+    using UseCaseCore.UcIntern;
 
     /// <summary>
     /// Interaction logic for MatrixControl.xaml
@@ -31,51 +33,42 @@ namespace UseCaseTool
         public MatrixControl()
         {
             this.InitializeComponent();
-
-            // Beispieldaten
-            // List<Scenario> scenarios = new List<Scenario> { new Scenario(1, "K1;K2;K3"), new Scenario(2, "K1;K2;K4"), new Scenario(3, "K1;K2;K5") };
-            // this.Draw(scenarios);
+            this.scenarios = new List<Scenario>();
+            this.matrixGrid.ItemsSource = this.Scenarios;
+            this.matrixGrid.RowEditEnding += MatrixGrid_RowEditEnding;
         }
+
+        public event Action<Scenario> MatrixChangedByUser;
+
+        private void MatrixGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
+        {
+            if(this.MatrixChangedByUser != null)
+            {
+                this.MatrixChangedByUser(((Scenario)e.Row.Item));
+            }
+        }
+
+        /// <summary>
+        /// List of scenarios to be displayed
+        /// </summary>
+        private List<Scenario> scenarios;
         
+        public List<Scenario> Scenarios
+        {
+            get { return scenarios; }
+            set { scenarios = value; }
+        }
+                
         /// <summary>
         /// Draws the scenario matrix
         /// </summary>
         /// <param name="scenarios"> scenarios to be drawn in the matrix </param>
         public void Draw(List<Scenario> scenarios)
         {
-            foreach (Scenario s in scenarios)
-            {
-                this.AddTableRow(s);
-            }
+            this.Scenarios.Clear();
+            this.Scenarios.AddRange(scenarios);
+            Dispatcher.Invoke(() => { matrixGrid.Items.Refresh(); });
         }
-
-        /// <summary>
-        /// Adds a table row with a given scenario to the scenario matrix
-        /// </summary>
-        /// <param name="s"> scenario to be included in the matrix table </param>
-        private void AddTableRow(Scenario s)
-        {            
-            var rowGroup = this.MatrixTable.RowGroups.Last();
-
-            if (rowGroup != null)
-            {
-                TableRow row = new TableRow();
-
-                TableCell cell = new TableCell();
-                cell.BorderThickness = new Thickness(1);
-                cell.BorderBrush = Brushes.Black;
-
-                cell.Blocks.Add(new Paragraph(new Run("Szenario " + s.ScenarioID.ToString())));
-                row.Cells.Add(cell);
-
-                cell = new TableCell();
-                cell.BorderThickness = new Thickness(1);
-                cell.BorderBrush = Brushes.Black;
-                cell.Blocks.Add(new Paragraph(new Run(s.Description.ToString())));
-                row.Cells.Add(cell);
-                
-                rowGroup.Rows.Add(row);
-            }
-        }
+        
     }
 }

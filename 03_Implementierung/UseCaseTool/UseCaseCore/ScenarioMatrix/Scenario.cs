@@ -18,11 +18,6 @@ namespace UseCaseCore.ScenarioMatrix
     public class Scenario
     {
         /// <summary>
-        /// Identifies each Scenario
-        /// </summary>
-        private int scenarioID;
-
-        /// <summary>
         /// Describes which steps get executed in what order
         /// </summary>
         private string description;
@@ -33,12 +28,21 @@ namespace UseCaseCore.ScenarioMatrix
         private List<Node> nodes;
 
         /// <summary>
+        /// Id of the scenario
+        /// </summary>
+        private int id;
+
+        /// <summary>
+        /// User defined comment to a scenario
+        /// </summary>
+        private string comment;
+
+        /// <summary>
         /// Initializes a new instance of the Scenario class
         /// </summary>
-        /// <param name="newID"> ID for the Scenario </param>
-        public Scenario(int newID)
+        public Scenario()
         {
-            this.ScenarioID = newID;
+            this.description = string.Empty;
             this.nodes = new List<Node>();
         }
 
@@ -48,20 +52,11 @@ namespace UseCaseCore.ScenarioMatrix
         /// <param name="s"> scenario that gets copied </param>
         public Scenario(Scenario s)
         {
-            this.scenarioID = s.scenarioID;
+            this.description = s.Description;
             this.nodes = new List<Node>();
             s.nodes.ForEach(n => this.nodes.Add(n));
         }
         
-        /// <summary>
-        /// Gets or sets ScenarioID
-        /// </summary>
-        public int ScenarioID
-        {
-            get { return this.scenarioID; }
-            set { this.scenarioID = value; }
-        }
-
         /// <summary>
         /// Gets or sets Nodes
         /// </summary>
@@ -78,6 +73,24 @@ namespace UseCaseCore.ScenarioMatrix
         {
             get { return this.description; }
             set { this.description = value; }
+        }
+        
+        /// <summary>
+        /// Gets or sets the scenario id
+        /// </summary>
+        public int ID
+        {
+            get { return this.id; }
+            set { this.id = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the comment
+        /// </summary>
+        public string Comment
+        {
+            get { return this.comment; }
+            set { this.comment = value; }
         }        
     }
 }

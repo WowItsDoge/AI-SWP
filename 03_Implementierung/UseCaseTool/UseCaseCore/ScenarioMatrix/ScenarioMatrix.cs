@@ -6,6 +6,7 @@ namespace UseCaseCore.ScenarioMatrix
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
@@ -23,9 +24,9 @@ namespace UseCaseCore.ScenarioMatrix
         private List<Scenario> scenarios;
 
         /// <summary>
-        ///  Sets the Cycledepth that defines how many times an alternative flow may be repeated
+        ///  Sets the cycle depth that defines how many times an alternative flow may be repeated
         /// </summary>
-        private int cycleDepth;
+        private uint cycleDepth;
 
         /// <summary>
         /// Sets the Use Case from which the scenarios get created
@@ -37,12 +38,18 @@ namespace UseCaseCore.ScenarioMatrix
         /// </summary>
         /// <param name="uc"> UseCase from which the scenarios get created </param>
         /// <param name="cycleDepth"> CycleDepth defined by the GUI </param>
-        public ScenarioMatrix(UseCase uc, int cycleDepth = 1)
+        public ScenarioMatrix(UseCase uc, uint cycleDepth = 1)
         {
             this.uc = uc;
             this.scenarios = new List<Scenario>();
-            this.CycleDepth = cycleDepth;
+            this.cycleDepth = cycleDepth;
+            
         }
+
+        /// <summary>
+        /// Event that fires when new Scenarios were created
+        /// </summary>
+        public event Action<List<Scenario>> ScenariosCreated;
 
         /// <summary>
         /// Gets or sets the Use Case from which the scenarios get created
@@ -56,41 +63,20 @@ namespace UseCaseCore.ScenarioMatrix
         /// <summary>
         /// Gets or sets CycleDepth
         /// </summary>
-        private int CycleDepth
+        public uint CycleDepth
         {
-            get { return this.cycleDepth; }
-            set { this.cycleDepth = value; }
-        }
-
-        /// <summary>
-        /// Changes the CycleDepth with a given value. Negative values get ignored. If the value changed, scenarios get recalculated
-        /// </summary>
-        /// <param name="newCycleDepth"> new value for cycleDepth</param>
-        public void ChangeCycleDepth(int newCycleDepth)
-        {
-            // If negative cycledepth or same value return
-            if (newCycleDepth < 0 || newCycleDepth == this.CycleDepth)
+            get
             {
-                return;
+                return this.cycleDepth;
             }
 
-            this.CycleDepth = newCycleDepth;
-            this.CreateScenarios();
+            set
+            {
+                this.cycleDepth = value;
+                this.CreateScenarios();
+            }
         }
         
-        /// <summary>
-        /// Initializes the ScenarioMatrix
-        /// </summary>
-        /// <param name="uc"> Reference to the UseCase from which the scenarios should be created </param>
-        /// <returns> Returns true if successful Initialization</returns>
-        public bool Initialize(UseCase uc)
-        {
-            this.uc = uc; 
-
-            // this.CreateScenarios();
-            return true; // TOCHANGE
-        }
-
         /// <summary>
         /// Exports the ScenarioMatrix to a given path
         /// </summary>
@@ -98,7 +84,41 @@ namespace UseCaseCore.ScenarioMatrix
         /// <returns> Returns true if successful </returns>
         public bool Export(string path)
         {
-            return true;
+            if (path == null) 
+            {
+                return false;
+            }
+
+            bool exportResult = false;
+            try
+            {
+                using (StreamWriter sw = new StreamWriter(path, false))
+                {
+                    sw.WriteLine("Scenario Matrix:");
+                    sw.WriteLine(string.Empty);
+                    int i = 1;
+                    foreach (Scenario s in this.scenarios)
+                    {
+                        if(s.Comment != null || s.Comment == string.Empty)
+                        {
+                            sw.WriteLine("// " + s.Comment);                            
+                        }
+                        sw.WriteLine("Scenario " + i.ToString() + ": " + s.Description);
+                        sw.WriteLine("");
+                        i++;
+                    }
+
+                    sw.Close();
+                }
+
+                exportResult = true;
+            }
+            catch
+            {
+                exportResult = false;
+            }
+                           
+            return exportResult;
         }
 
         /// <summary>
@@ -110,6 +130,45 @@ namespace UseCaseCore.ScenarioMatrix
             return this.scenarios;
         }
         
+        /// <summary>
+        /// Creates the Scenarios to the current UseCase
+        /// </summary>
+        /// <returns> Returns true if more than 0 scenarios were found </returns>
+        public bool CreateScenarios()
+        {
+            if (this.uc == null || this.uc.Nodes.Count == 0)
+            {
+                return false;
+            }
+
+            this.scenarios = new List<Scenario>(); // Clear all old scenarios to create new ones
+
+            Scenario s = new Scenario();            
+            s.Nodes.Add(this.uc.Nodes[0]); // Startknoten hinzufügen
+            s.Description += "Step 1, ";
+
+            this.TraverseGraphRec(this.uc.EdgeMatrix, 0, s, this.CycleDepth);
+            this.EnmuerateScenarioIds();
+
+            this.CreateMatrix();
+            return true;
+        }
+        
+        /// <summary>
+        /// Updates a Scenarios Comment
+        /// </summary>
+        /// <param name="newScenario"> new scenario to replace the old one </param>
+        public void UpdateScenarioComment(Scenario newScenario)
+        {
+            foreach(Scenario s in this.scenarios)
+            {
+                if(s.ID == newScenario.ID)
+                {
+                    s.Comment = newScenario.Comment;
+                }
+            }
+        }
+
         /// <summary>
         /// Returns the amount of Edges from node1 to node2 in a scenario
         /// </summary>
@@ -129,19 +188,18 @@ namespace UseCaseCore.ScenarioMatrix
                 .Where(x => x.i > 0)
                 .Where(x => x.n.Equals(node2) && s.Nodes[x.i - 1].Equals(node1)).Count();            
         }
-        
-        /// <summary>
-        /// Calculates all scenarios
-        /// </summary>
-        private void CreateScenarios()
-        {
-            if (this.uc == null)
-            {
-                return;
-            }
 
-            this.scenarios = new List<Scenario>(); // Clear all old scenarios to create new ones
-            this.TraverseGraphRec(this.uc.EdgeMatrix, 0, new Scenario(this.scenarios.Count), this.CycleDepth);
+        /// <summary>
+        /// Gives every Scenario an ID > 1
+        /// </summary>
+        private void EnmuerateScenarioIds()
+        {
+            int i = 1;
+            foreach (Scenario s in this.scenarios)
+            {
+                s.ID = i;
+                i++;
+            }
         }
 
         /// <summary>
@@ -149,23 +207,36 @@ namespace UseCaseCore.ScenarioMatrix
         /// </summary>
         private void CreateMatrix()
         {
-            // TODO
+            if (this.ScenariosCreated != null) 
+            {
+                this.ScenariosCreated(this.scenarios);
+            }
         }
 
         /// <summary>
         /// Traverses the graph recursively, while finding all possible paths through the graph
         /// </summary>
-        /// <param name="matrix"> Edgematrix representing the graph </param>
+        /// <param name="matrix"> Edge matrix representing the graph </param>
         /// <param name="startnode"> Node from which the traversing starts </param>
         /// <param name="s"> scenario up to the current node </param>
-        /// <param name="cycleDepth"> maximum cycledepth for the scenarios </param>
-        private void TraverseGraphRec(Matrix<bool> matrix, int startnode, Scenario s, int cycleDepth)
+        /// <param name="cycleDepth"> maximum cycle depth for the scenarios </param>
+        private void TraverseGraphRec(Matrix<bool> matrix, int startnode, Scenario s, uint cycleDepth)
         { 
-            int stepsFound = 0;
-            Scenario savedScenario = s;
+            int stepsFound = CountEdgesPerRow(matrix, startnode);
+
+            // If no next steps were found for the current steps, the scenario is finished and can be added to the list
+            if (stepsFound == 0)
+            {
+                s.Description = Regex.Replace(s.Description, "(.*),", "$1"); // Remove last comma
+                this.scenarios.Add(s);
+                return;
+            }
+
+            Scenario savedScenario = new Scenario(s);
+
             for (int i = 0; i < matrix.ColumnCount; i++)
             {
-                if (matrix[startnode][i] == true)
+                if (matrix[startnode, i] == true) 
                 {
                     if (ContainedEdges(this.uc.Nodes[startnode], this.uc.Nodes[i], s) >= cycleDepth)
                     {
@@ -173,21 +244,36 @@ namespace UseCaseCore.ScenarioMatrix
                     }
 
                     // Add current node to the scenario and increase of found steps from the previous node
-                    s.Nodes.Add(this.uc.Nodes[i]); 
-                    stepsFound++;
+                    s.Nodes.Add(this.uc.Nodes[i]);
+                    s.Description += "Step" + (i + 1).ToString() + ", ";
 
                     this.TraverseGraphRec(matrix, i, s, cycleDepth);
+                    
+                    if (stepsFound < 2) return;
 
                     // Continue with old scenario 
-                    s = savedScenario;
+                    s = new Scenario(savedScenario);
                 }
             }
+        }
 
-            // If no next steps were found for the current steps, the scenario is finished and can be added to the list
-            if (stepsFound == 0)
+        /// <summary>
+        /// Counts amount of child nodes from a starting node (row in a matrix)
+        /// </summary>
+        /// <param name="matrix"> edge matrix of this use case </param>
+        /// <param name="row"> row representing the current node </param>
+        /// <returns> returns the amount of child nodes / edges </returns>
+        private static int CountEdgesPerRow(Matrix<bool> matrix, int row)
+        {
+            int amount = 0;
+            for (int i = 0; i < matrix.ColumnCount; i++)
             {
-                this.scenarios.Add(s);
+                if (matrix[row, i] == true)
+                {
+                    amount++;
+                }
             }
+            return amount;
         }
     }
 }

@@ -5,6 +5,7 @@
 namespace UseCaseTest.RuleValidation.Errors
 {
     using NUnit.Framework;
+    using UseCaseCore.RuleValidation.Errors;
 
     /// <summary>
     /// Test class for the FlowError
@@ -13,19 +14,19 @@ namespace UseCaseTest.RuleValidation.Errors
     public class FlowErrorTest
     {
         /// <summary>
-        /// Tests the constructor of the class.
-        /// </summary>
-        [Test]
-        public void FlowErrorConstrTest()
-        {
-        }
-
-        /// <summary>
         /// Produces a string, continuing all the information of the error.
         /// </summary>
         [Test]
-        public void GetErrorStringTest()
+        public void GetFlowErrorStringTest()
         {
+            var errorMessage = "Das ist ein Fehler!";
+            var resolveMessage = "Zur Lösung bitte das machen...";
+            var referenceflow = 1;
+            var flowError = new FlowError(referenceflow, resolveMessage, errorMessage);
+
+            var expectedResult = "Error in Flow " + referenceflow + ": " + errorMessage + "\t" + resolveMessage + "\n";
+
+            Assert.IsTrue(flowError.ToString() == expectedResult);
         }
     }
 }

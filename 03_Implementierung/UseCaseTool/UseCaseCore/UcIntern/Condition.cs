@@ -13,10 +13,20 @@ namespace UseCaseCore.UcIntern
     /// One describing the edge that is valid if the condition is true and one to describe if the condition is false.
     /// Sadly there can be multiple valid conditions for the edges leaving a node.Then the right edge must be determined in the context.
     /// </summary>
-    public class Condition
+    public struct Condition
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Condition"/> class.
+        /// Gets the condition text.
+        /// </summary>
+        public readonly string ConditionText;
+
+        /// <summary>
+        /// Gets a value indicating whether the condition text is true.
+        /// </summary>
+        public readonly bool ConditionState;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Condition"/> struct.
         /// </summary>
         /// <param name="conditionText">The condition text.</param>
         /// <param name="conditionState">The condition state.</param>
@@ -27,13 +37,46 @@ namespace UseCaseCore.UcIntern
         }
 
         /// <summary>
-        /// Gets the condition text.
+        /// Tests if <paramref name="x"/> is equal to <paramref name="y"/>.
         /// </summary>
-        public string ConditionText { get; }
+        /// <param name="x">The first object to be compared.</param>
+        /// <param name="y">The second object to be compared.</param>
+        /// <returns>If <paramref name="x"/> is equal to <paramref name="y"/>.</returns>
+        public static bool operator ==(Condition x, Condition y)
+        {
+            return x.ConditionText == y.ConditionText
+                && x.ConditionState == y.ConditionState;
+        }
 
         /// <summary>
-        /// Gets a value indicating whether the condition text is true.
+        /// Tests if <paramref name="x"/> is not equal to <paramref name="y"/>.
         /// </summary>
-        public bool ConditionState { get; }
+        /// <param name="x">The first object to be compared.</param>
+        /// <param name="y">The second object to be compared.</param>
+        /// <returns>If <paramref name="x"/> is not equal to <paramref name="y"/>.</returns>
+        public static bool operator !=(Condition x, Condition y)
+        {
+            return !(x == y);
+        }
+
+        /// <summary>
+        /// Determines whether the specified object is equal to the current object.
+        /// </summary>
+        /// <param name="obj">The object to compare with the current object.</param>
+        /// <returns>true if the specified object is equal to the current object; otherwise, false.</returns>
+        public override bool Equals(object obj)
+        {
+            return obj is Condition && this == (Condition)obj;
+        }
+
+        /// <summary>
+        /// Serves as the default hash function.
+        /// </summary>
+        /// <returns>A hash code for the current object.</returns>
+        public override int GetHashCode()
+        {
+            return BitShifter.ShiftAndWrap(this.ConditionText?.GetHashCode() ?? 0, 1)
+                ^ this.ConditionState.GetHashCode();
+        }
     }
 }

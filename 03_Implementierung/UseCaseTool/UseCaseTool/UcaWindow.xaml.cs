@@ -4,10 +4,15 @@
 
 namespace UseCaseTool
 {
+    using System;
+    using System.Collections.Generic;
     using System.Windows;
+    using System.Windows.Input;
     using MahApps.Metro.Controls;
     using Microsoft.Win32;
-    using System.Windows.Input;
+    using UseCaseCore.Controller;
+    using UseCaseCore.RuleValidation.Errors;
+    using UseCaseCore.ScenarioMatrix;
 
     /// <summary>
     /// Interaction logic for MainWindow
@@ -23,7 +28,7 @@ namespace UseCaseTool
         /// Save the export directory
         /// </summary>
         private string importDirectory = string.Empty;
-        
+
         /// <summary>
         /// /// Save the export directory
         /// </summary>
@@ -40,8 +45,96 @@ namespace UseCaseTool
         public UcaWindow()
         {
             this.DataContext = this.controller;
+            this.controller.ScenariosCreated += this.Controller_ScenariosCreated;
+            this.controller.GraphCreated += this.Controller_GraphCreated;
+            this.controller.WriteErrorReport += this.Controller_WriteErrorReport;
             this.InitializeComponent();
+
+            this.MatrixControl.MatrixChangedByUser += this.MatrixControl_MatrixChangedByUser;
+            this.ErrorList = new List<IError>();
+            errorGrid.ItemsSource = this.ErrorList;
         }
+
+        /// <summary>
+        /// Event that fires when the Matrix in the GUI got changed by the user
+        /// </summary>
+        public event Action<Scenario> MatrixChangedByUser;       
+
+        /// <summary>
+        /// Gets or sets the list of errors
+        /// </summary>
+        public List<IError> ErrorList { get; set; }
+
+        /// <summary>
+        /// Create the error list
+        /// </summary>
+        /// <param name="obj">Error list</param>
+        private void Controller_WriteErrorReport(List<UseCaseCore.RuleValidation.Errors.IError> obj)
+        {
+            foreach (var error in obj)
+            {
+                this.ErrorList.Add(error);
+            }
+
+            Dispatcher.Invoke(() => { errorGrid.Items.Refresh(); });
+        }
+
+        /// <summary>
+        /// When new scenarios were created, draw them with the Matrix Control
+        /// </summary>
+        /// <param name="obj">The list of scenarios</param>
+        private void Controller_ScenariosCreated(System.Collections.Generic.List<UseCaseCore.ScenarioMatrix.Scenario> obj)
+        {
+            this.MatrixControl.Draw(obj);
+        }
+
+        /// <summary>
+        /// Matrix on GUI got changed by user
+        /// </summary>
+        /// <param name="obj">A Scenario matrix</param>
+        private void MatrixControl_MatrixChangedByUser(UseCaseCore.ScenarioMatrix.Scenario obj)
+        {
+            this.controller.UpdateScenario(obj);
+        }
+        
+        /// <summary>
+        /// When new Graph was created, draw it with Graph Control
+        /// </summary>
+        /// <param name="useCase">The current useCase</param>
+        /// <returns>returns if it was successful</returns>
+        private bool Controller_GraphCreated(UseCaseCore.UcIntern.UseCase useCase)
+        {
+            var success = this.GraphControl.UpdateGraphView(useCase);
+
+            //// UpdateGraphScrollbar();
+
+            //// GraphControl.GraphVisualisationChanged += GraphControl_GraphVisualisationChanged;
+
+            return success;
+        }
+
+        /*
+        private void GraphControl_GraphVisualisationChanged(object sender, EventArgs e)
+        {
+            UpdateGraphScrollbar();
+        }
+
+        private void UpdateGraphScrollbar()
+        {
+            var rangeX = GraphControl.GetGraphRangeX();
+            var rangeY = GraphControl.GetGraphRangeY();
+
+            Dispatcher.Invoke(() => {
+                ScrollbarX.Minimum = rangeX.Item1;
+                ScrollbarX.Maximum = rangeX.Item2;
+                ScrollbarY.Minimum = rangeY.Item1;
+                ScrollbarY.Maximum = rangeY.Item2;
+
+                ScrollbarY.Value = GraphControl.GetGraphY();
+                ScrollbarX.Value = GraphControl.GetGraphX();
+            });
+        }
+        */
 
         /// <summary>
         /// Button to open the dialog with which you can select the file
@@ -59,10 +152,20 @@ namespace UseCaseTool
 
             if (openXmlFileDialog.FileName != string.Empty)
             {
-                selectedFile.Text = openXmlFileDialog.FileName;
+                var result = openXmlFileDialog.FileName.Substring(openXmlFileDialog.FileName.Length - 40);
+                selectedFile.Text = string.Concat(" ... ", result);
                 this.controller.CurrentXmlFilePath(openXmlFileDialog.FileName);
-                ////selectedFile.TextAlignment = TextAlignment.Right;
             }
+        }
+
+        /// <summary>
+        /// Button to cancel the process
+        /// </summary>
+        /// <param name="sender">The sender</param>
+        /// <param name="e">The e</param>
+        private void CancelButtonClick(object sender, RoutedEventArgs e)
+        {
+            this.controller.CancelOperation();
         }
 
         /// <summary>
@@ -72,7 +175,7 @@ namespace UseCaseTool
         /// <param name="e">The e</param>
         private void CloseClick(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show("Programm wirklich schließen?", "Bestätigung", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (MessageBox.Show("Wollen Sie das Programm wirklich schließen?", "Bestätigung", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 this.Close();
             }
@@ -102,7 +205,6 @@ namespace UseCaseTool
         {
             mainGrid.ColumnDefinitions[0].Width = new GridLength(this.oldWidth);
             GridColumn0.Visibility = Visibility.Visible;
-
             sidebarShow.Visibility = Visibility.Collapsed;
             sidebarHide.Visibility = Visibility.Visible;
         }
@@ -143,7 +245,7 @@ namespace UseCaseTool
         {
             SaveFileDialog saveFileDialogReport = new SaveFileDialog();
 
-            saveFileDialogReport.Filter = "PDF files (*.pdf)|*.pdf";
+            saveFileDialogReport.Filter = "Textdatei (*.txt)|*.txt";
             saveFileDialogReport.RestoreDirectory = true;
 
             saveFileDialogReport.ShowDialog();
@@ -152,7 +254,7 @@ namespace UseCaseTool
         }
 
         /// <summary>
-        /// Button to show infos
+        /// Button to show info
         /// </summary>
         /// <param name="sender">The sender</param>
         /// <param name="e">The e</param>
@@ -168,7 +270,7 @@ namespace UseCaseTool
         /// <param name="e">The e</param>
         private void ChangeLanguageClick(object sender, RoutedEventArgs e)
         {
-            ////
+            //// wenn noch viel Zeit is...............
         }
 
         /// <summary>
@@ -178,7 +280,7 @@ namespace UseCaseTool
         /// <param name="e">The e</param>
         private void ZoomIn_Click(object sender, RoutedEventArgs e)
         {
-            GraphView.Zoom(1.2);
+            this.GraphControl.Zoom(1.2);
         }
 
         /// <summary>
@@ -188,12 +290,36 @@ namespace UseCaseTool
         /// <param name="e">The e</param>
         private void ZoomOut_Click(object sender, RoutedEventArgs e)
         {
-            GraphView.Zoom(0.8);
+            this.GraphControl.Zoom(0.8);
         }
 
-        private void TabItem_KeyUp(object sender, KeyEventArgs e)
+        /// <summary>
+        /// Chance cycle depth value
+        /// </summary>
+        /// <param name="sender">The sender</param>
+        /// <param name="e">The e</param>
+        private void NumericUpDownValueChanged(object sender, RoutedPropertyChangedEventArgs<double?> e)
         {
-            GraphView.Move(10, 0);
+            this.controller.ChangeCycleDepth((uint)CycleDepth.Value);
         }
+
+        private void ZoomAll_Click(object sender, RoutedEventArgs e)
+        {
+            this.GraphControl.UpdateGraphView();
+        }
+
+        private void ScrollbarX_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            GraphControl.SetPosition(ScrollbarX.Value, ScrollbarY.Value);
+        }
+
+        private void ScrollbarY_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            GraphControl.SetPosition(ScrollbarX.Value, ScrollbarY.Value);
+        }
+
+        //// ToDo...
+        //// - Reset Mängelbericht
+        //// - ... 
     }
 }

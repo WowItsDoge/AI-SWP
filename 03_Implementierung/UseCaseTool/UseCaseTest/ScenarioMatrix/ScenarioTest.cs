@@ -26,7 +26,7 @@ namespace UseCaseTest.ScenarioMatrix
         [Test]
         public void CopyConstructor_ListReferences_NotEqual()
         {
-            Scenario s1 = new Scenario(1);
+            Scenario s1 = new Scenario();
             Node n1 = new Node("Schritt 1", new FlowIdentifier(FlowType.Basic, 1));
             Node n2 = new Node("Schritt 2", new FlowIdentifier(FlowType.Basic, 1));
             Node n3 = new Node("Schritt 3", new FlowIdentifier(FlowType.Basic, 1));
@@ -43,6 +43,29 @@ namespace UseCaseTest.ScenarioMatrix
             s1.Nodes.Add(n5);
 
             Assert.AreNotEqual(s1.Nodes.Count(), s2.Nodes.Count());
+        }
+
+        /// <summary>
+        /// Set Scenario nodes to another list of nodes
+        /// </summary>
+        [Test]
+        public void Set_Nodes_Successful()
+        {
+            Node n1 = new Node("Schritt 1", new FlowIdentifier(FlowType.Basic, 1));
+            Node n2 = new Node("Schritt 2", new FlowIdentifier(FlowType.Basic, 1));
+
+            List<Node> nodes = new List<Node>();
+            nodes.Add(n1);
+            nodes.Add(n2);
+
+            Scenario s = new Scenario();
+            s.Nodes.Add(n1);
+
+            Assert.AreEqual(s.Nodes.Count, 1);
+
+            s.Nodes = nodes;
+            Assert.AreEqual(s.Nodes.Count, 2);
+
         }
     }
 }

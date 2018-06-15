@@ -25,26 +25,36 @@
 
 
         <Grid x:Name="GridColumn0" Grid.Column="0" Grid.Row="1" Grid.RowSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <Button x:Name="openButton" Content="Öffnen" HorizontalAlignment="Left" Height="28" Margin="10,10,0,0" VerticalAlignment="Top" Width="125" Click="OpenButtonClick"/>
-            <Button x:Name="cancelButton" Content="Abbrechen" HorizontalAlignment="Left" Height="28" Margin="151,10,0,0" VerticalAlignment="Top" Width="125" IsEnabled="False"/>
+            <Button x:Name="openButton" Content="Öffnen" HorizontalAlignment="Left" Height="28" Margin="10,10,0,0" VerticalAlignment="Top" Width="125" Click="OpenButtonClick" Style="{StaticResource AccentedSquareButtonStyle}"/>
+            <Button x:Name="cancelButton" Content="Abbrechen" HorizontalAlignment="Left" Height="28" Margin="151,10,0,0" VerticalAlignment="Top" Width="125" Click="CancelButtonClick" IsEnabled="{Binding Path=ButtonEnabled}" Style="{StaticResource AccentedSquareButtonStyle}"/>
             <Button x:Name="sidebarHide" HorizontalAlignment="Left" Margin="290,-10,-10,-10" VerticalAlignment="Stretch" Height="20" Click="SidebarHideClick" BorderThickness="0" Background="#41B1E1" Content="Seitenleiste ausblenden" FontWeight="Medium" Foreground="White" VerticalContentAlignment="Bottom">
                 <Button.LayoutTransform>
                     <RotateTransform Angle="90"/>
                 </Button.LayoutTransform>
             </Button>
 
-            <TextBlock x:Name="selectedFile" FontSize="14" HorizontalAlignment="Left" Height="24" Margin="10,52,0,0" TextWrapping="Wrap" Text="keine Datei ausgewählt..." VerticalAlignment="Top" Width="275" Focusable="True"/>
+            <TextBlock x:Name="selectedFile" FontSize="12" HorizontalAlignment="Left" Height="24" Margin="10,52,0,0" TextWrapping="NoWrap" Text="keine Datei ausgewählt..." VerticalAlignment="Top" Width="275" Focusable="True"/>
             <GroupBox x:Name="Ablauf" Header="Ablauf" Margin="10,90,0,10" HorizontalAlignment="Left" Width="266">
                 <Grid>
-                    <Label x:Name="labelFileImportProgress" Content="Datei einlesen..." HorizontalAlignment="Left" Margin="10,15,0,0" VerticalAlignment="Top" Width="236" FontSize="16" FontWeight="DemiBold" Foreground="{Binding Path=ForegroundColor}"/>
-                    <Image x:Name="imageOK1" HorizontalAlignment="Left" Height="29" Margin="210,15,0,0" VerticalAlignment="Top" Width="30" Source="/images/ok.png" Visibility="{Binding Path=VisibilityOk}"/>
-                    <Image x:Name="imageFail1" HorizontalAlignment="Left" Height="29" Margin="210,15,0,0" VerticalAlignment="Top" Width="30" Source="/images/fail.png" Visibility="{Binding Path=VisibilityFail}"/>
+                    <Label x:Name="labelImportProgress" Content="Datei eingelesen" HorizontalAlignment="Left" Margin="10,15,0,0" VerticalAlignment="Top" Width="236" FontSize="16" FontWeight="DemiBold" Background="{Binding Path=BackgroundColor1}" Foreground="White"/>
+                    <Image x:Name="imageOK1" HorizontalAlignment="Left" Height="29" Margin="210,15,0,0" VerticalAlignment="Top" Width="30" Source="/images/ok.png" Visibility="{Binding Path=VisibilityOk1}"/>
+                    <Image x:Name="imageFail1" HorizontalAlignment="Left" Height="29" Margin="210,15,0,0" VerticalAlignment="Top" Width="30" Source="/images/fail.png" Visibility="{Binding Path=VisibilityFail1}"/>
 
-                    <Label x:Name="labelUcValidProgress" Content="Use-Case validieren..." HorizontalAlignment="Left" Margin="10,55,0,0" VerticalAlignment="Top" Width="236" FontSize="16" FontWeight="DemiBold" Foreground="#41B1E1"/>
+                    <Label x:Name="labelValiProgress" Content="Use-Case validiert" HorizontalAlignment="Left" Margin="10,55,0,0" VerticalAlignment="Top" Width="236" FontSize="16" FontWeight="DemiBold" Background="{Binding Path=BackgroundColor2}" Foreground="White"/>
+                    <Image x:Name="imageOK2" HorizontalAlignment="Left" Height="29" Margin="210,55,0,0" VerticalAlignment="Top" Width="30" Source="/images/ok.png" Visibility="{Binding Path=VisibilityOk2}"/>
+                    <Image x:Name="imageFail2" HorizontalAlignment="Left" Height="29" Margin="210,55,0,0" VerticalAlignment="Top" Width="30" Source="/images/fail.png" Visibility="{Binding Path=VisibilityFail2}"/>
 
-                    <Label x:Name="labelMatrixProgess" Content="Szenario-Matrix erstellen..." HorizontalAlignment="Left" Margin="10,95,0,0" VerticalAlignment="Top" Width="236" FontSize="16" FontWeight="DemiBold" Foreground="#41B1E1"/>
+                    <Label x:Name="labelReportProgess" Content="Mängelbericht erstellt" HorizontalAlignment="Left" Margin="10,95,0,0" VerticalAlignment="Top" Width="236" FontSize="16" FontWeight="DemiBold" Background="{Binding Path=BackgroundColor5}" Foreground="White"/>
+                    <Image x:Name="imageOK5" HorizontalAlignment="Left" Height="29" Margin="210,95,0,0" VerticalAlignment="Top" Width="30" Source="/images/ok.png" Visibility="{Binding Path=VisibilityOk5}"/>
+                    <Image x:Name="imageFail5" HorizontalAlignment="Left" Height="29" Margin="210,95,0,0" VerticalAlignment="Top" Width="30" Source="/images/fail.png" Visibility="{Binding Path=VisibilityFail5}"/>
 
-                    <Label x:Name="labelGraphProgress" Content="Graph erstellen..." HorizontalAlignment="Left" Margin="10,135,0,0" VerticalAlignment="Top" Width="236" FontSize="16" FontWeight="DemiBold" Foreground="#41B1E1"/>
+                    <Label x:Name="labelMatrixProgess" Content="Szenario-Matrix erstellt" HorizontalAlignment="Left" Margin="10,135,0,0" VerticalAlignment="Top" Width="236" FontSize="16" FontWeight="DemiBold" Background="{Binding Path=BackgroundColor3}" Foreground="White"/>
+                    <Image x:Name="imageOK3" HorizontalAlignment="Left" Height="29" Margin="210,135,0,0" VerticalAlignment="Top" Width="30" Source="/images/ok.png" Visibility="{Binding Path=VisibilityOk3}"/>
+                    <Image x:Name="imageFail3" HorizontalAlignment="Left" Height="29" Margin="210,135,0,0" VerticalAlignment="Top" Width="30" Source="/images/fail.png" Visibility="{Binding Path=VisibilityFail3}"/>
+
+                    <Label x:Name="labelGraphProgress" Content="Graph erstellt" HorizontalAlignment="Left" Margin="10,175,0,0" VerticalAlignment="Top" Width="236" FontSize="16" FontWeight="DemiBold" Background="{Binding Path=BackgroundColor4}" Foreground="White"/>
+                    <Image x:Name="imageOK4" HorizontalAlignment="Left" Height="29" Margin="210,175,0,0" VerticalAlignment="Top" Width="30" Source="/images/ok.png" Visibility="{Binding Path=VisibilityOk4}"/>
+                    <Image x:Name="imageFail4" HorizontalAlignment="Left" Height="29" Margin="210,175,0,0" VerticalAlignment="Top" Width="30" Source="/images/fail.png" Visibility="{Binding Path=VisibilityFail4}"/>
 
                 </Grid>
             </GroupBox>
@@ -57,16 +67,23 @@
                 </Button.LayoutTransform>
             </Button>
             <TabControl x:Name="tabControl" HorizontalAlignment="Stretch" Margin="34,10,10,10" VerticalAlignment="Stretch">
-
                 <TabItem Header="Mängelbericht">
-                    <Grid Background="#FFE5E5E5"/>
+                    <Grid Background="#FFE5E5E5">
+                        <DataGrid AutoGenerateColumns="False" Name="errorGrid" CanUserResizeColumns="True">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Width="1*" Header="Mängel" IsReadOnly="True" Binding="{Binding}"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
                 </TabItem>
                 <TabItem Header="Szenariomatrix">
                     <Grid Background="#FFE5E5E5">
-                        <UseCaseTool:MatrixControl/>
+                        <UseCaseTool:MatrixControl x:Name="MatrixControl"/>
+                        <Label x:Name="cycleDepth" Content="Zyklustiefe:" HorizontalAlignment="Right" Margin="0,0,60,0" VerticalAlignment="Bottom" Width="100" FontSize="16" Height="29"/>
+                        <Controls:NumericUpDown x:Name="CycleDepth" HorizontalAlignment="Right" Value="1" Minimum="1" Maximum="20" Interval="1" Margin="0,0,0,0" VerticalAlignment="Bottom" Height="15" ValueChanged="NumericUpDownValueChanged" IsEnabled="{Binding Path=MatrixCycleDepthEnabled}"/>
                     </Grid>
                 </TabItem>
-                <TabItem Header="Graph" KeyUp="TabItem_KeyUp">
+                <TabItem Header="Graph">
                     <Grid Background="#FFE5E5E5">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
@@ -76,23 +93,35 @@
                             <ColumnDefinition Width="35"/>
                         </Grid.ColumnDefinitions>
 
-                        <ScrollViewer HorizontalAlignment="Stretch" Grid.Column="0" VerticalAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Visible">
-                            <UseCaseTool:GraphViewerControl x:Name="GraphView"  Margin="0,0,0,0"/>
-                        </ScrollViewer>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
+                            <ScrollBar x:Name="ScrollbarX" Grid.Row="1" Grid.Column="0" Orientation="Horizontal" ValueChanged="ScrollbarX_ValueChanged"></ScrollBar>
+                            <ScrollBar x:Name="ScrollbarY" Grid.Row="0" Grid.Column="1" ValueChanged="ScrollbarY_ValueChanged"></ScrollBar>
 
-                        <Button x:Name="zoomAll" HorizontalAlignment="Left" Height="25" Margin="5,10,0,0" VerticalAlignment="Top" Width="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Grid.Row="0">
+                            <UseCaseTool:GraphViewerControl x:Name="GraphControl"  Margin="0,0,0,0" Grid.Row="0" Grid.Column="0"/>
+
+                        </Grid>
+
+                        <Button x:Name="zoomAll" HorizontalAlignment="Left" Height="25" Margin="5,10,0,0" VerticalAlignment="Top" Width="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Grid.Row="0"  Click="ZoomAll_Click" ToolTip="Gesamtansicht" IsEnabled="{Binding Path=GraphButtonsEnabled}">
                             <StackPanel>
                                 <Image Source="/images/home.png"/>
                             </StackPanel>
                         </Button>
 
-                        <Button x:Name="zoomIn" HorizontalAlignment="Left" Height="25" Margin="5,50,0,0" VerticalAlignment="Top" Width="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Click="ZoomIn_Click" >
+                        <Button x:Name="zoomIn" HorizontalAlignment="Left" Height="25" Margin="5,50,0,0" VerticalAlignment="Top" Width="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Click="ZoomIn_Click" ToolTip="Ansicht vergrößern" IsEnabled="{Binding Path=GraphButtonsEnabled}">
                             <StackPanel>
                                 <Image Source="/images/plus.png"/>
                             </StackPanel>
                         </Button>
 
-                        <Button x:Name="zoomOut" HorizontalAlignment="Left" Height="25" Margin="5,75,0,0" VerticalAlignment="Top" Width="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Click="ZoomOut_Click">
+                        <Button x:Name="zoomOut" HorizontalAlignment="Left" Height="25" Margin="5,75,0,0" VerticalAlignment="Top" Width="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Click="ZoomOut_Click" ToolTip="Ansicht verkleinern" IsEnabled="{Binding Path=GraphButtonsEnabled}">
                             <StackPanel>
                                 <Image Source="/images/minus.png"/>
                             </StackPanel>
@@ -135,13 +164,7 @@
                 <MenuItem Header="_Ansicht">
                     <MenuItem Header="_Sprache ändern" Click="ChangeLanguageClick">
                         <MenuItem.Icon>
-                            <Image Source="/images/world.png" Width="18" Height="18"/>
-                        </MenuItem.Icon>
-                    </MenuItem>
-                    <Separator/>
-                    <MenuItem Header="_noch andere Menüeinträge?">
-                        <MenuItem.Icon>
-                            <Image Source="/images/question.png" Width="20" Height="20"/>
+                            <Image Source="/images/language.png" Width="18" Height="18"/>
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
