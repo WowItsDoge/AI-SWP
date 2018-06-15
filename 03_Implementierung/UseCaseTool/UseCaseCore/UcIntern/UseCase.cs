@@ -214,12 +214,13 @@ namespace UseCaseCore.UcIntern
         /// </summary>
         public void BuildGraph()
         {
+            Flow basicFlow = this.BasicFlow;
             List<Node> nodes;
             Matrix<bool> edgeMatrix;
             Matrix<Condition?> conditionMatrix;
 
             GraphBuilder.BuildGraph(
-                this.BasicFlow,
+                ref basicFlow,
                 this.SpecificAlternativeFlows,
                 this.GlobalAlternativeFlows,
                 this.BoundedAlternativeFlows,
@@ -227,6 +228,7 @@ namespace UseCaseCore.UcIntern
                 out edgeMatrix,
                 out conditionMatrix);
 
+            this.BasicFlow = basicFlow;
             this.Nodes = nodes;
             this.EdgeMatrix = edgeMatrix;
             this.ConditionMatrix = conditionMatrix;

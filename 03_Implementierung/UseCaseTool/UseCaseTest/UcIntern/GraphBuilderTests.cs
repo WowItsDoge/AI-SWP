@@ -129,7 +129,38 @@ namespace UseCaseTest.UcIntern
             Matrix<Condition?> conditionMatrix;
 
             // Act
-            GraphBuilder.BuildGraph(basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+            
+            // Assert
+            Assert.AreEqual(allSteps, steps);
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+        }
+
+        [Test]
+        public void BuildEmptyBasic()
+        {
+            // Arrange
+            List<Node> allSteps = new List<Node>();
+
+            List<Node> basicSteps = new List<Node>();
+            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
+            allSteps.AddRange(basicSteps);
+
+            List<Flow> specificFlows = new List<Flow>();
+            List<Flow> globalFlows = new List<Flow>();
+            List<Flow> boundedFlows = new List<Flow>();
+
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+
+            List<Node> steps;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            // Act
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
 
             // Assert
             Assert.AreEqual(allSteps, steps);
@@ -180,7 +211,7 @@ namespace UseCaseTest.UcIntern
             Matrix<Condition?> conditionMatrix;
 
             // Act
-            GraphBuilder.BuildGraph(basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
 
             // Assert
             Assert.AreEqual(allSteps, steps);
@@ -236,7 +267,7 @@ namespace UseCaseTest.UcIntern
             Matrix<Condition?> conditionMatrix;
 
             // Act
-            GraphBuilder.BuildGraph(basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
 
             // Assert
             Assert.AreEqual(allSteps, steps);
@@ -278,13 +309,16 @@ namespace UseCaseTest.UcIntern
             expectedEdgeMatrix[4, 1] = true;
 
             Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[0, 3] = new Condition(globalSteps[0].StepDescription, true);
+            expectedConditionMatrix[1, 3] = new Condition(globalSteps[0].StepDescription, true);
+            expectedConditionMatrix[2, 3] = new Condition(globalSteps[0].StepDescription, true);
 
             List<Node> steps;
             Matrix<bool> edgeMatrix;
             Matrix<Condition?> conditionMatrix;
 
             // Act
-            GraphBuilder.BuildGraph(basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
             
             // Assert
             Assert.AreEqual(allSteps, steps);
@@ -342,19 +376,27 @@ namespace UseCaseTest.UcIntern
             expectedEdgeMatrix[8,10] = true;
             expectedEdgeMatrix[10,11] = true;
 
-            //Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[0, 1] = new Condition(basicSteps[0].StepDescription, true);
+            expectedConditionMatrix[0,6] = new Condition(basicSteps[0].StepDescription, false);
+            expectedConditionMatrix[3,4] = new Condition(basicSteps[3].StepDescription, true);
+            expectedConditionMatrix[3,6] = new Condition(basicSteps[3].StepDescription, false);
+            expectedConditionMatrix[6,7] = new Condition(allSteps[6].StepDescription, true);
+            expectedConditionMatrix[6,8] = new Condition(allSteps[6].StepDescription, false);
+            expectedConditionMatrix[8,9] = new Condition(allSteps[8].StepDescription, true);
+            expectedConditionMatrix[8,10] = new Condition(allSteps[8].StepDescription, false);
 
             List<Node> steps;
             Matrix<bool> edgeMatrix;
             Matrix<Condition?> conditionMatrix;
 
             // Act
-            GraphBuilder.BuildGraph(basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
-            this.PrintEdges(edgeMatrix, true);
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+            
             // Assert
             Assert.AreEqual(allSteps, steps);
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
-            //Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
         }
 
         [Test]
@@ -372,10 +414,13 @@ namespace UseCaseTest.UcIntern
             basicSteps.Add(new Node("ENDIF", flowIdentifierBasic));
             basicSteps.Add(new Node("He VALIDATES THAT it is correct!", flowIdentifierBasic));
             basicSteps.Add(new Node("I VALIDATES THAT I can't fly", flowIdentifierBasic));
-            basicSteps.Add(new Node("You VALIDTAES THAT clouds are falling", flowIdentifierBasic));
-            basicSteps.Add(new Node("Go home", flowIdentifierBasic));
+            basicSteps.Add(new Node("You VALIDATES THAT clouds are falling", flowIdentifierBasic));
+            basicSteps.Add(new Node("We VALIDATES THAT you go home", flowIdentifierBasic));
             Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
             allSteps.AddRange(basicSteps);
+
+            // automatically extended basic flow to not lose the last condition
+            allSteps.Add(new Node(string.Empty, flowIdentifierBasic));
 
             List<Flow> specificFlows = new List<Flow>();
 
@@ -421,12 +466,11 @@ namespace UseCaseTest.UcIntern
             boundedSteps2.Add(new Node("UNTIL there are peas on the floor", flowIdentifierBounded1));
             boundedSteps2.Add(new Node("ABORT", flowIdentifierBounded1));
             List<ReferenceStep> boundedReferenceSteps2 = new List<ReferenceStep>();
-            boundedReferenceSteps2.Add(new ReferenceStep(flowIdentifierBasic, 7));
-            boundedReferenceSteps2.Add(new ReferenceStep(flowIdentifierBasic, 8));
+            boundedReferenceSteps2.Add(new ReferenceStep(flowIdentifierBasic, 10));
             boundedFlows.Add(new Flow(flowIdentifierBounded1, null, boundedSteps2, boundedReferenceSteps2));
             allSteps.AddRange(boundedSteps2);
-
-            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(19, false);
+            
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
             // basic
             expectedEdgeMatrix[0,1] = true;
             expectedEdgeMatrix[0,2] = true;
@@ -438,57 +482,102 @@ namespace UseCaseTest.UcIntern
             expectedEdgeMatrix[6,7] = true;
             expectedEdgeMatrix[7,8] = true;
             expectedEdgeMatrix[8,9] = true;
+            expectedEdgeMatrix[9,10] = true;
 
             // specific/bounded
-            expectedEdgeMatrix[3,10] = true;
-            expectedEdgeMatrix[10,0] = true;
-            expectedEdgeMatrix[6,11] = true;
-            expectedEdgeMatrix[11,5] = true;
-            expectedEdgeMatrix[7,14] = true;
-            expectedEdgeMatrix[8,14] = true;
-            expectedEdgeMatrix[6,15] = true;
-            expectedEdgeMatrix[7, 15] = true;
-            expectedEdgeMatrix[15, 16] = true;
+            expectedEdgeMatrix[3,11] = true;
+            expectedEdgeMatrix[11,0] = true;
+            expectedEdgeMatrix[6,12] = true;
+            expectedEdgeMatrix[12,5] = true;
+            expectedEdgeMatrix[7,15] = true;
+            expectedEdgeMatrix[8,15] = true;
+            expectedEdgeMatrix[9, 16] = true;
             expectedEdgeMatrix[16, 17] = true;
-            expectedEdgeMatrix[17, 15] = true;
             expectedEdgeMatrix[17, 18] = true;
+            expectedEdgeMatrix[18, 16] = true;
+            expectedEdgeMatrix[18, 19] = true;
 
             // globals
-            expectedEdgeMatrix[0,12] = true;
-            expectedEdgeMatrix[1,12] = true;
-            expectedEdgeMatrix[2,12] = true;
-            expectedEdgeMatrix[3,12] = true;
-            expectedEdgeMatrix[4, 12] = true;
-            expectedEdgeMatrix[5, 12] = true;
-            expectedEdgeMatrix[6, 12] = true;
-            expectedEdgeMatrix[7, 12] = true;
-            expectedEdgeMatrix[8, 12] = true;
-            expectedEdgeMatrix[9, 12] = true;
-
             expectedEdgeMatrix[0,13] = true;
-            expectedEdgeMatrix[1, 13] = true;
-            expectedEdgeMatrix[2, 13] = true;
-            expectedEdgeMatrix[3, 13] = true;
+            expectedEdgeMatrix[1,13] = true;
+            expectedEdgeMatrix[2,13] = true;
+            expectedEdgeMatrix[3,13] = true;
             expectedEdgeMatrix[4, 13] = true;
             expectedEdgeMatrix[5, 13] = true;
             expectedEdgeMatrix[6, 13] = true;
             expectedEdgeMatrix[7, 13] = true;
             expectedEdgeMatrix[8, 13] = true;
             expectedEdgeMatrix[9, 13] = true;
+            expectedEdgeMatrix[10, 13] = true;
 
-            //Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedEdgeMatrix[0,14] = true;
+            expectedEdgeMatrix[1, 14] = true;
+            expectedEdgeMatrix[2, 14] = true;
+            expectedEdgeMatrix[3, 14] = true;
+            expectedEdgeMatrix[4, 14] = true;
+            expectedEdgeMatrix[5, 14] = true;
+            expectedEdgeMatrix[6, 14] = true;
+            expectedEdgeMatrix[7, 14] = true;
+            expectedEdgeMatrix[8, 14] = true;
+            expectedEdgeMatrix[9, 14] = true;
+            expectedEdgeMatrix[10, 14] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            // basic
+            expectedConditionMatrix[0,1] = new Condition(allSteps[0].StepDescription, true);
+            expectedConditionMatrix[0,2] = new Condition(allSteps[0].StepDescription, false);
+            expectedConditionMatrix[3,4] = new Condition(allSteps[3].StepDescription, true);
+            expectedConditionMatrix[6,7] = new Condition(allSteps[6].StepDescription, true);
+            expectedConditionMatrix[7,8] = new Condition(allSteps[7].StepDescription, true);
+            expectedConditionMatrix[8,9] = new Condition(allSteps[8].StepDescription, true);
+            expectedConditionMatrix[9,10] = new Condition(allSteps[9].StepDescription, true);
+
+            // specific/bounded
+            expectedConditionMatrix[3,11] = new Condition(allSteps[3].StepDescription, false);
+            expectedConditionMatrix[6,12] = new Condition(allSteps[6].StepDescription, false);
+            expectedConditionMatrix[7,15] = new Condition(allSteps[7].StepDescription, false);
+            expectedConditionMatrix[8,15] = new Condition(allSteps[8].StepDescription, false);
+            expectedConditionMatrix[9,16] = new Condition(allSteps[9].StepDescription, false);
+
+            expectedConditionMatrix[18, 16] = new Condition(allSteps[18].StepDescription, false);
+            expectedConditionMatrix[18, 19] = new Condition(allSteps[18].StepDescription, true);
+
+            // global
+            expectedConditionMatrix[0,13] = new Condition(allSteps[13].StepDescription, true);
+            expectedConditionMatrix[1, 13] = new Condition(allSteps[13].StepDescription, true);
+            expectedConditionMatrix[2, 13] = new Condition(allSteps[13].StepDescription, true);
+            expectedConditionMatrix[3, 13] = new Condition(allSteps[13].StepDescription, true);
+            expectedConditionMatrix[4, 13] = new Condition(allSteps[13].StepDescription, true);
+            expectedConditionMatrix[5, 13] = new Condition(allSteps[13].StepDescription, true);
+            expectedConditionMatrix[6, 13] = new Condition(allSteps[13].StepDescription, true);
+            expectedConditionMatrix[7, 13] = new Condition(allSteps[13].StepDescription, true);
+            expectedConditionMatrix[8, 13] = new Condition(allSteps[13].StepDescription, true);
+            expectedConditionMatrix[9, 13] = new Condition(allSteps[13].StepDescription, true);
+            expectedConditionMatrix[10, 13] = new Condition(allSteps[13].StepDescription, true);
+
+            expectedConditionMatrix[0, 14] = new Condition(allSteps[14].StepDescription, true);
+            expectedConditionMatrix[1, 14] = new Condition(allSteps[14].StepDescription, true);
+            expectedConditionMatrix[2, 14] = new Condition(allSteps[14].StepDescription, true);
+            expectedConditionMatrix[3, 14] = new Condition(allSteps[14].StepDescription, true);
+            expectedConditionMatrix[4, 14] = new Condition(allSteps[14].StepDescription, true);
+            expectedConditionMatrix[5, 14] = new Condition(allSteps[14].StepDescription, true);
+            expectedConditionMatrix[6, 14] = new Condition(allSteps[14].StepDescription, true);
+            expectedConditionMatrix[7, 14] = new Condition(allSteps[14].StepDescription, true);
+            expectedConditionMatrix[8, 14] = new Condition(allSteps[14].StepDescription, true);
+            expectedConditionMatrix[9, 14] = new Condition(allSteps[14].StepDescription, true);
+            expectedConditionMatrix[10, 14] = new Condition(allSteps[14].StepDescription, true);
 
             List<Node> steps;
             Matrix<bool> edgeMatrix;
             Matrix<Condition?> conditionMatrix;
 
             // Act
-            GraphBuilder.BuildGraph(basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
-            PrintEdges(edgeMatrix, true);
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+            
             // Assert
             Assert.AreEqual(allSteps, steps);
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
-            //Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
         }
 
         // --------------------------------------------------------------------------------------------- SetEdgesInNodeBlock
@@ -559,6 +648,7 @@ namespace UseCaseTest.UcIntern
             List<InternalEdge> possibleInvalidIfEdges;
             List<Tuple<int, Condition?>> exitSteps;
             Matrix<Condition?> conditonMatrix;
+
             GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps, out conditonMatrix);
 
             // Assert
@@ -1003,7 +1093,7 @@ namespace UseCaseTest.UcIntern
             nodes.Add(new Node("DO", flowIdentifierBasic));                         // 0
                 nodes.Add(new Node("Stamp on the ground", flowIdentifierBasic));    // 1
                 nodes.Add(new Node("Jump in the air", flowIdentifierBasic));        // 2
-            nodes.Add(new Node("UNTIL you are not tired", flowIdentifierBasic));    // 3
+            nodes.Add(new Node("UNTIL you are tired", flowIdentifierBasic));        // 3
             Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(4, false);
             expectedEdgeMatrix[0, 1] = true;
             expectedEdgeMatrix[1, 2] = true;
@@ -1012,7 +1102,7 @@ namespace UseCaseTest.UcIntern
             List<ExternalEdge> expectedExternalEdges = new List<ExternalEdge>();
             List<InternalEdge> expectedPossibleInvalidIfEdges = new List<InternalEdge>();
             List<Tuple<int, Condition?>> expectedExitSteps = new List<Tuple<int, Condition?>>();
-            expectedExitSteps.Add(new Tuple<int, Condition?>(3, null));
+            expectedExitSteps.Add(new Tuple<int, Condition?>(3, new Condition(nodes[3].StepDescription, true)));
 
             // Act
             Matrix<bool> edgeMatrix;
@@ -1040,7 +1130,7 @@ namespace UseCaseTest.UcIntern
             nodes.Add(new Node("DO", flowIdentifierBasic));                         // 0
                 nodes.Add(new Node("DO", flowIdentifierBasic));                     // 1
                     nodes.Add(new Node("Ask pin", flowIdentifierBasic));            // 2
-                nodes.Add(new Node("UNTIL pin is false", flowIdentifierBasic));     // 3
+                nodes.Add(new Node("UNTIL pin is true", flowIdentifierBasic));      // 3
                 nodes.Add(new Node("IF wants money THEN", flowIdentifierBasic));    // 4
                     nodes.Add(new Node("Give money", flowIdentifierBasic));         // 5
                 nodes.Add(new Node("ENDIF", flowIdentifierBasic));                  // 6
@@ -1062,7 +1152,7 @@ namespace UseCaseTest.UcIntern
             List<InternalEdge> expectedPossibleInvalidIfEdges = new List<InternalEdge>();
             expectedPossibleInvalidIfEdges.Add(new InternalEdge(4, 6));
             List<Tuple<int, Condition?>> expectedExitSteps = new List<Tuple<int, Condition?>>();
-            expectedExitSteps.Add(new Tuple<int, Condition?>(8, null));
+            expectedExitSteps.Add(new Tuple<int, Condition?>(8, new Condition(nodes[8].StepDescription, true)));
 
             // Act
             Matrix<bool> edgeMatrix;
