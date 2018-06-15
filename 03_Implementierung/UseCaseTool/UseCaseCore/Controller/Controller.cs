@@ -9,7 +9,9 @@ namespace UseCaseCore.Controller
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
+    using System.Threading.Tasks;
     using System.Windows;
+    using System.Windows.Forms;
     using System.Windows.Media;
     using RuleValidation.Errors;
     using RuleValidation.RucmRules;
@@ -17,8 +19,6 @@ namespace UseCaseCore.Controller
     using UseCaseCore.ScenarioMatrix;
     using UseCaseCore.UcIntern;
     using UseCaseCore.XmlParser;
-    using System.Threading.Tasks;
-    using System.Windows.Forms;
 
     /// <summary>
     /// Controller class
@@ -128,8 +128,8 @@ namespace UseCaseCore.Controller
         /// </summary>
         public Controller()
         {
-            ruleValidator = new RucmRuleValidator(RucmRuleRepository.Rules);
-            xmlParser = new XmlStructureParser(ruleValidator);
+            this.ruleValidator = new RucmRuleValidator(RucmRuleRepository.Rules);
+            this.xmlParser = new XmlStructureParser(this.ruleValidator);
         }
 
         /// <summary>
@@ -454,19 +454,19 @@ namespace UseCaseCore.Controller
         {
             if (this.currentFilePath != string.Empty)
             {
-                ResetPreviousContent();
+                this.ResetPreviousContent();
             }
 
-            currentFilePath = filePath;
+            this.currentFilePath = filePath;
             this.CancelButtonEnabled = true;
 
-            if (!backgroundWorkerValidFile.CancellationPending)
+            if (!this.backgroundWorkerValidFile.CancellationPending)
             {
                 this.backgroundWorkerLoadFile.WorkerSupportsCancellation = true;
-                this.backgroundWorkerLoadFile.DoWork += new DoWorkEventHandler(BackgroundWorkerLoadFile_DoWork);
+                this.backgroundWorkerLoadFile.DoWork += new DoWorkEventHandler(this.BackgroundWorkerLoadFile_DoWork);
             }
 
-            //this.CancelButtonEnabled = true;
+            //// this.CancelButtonEnabled = true;
 
             if (!this.backgroundWorkerLoadFile.IsBusy)
             {
@@ -521,7 +521,6 @@ namespace UseCaseCore.Controller
             {
                 MessageBox.Show("Keine Datei eingelesen.", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
         }
 
         /// <summary>
@@ -531,7 +530,7 @@ namespace UseCaseCore.Controller
         /// <param name="filePath">destination path for the defect report</param>
         public void ReportFilePath(string filePath)
         {
-            ////ToDo...
+            this.ruleValidator.Export(filePath);
         }
 
         /// <summary>
@@ -556,9 +555,9 @@ namespace UseCaseCore.Controller
         }
 
         /// <summary>
-        /// Update a Scenario with the hnew value from the GUI
+        /// Update a Scenario with the new value from the GUI
         /// </summary>
-        /// <param name="s"></param>
+        /// <param name="s">Scenario matrix</param>
         public void UpdateScenario(Scenario s)
         {
             this.matrix.UpdateScenarioComment(s);
@@ -575,16 +574,18 @@ namespace UseCaseCore.Controller
             this.BackgroundColor4 = new SolidColorBrush(Color.FromArgb(255, 65, 177, 255));
             this.BackgroundColor5 = new SolidColorBrush(Color.FromArgb(255, 65, 177, 255));
 
-            //ToDo: reset Fehlerbericht
+            //// ToDo: reset Fehlerbericht
             this.ruleValidator.Reset();
-            // neu zeichnen??!?!?!
 
-            this.backgroundWorkerLoadFile.DoWork -= new DoWorkEventHandler(BackgroundWorkerLoadFile_DoWork);
-            this.backgroundWorkerValidFile.DoWork -= new DoWorkEventHandler(BackgroundWorkerValidFile_DoWork);
-            this.backgroundWorkerGetErrorReport.DoWork -= new DoWorkEventHandler(BackgroundWorkerGetErrorReport_DoWork);
-            this.backgroundWorkerGenerateGraph.DoWork -= new DoWorkEventHandler(BackgroundWorkerGenerateGraph_DoWork);
-            this.backgroundWorkerGenerateMatrix.DoWork -= new DoWorkEventHandler(BackgroundWorkerGenerateMatrix_DoWork);
-            //...
+            //// neu zeichnen??!?!?!
+
+            this.backgroundWorkerLoadFile.DoWork -= new DoWorkEventHandler(this.BackgroundWorkerLoadFile_DoWork);
+            this.backgroundWorkerValidFile.DoWork -= new DoWorkEventHandler(this.BackgroundWorkerValidFile_DoWork);
+            this.backgroundWorkerGetErrorReport.DoWork -= new DoWorkEventHandler(this.BackgroundWorkerGetErrorReport_DoWork);
+            this.backgroundWorkerGenerateGraph.DoWork -= new DoWorkEventHandler(this.BackgroundWorkerGenerateGraph_DoWork);
+            this.backgroundWorkerGenerateMatrix.DoWork -= new DoWorkEventHandler(this.BackgroundWorkerGenerateMatrix_DoWork);
+
+            ////...
         }
 
         /// <summary>
@@ -594,16 +595,16 @@ namespace UseCaseCore.Controller
         /// <param name="e">The e</param>
         private void BackgroundWorkerLoadFile_DoWork(object sender, DoWorkEventArgs e)
         {
-            //Task.Delay(2000).Wait();
-            if ((!backgroundWorkerLoadFile.CancellationPending && !backgroundWorkerValidFile.CancellationPending))
+            //// Task.Delay(2000).Wait();
+            if (!this.backgroundWorkerLoadFile.CancellationPending && !this.backgroundWorkerValidFile.CancellationPending)
             {
-                if (this.xmlParser.LoadXmlFile(currentFilePath))
+                if (this.xmlParser.LoadXmlFile(this.currentFilePath))
                 {
                     this.BackgroundColor1 = Brushes.LimeGreen;
                     this.VisibilityOk1 = Visibility.Visible;
 
                     this.backgroundWorkerValidFile.WorkerSupportsCancellation = true;
-                    this.backgroundWorkerValidFile.DoWork += new DoWorkEventHandler(BackgroundWorkerValidFile_DoWork);
+                    this.backgroundWorkerValidFile.DoWork += new DoWorkEventHandler(this.BackgroundWorkerValidFile_DoWork);
 
                     if (!this.backgroundWorkerValidFile.IsBusy)
                     {
@@ -615,6 +616,14 @@ namespace UseCaseCore.Controller
                     this.BackgroundColor1 = Brushes.Red;
                     this.VisibilityFail1 = Visibility.Visible;
                     MessageBox.Show("Fehler beim Einlesen der Datei.", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                    this.ruleValidator.AddExternalError(this.xmlParser.GetError());
+                    ErrorReport errorReport = this.ruleValidator.GetErrorReport();
+                    List<IError> errorList = errorReport.GetErrorList;
+                    if (this.WriteErrorReport != null)
+                    {
+                        this.WriteErrorReport(errorList);
+                    }
                 }
             }
             else
@@ -630,10 +639,9 @@ namespace UseCaseCore.Controller
         /// <param name="e">The e</param>
         private void BackgroundWorkerValidFile_DoWork(object sender, DoWorkEventArgs e)
         {
-            //Task.Delay(2000).Wait();
-            if ((!backgroundWorkerValidFile.CancellationPending) && (!backgroundWorkerLoadFile.CancellationPending))
+            //// Task.Delay(2000).Wait();
+            if ((!this.backgroundWorkerValidFile.CancellationPending) && (!this.backgroundWorkerLoadFile.CancellationPending))
             {
-
                 if (this.xmlParser.ParseXmlFile(out this.useCase))
                 {
                     this.BackgroundColor2 = Brushes.LimeGreen;
@@ -643,9 +651,8 @@ namespace UseCaseCore.Controller
                 {
                     this.BackgroundColor2 = Brushes.Red;
                     this.VisibilityFail2 = Visibility.Visible;
-                    //MessageBox.Show("Fehler beim Validieren der Datei.", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-
+                    //// MessageBox.Show("Fehler beim Validieren der Datei.", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }   
 
                 this.backgroundWorkerGetErrorReport.DoWork += new DoWorkEventHandler(this.BackgroundWorkerGetErrorReport_DoWork);
                 this.backgroundWorkerGetErrorReport.WorkerSupportsCancellation = true;
@@ -668,17 +675,17 @@ namespace UseCaseCore.Controller
         /// <param name="e">The e</param>
         private void BackgroundWorkerGetErrorReport_DoWork(object sender, DoWorkEventArgs e)
         {
-            //Task.Delay(2000).Wait();
-            if ((!backgroundWorkerGetErrorReport.CancellationPending) && (!backgroundWorkerValidFile.CancellationPending) && (!backgroundWorkerLoadFile.CancellationPending))
+            //// Task.Delay(2000).Wait();
+            if ((!this.backgroundWorkerGetErrorReport.CancellationPending) && (!this.backgroundWorkerValidFile.CancellationPending) && (!this.backgroundWorkerLoadFile.CancellationPending))
             {
-                //this.ruleValidator.AddExternalError("Beispiel Fehler");
+                //// this.ruleValidator.AddExternalError("Beispiel Fehler");
                 ErrorReport errorReport = this.ruleValidator.GetErrorReport();
                 List<IError> errorList = errorReport.GetErrorList;
                 if (errorList.Count > 0)
                 {
                     this.BackgroundColor5 = Brushes.Red;
                     this.VisibilityFail5 = Visibility.Visible;
-                    MessageBox.Show("Fehler in UseCase aufgetreten. Mängelbericht für weitere Infos abrufen.", "Fehler" , MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Fehler in UseCase aufgetreten. Mängelbericht für weitere Infos abrufen.", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 else
                 {
@@ -721,10 +728,10 @@ namespace UseCaseCore.Controller
         /// <param name="e">The e</param>
         private void BackgroundWorkerGenerateGraph_DoWork(object sender, DoWorkEventArgs e)
         {
-            //Task.Delay(2000).Wait();
-            if ((!backgroundWorkerGenerateGraph.CancellationPending) && (!backgroundWorkerValidFile.CancellationPending) && (!backgroundWorkerLoadFile.CancellationPending))
+            //// Task.Delay(2000).Wait();
+            if ((!this.backgroundWorkerGenerateGraph.CancellationPending) && (!this.backgroundWorkerValidFile.CancellationPending) && (!this.backgroundWorkerLoadFile.CancellationPending))
             {
-                if(this.GraphCreated(this.useCase))
+                if (this.GraphCreated(this.useCase))
                 {
                     this.BackgroundColor4 = Brushes.LimeGreen;
                     this.VisibilityOk4 = Visibility.Visible;
@@ -750,8 +757,8 @@ namespace UseCaseCore.Controller
         /// <param name="e">The e</param>
         private void BackgroundWorkerGenerateMatrix_DoWork(object sender, DoWorkEventArgs e)
         {
-            //Task.Delay(2000).Wait();
-            if ((!backgroundWorkerGenerateMatrix.CancellationPending) && (!backgroundWorkerValidFile.CancellationPending) && (!backgroundWorkerLoadFile.CancellationPending))
+            //// Task.Delay(2000).Wait();
+            if ((!this.backgroundWorkerGenerateMatrix.CancellationPending) && (!this.backgroundWorkerValidFile.CancellationPending) && (!this.backgroundWorkerLoadFile.CancellationPending))
             {
                 this.matrix = new ScenarioMatrix(this.useCase, this.currentCycleDepth);
                 this.matrix.ScenariosCreated += this.Matrix_scenariosCreated;
@@ -768,10 +775,11 @@ namespace UseCaseCore.Controller
                     MessageBox.Show("Fehler beim Erstellen der Szenariomatrix aufgetreten.", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-            //else
-            //{
-            //    MessageBox.Show("Vorgang wurde abgebrochen.", "Abbruch", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            //}
+
+            //// else
+            //// {
+            ////    MessageBox.Show("Vorgang wurde abgebrochen.", "Abbruch", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            //// }
         }
 
         /// <summary>

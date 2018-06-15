@@ -4,6 +4,7 @@
 
 namespace UseCaseTool
 {
+    using System;
     using System.Collections.Generic;
     using System.Windows;
     using System.Windows.Input;
@@ -11,7 +12,6 @@ namespace UseCaseTool
     using Microsoft.Win32;
     using UseCaseCore.Controller;
     using UseCaseCore.RuleValidation.Errors;
-    using System;
     using UseCaseCore.ScenarioMatrix;
 
     /// <summary>
@@ -40,25 +40,25 @@ namespace UseCaseTool
         private Controller controller = new Controller();
 
         /// <summary>
-        /// Event that fires when the Matrix in the GUI got changed by the user
-        /// </summary>
-        public event Action<Scenario> MatrixChangedByUser;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="UcaWindow"/> class.
         /// </summary>
         public UcaWindow()
         {
             this.DataContext = this.controller;
             this.controller.ScenariosCreated += this.Controller_ScenariosCreated;
-            this.controller.GraphCreated += Controller_GraphCreated;
+            this.controller.GraphCreated += this.Controller_GraphCreated;
             this.controller.WriteErrorReport += this.Controller_WriteErrorReport;
             this.InitializeComponent();
-            
-            this.MatrixControl.MatrixChangedByUser += MatrixControl_MatrixChangedByUser;
+
+            this.MatrixControl.MatrixChangedByUser += this.MatrixControl_MatrixChangedByUser;
             this.ErrorList = new List<IError>();
             errorGrid.ItemsSource = this.ErrorList;
         }
+
+        /// <summary>
+        /// Event that fires when the Matrix in the GUI got changed by the user
+        /// </summary>
+        public event Action<Scenario> MatrixChangedByUser;       
 
         /// <summary>
         /// Gets or sets the list of errors
@@ -75,6 +75,7 @@ namespace UseCaseTool
             {
                 this.ErrorList.Add(error);
             }
+
             Dispatcher.Invoke(() => { errorGrid.Items.Refresh(); });
         }
 
@@ -90,23 +91,24 @@ namespace UseCaseTool
         /// <summary>
         /// Matrix on GUI got changed by user
         /// </summary>
-        /// <param name="obj"></param>
+        /// <param name="obj">A Scenario matrix</param>
         private void MatrixControl_MatrixChangedByUser(UseCaseCore.ScenarioMatrix.Scenario obj)
         {
             this.controller.UpdateScenario(obj);
         }
-
+        
         /// <summary>
         /// When new Graph was created, draw it with Graph Control
         /// </summary>
         /// <param name="useCase">The current useCase</param>
+        /// <returns>returns if it was successful</returns>
         private bool Controller_GraphCreated(UseCaseCore.UcIntern.UseCase useCase)
         {
             var success = this.GraphControl.UpdateGraphView(useCase);
 
-            //UpdateGraphScrollbar();
+            //// UpdateGraphScrollbar();
 
-            //GraphControl.GraphVisualisationChanged += GraphControl_GraphVisualisationChanged;
+            //// GraphControl.GraphVisualisationChanged += GraphControl_GraphVisualisationChanged;
 
             return success;
         }
@@ -316,8 +318,7 @@ namespace UseCaseTool
             GraphControl.SetPosition(ScrollbarX.Value, ScrollbarY.Value);
         }
 
-
-        ////ToDo...
+        //// ToDo...
         //// - Reset Mängelbericht
         //// - ... 
     }
