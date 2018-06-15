@@ -7,7 +7,7 @@ namespace UseCaseCore.RuleValidation.RucmRules
     using System.Collections.Generic;
     using System.Linq;
     using Errors;
-    using XmlParser;
+    using UcIntern;
 
     /// <summary>
     /// Checks the RUCM rules 24 and 25.
@@ -25,14 +25,14 @@ namespace UseCaseCore.RuleValidation.RucmRules
         /// <param name="flowToCheck">The flow to check for violations.</param>
         /// <param name="referencedBasicFlow">The referenced flow by the flow to check.</param>
         /// <returns>A list containing the errors that occurred during the check.</returns>
-        public override List<IError> Check(Flow flowToCheck, Flow referencedBasicFlow = null)
+        public override List<IError> Check(Flow flowToCheck, Flow referencedBasicFlow = new Flow())
         {
             this.errors = new List<IError>();
 
             // Check only if it is an alternative flow.
-            if (referencedBasicFlow != null)
+            if (referencedBasicFlow != new Flow())
             {
-                var stepsToCheck = flowToCheck.GetSteps();
+                var stepsToCheck = (List<Node>) flowToCheck.Nodes;
                 if (!this.CheckPathEnd(stepsToCheck, referencedBasicFlow))
                 {
                     this.errors.Add(new FlowError(0, "Ein Flow muss immer mit ABORT oder einem gültigen RESUME STEP enden!", "Flow endet ungültig!"));
@@ -48,7 +48,7 @@ namespace UseCaseCore.RuleValidation.RucmRules
         /// <param name="blockToCheck">the block to check.</param>
         /// <param name="referencedBasicFlow">The referenced flow by the flow to check.</param>
         /// <returns>true if all paths have an end.</returns>
-        private bool CheckPathEnd(List<string> blockToCheck, Flow referencedBasicFlow)
+        private bool CheckPathEnd(List<Node> blockToCheck, Flow referencedBasicFlow)
         {
             var lastStep = blockToCheck.LastOrDefault();
             if (lastStep == null)
@@ -57,30 +57,30 @@ namespace UseCaseCore.RuleValidation.RucmRules
             }
             else
             {
-                if (this.ContainsEndKeyword(lastStep))
+                if (this.ContainsEndKeyword(lastStep.StepDescription))
                 {
-                    return this.CheckForCorrectUsage(blockToCheck.Count, lastStep, referencedBasicFlow);
+                    return this.CheckForCorrectUsage(blockToCheck.Count, lastStep.StepDescription, referencedBasicFlow);
                 }
                 else
                 {
-                    var ifBlocks = new Dictionary<int, List<string>>();
+                    var ifBlocks = new Dictionary<int, List<Node>>();
                     for (var i = 0; i < blockToCheck.Count; i++)
                     {
                         var step = blockToCheck[i];
                         var conditionCounter = 0;
-                        if (this.ContainsConditionKeyword(step))
+                        if (this.ContainsConditionKeyword(step.StepDescription))
                         {
-                            ifBlocks[i] = new List<string>();
+                            ifBlocks[i] = new List<Node>();
                             var j = i + 1;
                             conditionCounter++;
                             for (; j < blockToCheck.Count; j++)
                             {
-                                if (blockToCheck[j].Split(' ').Contains(RucmRuleKeyWords.IfKeyWord))
+                                if (blockToCheck[j].StepDescription.Split(' ').Contains(RucmRuleKeyWords.IfKeyWord))
                                 {
                                     conditionCounter++;
                                     ifBlocks[i].Add(blockToCheck[j]);
                                 }
-                                else if (this.ContainsConditionEndKeyword(blockToCheck[j]))
+                                else if (this.ContainsConditionEndKeyword(blockToCheck[j].StepDescription))
                                 {
                                     conditionCounter--;
                                     if (conditionCounter == 0)
@@ -132,7 +132,7 @@ namespace UseCaseCore.RuleValidation.RucmRules
                     int numberToResume = 0;
                     if (int.TryParse(step.Substring(RucmRuleKeyWords.ResumeKeyWord.Length), out numberToResume))
                     {
-                        if (referencedBasicFlow.GetSteps().Count >= numberToResume && numberToResume != 0)
+                        if (referencedBasicFlow.Nodes.Count >= numberToResume && numberToResume != 0)
                         {
                             result = true;                            
                         }

@@ -105,11 +105,6 @@
     <Compile Include="UcIntern\Row.cs" />
     <Compile Include="UcIntern\StepType.cs" />
     <Compile Include="UcIntern\UseCase.cs" />
-    <Compile Include="XmlParser\BasicFlow.cs" />
-    <Compile Include="XmlParser\BoundedAlternativeFlow.cs" />
-    <Compile Include="XmlParser\Flow.cs" />
-    <Compile Include="XmlParser\GlobalAlternativeFlow.cs" />
-    <Compile Include="XmlParser\SpecificAlternativeFlow.cs" />
     <Compile Include="XmlParser\XmlStructureParser.cs" />
   </ItemGroup>
   <ItemGroup>
