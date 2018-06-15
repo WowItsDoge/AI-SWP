@@ -8,7 +8,7 @@ namespace UseCaseCore.RuleValidation
 
     using Errors;
     using RucmRules;
-    using XmlParser;
+    using UcIntern;
 
     /// <summary>
     /// The rule validator instance.
@@ -71,7 +71,8 @@ namespace UseCaseCore.RuleValidation
         /// <param name="referencedBasicFlow">If the flowToCheck is the „Basic Flow“ no „Reference Flow“ has to be passed,
         /// if the flowToCheck is an „Alternative Flow“, the referencedBasicFlow has to be passed in order to validate it properly.</param>
         /// <returns>Returns true if there was no violation found, otherwise false.</returns>
-        public bool Validate(Flow flowToCheck, Flow referencedBasicFlow = null)
+        //// public bool Validate(Flow flowToCheck, Flow referencedBasicFlow = null)
+        public bool Validate(Flow flowToCheck, Flow referencedBasicFlow = new Flow())
         {
             var result = true;
             foreach (var rule in this.ruleList)

@@ -6,7 +6,7 @@ namespace UseCaseCore.RuleValidation.RucmRules
 {
     using System.Collections.Generic;
     using Errors;
-    using XmlParser;
+    using UcIntern;
 
     /// <summary>
     /// Checks the RUCM rule 23.
@@ -24,10 +24,10 @@ namespace UseCaseCore.RuleValidation.RucmRules
         /// <param name="flowToCheck">The flow to check for violations.</param>
         /// <param name="referencedBasicFlow">The referenced flow by the flow to check.</param>
         /// <returns>A list containing the errors that occurred during the check.</returns>
-        public override List<IError> Check(Flow flowToCheck, Flow referencedBasicFlow = null)
+        public override List<IError> Check(Flow flowToCheck, Flow referencedBasicFlow = new Flow())
         {
             this.errors = new List<IError>();
-            if (!this.CheckStepsForCompleteLoop(flowToCheck.GetSteps()))
+            if (!this.CheckStepsForCompleteLoop((List<Node>)flowToCheck.Nodes))
             {
                 this.errors.Add(new FlowError(0, "Ein Flow muss immer eine geschlossene DO-UNTIL Schleife enthalten.", "Flow enthält ungültige Schleife!"));
             }            
@@ -40,39 +40,39 @@ namespace UseCaseCore.RuleValidation.RucmRules
         /// </summary>
         /// <param name="stepsToCheck">the steps to check for the loop</param>
         /// <returns>True if the steps contain a complete loop.</returns>
-        private bool CheckStepsForCompleteLoop(List<string> stepsToCheck)
+        private bool CheckStepsForCompleteLoop(List<Node> stepsToCheck)
         {
             var result = true;
 
-            var doList = new Dictionary<int, List<string>>();
+            var doList = new Dictionary<int, List<Node>>();
             for (int i = 0; i < stepsToCheck.Count; i++)
             {
                 var step = stepsToCheck[i];
-                if (step.Contains(RucmRuleKeyWords.DoKeyWord))
+                if (step.StepDescription.Contains(RucmRuleKeyWords.DoKeyWord))
                 {
-                    if (step != RucmRuleKeyWords.DoKeyWord)
+                    if (step.StepDescription != RucmRuleKeyWords.DoKeyWord)
                     {
                         this.errors.Add(new StepError(0, "Bitte verwenden Sie für das DO einen eigenen Schritt!", "Ungültige Verwendung von DO."));
                         result = false;
                         break;
                     }
 
-                    doList[i] = new List<string>();
+                    doList[i] = new List<Node>();
                     var j = i + 1;
                     var doCounter = 1;
                     for (; j < stepsToCheck.Count; j++)
                     {
-                        if (stepsToCheck[j].Contains(RucmRuleKeyWords.DoKeyWord))
+                        if (stepsToCheck[j].StepDescription.Contains(RucmRuleKeyWords.DoKeyWord))
                         {
                             doCounter++;
                         }
-                        else if (stepsToCheck[j].Contains(RucmRuleKeyWords.UntilKeyWord))
+                        else if (stepsToCheck[j].StepDescription.Contains(RucmRuleKeyWords.UntilKeyWord))
                         {
                             doCounter--;
                             if (doCounter == 0)
                             {
-                                if (!stepsToCheck[j].StartsWith(RucmRuleKeyWords.UntilKeyWord) || 
-                                    string.IsNullOrWhiteSpace(stepsToCheck[j].Replace(RucmRuleKeyWords.UntilKeyWord, string.Empty)))
+                                if (!stepsToCheck[j].StepDescription.StartsWith(RucmRuleKeyWords.UntilKeyWord) || 
+                                    string.IsNullOrWhiteSpace(stepsToCheck[j].StepDescription.Replace(RucmRuleKeyWords.UntilKeyWord, string.Empty)))
                                 {
                                     this.errors.Add(new StepError(0, "Bitte verwenden Sie für UNTIL die Syntax \"UNTIL condition\"!", "Ungültige Verwendung von UNTIL."));
                                     result = false;
@@ -94,7 +94,7 @@ namespace UseCaseCore.RuleValidation.RucmRules
 
                     i = j;
                 }
-                else if (step.Contains(RucmRuleKeyWords.UntilKeyWord))
+                else if (step.StepDescription.Contains(RucmRuleKeyWords.UntilKeyWord))
                 {
                     this.errors.Add(new StepError(0, "Bitte achten Sie auf eine geschlossene DO-UNTIL-Schleifenstruktur", "UNTIL ohne zugehöriges DO gefunden"));
                     result = false;
