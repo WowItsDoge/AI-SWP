@@ -172,9 +172,12 @@ namespace UseCaseTool
                         var node2 = this.graph.FindNode(nodeTitle2);
                         SetNodeStyle(node2, nodeTitle2, useCase.Nodes[n2].Identifier.GetHashCode());
 
-                        edge.Attr.Color = GetNodeColor(nodeTitle1, useCase.Nodes[n1].Identifier.Id);
+                        edge.Attr.Color = GetNodeColor(nodeTitle1, useCase.Nodes[n1].Identifier.GetHashCode());
 
-                        if (useCase.Nodes[n1].Identifier.Id == useCase.Nodes[n2].Identifier.GetHashCode())
+                        if (useCase.Nodes[n1].Identifier.Id == useCase.Nodes[n2].Identifier.Id &&
+                            useCase.Nodes[n1].Identifier.Type == FlowType.Basic &&
+                            useCase.Nodes[n2].Identifier.Type == FlowType.Basic &&
+                            n1 < n2)
                         {
                             graph.LayerConstraints.AddSequenceOfUpDownVerticalConstraint(node1, node2);
                         }
@@ -202,6 +205,7 @@ namespace UseCaseTool
         public void ChangeGraphColors()
         {
             nodeColors.Clear();
+            flowIdPalette.Clear();
 
             UpdateGraphView();
         }
@@ -288,7 +292,7 @@ namespace UseCaseTool
                 return (nodeId + 1).ToString();
             }
 
-            return "id: " + (nodeId + 1) + " flowId: " + node.Identifier.Id + " flowType: " + node.Identifier.Type + "\r\n" + InsertLines(node.StepDescription);
+            return "id: " + (nodeId + 1) + " flow: " + node.Identifier.Id + " type: " + node.Identifier.Type + "\r\n" + InsertLines(node.StepDescription);
         }
 
         /// <summary>
