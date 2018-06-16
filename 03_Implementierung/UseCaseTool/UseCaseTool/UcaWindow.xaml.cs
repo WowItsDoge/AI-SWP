@@ -318,6 +318,11 @@ namespace UseCaseTool
             GraphControl.SetPosition(ScrollbarX.Value, ScrollbarY.Value);
         }
 
+        private void ChangeColor_Click(object sender, RoutedEventArgs e)
+        {
+            GraphControl.ChangeGraphColors();
+        }
+
         //// ToDo...
         //// - Reset Mängelbericht
         //// - ... 
