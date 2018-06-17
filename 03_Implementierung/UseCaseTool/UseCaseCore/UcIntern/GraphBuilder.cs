@@ -121,13 +121,13 @@ namespace UseCaseCore.UcIntern
                             foreach (InternalEdge invalidIfEdge in invalidIfEdges)
                             {
                                 int invalidTargetStep = sourceFlowOffset + invalidIfEdge.TargetStep;
-                                edgeMatrix[sourceStep, invalidTargetStep] = false;
 
                                 // If the block is empty than the edges for fulfilled and not fulfilled condition are the same.
                                 // In that case the invalid edge does not have a condition and thus its condition must be set to the fulfilled condition of the if/else if statement step.
                                 if (conditionMatrix[sourceStep, invalidTargetStep] != null)
                                 {
                                     conditionMatrix[sourceStep, invalidTargetStep] = null;
+                                    edgeMatrix[sourceStep, invalidTargetStep] = false;
                                 }
                                 else
                                 {
@@ -217,7 +217,7 @@ namespace UseCaseCore.UcIntern
             IReadOnlyList<Flow> flows,
             int firstFlowOffset)
         {
-            List<Tuple<int, Flow, Matrix<bool>, List<ExternalEdge>, List<InternalEdge>, List<Tuple<int, Condition?>>, Matrix<Condition?>>> individuallyWiredFlows = 
+            List<Tuple<int, Flow, Matrix<bool>, List<ExternalEdge>, List<InternalEdge>, List<Tuple<int, Condition?>>, Matrix<Condition?>>> individuallyWiredFlows =
                 new List<Tuple<int, Flow, Matrix<bool>, List<ExternalEdge>, List<InternalEdge>, List<Tuple<int, Condition?>>, Matrix<Condition?>>>();
             int flowOffset = firstFlowOffset;
 
@@ -481,7 +481,7 @@ namespace UseCaseCore.UcIntern
             List<int> importantIfSteps = GraphBuilder.GetImportantIfStatementSteps(steps, stepIndex);
 
             // Handle nested blocks
-            int lastBlockStartIndex = -1, 
+            int lastBlockStartIndex = -1,
                 endIfStepIndex = importantIfSteps.Last();
 
             for (int blockIndex = 0; blockIndex < importantIfSteps.Count - 1; blockIndex++)
@@ -506,7 +506,7 @@ namespace UseCaseCore.UcIntern
                         ref externalEdges,
                         ref possibleInvalidIfEdges,
                         ref conditionMatrix,
-                        blockStartIndex, 
+                        blockStartIndex,
                         blockEndIndex,
                         endIfStepIndex,
                         blockStartStepType == StepType.Else ? (Condition?)null : new Condition(steps[blockStartIndex].StepDescription, true));
@@ -579,7 +579,7 @@ namespace UseCaseCore.UcIntern
                     ref possibleInvalidIfEdges,
                     ref conditionMatrix,
                     doStepIndex,
-                    untilStepIndex, 
+                    untilStepIndex,
                     untilStepIndex,
                     null);
             }

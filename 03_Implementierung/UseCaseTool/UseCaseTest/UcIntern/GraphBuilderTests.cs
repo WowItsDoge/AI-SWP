@@ -102,42 +102,6 @@ namespace UseCaseTest.UcIntern
         // For the graphes see in 04_Test/UcIntern/GraphsForUnitTests.pdf
 
         [Test]
-        public void BuildBasic()
-        {
-            // Arrange
-            List<Node> allSteps = new List<Node>();
-
-            List<Node> basicSteps = new List<Node>();
-            basicSteps.Add(new Node("The use case starts.", flowIdentifierBasic));
-            basicSteps.Add(new Node("A random step.", flowIdentifierBasic));
-            basicSteps.Add(new Node("The use case starts.", flowIdentifierBasic));
-            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
-            allSteps.AddRange(basicSteps);
-
-            List<Flow> specificFlows = new List<Flow>();
-            List<Flow> globalFlows = new List<Flow>();
-            List<Flow> boundedFlows = new List<Flow>();
-
-            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
-            expectedEdgeMatrix[0, 1] = true;
-            expectedEdgeMatrix[1, 2] = true;
-
-            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
-
-            List<Node> steps;
-            Matrix<bool> edgeMatrix;
-            Matrix<Condition?> conditionMatrix;
-
-            // Act
-            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
-            
-            // Assert
-            Assert.AreEqual(allSteps, steps);
-            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
-            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
-        }
-
-        [Test]
         public void BuildEmptyBasic()
         {
             // Arrange
@@ -169,7 +133,43 @@ namespace UseCaseTest.UcIntern
         }
 
         [Test]
-        public void BuildBasicWithSpecificAborted()
+        public void TB1Basic()
+        {
+            // Arrange
+            List<Node> allSteps = new List<Node>();
+
+            List<Node> basicSteps = new List<Node>();
+            basicSteps.Add(new Node("The use case starts.", flowIdentifierBasic));
+            basicSteps.Add(new Node("A random step.", flowIdentifierBasic));
+            basicSteps.Add(new Node("The use case starts.", flowIdentifierBasic));
+            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
+            allSteps.AddRange(basicSteps);
+
+            List<Flow> specificFlows = new List<Flow>();
+            List<Flow> globalFlows = new List<Flow>();
+            List<Flow> boundedFlows = new List<Flow>();
+
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[1, 2] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+
+            List<Node> steps;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            // Act
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+
+            // Assert
+            Assert.AreEqual(allSteps, steps);
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+        }
+
+        [Test]
+        public void TB2BasicIfSpecificElseAbort()
         {
             // Arrange
             List<Node> allSteps = new List<Node>();
@@ -220,7 +220,7 @@ namespace UseCaseTest.UcIntern
         }
 
         [Test]
-        public void BuildBasicWithSpecific()
+        public void TB3BasicIfSpecificElseResume()
         {
             // Arrange
             List<Node> allSteps = new List<Node>();
@@ -276,7 +276,7 @@ namespace UseCaseTest.UcIntern
         }
 
         [Test]
-        public void BuildBasicWithGlobalResuming()
+        public void TB4GlobalResume()
         {
             // Arrange
             List<Node> allSteps = new List<Node>();
@@ -319,7 +319,7 @@ namespace UseCaseTest.UcIntern
 
             // Act
             GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
-            
+
             // Assert
             Assert.AreEqual(allSteps, steps);
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
@@ -327,7 +327,7 @@ namespace UseCaseTest.UcIntern
         }
 
         [Test]
-        public void BuildBasicWithBounded()
+        public void TB5Basic2IfBoundedElseIfElseResumeAbort()
         {
             // Arrange
             List<Node> allSteps = new List<Node>();
@@ -392,7 +392,7 @@ namespace UseCaseTest.UcIntern
 
             // Act
             GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
-            
+
             // Assert
             Assert.AreEqual(allSteps, steps);
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
@@ -400,7 +400,7 @@ namespace UseCaseTest.UcIntern
         }
 
         [Test]
-        public void BuildComplexGraph()
+        public void TB6Complex1()
         {
             // Arrange
             List<Node> allSteps = new List<Node>();
@@ -469,7 +469,7 @@ namespace UseCaseTest.UcIntern
             boundedReferenceSteps2.Add(new ReferenceStep(flowIdentifierBasic, 10));
             boundedFlows.Add(new Flow(flowIdentifierBounded1, null, boundedSteps2, boundedReferenceSteps2));
             allSteps.AddRange(boundedSteps2);
-            
+
             Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
             // basic
             expectedEdgeMatrix[0,1] = true;
@@ -573,7 +573,1685 @@ namespace UseCaseTest.UcIntern
 
             // Act
             GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
-            
+
+            // Assert
+            Assert.AreEqual(allSteps, steps);
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+        }
+
+        [Test]
+        public void TB7BasicIf()
+        {
+            // Arrange
+            List<Node> allSteps = new List<Node>();
+
+            List<Node> basicSteps = new List<Node>();
+            basicSteps.Add(new Node("IF the use case starts THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("Celebrate a party.", flowIdentifierBasic));
+            basicSteps.Add(new Node("ENDIF", flowIdentifierBasic));
+            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
+            allSteps.AddRange(basicSteps);
+
+            List<Flow> specificFlows = new List<Flow>();
+            List<Flow> globalFlows = new List<Flow>();
+            List<Flow> boundedFlows = new List<Flow>();
+
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[0, 2] = true;
+            expectedEdgeMatrix[1, 2] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[0, 1] = new Condition(allSteps[0].StepDescription, true);
+            expectedConditionMatrix[0, 2] = new Condition(allSteps[0].StepDescription, false);
+
+            List<Node> steps;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            // Act
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+
+            // Assert
+            Assert.AreEqual(allSteps, steps);
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+        }
+
+        [Test]
+        public void TB8BasicEmptyIf()
+        {
+            // Arrange
+            List<Node> allSteps = new List<Node>();
+
+            List<Node> basicSteps = new List<Node>();
+            basicSteps.Add(new Node("IF the use case starts THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("ENDIF", flowIdentifierBasic));
+            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
+            allSteps.AddRange(basicSteps);
+
+            List<Flow> specificFlows = new List<Flow>();
+            List<Flow> globalFlows = new List<Flow>();
+            List<Flow> boundedFlows = new List<Flow>();
+
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
+            expectedEdgeMatrix[0, 1] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+
+            List<Node> steps;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            // Act
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+
+            // Assert
+            Assert.AreEqual(allSteps, steps);
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+        }
+
+        [Test]
+        public void TB9BasicIfElse()
+        {
+            // Arrange
+            List<Node> allSteps = new List<Node>();
+
+            List<Node> basicSteps = new List<Node>();
+            basicSteps.Add(new Node("IF the use case starts THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("Celebrate a party.", flowIdentifierBasic));
+            basicSteps.Add(new Node("ELSE", flowIdentifierBasic));
+            basicSteps.Add(new Node("Go in a corner and cry.", flowIdentifierBasic));
+            basicSteps.Add(new Node("ENDIF", flowIdentifierBasic));
+            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
+            allSteps.AddRange(basicSteps);
+
+            List<Flow> specificFlows = new List<Flow>();
+            List<Flow> globalFlows = new List<Flow>();
+            List<Flow> boundedFlows = new List<Flow>();
+
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[0, 2] = true;
+            expectedEdgeMatrix[1, 4] = true;
+            expectedEdgeMatrix[2, 3] = true;
+            expectedEdgeMatrix[3, 4] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[0, 1] = new Condition(allSteps[0].StepDescription, true);
+            expectedConditionMatrix[0, 2] = new Condition(allSteps[0].StepDescription, false);
+
+            List<Node> steps;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            // Act
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+
+            // Assert
+            Assert.AreEqual(allSteps, steps);
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+        }
+
+        [Test]
+        public void TB10BasicEmptyIf()
+        {
+            // Arrange
+            List<Node> allSteps = new List<Node>();
+
+            List<Node> basicSteps = new List<Node>();
+            basicSteps.Add(new Node("IF the use case starts THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("ELSE", flowIdentifierBasic));
+            basicSteps.Add(new Node("Go in a corner and cry.", flowIdentifierBasic));
+            basicSteps.Add(new Node("ENDIF", flowIdentifierBasic));
+            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
+            allSteps.AddRange(basicSteps);
+
+            List<Flow> specificFlows = new List<Flow>();
+            List<Flow> globalFlows = new List<Flow>();
+            List<Flow> boundedFlows = new List<Flow>();
+
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[0, 3] = true;
+            expectedEdgeMatrix[1, 2] = true;
+            expectedEdgeMatrix[2, 3] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[0, 1] = new Condition(allSteps[0].StepDescription, false);
+            expectedConditionMatrix[0, 3] = new Condition(allSteps[0].StepDescription, true);
+
+            List<Node> steps;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            // Act
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+
+            // Assert
+            Assert.AreEqual(allSteps, steps);
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+        }
+
+        [Test]
+        public void TB11BasicIfEmptyElse()
+        {
+            // Arrange
+            List<Node> allSteps = new List<Node>();
+
+            List<Node> basicSteps = new List<Node>();
+            basicSteps.Add(new Node("IF the use case starts THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("Celebrate a party.", flowIdentifierBasic));
+            basicSteps.Add(new Node("ELSE", flowIdentifierBasic));
+            basicSteps.Add(new Node("ENDIF", flowIdentifierBasic));
+            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
+            allSteps.AddRange(basicSteps);
+
+            List<Flow> specificFlows = new List<Flow>();
+            List<Flow> globalFlows = new List<Flow>();
+            List<Flow> boundedFlows = new List<Flow>();
+
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[0, 2] = true;
+            expectedEdgeMatrix[1, 3] = true;
+            expectedEdgeMatrix[2, 3] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[0, 1] = new Condition(allSteps[0].StepDescription, true);
+            expectedConditionMatrix[0, 2] = new Condition(allSteps[0].StepDescription, false);
+
+            List<Node> steps;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            // Act
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+
+            // Assert
+            Assert.AreEqual(allSteps, steps);
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+        }
+
+        [Test]
+        public void TB12_1BasicEmptyIfEmptyElse()
+        {
+            // Arrange
+            List<Node> allSteps = new List<Node>();
+
+            List<Node> basicSteps = new List<Node>();
+            basicSteps.Add(new Node("IF the use case starts THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("ELSE", flowIdentifierBasic));
+            basicSteps.Add(new Node("ENDIF", flowIdentifierBasic));
+            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
+            allSteps.AddRange(basicSteps);
+
+            List<Flow> specificFlows = new List<Flow>();
+            List<Flow> globalFlows = new List<Flow>();
+            List<Flow> boundedFlows = new List<Flow>();
+
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[0, 2] = true;
+            expectedEdgeMatrix[1, 2] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[0, 1] = new Condition(allSteps[0].StepDescription, false);
+            expectedConditionMatrix[0, 2] = new Condition(allSteps[0].StepDescription, true);
+
+            List<Node> steps;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            // Act
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+
+            // Assert
+            Assert.AreEqual(allSteps, steps);
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+        }
+
+        [Test]
+        public void TB12_2BasicIfElseIf()
+        {
+            // Arrange
+            List<Node> allSteps = new List<Node>();
+
+            List<Node> basicSteps = new List<Node>();
+            basicSteps.Add(new Node("IF the apple is rotten THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("Eat it", flowIdentifierBasic));
+            basicSteps.Add(new Node("ELSEIF the apple is golden THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("Throw it in the well", flowIdentifierBasic));
+            basicSteps.Add(new Node("ENDIF", flowIdentifierBasic));
+            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
+            allSteps.AddRange(basicSteps);
+
+            List<Flow> specificFlows = new List<Flow>();
+            List<Flow> globalFlows = new List<Flow>();
+            List<Flow> boundedFlows = new List<Flow>();
+
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[0, 2] = true;
+            expectedEdgeMatrix[1, 4] = true;
+            expectedEdgeMatrix[2, 3] = true;
+            expectedEdgeMatrix[2, 4] = true;
+            expectedEdgeMatrix[3, 4] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[0, 1] = new Condition(allSteps[0].StepDescription, true);
+            expectedConditionMatrix[0, 2] = new Condition(allSteps[0].StepDescription, false);
+            expectedConditionMatrix[2, 3] = new Condition(allSteps[2].StepDescription, true);
+            expectedConditionMatrix[2, 4] = new Condition(allSteps[2].StepDescription, false);
+
+            List<Node> steps;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            // Act
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+
+            // Assert
+            Assert.AreEqual(allSteps, steps);
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+        }
+
+        [Test]
+        public void TB13BasicEmptyIfElseIf()
+        {
+            // Arrange
+            List<Node> allSteps = new List<Node>();
+
+            List<Node> basicSteps = new List<Node>();
+            basicSteps.Add(new Node("IF the apple is rotten THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("ELSEIF the apple is golden THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("Throw it in the well", flowIdentifierBasic));
+            basicSteps.Add(new Node("ENDIF", flowIdentifierBasic));
+            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
+            allSteps.AddRange(basicSteps);
+
+            List<Flow> specificFlows = new List<Flow>();
+            List<Flow> globalFlows = new List<Flow>();
+            List<Flow> boundedFlows = new List<Flow>();
+
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[0, 3] = true;
+            expectedEdgeMatrix[1, 2] = true;
+            expectedEdgeMatrix[1, 3] = true;
+            expectedEdgeMatrix[2, 3] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[0, 1] = new Condition(allSteps[0].StepDescription, false);
+            expectedConditionMatrix[0, 3] = new Condition(allSteps[0].StepDescription, true);
+            expectedConditionMatrix[1, 2] = new Condition(allSteps[1].StepDescription, true);
+            expectedConditionMatrix[1, 3] = new Condition(allSteps[1].StepDescription, false);
+
+            List<Node> steps;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            // Act
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+
+            // Assert
+            Assert.AreEqual(allSteps, steps);
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+        }
+
+        [Test]
+        public void TB14BasicIfEmptyElseIf()
+        {
+            // Arrange
+            List<Node> allSteps = new List<Node>();
+
+            List<Node> basicSteps = new List<Node>();
+            basicSteps.Add(new Node("IF the apple is rotten THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("Eat it", flowIdentifierBasic));
+            basicSteps.Add(new Node("ELSEIF the apple is golden THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("ENDIF", flowIdentifierBasic));
+            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
+            allSteps.AddRange(basicSteps);
+
+            List<Flow> specificFlows = new List<Flow>();
+            List<Flow> globalFlows = new List<Flow>();
+            List<Flow> boundedFlows = new List<Flow>();
+
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[0, 2] = true;
+            expectedEdgeMatrix[1, 3] = true;
+            expectedEdgeMatrix[2, 3] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[0, 1] = new Condition(allSteps[0].StepDescription, true);
+            expectedConditionMatrix[0, 2] = new Condition(allSteps[0].StepDescription, false);
+
+            List<Node> steps;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            // Act
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+
+            // Assert
+            Assert.AreEqual(allSteps, steps);
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+        }
+
+        [Test]
+        public void TB15BasicEmptyIfEmptyElseIf()
+        {
+            // Arrange
+            List<Node> allSteps = new List<Node>();
+
+            List<Node> basicSteps = new List<Node>();
+            basicSteps.Add(new Node("IF the apple is rotten THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("ELSEIF the apple is golden THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("ENDIF", flowIdentifierBasic));
+            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
+            allSteps.AddRange(basicSteps);
+
+            List<Flow> specificFlows = new List<Flow>();
+            List<Flow> globalFlows = new List<Flow>();
+            List<Flow> boundedFlows = new List<Flow>();
+
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[0, 2] = true;
+            expectedEdgeMatrix[1, 2] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[0, 1] = new Condition(allSteps[0].StepDescription, false);
+            expectedConditionMatrix[0, 2] = new Condition(allSteps[0].StepDescription, true);
+
+            List<Node> steps;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            // Act
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+
+            // Assert
+            Assert.AreEqual(allSteps, steps);
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+        }
+
+        [Test]
+        public void TB16BasicIfElseIfElse()
+        {
+            // Arrange
+            List<Node> allSteps = new List<Node>();
+
+            List<Node> basicSteps = new List<Node>();
+            basicSteps.Add(new Node("IF there are traffic lights THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("Watch the traffic lights", flowIdentifierBasic));
+            basicSteps.Add(new Node("ELSEIF there are traffic signs THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("Watch the traffic signs", flowIdentifierBasic));
+            basicSteps.Add(new Node("ELSE", flowIdentifierBasic));
+            basicSteps.Add(new Node("Give priority to the right", flowIdentifierBasic));
+            basicSteps.Add(new Node("ENDIF", flowIdentifierBasic));
+            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
+            allSteps.AddRange(basicSteps);
+
+            List<Flow> specificFlows = new List<Flow>();
+            List<Flow> globalFlows = new List<Flow>();
+            List<Flow> boundedFlows = new List<Flow>();
+
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[0, 2] = true;
+            expectedEdgeMatrix[1, 6] = true;
+            expectedEdgeMatrix[2, 3] = true;
+            expectedEdgeMatrix[2, 4] = true;
+            expectedEdgeMatrix[3, 6] = true;
+            expectedEdgeMatrix[4, 5] = true;
+            expectedEdgeMatrix[5, 6] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[0, 1] = new Condition(allSteps[0].StepDescription, true);
+            expectedConditionMatrix[0, 2] = new Condition(allSteps[0].StepDescription, false);
+            expectedConditionMatrix[2, 3] = new Condition(allSteps[2].StepDescription, true);
+            expectedConditionMatrix[2, 4] = new Condition(allSteps[2].StepDescription, false);
+
+            List<Node> steps;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            // Act
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+
+            // Assert
+            Assert.AreEqual(allSteps, steps);
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+        }
+
+        [Test]
+        public void TB17BasicEmptyIfElseIfElse()
+        {
+            // Arrange
+            List<Node> allSteps = new List<Node>();
+
+            List<Node> basicSteps = new List<Node>();
+            basicSteps.Add(new Node("IF there are traffic lights THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("ELSEIF there are traffic signs THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("Watch the traffic signs", flowIdentifierBasic));
+            basicSteps.Add(new Node("ELSE", flowIdentifierBasic));
+            basicSteps.Add(new Node("Give priority to the right", flowIdentifierBasic));
+            basicSteps.Add(new Node("ENDIF", flowIdentifierBasic));
+            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
+            allSteps.AddRange(basicSteps);
+
+            List<Flow> specificFlows = new List<Flow>();
+            List<Flow> globalFlows = new List<Flow>();
+            List<Flow> boundedFlows = new List<Flow>();
+
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[0, 5] = true;
+            expectedEdgeMatrix[1, 2] = true;
+            expectedEdgeMatrix[1, 3] = true;
+            expectedEdgeMatrix[2, 5] = true;
+            expectedEdgeMatrix[3, 4] = true;
+            expectedEdgeMatrix[4, 5] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[0, 1] = new Condition(allSteps[0].StepDescription, false);
+            expectedConditionMatrix[0, 5] = new Condition(allSteps[0].StepDescription, true);
+            expectedConditionMatrix[1, 2] = new Condition(allSteps[1].StepDescription, true);
+            expectedConditionMatrix[1, 3] = new Condition(allSteps[1].StepDescription, false);
+
+            List<Node> steps;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            // Act
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+
+            // Assert
+            Assert.AreEqual(allSteps, steps);
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+        }
+
+        [Test]
+        public void TB18BasicIfEmptyElseIfElse()
+        {
+            // Arrange
+            List<Node> allSteps = new List<Node>();
+
+            List<Node> basicSteps = new List<Node>();
+            basicSteps.Add(new Node("IF there are traffic lights THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("Watch the traffic lights", flowIdentifierBasic));
+            basicSteps.Add(new Node("ELSEIF there are traffic signs THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("ELSE", flowIdentifierBasic));
+            basicSteps.Add(new Node("Give priority to the right", flowIdentifierBasic));
+            basicSteps.Add(new Node("ENDIF", flowIdentifierBasic));
+            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
+            allSteps.AddRange(basicSteps);
+
+            List<Flow> specificFlows = new List<Flow>();
+            List<Flow> globalFlows = new List<Flow>();
+            List<Flow> boundedFlows = new List<Flow>();
+
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[0, 2] = true;
+            expectedEdgeMatrix[1, 5] = true;
+            expectedEdgeMatrix[2, 3] = true;
+            expectedEdgeMatrix[2, 5] = true;
+            expectedEdgeMatrix[3, 4] = true;
+            expectedEdgeMatrix[4, 5] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[0, 1] = new Condition(allSteps[0].StepDescription, true);
+            expectedConditionMatrix[0, 2] = new Condition(allSteps[0].StepDescription, false);
+            expectedConditionMatrix[2, 3] = new Condition(allSteps[2].StepDescription, false);
+            expectedConditionMatrix[2, 5] = new Condition(allSteps[2].StepDescription, true);
+
+            List<Node> steps;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            // Act
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+
+            // Assert
+            Assert.AreEqual(allSteps, steps);
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+        }
+
+        [Test]
+        public void TB19BasicEmptyIfEmptyElseIfElse()
+        {
+            // Arrange
+            List<Node> allSteps = new List<Node>();
+
+            List<Node> basicSteps = new List<Node>();
+            basicSteps.Add(new Node("IF there are traffic lights THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("ELSEIF there are traffic signs THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("ELSE", flowIdentifierBasic));
+            basicSteps.Add(new Node("Give priority to the right", flowIdentifierBasic));
+            basicSteps.Add(new Node("ENDIF", flowIdentifierBasic));
+            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
+            allSteps.AddRange(basicSteps);
+
+            List<Flow> specificFlows = new List<Flow>();
+            List<Flow> globalFlows = new List<Flow>();
+            List<Flow> boundedFlows = new List<Flow>();
+
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[0, 4] = true;
+            expectedEdgeMatrix[1, 2] = true;
+            expectedEdgeMatrix[1, 4] = true;
+            expectedEdgeMatrix[2, 3] = true;
+            expectedEdgeMatrix[3, 4] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[0, 1] = new Condition(allSteps[0].StepDescription, false);
+            expectedConditionMatrix[0, 4] = new Condition(allSteps[0].StepDescription, true);
+            expectedConditionMatrix[1, 2] = new Condition(allSteps[1].StepDescription, false);
+            expectedConditionMatrix[1, 4] = new Condition(allSteps[1].StepDescription, true);
+
+            List<Node> steps;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            // Act
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+
+            // Assert
+            Assert.AreEqual(allSteps, steps);
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+        }
+
+        [Test]
+        public void TB20BasicIfElseIfEmptyElse()
+        {
+            // Arrange
+            List<Node> allSteps = new List<Node>();
+
+            List<Node> basicSteps = new List<Node>();
+            basicSteps.Add(new Node("IF there are traffic lights THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("Watch the traffic lights", flowIdentifierBasic));
+            basicSteps.Add(new Node("ELSEIF there are traffic signs THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("Watch the traffic signs", flowIdentifierBasic));
+            basicSteps.Add(new Node("ELSE", flowIdentifierBasic));
+            basicSteps.Add(new Node("ENDIF", flowIdentifierBasic));
+            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
+            allSteps.AddRange(basicSteps);
+
+            List<Flow> specificFlows = new List<Flow>();
+            List<Flow> globalFlows = new List<Flow>();
+            List<Flow> boundedFlows = new List<Flow>();
+
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[0, 2] = true;
+            expectedEdgeMatrix[1, 5] = true;
+            expectedEdgeMatrix[2, 3] = true;
+            expectedEdgeMatrix[2, 4] = true;
+            expectedEdgeMatrix[3, 5] = true;
+            expectedEdgeMatrix[4, 5] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[0, 1] = new Condition(allSteps[0].StepDescription, true);
+            expectedConditionMatrix[0, 2] = new Condition(allSteps[0].StepDescription, false);
+            expectedConditionMatrix[2, 3] = new Condition(allSteps[2].StepDescription, true);
+            expectedConditionMatrix[2, 4] = new Condition(allSteps[2].StepDescription, false);
+
+            List<Node> steps;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            // Act
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+
+            // Assert
+            Assert.AreEqual(allSteps, steps);
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+        }
+
+        [Test]
+        public void TB21BasicEmptyIfElseIfEmptyElse()
+        {
+            // Arrange
+            List<Node> allSteps = new List<Node>();
+
+            List<Node> basicSteps = new List<Node>();
+            basicSteps.Add(new Node("IF there are traffic lights THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("ELSEIF there are traffic signs THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("Watch the traffic signs", flowIdentifierBasic));
+            basicSteps.Add(new Node("ELSE", flowIdentifierBasic));
+            basicSteps.Add(new Node("ENDIF", flowIdentifierBasic));
+            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
+            allSteps.AddRange(basicSteps);
+
+            List<Flow> specificFlows = new List<Flow>();
+            List<Flow> globalFlows = new List<Flow>();
+            List<Flow> boundedFlows = new List<Flow>();
+
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[0, 4] = true;
+            expectedEdgeMatrix[1, 2] = true;
+            expectedEdgeMatrix[1, 3] = true;
+            expectedEdgeMatrix[2, 4] = true;
+            expectedEdgeMatrix[3, 4] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[0, 1] = new Condition(allSteps[0].StepDescription, false);
+            expectedConditionMatrix[0, 4] = new Condition(allSteps[0].StepDescription, true);
+            expectedConditionMatrix[1, 2] = new Condition(allSteps[1].StepDescription, true);
+            expectedConditionMatrix[1, 3] = new Condition(allSteps[1].StepDescription, false);
+
+            List<Node> steps;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            // Act
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+
+            // Assert
+            Assert.AreEqual(allSteps, steps);
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+        }
+
+        [Test]
+        public void TB22BasicIfEmptyElseIfEmptyElse()
+        {
+            // Arrange
+            List<Node> allSteps = new List<Node>();
+
+            List<Node> basicSteps = new List<Node>();
+            basicSteps.Add(new Node("IF there are traffic lights THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("Watch the traffic lights", flowIdentifierBasic));
+            basicSteps.Add(new Node("ELSEIF there are traffic signs THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("ELSE", flowIdentifierBasic));
+            basicSteps.Add(new Node("ENDIF", flowIdentifierBasic));
+            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
+            allSteps.AddRange(basicSteps);
+
+            List<Flow> specificFlows = new List<Flow>();
+            List<Flow> globalFlows = new List<Flow>();
+            List<Flow> boundedFlows = new List<Flow>();
+
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[0, 2] = true;
+            expectedEdgeMatrix[1, 4] = true;
+            expectedEdgeMatrix[2, 3] = true;
+            expectedEdgeMatrix[2, 4] = true;
+            expectedEdgeMatrix[3, 4] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[0, 1] = new Condition(allSteps[0].StepDescription, true);
+            expectedConditionMatrix[0, 2] = new Condition(allSteps[0].StepDescription, false);
+            expectedConditionMatrix[2, 3] = new Condition(allSteps[2].StepDescription, false);
+            expectedConditionMatrix[2, 4] = new Condition(allSteps[2].StepDescription, true);
+
+            List<Node> steps;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            // Act
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+
+            // Assert
+            Assert.AreEqual(allSteps, steps);
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+        }
+
+        [Test]
+        public void TB23BasicEmptyIfEmptyElseIfEmptyElse()
+        {
+            // Arrange
+            List<Node> allSteps = new List<Node>();
+
+            List<Node> basicSteps = new List<Node>();
+            basicSteps.Add(new Node("IF there are traffic lights THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("ELSEIF there are traffic signs THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("ELSE", flowIdentifierBasic));
+            basicSteps.Add(new Node("ENDIF", flowIdentifierBasic));
+            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
+            allSteps.AddRange(basicSteps);
+
+            List<Flow> specificFlows = new List<Flow>();
+            List<Flow> globalFlows = new List<Flow>();
+            List<Flow> boundedFlows = new List<Flow>();
+
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[0, 3] = true;
+            expectedEdgeMatrix[1, 2] = true;
+            expectedEdgeMatrix[1, 3] = true;
+            expectedEdgeMatrix[2, 3] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[0, 1] = new Condition(allSteps[0].StepDescription, false);
+            expectedConditionMatrix[0, 3] = new Condition(allSteps[0].StepDescription, true);
+            expectedConditionMatrix[1, 2] = new Condition(allSteps[1].StepDescription, false);
+            expectedConditionMatrix[1, 3] = new Condition(allSteps[1].StepDescription, true);
+
+            List<Node> steps;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            // Act
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+
+            // Assert
+            Assert.AreEqual(allSteps, steps);
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+        }
+
+        [Test]
+        public void TB24BasicIfElseIfElse()
+        {
+            // Arrange
+            List<Node> allSteps = new List<Node>();
+
+            List<Node> basicSteps = new List<Node>();
+            basicSteps.Add(new Node("IF there are police men THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("Watch the police men", flowIdentifierBasic));
+            basicSteps.Add(new Node("ELSEIF there are traffic lights THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("Watch the traffic lights", flowIdentifierBasic));
+            basicSteps.Add(new Node("ELSEIF there are traffic signs THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("Watch the traffic signs", flowIdentifierBasic));
+            basicSteps.Add(new Node("ELSE", flowIdentifierBasic));
+            basicSteps.Add(new Node("Give priority to the right", flowIdentifierBasic));
+            basicSteps.Add(new Node("ENDIF", flowIdentifierBasic));
+            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
+            allSteps.AddRange(basicSteps);
+
+            List<Flow> specificFlows = new List<Flow>();
+            List<Flow> globalFlows = new List<Flow>();
+            List<Flow> boundedFlows = new List<Flow>();
+
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[0, 2] = true;
+            expectedEdgeMatrix[1, 8] = true;
+            expectedEdgeMatrix[2, 3] = true;
+            expectedEdgeMatrix[2, 4] = true;
+            expectedEdgeMatrix[3, 8] = true;
+            expectedEdgeMatrix[4, 5] = true;
+            expectedEdgeMatrix[4, 6] = true;
+            expectedEdgeMatrix[5, 8] = true;
+            expectedEdgeMatrix[6, 7] = true;
+            expectedEdgeMatrix[7, 8] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[0, 1] = new Condition(allSteps[0].StepDescription, true);
+            expectedConditionMatrix[0, 2] = new Condition(allSteps[0].StepDescription, false);
+            expectedConditionMatrix[2, 3] = new Condition(allSteps[2].StepDescription, true);
+            expectedConditionMatrix[2, 4] = new Condition(allSteps[2].StepDescription, false);
+            expectedConditionMatrix[4, 5] = new Condition(allSteps[4].StepDescription, true);
+            expectedConditionMatrix[4, 6] = new Condition(allSteps[4].StepDescription, false);
+
+            List<Node> steps;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            // Act
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+
+            // Assert
+            Assert.AreEqual(allSteps, steps);
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+        }
+
+        [Test]
+        public void TB25BasicDoUntil()
+        {
+            // Arrange
+            List<Node> allSteps = new List<Node>();
+
+            List<Node> basicSteps = new List<Node>();
+            basicSteps.Add(new Node("DO", flowIdentifierBasic));
+            basicSteps.Add(new Node("Clap your hands", flowIdentifierBasic));
+            basicSteps.Add(new Node("UNTIL you know you are unhappy", flowIdentifierBasic));
+            basicSteps.Add(new Node("Care about your mood!", flowIdentifierBasic));
+            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
+            allSteps.AddRange(basicSteps);
+
+            List<Flow> specificFlows = new List<Flow>();
+            List<Flow> globalFlows = new List<Flow>();
+            List<Flow> boundedFlows = new List<Flow>();
+
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[1, 2] = true;
+            expectedEdgeMatrix[2, 0] = true;
+            expectedEdgeMatrix[2, 3] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[2, 0] = new Condition(allSteps[2].StepDescription, false);
+            expectedConditionMatrix[2, 3] = new Condition(allSteps[2].StepDescription, true);
+
+            List<Node> steps;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            // Act
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+
+            // Assert
+            Assert.AreEqual(allSteps, steps);
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+        }
+
+        [Test]
+        public void TB26BasicDoUntilLastStep()
+        {
+            // Arrange
+            List<Node> allSteps = new List<Node>();
+
+            List<Node> basicSteps = new List<Node>();
+            basicSteps.Add(new Node("DO", flowIdentifierBasic));
+            basicSteps.Add(new Node("Clap your hands", flowIdentifierBasic));
+            basicSteps.Add(new Node("UNTIL you know you are unhappy", flowIdentifierBasic));
+            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
+            allSteps.AddRange(basicSteps);
+            allSteps.Add(new Node(string.Empty, flowIdentifierBasic));
+
+            List<Flow> specificFlows = new List<Flow>();
+            List<Flow> globalFlows = new List<Flow>();
+            List<Flow> boundedFlows = new List<Flow>();
+
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[1, 2] = true;
+            expectedEdgeMatrix[2, 0] = true;
+            expectedEdgeMatrix[2, 3] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[2, 0] = new Condition(allSteps[2].StepDescription, false);
+            expectedConditionMatrix[2, 3] = new Condition(allSteps[2].StepDescription, true);
+
+            List<Node> steps;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            // Act
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+
+            // Assert
+            Assert.AreEqual(allSteps, steps);
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+        }
+
+        [Test]
+        public void TB27BasicValidatesThatSpecificAbort()
+        {
+            // Arrange
+            List<Node> allSteps = new List<Node>();
+
+            List<Node> basicSteps = new List<Node>();
+            basicSteps.Add(new Node("If the boss enthers the room", flowIdentifierBasic));
+            basicSteps.Add(new Node("the first thing is that he VALIDATES THAT the personnel is working", flowIdentifierBasic));
+            basicSteps.Add(new Node("and takes seat on his chair.", flowIdentifierBasic));
+            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
+            allSteps.AddRange(basicSteps);
+
+            List<Flow> specificFlows = new List<Flow>();
+
+            List<Node> specificSteps1 = new List<Node>();
+            specificSteps1.Add(new Node("ABORT", flowIdentifierSpecific1));
+            List<ReferenceStep> specificReferenceSteps1 = new List<ReferenceStep>();
+            specificReferenceSteps1.Add(new ReferenceStep(flowIdentifierBasic, 2));
+            specificFlows.Add(new Flow(flowIdentifierSpecific1, null, specificSteps1, specificReferenceSteps1));
+            allSteps.AddRange(specificSteps1);
+
+            List<Flow> globalFlows = new List<Flow>();
+            List<Flow> boundedFlows = new List<Flow>();
+
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[1, 2] = true;
+            expectedEdgeMatrix[1, 3] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[1, 2] = new Condition(allSteps[1].StepDescription, true);
+            expectedConditionMatrix[1, 3] = new Condition(allSteps[1].StepDescription, false);
+
+            List<Node> steps;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            // Act
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+
+            // Assert
+            Assert.AreEqual(allSteps, steps);
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+        }
+
+        [Test]
+        public void TB28BasicValidatesThatLastStepSpecificAbort()
+        {
+            // Arrange
+            List<Node> allSteps = new List<Node>();
+
+            List<Node> basicSteps = new List<Node>();
+            basicSteps.Add(new Node("If the boss enthers the room", flowIdentifierBasic));
+            basicSteps.Add(new Node("the first thing is that he VALIDATES THAT the personnel is working", flowIdentifierBasic));
+            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
+            allSteps.AddRange(basicSteps);
+            allSteps.Add(new Node(string.Empty, flowIdentifierBasic));
+
+            List<Flow> specificFlows = new List<Flow>();
+
+            List<Node> specificSteps1 = new List<Node>();
+            specificSteps1.Add(new Node("ABORT", flowIdentifierSpecific1));
+            List<ReferenceStep> specificReferenceSteps1 = new List<ReferenceStep>();
+            specificReferenceSteps1.Add(new ReferenceStep(flowIdentifierBasic, 2));
+            specificFlows.Add(new Flow(flowIdentifierSpecific1, null, specificSteps1, specificReferenceSteps1));
+            allSteps.AddRange(specificSteps1);
+
+            List<Flow> globalFlows = new List<Flow>();
+            List<Flow> boundedFlows = new List<Flow>();
+
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[1, 2] = true;
+            expectedEdgeMatrix[1, 3] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[1, 2] = new Condition(allSteps[1].StepDescription, true);
+            expectedConditionMatrix[1, 3] = new Condition(allSteps[1].StepDescription, false);
+
+            List<Node> steps;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            // Act
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+
+            // Assert
+            Assert.AreEqual(allSteps, steps);
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+        }
+
+        [Test]
+        public void TB29BasicValidatesThatBoundedResume()
+        {
+            // Arrange
+            List<Node> allSteps = new List<Node>();
+
+            List<Node> basicSteps = new List<Node>();
+            basicSteps.Add(new Node("If the boss enthers the room", flowIdentifierBasic));
+            basicSteps.Add(new Node("the first thing is that he VALIDATES THAT the personnel is working", flowIdentifierBasic));
+            basicSteps.Add(new Node("and takes seat on his chair.", flowIdentifierBasic));
+            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
+            allSteps.AddRange(basicSteps);
+
+            List<Flow> specificFlows = new List<Flow>();
+            List<Flow> globalFlows = new List<Flow>();
+            List<Flow> boundedFlows = new List<Flow>();
+
+            List<Node> boundedSteps1 = new List<Node>();
+            boundedSteps1.Add(new Node("RESUME 1", flowIdentifierBounded1));
+            List<ReferenceStep> boundedReferenceSteps1 = new List<ReferenceStep>();
+            boundedReferenceSteps1.Add(new ReferenceStep(flowIdentifierBasic, 2));
+            boundedFlows.Add(new Flow(flowIdentifierBounded1, null, boundedSteps1, boundedReferenceSteps1));
+            allSteps.AddRange(boundedSteps1);
+
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[1, 2] = true;
+            expectedEdgeMatrix[1, 3] = true;
+            expectedEdgeMatrix[3, 0] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[1, 2] = new Condition(allSteps[1].StepDescription, true);
+            expectedConditionMatrix[1, 3] = new Condition(allSteps[1].StepDescription, false);
+
+            List<Node> steps;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            // Act
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+
+            // Assert
+            Assert.AreEqual(allSteps, steps);
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+        }
+
+        [Test]
+        public void TB30BasicValidatesThatMultiBoundedAbort()
+        {
+            // Arrange
+            List<Node> allSteps = new List<Node>();
+
+            List<Node> basicSteps = new List<Node>();
+            basicSteps.Add(new Node("VALIDATES THAT the engine starts", flowIdentifierBasic));
+            basicSteps.Add(new Node("Warm up the engine and tires", flowIdentifierBasic));
+            basicSteps.Add(new Node("VALIDATES THAT the engine is running well", flowIdentifierBasic));
+            basicSteps.Add(new Node("VALIDATES THAT the suspension is well", flowIdentifierBasic));
+            basicSteps.Add(new Node("Start the race", flowIdentifierBasic));
+            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
+            allSteps.AddRange(basicSteps);
+
+            List<Flow> specificFlows = new List<Flow>();
+            List<Flow> globalFlows = new List<Flow>();
+            List<Flow> boundedFlows = new List<Flow>();
+
+            List<Node> boundedSteps1 = new List<Node>();
+            boundedSteps1.Add(new Node("ABORT", flowIdentifierBounded1));
+            List<ReferenceStep> boundedReferenceSteps1 = new List<ReferenceStep>();
+            boundedReferenceSteps1.Add(new ReferenceStep(flowIdentifierBasic, 1));
+            boundedReferenceSteps1.Add(new ReferenceStep(flowIdentifierBasic, 3));
+            boundedReferenceSteps1.Add(new ReferenceStep(flowIdentifierBasic, 4));
+            boundedFlows.Add(new Flow(flowIdentifierBounded1, null, boundedSteps1, boundedReferenceSteps1));
+            allSteps.AddRange(boundedSteps1);
+
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[0, 5] = true;
+            expectedEdgeMatrix[1, 2] = true;
+            expectedEdgeMatrix[2, 3] = true;
+            expectedEdgeMatrix[2, 5] = true;
+            expectedEdgeMatrix[3, 4] = true;
+            expectedEdgeMatrix[3, 5] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[0, 1] = new Condition(allSteps[0].StepDescription, true);
+            expectedConditionMatrix[0, 5] = new Condition(allSteps[0].StepDescription, false);
+            expectedConditionMatrix[2, 3] = new Condition(allSteps[2].StepDescription, true);
+            expectedConditionMatrix[2, 5] = new Condition(allSteps[2].StepDescription, false);
+            expectedConditionMatrix[3, 4] = new Condition(allSteps[3].StepDescription, true);
+            expectedConditionMatrix[3, 5] = new Condition(allSteps[3].StepDescription, false);
+
+            List<Node> steps;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            // Act
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+
+            // Assert
+            Assert.AreEqual(allSteps, steps);
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+        }
+
+        [Test]
+        public void TB31BasicValidatesThatSpecificAbortNestedInIf()
+        {
+            // Arrange
+            List<Node> allSteps = new List<Node>();
+
+            List<Node> basicSteps = new List<Node>();
+            basicSteps.Add(new Node("IF the pot is empty THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("The bear VALIDATES THAT the bees produced honey", flowIdentifierBasic));
+            basicSteps.Add(new Node("ENDIF", flowIdentifierBasic));
+            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
+            allSteps.AddRange(basicSteps);
+
+            List<Flow> specificFlows = new List<Flow>();
+
+            List<Node> specificSteps1 = new List<Node>();
+            specificSteps1.Add(new Node("ABORT", flowIdentifierSpecific1));
+            List<ReferenceStep> specificReferenceSteps1 = new List<ReferenceStep>();
+            specificReferenceSteps1.Add(new ReferenceStep(flowIdentifierBasic, 2));
+            specificFlows.Add(new Flow(flowIdentifierSpecific1, null, specificSteps1, specificReferenceSteps1));
+            allSteps.AddRange(specificSteps1);
+
+            List<Flow> globalFlows = new List<Flow>();
+            List<Flow> boundedFlows = new List<Flow>();
+
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[0, 2] = true;
+            expectedEdgeMatrix[1, 2] = true;
+            expectedEdgeMatrix[1, 3] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[0, 1] = new Condition(allSteps[0].StepDescription, true);
+            expectedConditionMatrix[0, 2] = new Condition(allSteps[0].StepDescription, false);
+            expectedConditionMatrix[1, 2] = new Condition(allSteps[1].StepDescription, true);
+            expectedConditionMatrix[1, 3] = new Condition(allSteps[1].StepDescription, false);
+
+            List<Node> steps;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            // Act
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+
+            // Assert
+            Assert.AreEqual(allSteps, steps);
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+        }
+
+        [Test]
+        public void TB32BasicDoUntilNestedInIf()
+        {
+            // Arrange
+            List<Node> allSteps = new List<Node>();
+
+            List<Node> basicSteps = new List<Node>();
+            basicSteps.Add(new Node("IF the pot is empty THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("DO", flowIdentifierBasic));
+            basicSteps.Add(new Node("Gather honey from the bees", flowIdentifierBasic));
+            basicSteps.Add(new Node("UNTIL the pot is full again", flowIdentifierBasic));
+            basicSteps.Add(new Node("ENDIF", flowIdentifierBasic));
+            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
+            allSteps.AddRange(basicSteps);
+
+            List<Flow> specificFlows = new List<Flow>();
+            List<Flow> globalFlows = new List<Flow>();
+            List<Flow> boundedFlows = new List<Flow>();
+
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[0, 4] = true;
+            expectedEdgeMatrix[1, 2] = true;
+            expectedEdgeMatrix[2, 3] = true;
+            expectedEdgeMatrix[3, 1] = true;
+            expectedEdgeMatrix[3, 4] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[0, 1] = new Condition(allSteps[0].StepDescription, true);
+            expectedConditionMatrix[0, 4] = new Condition(allSteps[0].StepDescription, false);
+            expectedConditionMatrix[3, 1] = new Condition(allSteps[3].StepDescription, false);
+            expectedConditionMatrix[3, 4] = new Condition(allSteps[3].StepDescription, true);
+
+            List<Node> steps;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            // Act
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+
+            // Assert
+            Assert.AreEqual(allSteps, steps);
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+        }
+
+        [Test]
+        public void TB33BasicIfSpecificElseAbortInside()
+        {
+            // Arrange
+            List<Node> allSteps = new List<Node>();
+
+            List<Node> basicSteps = new List<Node>();
+            basicSteps.Add(new Node("IF the carrots are grown THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("Harvest the carrots", flowIdentifierBasic));
+            basicSteps.Add(new Node("ENDIF", flowIdentifierBasic));
+            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
+            allSteps.AddRange(basicSteps);
+
+            List<Flow> specificFlows = new List<Flow>();
+
+            List<Node> specificSteps1 = new List<Node>();
+            specificSteps1.Add(new Node("ELSE", flowIdentifierSpecific1));
+            specificSteps1.Add(new Node("ABORT", flowIdentifierSpecific1));
+            specificSteps1.Add(new Node("ENDIF", flowIdentifierSpecific1));
+            List<ReferenceStep> specificReferenceSteps1 = new List<ReferenceStep>();
+            specificReferenceSteps1.Add(new ReferenceStep(flowIdentifierBasic, 1));
+            specificFlows.Add(new Flow(flowIdentifierSpecific1, null, specificSteps1, specificReferenceSteps1));
+            allSteps.AddRange(specificSteps1);
+
+            List<Flow> globalFlows = new List<Flow>();
+            List<Flow> boundedFlows = new List<Flow>();
+
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[0, 3] = true;
+            expectedEdgeMatrix[1, 2] = true;
+            expectedEdgeMatrix[3, 4] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[0, 1] = new Condition(allSteps[0].StepDescription, true);
+            expectedConditionMatrix[0, 3] = new Condition(allSteps[0].StepDescription, false);
+
+            List<Node> steps;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            // Act
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+
+            // Assert
+            Assert.AreEqual(allSteps, steps);
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+        }
+
+        [Test]
+        public void TB34BasicEmptyIfSpecificElseAbortOutside()
+        {
+            // Arrange
+            List<Node> allSteps = new List<Node>();
+
+            List<Node> basicSteps = new List<Node>();
+            basicSteps.Add(new Node("IF the carrots are grown THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("ENDIF", flowIdentifierBasic));
+            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
+            allSteps.AddRange(basicSteps);
+
+            List<Flow> specificFlows = new List<Flow>();
+
+            List<Node> specificSteps1 = new List<Node>();
+            specificSteps1.Add(new Node("ELSE", flowIdentifierSpecific1));
+            specificSteps1.Add(new Node("Water the carrots", flowIdentifierSpecific1));
+            specificSteps1.Add(new Node("ENDIF", flowIdentifierSpecific1));
+            specificSteps1.Add(new Node("ABORT", flowIdentifierSpecific1));
+            List<ReferenceStep> specificReferenceSteps1 = new List<ReferenceStep>();
+            specificReferenceSteps1.Add(new ReferenceStep(flowIdentifierBasic, 1));
+            specificFlows.Add(new Flow(flowIdentifierSpecific1, null, specificSteps1, specificReferenceSteps1));
+            allSteps.AddRange(specificSteps1);
+
+            List<Flow> globalFlows = new List<Flow>();
+            List<Flow> boundedFlows = new List<Flow>();
+
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[0, 2] = true;
+            expectedEdgeMatrix[2, 3] = true;
+            expectedEdgeMatrix[3, 4] = true;
+            expectedEdgeMatrix[4, 5] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[0, 1] = new Condition(allSteps[0].StepDescription, true);
+            expectedConditionMatrix[0, 2] = new Condition(allSteps[0].StepDescription, false);
+
+            List<Node> steps;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            // Act
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+
+            // Assert
+            Assert.AreEqual(allSteps, steps);
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+        }
+
+        [Test]
+        public void TB35BasicEmptyIfSpecificElseIfAbort()
+        {
+            // Arrange
+            List<Node> allSteps = new List<Node>();
+
+            List<Node> basicSteps = new List<Node>();
+            basicSteps.Add(new Node("IF the carrots are grown THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("ENDIF", flowIdentifierBasic));
+            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
+            allSteps.AddRange(basicSteps);
+
+            List<Flow> specificFlows = new List<Flow>();
+
+            List<Node> specificSteps1 = new List<Node>();
+            specificSteps1.Add(new Node("ELSEIF carrots are planted THEN", flowIdentifierSpecific1));
+            specificSteps1.Add(new Node("ABORT", flowIdentifierSpecific1));
+            specificSteps1.Add(new Node("ENDIF", flowIdentifierSpecific1));
+            specificSteps1.Add(new Node("ABORT", flowIdentifierSpecific1));
+            List<ReferenceStep> specificReferenceSteps1 = new List<ReferenceStep>();
+            specificReferenceSteps1.Add(new ReferenceStep(flowIdentifierBasic, 1));
+            specificFlows.Add(new Flow(flowIdentifierSpecific1, null, specificSteps1, specificReferenceSteps1));
+            allSteps.AddRange(specificSteps1);
+
+            List<Flow> globalFlows = new List<Flow>();
+            List<Flow> boundedFlows = new List<Flow>();
+
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[0, 2] = true;
+            expectedEdgeMatrix[2, 3] = true;
+            expectedEdgeMatrix[2, 4] = true;
+            expectedEdgeMatrix[4, 5] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[0, 1] = new Condition(allSteps[0].StepDescription, true);
+            expectedConditionMatrix[0, 2] = new Condition(allSteps[0].StepDescription, false);
+            expectedConditionMatrix[2, 3] = new Condition(allSteps[2].StepDescription, true);
+            expectedConditionMatrix[2, 4] = new Condition(allSteps[2].StepDescription, false);
+
+            List<Node> steps;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            // Act
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+
+            // Assert
+            Assert.AreEqual(allSteps, steps);
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+        }
+
+        [Test]
+        public void TB36BasicIfSpecificEmptyElseIfAbort()
+        {
+            // Arrange
+            List<Node> allSteps = new List<Node>();
+
+            List<Node> basicSteps = new List<Node>();
+            basicSteps.Add(new Node("IF the carrots are grown THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("ENDIF", flowIdentifierBasic));
+            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
+            allSteps.AddRange(basicSteps);
+
+            List<Flow> specificFlows = new List<Flow>();
+
+            List<Node> specificSteps1 = new List<Node>();
+            specificSteps1.Add(new Node("ELSEIF carrots are planted THEN", flowIdentifierSpecific1));
+            specificSteps1.Add(new Node("ENDIF", flowIdentifierSpecific1));
+            specificSteps1.Add(new Node("ABORT", flowIdentifierSpecific1));
+            List<ReferenceStep> specificReferenceSteps1 = new List<ReferenceStep>();
+            specificReferenceSteps1.Add(new ReferenceStep(flowIdentifierBasic, 1));
+            specificFlows.Add(new Flow(flowIdentifierSpecific1, null, specificSteps1, specificReferenceSteps1));
+            allSteps.AddRange(specificSteps1);
+
+            List<Flow> globalFlows = new List<Flow>();
+            List<Flow> boundedFlows = new List<Flow>();
+
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[0, 2] = true;
+            expectedEdgeMatrix[2, 3] = true;
+            expectedEdgeMatrix[3, 4] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[0, 1] = new Condition(allSteps[0].StepDescription, true);
+            expectedConditionMatrix[0, 2] = new Condition(allSteps[0].StepDescription, false);
+
+            List<Node> steps;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            // Act
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+
+            // Assert
+            Assert.AreEqual(allSteps, steps);
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+        }
+
+        [Test]
+        public void TB37BasicIfSpecificEmptyElseAbort()
+        {
+            // Arrange
+            List<Node> allSteps = new List<Node>();
+
+            List<Node> basicSteps = new List<Node>();
+            basicSteps.Add(new Node("IF the carrots are grown THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("ENDIF", flowIdentifierBasic));
+            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
+            allSteps.AddRange(basicSteps);
+
+            List<Flow> specificFlows = new List<Flow>();
+
+            List<Node> specificSteps1 = new List<Node>();
+            specificSteps1.Add(new Node("ELSE", flowIdentifierSpecific1));
+            specificSteps1.Add(new Node("ENDIF", flowIdentifierSpecific1));
+            specificSteps1.Add(new Node("ABORT", flowIdentifierSpecific1));
+            List<ReferenceStep> specificReferenceSteps1 = new List<ReferenceStep>();
+            specificReferenceSteps1.Add(new ReferenceStep(flowIdentifierBasic, 1));
+            specificFlows.Add(new Flow(flowIdentifierSpecific1, null, specificSteps1, specificReferenceSteps1));
+            allSteps.AddRange(specificSteps1);
+
+            List<Flow> globalFlows = new List<Flow>();
+            List<Flow> boundedFlows = new List<Flow>();
+
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[0, 2] = true;
+            expectedEdgeMatrix[2, 3] = true;
+            expectedEdgeMatrix[3, 4] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[0, 1] = new Condition(allSteps[0].StepDescription, true);
+            expectedConditionMatrix[0, 2] = new Condition(allSteps[0].StepDescription, false);
+
+            List<Node> steps;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            // Act
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+
+            // Assert
+            Assert.AreEqual(allSteps, steps);
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+        }
+
+        [Test]
+        public void TB38BasicIfSpecificElseIfElseAbort()
+        {
+            // Arrange
+            List<Node> allSteps = new List<Node>();
+
+            List<Node> basicSteps = new List<Node>();
+            basicSteps.Add(new Node("IF the carrots are grown THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("ENDIF", flowIdentifierBasic));
+            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
+            allSteps.AddRange(basicSteps);
+
+            List<Flow> specificFlows = new List<Flow>();
+
+            List<Node> specificSteps1 = new List<Node>();
+            specificSteps1.Add(new Node("ELSEIF carrots are planted THEN", flowIdentifierSpecific1));
+            specificSteps1.Add(new Node("Water the carrots", flowIdentifierSpecific1));
+            specificSteps1.Add(new Node("ELSE", flowIdentifierSpecific1));
+            specificSteps1.Add(new Node("Plant carrots", flowIdentifierSpecific1));
+            specificSteps1.Add(new Node("ENDIF", flowIdentifierSpecific1));
+            specificSteps1.Add(new Node("ABORT", flowIdentifierSpecific1));
+            List<ReferenceStep> specificReferenceSteps1 = new List<ReferenceStep>();
+            specificReferenceSteps1.Add(new ReferenceStep(flowIdentifierBasic, 1));
+            specificFlows.Add(new Flow(flowIdentifierSpecific1, null, specificSteps1, specificReferenceSteps1));
+            allSteps.AddRange(specificSteps1);
+
+            List<Flow> globalFlows = new List<Flow>();
+            List<Flow> boundedFlows = new List<Flow>();
+
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[0, 2] = true;
+            expectedEdgeMatrix[2, 3] = true;
+            expectedEdgeMatrix[2, 4] = true;
+            expectedEdgeMatrix[3, 6] = true;
+            expectedEdgeMatrix[4, 5] = true;
+            expectedEdgeMatrix[5, 6] = true;
+            expectedEdgeMatrix[6, 7] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[0, 1] = new Condition(allSteps[0].StepDescription, true);
+            expectedConditionMatrix[0, 2] = new Condition(allSteps[0].StepDescription, false);
+            expectedConditionMatrix[2, 3] = new Condition(allSteps[2].StepDescription, true);
+            expectedConditionMatrix[2, 4] = new Condition(allSteps[2].StepDescription, false);
+
+            List<Node> steps;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            // Act
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+
+            // Assert
+            Assert.AreEqual(allSteps, steps);
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+        }
+
+        [Test]
+        public void TB39NestedBasic()
+        {
+            // Arrange
+            List<Node> allSteps = new List<Node>();
+
+            List<Node> basicSteps = new List<Node>();
+            basicSteps.Add(new Node("IF the cauldron is filled with water THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("DO", flowIdentifierBasic));
+            basicSteps.Add(new Node("IF you need another wart THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("VALIDATES THAT they have an even scrumbled surface", flowIdentifierBasic));
+            basicSteps.Add(new Node("ELSE", flowIdentifierBasic));
+            basicSteps.Add(new Node("VALIDATES THAT the water does not turn purple", flowIdentifierBasic));
+            basicSteps.Add(new Node("ENDIF", flowIdentifierBasic));
+            basicSteps.Add(new Node("UNTIL the water turns red", flowIdentifierBasic));
+            basicSteps.Add(new Node("ELSE", flowIdentifierBasic));
+            basicSteps.Add(new Node("VALIDATES THAT the fire is out", flowIdentifierBasic));
+            basicSteps.Add(new Node("ENDIF", flowIdentifierBasic));
+            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
+            allSteps.AddRange(basicSteps);
+
+            List<Flow> specificFlows = new List<Flow>();
+            List<Flow> globalFlows = new List<Flow>();
+            List<Flow> boundedFlows = new List<Flow>();
+
+            List<Node> boundedSteps1 = new List<Node>();
+            boundedSteps1.Add(new Node("ABORT", flowIdentifierBounded1));
+            List<ReferenceStep> boundedReferenceSteps1 = new List<ReferenceStep>();
+            boundedReferenceSteps1.Add(new ReferenceStep(flowIdentifierBasic, 4));
+            boundedReferenceSteps1.Add(new ReferenceStep(flowIdentifierBasic, 6));
+            boundedReferenceSteps1.Add(new ReferenceStep(flowIdentifierBasic, 10));
+            boundedFlows.Add(new Flow(flowIdentifierBounded1, null, boundedSteps1, boundedReferenceSteps1));
+            allSteps.AddRange(boundedSteps1);
+
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[0, 8] = true;
+            expectedEdgeMatrix[1, 2] = true;
+            expectedEdgeMatrix[2, 3] = true;
+            expectedEdgeMatrix[2, 4] = true;
+            expectedEdgeMatrix[3, 6] = true;
+            expectedEdgeMatrix[3, 11] = true;
+            expectedEdgeMatrix[4, 5] = true;
+            expectedEdgeMatrix[5, 6] = true;
+            expectedEdgeMatrix[5, 11] = true;
+            expectedEdgeMatrix[6, 7] = true;
+            expectedEdgeMatrix[7, 10] = true;
+            expectedEdgeMatrix[7, 1] = true;
+            expectedEdgeMatrix[8, 9] = true;
+            expectedEdgeMatrix[9, 10] = true;
+            expectedEdgeMatrix[9, 11] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[0, 1] = new Condition(allSteps[0].StepDescription, true);
+            expectedConditionMatrix[0, 8] = new Condition(allSteps[0].StepDescription, false);
+            expectedConditionMatrix[2, 3] = new Condition(allSteps[2].StepDescription, true);
+            expectedConditionMatrix[2, 4] = new Condition(allSteps[2].StepDescription, false);
+            expectedConditionMatrix[3, 6] = new Condition(allSteps[3].StepDescription, true);
+            expectedConditionMatrix[3, 11] = new Condition(allSteps[3].StepDescription, false);
+            expectedConditionMatrix[5, 6] = new Condition(allSteps[5].StepDescription, true);
+            expectedConditionMatrix[5, 11] = new Condition(allSteps[5].StepDescription, false);
+            expectedConditionMatrix[7, 1] = new Condition(allSteps[7].StepDescription, false);
+            expectedConditionMatrix[7, 10] = new Condition(allSteps[7].StepDescription, true);
+            expectedConditionMatrix[9, 10] = new Condition(allSteps[9].StepDescription, true);
+            expectedConditionMatrix[9, 11] = new Condition(allSteps[9].StepDescription, false);
+
+            List<Node> steps;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            // Act
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+
+            // Assert
+            Assert.AreEqual(allSteps, steps);
+            Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
+            Assert.AreEqual(expectedConditionMatrix, conditionMatrix);
+        }
+
+        [Test]
+        public void TB40NestedSpecific()
+        {
+            // Arrange
+            List<Node> allSteps = new List<Node>();
+
+            List<Node> basicSteps = new List<Node>();
+            basicSteps.Add(new Node("IF the cauldron is filled with water THEN", flowIdentifierBasic));
+            basicSteps.Add(new Node("Make tea", flowIdentifierBasic));
+            basicSteps.Add(new Node("ENDIF", flowIdentifierBasic));
+            Flow basicFlow = new Flow(flowIdentifierBasic, null, basicSteps, new List<ReferenceStep>());
+            allSteps.AddRange(basicSteps);
+
+            List<Flow> specificFlows = new List<Flow>();
+
+            List<Node> specificSteps1 = new List<Node>();
+            specificSteps1.Add(new Node("ELSEIF hot water is needed THEN", flowIdentifierSpecific1));
+            specificSteps1.Add(new Node("DO", flowIdentifierSpecific1));
+            specificSteps1.Add(new Node("Add water", flowIdentifierSpecific1));
+            specificSteps1.Add(new Node("UNTIL the cauldron is filled", flowIdentifierSpecific1));
+            specificSteps1.Add(new Node("ELSE", flowIdentifierSpecific1));
+            specificSteps1.Add(new Node("DO", flowIdentifierSpecific1));
+            specificSteps1.Add(new Node("UNTIL the cauldron is clean", flowIdentifierSpecific1));
+            specificSteps1.Add(new Node("ENDIF", flowIdentifierSpecific1));
+            specificSteps1.Add(new Node("ABORT", flowIdentifierSpecific1));
+            List<ReferenceStep> specificReferenceSteps1 = new List<ReferenceStep>();
+            specificReferenceSteps1.Add(new ReferenceStep(flowIdentifierBasic, 1));
+            specificFlows.Add(new Flow(flowIdentifierSpecific1, null, specificSteps1, specificReferenceSteps1));
+            allSteps.AddRange(specificSteps1);
+
+            List<Flow> globalFlows = new List<Flow>();
+            List<Flow> boundedFlows = new List<Flow>();
+
+            Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(allSteps.Count, false);
+            expectedEdgeMatrix[0, 1] = true;
+            expectedEdgeMatrix[0, 3] = true;
+            expectedEdgeMatrix[1, 2] = true;
+            expectedEdgeMatrix[3, 4] = true;
+            expectedEdgeMatrix[3, 7] = true;
+            expectedEdgeMatrix[4, 5] = true;
+            expectedEdgeMatrix[5, 6] = true;
+            expectedEdgeMatrix[6, 4] = true;
+            expectedEdgeMatrix[6, 10] = true;
+            expectedEdgeMatrix[7, 8] = true;
+            expectedEdgeMatrix[8, 9] = true;
+            expectedEdgeMatrix[9, 8] = true;
+            expectedEdgeMatrix[9, 10] = true;
+            expectedEdgeMatrix[10, 11] = true;
+
+            Matrix<Condition?> expectedConditionMatrix = new Matrix<Condition?>(allSteps.Count, null);
+            expectedConditionMatrix[0, 1] = new Condition(allSteps[0].StepDescription, true);
+            expectedConditionMatrix[0, 3] = new Condition(allSteps[0].StepDescription, false);
+            expectedConditionMatrix[3, 4] = new Condition(allSteps[3].StepDescription, true);
+            expectedConditionMatrix[3, 7] = new Condition(allSteps[3].StepDescription, false);
+            expectedConditionMatrix[6, 4] = new Condition(allSteps[6].StepDescription, false);
+            expectedConditionMatrix[6, 10] = new Condition(allSteps[6].StepDescription, true);
+            expectedConditionMatrix[9, 8] = new Condition(allSteps[9].StepDescription, false);
+            expectedConditionMatrix[9, 10] = new Condition(allSteps[9].StepDescription, true);
+
+            List<Node> steps;
+            Matrix<bool> edgeMatrix;
+            Matrix<Condition?> conditionMatrix;
+
+            // Act
+            GraphBuilder.BuildGraph(ref basicFlow, specificFlows, globalFlows, boundedFlows, out steps, out edgeMatrix, out conditionMatrix);
+
             // Assert
             Assert.AreEqual(allSteps, steps);
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
@@ -865,7 +2543,7 @@ namespace UseCaseTest.UcIntern
             List<Tuple<int, Condition?>> exitSteps;
             Matrix<Condition?> conditonMatrix;
             GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps, out conditonMatrix);
-            PrintEdges(edgeMatrix, true);
+
             // Assert
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
             Assert.AreEqual(expectedExternalEdges, externalEdges);
@@ -1074,7 +2752,7 @@ namespace UseCaseTest.UcIntern
             List<Tuple<int, Condition?>> exitSteps;
             Matrix<Condition?> conditionMatrix;
             GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps, out conditionMatrix);
-            
+
             // Assert
             Assert.AreEqual(expectedEdgeMatrix, edgeMatrix);
             Assert.AreEqual(expectedExternalEdges, externalEdges);
@@ -1185,7 +2863,7 @@ namespace UseCaseTest.UcIntern
                         { false, false, true, false },
                         { false, true, false, false },
                         { true, false, false, false }
-                    }), 
+                    }),
                 sourceMatrix = new Matrix<bool>(
                     new bool[,]
                     {
