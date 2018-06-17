@@ -49,41 +49,5 @@ namespace UseCaseTest.UcIntern
         {
             this.ConditionMatrix = conditionMatrix.AsReadonly();
         }
-
-        /// <summary>
-        /// Sets the basic flow.
-        /// </summary>
-        /// <param name="basicFlow">The basic flow to set.</param>
-        public void SetBasicFlow(Flow basicFlow)
-        {
-            this.BasicFlow = basicFlow;
-        }
-
-        /// <summary>
-        /// Sets the specific alternative flows.
-        /// </summary>
-        /// <param name="specificAlternativeFlows">The specific alternative flows to set.</param>
-        public void SetSpecificAlternativeFlows(List<Flow> specificAlternativeFlows)
-        {
-            this.SpecificAlternativeFlows = specificAlternativeFlows.AsReadOnly();
-        }
-
-        /// <summary>
-        /// Sets the global alternative flows.
-        /// </summary>
-        /// <param name="globalAlternativeFlows">The global alternative flows to set.</param>
-        public void SetGlobalAlternativeFlows(List<Flow> globalAlternativeFlows)
-        {
-            this.GlobalAlternativeFlows = globalAlternativeFlows.AsReadOnly();
-        }
-
-        /// <summary>
-        /// Sets the bounded alternative flows.
-        /// </summary>
-        /// <param name="boundedAlternativeFlows">The bounded alternative flows to set.</param>
-        public void SetBoundedAlternativeFlows(List<Flow> boundedAlternativeFlows)
-        {
-            this.BoundedAlternativeFlows = boundedAlternativeFlows.AsReadOnly();
-        }
     }
 }

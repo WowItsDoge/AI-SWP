@@ -4,6 +4,7 @@
 
 namespace UseCaseCore.UcIntern
 {
+    using System;
     using System.Collections.Generic;
 
     /// <summary>
@@ -89,22 +90,22 @@ namespace UseCaseCore.UcIntern
         /// <summary>
         /// Gets or sets the basic flow.
         /// </summary>
-        public Flow BasicFlow { get; protected set; }
+        public Flow BasicFlow { get; set; }
 
         /// <summary>
         /// Gets or sets the specific alternative flow list.
         /// </summary>
-        public IReadOnlyList<Flow> SpecificAlternativeFlows { get; protected set; }
+        public IReadOnlyList<Flow> SpecificAlternativeFlows { get; set; }
 
         /// <summary>
         /// Gets or sets the global alternative flow list.
         /// </summary>
-        public IReadOnlyList<Flow> GlobalAlternativeFlows { get; protected set; }
+        public IReadOnlyList<Flow> GlobalAlternativeFlows { get; set; }
 
         /// <summary>
         /// Gets or sets the bounded alternative flow list.
         /// </summary>
-        public IReadOnlyList<Flow> BoundedAlternativeFlows { get; protected set; }
+        public IReadOnlyList<Flow> BoundedAlternativeFlows { get; set; }
 
         /// <summary>
         /// Sets a basic flow for the use-case. It consists of a list of steps numbered by their position in the list and a postcondition as string.
@@ -112,17 +113,9 @@ namespace UseCaseCore.UcIntern
         /// <param name="steps">The steps of the flow.</param>
         /// <param name="postcondition">The postcondition text of the flow.</param>
         //// public void SetBasicFlow(List<string> steps, string postcondition)
+        [Obsolete("Use property BasicFlow instead.")]
         public void SetBasicFlow(Flow basicFlow)
         {
-            /*List<Node> basicSteps = new List<Node>();
-            FlowIdentifier basicIdentifier = new FlowIdentifier(FlowType.Basic, 0);
-
-            foreach (string step in steps)
-            {
-                basicSteps.Add(new Node(step, basicIdentifier));
-            }
-
-            this.BasicFlow = new Flow(basicIdentifier, postcondition, basicSteps, new List<ReferenceStep>());*/
             this.BasicFlow = basicFlow;
         }
 
@@ -135,21 +128,9 @@ namespace UseCaseCore.UcIntern
         /// <param name="postcondition">The postcondition text of the flow.</param>
         /// <param name="referenceStep">The reference step of the specific flow.</param>
         //// public void AddSpecificAlternativeFlow(int id, List<string> steps, string postcondition, ReferenceStep referenceStep)
+        [Obsolete("Use property SpecificAlternativeFlow instead.")]
         public void AddSpecificAlternativeFlow(List<Flow> specificAlternativeFlows)
         {
-            /*List<Node> specificSteps = new List<Node>();
-            FlowIdentifier specificIdentifier = new FlowIdentifier(FlowType.SpecificAlternative, id);
-
-            foreach (string step in steps)
-            {
-                specificSteps.Add(new Node(step, specificIdentifier));
-            }
-
-            List<Flow> tempList = new List<Flow>();
-            tempList.AddRange(this.SpecificAlternativeFlows);
-            tempList.Add(new Flow(specificIdentifier, postcondition, specificSteps, new List<ReferenceStep>() { referenceStep }));
-
-            this.SpecificAlternativeFlows = tempList;*/
             this.SpecificAlternativeFlows = specificAlternativeFlows;
         }
 
@@ -161,21 +142,9 @@ namespace UseCaseCore.UcIntern
         /// <param name="steps">The steps of the flow.</param>
         /// <param name="postcondition">The postcondition text of the flow.</param>
         //// public void AddGlobalAlternativeFlow(int id, List<string> steps, string postcondition)
+        [Obsolete("Use property GlobalAlternativeFlow instead.")]
         public void AddGlobalAlternativeFlow(List<Flow> globalAlternativeFlows)
         {
-            /*List<Node> globalSteps = new List<Node>();
-            FlowIdentifier globalIdentifier = new FlowIdentifier(FlowType.GlobalAlternative, id);
-
-            foreach (string step in steps)
-            {
-                globalSteps.Add(new Node(step, globalIdentifier));
-            }
-
-            List<Flow> tempList = new List<Flow>();
-            tempList.AddRange(this.GlobalAlternativeFlows);
-            tempList.Add(new Flow(globalIdentifier, postcondition, globalSteps, new List<ReferenceStep>()));
-
-            this.GlobalAlternativeFlows = tempList;*/
             this.GlobalAlternativeFlows = globalAlternativeFlows;
         }
 
@@ -188,21 +157,9 @@ namespace UseCaseCore.UcIntern
         /// <param name="postcondition">The postcondition text of the flow.</param>
         /// <param name="referenceSteps">The reference steps of the bounded flow.</param>
         //// public void AddBoundedAlternativeFlow(int id, List<string> steps, string postcondition, List<ReferenceStep> referenceSteps)
+        [Obsolete("Use property BoundedAlternativeFlow instead.")]
         public void AddBoundedAlternativeFlow(List<Flow> boundedAlternativeFlow)
         {
-            /*List<Node> boundedSteps = new List<Node>();
-            FlowIdentifier boundedIdentifier = new FlowIdentifier(FlowType.BoundedAlternative, id);
-
-            foreach (string step in steps)
-            {
-                boundedSteps.Add(new Node(step, boundedIdentifier));
-            }
-
-            List<Flow> tempList = new List<Flow>();
-            tempList.AddRange(this.BoundedAlternativeFlows);
-            tempList.Add(new Flow(boundedIdentifier, postcondition, boundedSteps, referenceSteps));
-
-            this.BoundedAlternativeFlows = tempList;*/
             this.BoundedAlternativeFlows = boundedAlternativeFlow;
         }
 
