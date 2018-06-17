@@ -233,47 +233,5 @@ namespace UseCaseCore.UcIntern
             this.EdgeMatrix = edgeMatrix;
             this.ConditionMatrix = conditionMatrix;
         }
-
-        /// <summary>
-        /// Prints the edges of the matrix into the console, that are equal to the match object.
-        /// Output: {row} -> {column}
-        /// </summary>
-        /// <typeparam name="T">The matrix contents type.</typeparam>
-        /// <param name="matrix">The matrix.</param>
-        /// <param name="matchObject">The object whose edges from the matrix will be printed.</param>
-        public void PrintEdges<T>(Matrix<T> matrix, T matchObject)
-        {
-            for (int row = 0; row < matrix.RowCount; row++)
-            {
-                for (int column = 0; column < matrix.ColumnCount; column++)
-                {
-                    if (matrix[row, column].Equals(matchObject))
-                    {
-                        System.Console.WriteLine($"{row} -> {column}");
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Prints the edges of the matrix into the console, that are not equal to the match object.
-        /// Output: {row} -> {column}
-        /// </summary>
-        /// <typeparam name="T">The matrix contents type.</typeparam>
-        /// <param name="matrix">The matrix.</param>
-        /// <param name="matchObject">The object whose edges from the matrix will not be printed.</param>
-        public void PrintEdgesInverse<T>(Matrix<T> matrix, T matchObject)
-        {
-            for (int row = 0; row < matrix.RowCount; row++)
-            {
-                for (int column = 0; column < matrix.ColumnCount; column++)
-                {
-                    if (!matrix[row, column].Equals(matchObject))
-                    {
-                        System.Console.WriteLine($"{row} -> {column}");
-                    }
-                }
-            }
-        }
     }
 }
