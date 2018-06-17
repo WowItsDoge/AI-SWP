@@ -110,8 +110,7 @@ namespace UseCaseCore.UcIntern
         /// <summary>
         /// Sets a basic flow for the use-case. It consists of a list of steps numbered by their position in the list and a postcondition as string.
         /// </summary>
-        /// <param name="steps">The steps of the flow.</param>
-        /// <param name="postcondition">The postcondition text of the flow.</param>
+        /// <param name="basicFlow">The basic flow.</param>
         //// public void SetBasicFlow(List<string> steps, string postcondition)
         [Obsolete("Use property BasicFlow instead.")]
         public void SetBasicFlow(Flow basicFlow)
@@ -123,11 +122,7 @@ namespace UseCaseCore.UcIntern
         /// Adds a specific alternative flow with an unique id (unique for all specific alternative flows added to this use-case), a list of steps numbered by their position in the list,
         /// a postcondition and a reference step that describes the step from which this alternative flow may start.
         /// </summary>
-        /// <param name="id">The unique id of the flow.</param>
-        /// <param name="steps">The steps of the flow.</param>
-        /// <param name="postcondition">The postcondition text of the flow.</param>
-        /// <param name="referenceStep">The reference step of the specific flow.</param>
-        //// public void AddSpecificAlternativeFlow(int id, List<string> steps, string postcondition, ReferenceStep referenceStep)
+        /// <param name="specificAlternativeFlows">The specific alternative flow.</param>
         [Obsolete("Use property SpecificAlternativeFlow instead.")]
         public void AddSpecificAlternativeFlow(List<Flow> specificAlternativeFlows)
         {
@@ -138,10 +133,7 @@ namespace UseCaseCore.UcIntern
         /// Adds a global alternative flow with an unique id (unique for all global alternative flows added to this use-case),
         /// a list of steps numbered by their position in the list and a postcondition.
         /// </summary>
-        /// <param name="id">The unique id of the flow.</param>
-        /// <param name="steps">The steps of the flow.</param>
-        /// <param name="postcondition">The postcondition text of the flow.</param>
-        //// public void AddGlobalAlternativeFlow(int id, List<string> steps, string postcondition)
+        /// <param name="globalAlternativeFlows">The global alternative flow.</param>
         [Obsolete("Use property GlobalAlternativeFlow instead.")]
         public void AddGlobalAlternativeFlow(List<Flow> globalAlternativeFlows)
         {
@@ -152,11 +144,7 @@ namespace UseCaseCore.UcIntern
         /// Adds a bounded alternative flow with an unique id (unique for all bounded alternative flows added to this use-case), a list of steps numbered by their position in the list,
         /// a postcondition and a list of reference steps that describe the steps from which this alternative flow may start.
         /// </summary>
-        /// <param name="id">The unique id of the flow.</param>
-        /// <param name="steps">The steps of the flow.</param>
-        /// <param name="postcondition">The postcondition text of the flow.</param>
-        /// <param name="referenceSteps">The reference steps of the bounded flow.</param>
-        //// public void AddBoundedAlternativeFlow(int id, List<string> steps, string postcondition, List<ReferenceStep> referenceSteps)
+        /// <param name="boundedAlternativeFlow">The bounded alternative flow.</param>
         [Obsolete("Use property BoundedAlternativeFlow instead.")]
         public void AddBoundedAlternativeFlow(List<Flow> boundedAlternativeFlow)
         {
