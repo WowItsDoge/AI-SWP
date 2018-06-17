@@ -515,12 +515,6 @@ namespace UseCaseCore.UcIntern
                 {
                     // Wire block start step to endif step
                     edgeMatrix[blockStartIndex, endIfStepIndex] = true;
-
-                    // If it is not the last block then the edge to the end if has a condition
-                    if (blockIndex < importantIfSteps.Count - 2)
-                    {
-                        conditionMatrix[blockStartIndex, endIfStepIndex] = new Condition(steps[blockStartIndex].StepDescription, true);
-                    }
                 }
 
                 lastBlockStartIndex = blockStartIndex;

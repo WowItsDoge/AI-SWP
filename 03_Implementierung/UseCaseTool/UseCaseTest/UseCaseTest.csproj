@@ -98,6 +98,7 @@
     <Compile Include="UcIntern\NodeTests.cs" />
     <Compile Include="UcIntern\ReferenceStepTests.cs" />
     <Compile Include="UcIntern\RowTests.cs" />
+    <Compile Include="UcIntern\UseCaseTests.cs" />
     <Compile Include="XmlParser\XmlStructureParserTest.cs" />
   </ItemGroup>
   <ItemGroup>

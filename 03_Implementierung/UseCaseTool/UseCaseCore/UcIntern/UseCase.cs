@@ -89,6 +89,7 @@ namespace UseCaseCore.UcIntern
 
         /// <summary>
         /// Gets or sets the basic flow.
+        /// It can be altered by the graph creation!
         /// </summary>
         public Flow BasicFlow { get; set; }
 
@@ -174,9 +175,9 @@ namespace UseCaseCore.UcIntern
                 out conditionMatrix);
 
             this.BasicFlow = basicFlow;
-            this.Nodes = nodes;
-            this.EdgeMatrix = edgeMatrix;
-            this.ConditionMatrix = conditionMatrix;
+            this.Nodes = nodes.AsReadOnly();
+            this.EdgeMatrix = edgeMatrix.AsReadonly();
+            this.ConditionMatrix = conditionMatrix.AsReadonly();
         }
     }
 }

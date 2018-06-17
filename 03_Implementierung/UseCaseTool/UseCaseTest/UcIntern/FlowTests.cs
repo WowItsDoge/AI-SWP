@@ -35,11 +35,11 @@ namespace UseCaseTest.UcIntern
             referenceStep2 = new ReferenceStep(flowIdentifier2, 1);
 
             List<Node> nodes = new List<Node>();
-            nodes.Add(new Node());
+            nodes.Add(new Node("A node", flowIdentifier1));
             nodeList1 = nodes.AsReadOnly();
 
             nodes = new List<Node>();
-            nodes.Add(new Node());
+            nodes.Add(new Node("Another node",flowIdentifier2));
             nodeList2 = nodes.AsReadOnly();
 
             List<ReferenceStep> referenceSteps = new List<ReferenceStep>();

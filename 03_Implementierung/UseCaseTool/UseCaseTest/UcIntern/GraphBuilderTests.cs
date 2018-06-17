@@ -2686,7 +2686,7 @@ namespace UseCaseTest.UcIntern
         /// Tests if an exception if thrown if a description is given that can create a loop.
         /// </summary>
         [Test]
-        public void TryWirePossibleEndlessLoopInWrongFlowDescription()
+        public void TryWirePossibleEndlessLoopInWrongIfFlowDescription()
         {
             // Arrange
             List<Node> nodes = new List<Node>();
@@ -2695,6 +2695,59 @@ namespace UseCaseTest.UcIntern
             nodes.Add(new Node("IF the crystal is red THEN", flowIdentifierBasic));
             nodes.Add(new Node("Burn it in fire.", flowIdentifierBasic));
             nodes.Add(new Node("ENDIF", flowIdentifierBasic));
+
+            // Act
+
+            // Assert
+            Assert.Catch(
+                        typeof(Exception),
+                        () =>
+                        {
+                            Matrix<bool> edgeMatrix;
+                            List<ExternalEdge> externalEdges;
+                            List<InternalEdge> possibleInvalidIfEdges;
+                            List<Tuple<int, Condition?>> exitSteps;
+                            Matrix<Condition?> conditonMatrix;
+                            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps, out conditonMatrix);
+                        });
+        }
+
+        /// <summary>
+        /// Tests if an exception if thrown if a description is given that can create a loop.
+        /// </summary>
+        [Test]
+        public void TryWirePossibleEndlessLoopInWrongIfFlowDescription2()
+        {
+            // Arrange
+            List<Node> nodes = new List<Node>();
+            nodes.Add(new Node("ELSEIF the crystal is blue THEN", flowIdentifierBasic));
+            nodes.Add(new Node("ELSE the crystal is red THEN", flowIdentifierBasic));
+
+            // Act
+
+            // Assert
+            Assert.Catch(
+                        typeof(Exception),
+                        () =>
+                        {
+                            Matrix<bool> edgeMatrix;
+                            List<ExternalEdge> externalEdges;
+                            List<InternalEdge> possibleInvalidIfEdges;
+                            List<Tuple<int, Condition?>> exitSteps;
+                            Matrix<Condition?> conditonMatrix;
+                            GraphBuilder.SetEdgesInStepBlock(nodes, out edgeMatrix, out externalEdges, out possibleInvalidIfEdges, out exitSteps, out conditonMatrix);
+                        });
+        }
+
+        /// <summary>
+        /// Tests if an exception if thrown if a description is given that can create a loop.
+        /// </summary>
+        [Test]
+        public void TryWirePossibleEndlessLoopInWrongDoUntilFlowDescription()
+        {
+            // Arrange
+            List<Node> nodes = new List<Node>();
+            nodes.Add(new Node("DO", flowIdentifierBasic));
 
             // Act
 

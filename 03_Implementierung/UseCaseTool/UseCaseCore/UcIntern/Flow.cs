@@ -5,6 +5,7 @@
 namespace UseCaseCore.UcIntern
 {
     using System.Collections.Generic;
+    using System.Linq;
 
     /// <summary>
     /// An object representing a flow with its unique identifier and its postcondition as a string.
@@ -56,8 +57,8 @@ namespace UseCaseCore.UcIntern
         {
             return x.Identifier == y.Identifier
                 && x.Postcondition == y.Postcondition
-                && ReferenceEquals(x.Nodes, y.Nodes)
-                && ReferenceEquals(x.ReferenceSteps, y.ReferenceSteps);
+                && ((x.Nodes == null && y.Nodes == null) || x.Nodes.SequenceEqual(y.Nodes))
+                && ((x.ReferenceSteps == null && y.ReferenceSteps == null) || x.ReferenceSteps.SequenceEqual(y.ReferenceSteps));
         }
 
         /// <summary>
