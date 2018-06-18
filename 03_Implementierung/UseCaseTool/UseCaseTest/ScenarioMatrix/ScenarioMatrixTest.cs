@@ -696,5 +696,70 @@ namespace UseCaseTest.ScenarioMatrix
             Assert.AreEqual(sm.UC.Nodes.Count, 2);
         }
 
+        /// <summary>
+        /// Try export with path = null
+        /// </summary>
+        [Test]
+        public void Export_Path_IsNull()
+        {
+            ScenarioMatrix s = new ScenarioMatrix( new TestUseCase(), 1);
+            bool ret = s.Export(null);
+
+            Assert.IsFalse(ret);
+        }
+
+        /// <summary>
+        /// Try export with path = null
+        /// </summary>
+        [Test]
+        public void Export_Scenario_WithComment()
+        {
+            bool[,] matrixA = new bool[,]  //// 1 2                    
+              { { false, true} ,           // 1 O X
+              { false, false}              // 2 O O
+              };
+
+            Matrix<bool> m = new Matrix<bool>(matrixA);
+
+            Node n1 = new Node("Step1", new FlowIdentifier(FlowType.Basic, 1));
+            Node n2 = new Node("Step2", new FlowIdentifier(FlowType.Basic, 1));
+            List<Node> nodes = new List<Node>();
+            nodes.Add(n1);
+            nodes.Add(n2);
+
+            TestUseCase uc = new TestUseCase();
+            uc.SetNodes(nodes);
+            uc.SetEdgeMatrix(m);
+
+            ScenarioMatrix sm = new ScenarioMatrix(uc, 1);
+            sm.CreateScenarios();
+
+            Assert.AreEqual(sm.GetScenarios().Count, 1);
+
+            Scenario s1 = new Scenario(sm.GetScenarios()[0]);
+            s1.Comment = "Apfelkuchen";
+
+            sm.UpdateScenarioComment(s1);
+
+
+            string filename = this.GetTmpFile();
+
+             bool retVal = sm.Export(filename);
+
+
+
+            try
+            {
+                Assert.IsTrue(File.Exists(filename));
+                Assert.IsTrue(retVal);
+                string text = File.ReadAllText(filename);
+                Assert.IsTrue(text.Contains("Apfelkuchen"));
+            }
+            finally
+            {
+                File.Delete(filename);
+            }
+        }
+
     }
 }
