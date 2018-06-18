@@ -5,9 +5,9 @@
 namespace UseCaseTest.RuleValidation
 {
     using NUnit.Framework;
-
+    using System.Collections.Generic;
     using UseCaseCore.RuleValidation.RucmRules;
-    using UseCaseCore.XmlParser;
+    using UseCaseCore.UcIntern;
 
     /// <summary>
     /// Test class for the rucm rule 23.
@@ -21,18 +21,19 @@ namespace UseCaseTest.RuleValidation
         [Test]
         public void Check23Test()
         {
-
-            /*
-             
             // Check a normal basic Flow for DO-UNTIL
-            var basicFlow = new BasicFlow();
-            basicFlow.AddStep("Der erste Schritt");
-            basicFlow.AddStep("DO");
-            basicFlow.AddStep("Der erste Schritt im Do");
-            basicFlow.AddStep("Der zweite Schritt im Do");
-            basicFlow.AddStep("UNTIL Stop");
-            basicFlow.AddStep("Der zweite Schritt");
-            basicFlow.AddStep("Der dritte Schritt");
+            var flowId = new FlowIdentifier(FlowType.Basic, 1);
+            var nodes = new List<Node>();
+            nodes.Add(new Node("Der erste Schritt", flowId));
+            nodes.Add(new Node("DO", flowId));
+            nodes.Add(new Node("Der erste Schritt im Do", flowId));
+            nodes.Add(new Node("Der zweite Schritt im Do", flowId));
+            nodes.Add(new Node("UNTIL Stop", flowId));
+            nodes.Add(new Node("Der zweite Schritt", flowId));
+            nodes.Add(new Node("Der dritte Schritt", flowId));
+            var rfStep = new List<ReferenceStep>();
+
+            var basicFlow = new Flow(flowId, "Die Standard-Nachbedingung.", nodes, rfStep);
 
             var rucmRule = new RucmRule_23();
 
@@ -40,94 +41,108 @@ namespace UseCaseTest.RuleValidation
             Assert.IsTrue(result.Count == 0);
 
             // Check no DO-UNTIL
-            basicFlow = new BasicFlow();
-            basicFlow.AddStep("Der erste Schritt");
-            basicFlow.AddStep("Der zweite Schritt");
+            nodes = new List<Node>();
+            nodes.Add(new Node("Der erste Schritt", flowId));
+            nodes.Add(new Node("Der zweite Schritt", flowId));
+
+            basicFlow = new Flow(flowId, "Die Standard-Nachbedingung.", nodes, rfStep);
 
             result = rucmRule.Check(basicFlow);
             Assert.IsTrue(result.Count == 0);
 
             // Check for a nested DO-UNTIL
-            basicFlow = new BasicFlow();
-            basicFlow.AddStep("Der erste Schritt");
-            basicFlow.AddStep("DO");
-            basicFlow.AddStep("Der erste Schritt im Do");
-            basicFlow.AddStep("DO");
-            basicFlow.AddStep("Der erste Schritt im Do-Do");
-            basicFlow.AddStep("UNTIL Stop");
-            basicFlow.AddStep("UNTIL Stop-Stop");
-            basicFlow.AddStep("Der zweite Schritt");
+            nodes = new List<Node>();
+            nodes.Add(new Node("Der erste Schritt", flowId));
+            nodes.Add(new Node("DO", flowId));
+            nodes.Add(new Node("Der erste Schritt im Do", flowId));
+            nodes.Add(new Node("DO", flowId));
+            nodes.Add(new Node("Der erste Schritt im Do-Do", flowId));
+            nodes.Add(new Node("UNTIL Stop", flowId));
+            nodes.Add(new Node("UNTIL Stop-Stop", flowId));
+            nodes.Add(new Node("Der zweite Schritt", flowId));
+
+            basicFlow = new Flow(flowId, "Die Standard-Nachbedingung.", nodes, rfStep);
 
             result = rucmRule.Check(basicFlow);
             Assert.IsTrue(result.Count == 0);
 
             // Check for two seperate DOs
-            basicFlow = new BasicFlow();
-            basicFlow.AddStep("Der erste Schritt");
-            basicFlow.AddStep("DO");
-            basicFlow.AddStep("Der erste Schritt im Do");
-            basicFlow.AddStep("UNTIL Stop");
-            basicFlow.AddStep("DO");
-            basicFlow.AddStep("Der erste Schritt im Do-Do");
-            basicFlow.AddStep("UNTIL Stop-Stop");
-            basicFlow.AddStep("Der zweite Schritt");
+            nodes = new List<Node>();
+            nodes.Add(new Node("Der erste Schritt", flowId));
+            nodes.Add(new Node("DO", flowId));
+            nodes.Add(new Node("Der erste Schritt im Do", flowId));
+            nodes.Add(new Node("UNTIL Stop", flowId));
+            nodes.Add(new Node("DO", flowId));
+            nodes.Add(new Node("Der erste Schritt im Do-Do", flowId));
+            nodes.Add(new Node("UNTIL Stop-Stop", flowId));
+            nodes.Add(new Node("Der zweite Schritt", flowId));
+
+            basicFlow = new Flow(flowId, "Die Standard-Nachbedingung.", nodes, rfStep);
 
             result = rucmRule.Check(basicFlow);
             Assert.IsTrue(result.Count == 0);
 
             // Check for a DO without UNTIL
-            basicFlow = new BasicFlow();
-            basicFlow.AddStep("Der erste Schritt");
-            basicFlow.AddStep("DO");
-            basicFlow.AddStep("Der erste Schritt im Do");
-            basicFlow.AddStep("Der zweite Schritt");
+            nodes = new List<Node>();
+            nodes.Add(new Node("Der erste Schritt", flowId));
+            nodes.Add(new Node("DO", flowId));
+            nodes.Add(new Node("Der erste Schritt im Do", flowId));
+            nodes.Add(new Node("Der zweite Schritt", flowId));
+
+            basicFlow = new Flow(flowId, "Die Standard-Nachbedingung.", nodes, rfStep);
 
             result = rucmRule.Check(basicFlow);
             Assert.IsTrue(result.Count == 2);
 
             // Check for a UNTIL without DO
-            basicFlow = new BasicFlow();
-            basicFlow.AddStep("Der erste Schritt");
-            basicFlow.AddStep("Der erste Schritt im Do");
-            basicFlow.AddStep("UNTIL Stop");
-            basicFlow.AddStep("Der zweite Schritt");
+            nodes = new List<Node>();
+            nodes.Add(new Node("Der erste Schritt", flowId));
+            nodes.Add(new Node("Der erste Schritt im Do", flowId));
+            nodes.Add(new Node("UNTIL Stop", flowId));
+            nodes.Add(new Node("Der zweite Schritt", flowId));
+
+            basicFlow = new Flow(flowId, "Die Standard-Nachbedingung.", nodes, rfStep);
 
             result = rucmRule.Check(basicFlow);
             Assert.IsTrue(result.Count == 2);
 
             // Check for a UNTIL on the end
-            basicFlow = new BasicFlow();
-            basicFlow.AddStep("Der erste Schritt");
-            basicFlow.AddStep("DO");
-            basicFlow.AddStep("Der erste Schritt im Do");
-            basicFlow.AddStep("Stop UNTIL");
-            basicFlow.AddStep("Der zweite Schritt");
+            nodes = new List<Node>();
+            nodes.Add(new Node("Der erste Schritt", flowId));
+            nodes.Add(new Node("DO", flowId));
+            nodes.Add(new Node("Der erste Schritt im Do", flowId));
+            nodes.Add(new Node("Stop UNTIL", flowId));
+            nodes.Add(new Node("Der zweite Schritt", flowId));
+
+            basicFlow = new Flow(flowId, "Die Standard-Nachbedingung.", nodes, rfStep);
 
             result = rucmRule.Check(basicFlow);
             Assert.IsTrue(result.Count == 2);
 
             // Check for a DO-UNTIL without a Stopcondition
-            basicFlow = new BasicFlow();
-            basicFlow.AddStep("Der erste Schritt");
-            basicFlow.AddStep("DO");
-            basicFlow.AddStep("Der erste Schritt im Do");
-            basicFlow.AddStep("UNTIL");
-            basicFlow.AddStep("Der zweite Schritt");
+            nodes = new List<Node>();
+            nodes.Add(new Node("Der erste Schritt", flowId));
+            nodes.Add(new Node("DO", flowId));
+            nodes.Add(new Node("Der erste Schritt im Do", flowId));
+            nodes.Add(new Node("UNTIL", flowId));
+            nodes.Add(new Node("Der zweite Schritt", flowId));
+
+            basicFlow = new Flow(flowId, "Die Standard-Nachbedingung.", nodes, rfStep);
 
             result = rucmRule.Check(basicFlow);
             Assert.IsTrue(result.Count == 2);
 
             // Check for a DO-UNTIL without the stuff TODO in the DO
-            basicFlow = new BasicFlow();
-            basicFlow.AddStep("Der erste Schritt");
-            basicFlow.AddStep("DO Das alles was hier steht");
-            basicFlow.AddStep("UNTIL Stop gesetzt wird");
-            basicFlow.AddStep("Der zweite Schritt");
+            nodes = new List<Node>();
+            nodes.Add(new Node("Der erste Schritt", flowId));
+            nodes.Add(new Node("DO Das alles was hier steht", flowId));
+            nodes.Add(new Node("UNTIL Stop gesetzt wird", flowId));
+            nodes.Add(new Node("Der zweite Schritt", flowId));
+
+            basicFlow = new Flow(flowId, "Die Standard-Nachbedingung.", nodes, rfStep);
 
             result = rucmRule.Check(basicFlow);
             Assert.IsTrue(result.Count == 2);
-
-            */
         }
     }
 }

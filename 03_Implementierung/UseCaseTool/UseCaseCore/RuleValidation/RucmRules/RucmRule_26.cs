@@ -30,7 +30,7 @@ namespace UseCaseCore.RuleValidation.RucmRules
             var postCondition = flowToCheck.Postcondition;
             if (string.IsNullOrWhiteSpace(postCondition))
             {
-                this.errors.Add(new FlowError(0, "Bitte geben Sie für jeden Flow eine eigene Nachbedingung an.", "Dieser Flow enthält keine Nachbedingung!"));
+                this.errors.Add(new FlowError(flowToCheck.Identifier.Id, "Dieser Flow enthält keine Nachbedingung!\nBitte geben Sie für jeden Flow eine eigene Nachbedingung an.", "Verletzung der Regel 26!"));
             }
 
             return this.errors;

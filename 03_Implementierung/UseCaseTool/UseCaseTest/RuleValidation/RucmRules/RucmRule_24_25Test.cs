@@ -1,17 +1,13 @@
-﻿
-
-
-// <copyright file="RucmRule_24_25Test.cs" company="Team B">
+﻿// <copyright file="RucmRule_24_25Test.cs" company="Team B">
 //      Team B. All rights reserved.
 // </copyright>
 
 namespace UseCaseTest.RuleValidation
 {
     using NUnit.Framework;
-
+    using System.Collections.Generic;
     using UseCaseCore.RuleValidation.RucmRules;
     using UseCaseCore.UcIntern;
-    using UseCaseCore.XmlParser;
 
     /// <summary>
     /// Test class for the rucm rules 24 and 25.
@@ -25,15 +21,23 @@ namespace UseCaseTest.RuleValidation
         [Test]
         public void Check2425Test()
         {
+            var flowId = new FlowIdentifier(FlowType.Basic, 1);
+            var nodes = new List<Node>();
+            nodes.Add(new Node("Der erste Schritt", flowId));
+            nodes.Add(new Node("Der zweite Schritt", flowId));
+            nodes.Add(new Node("Der dritte Schritt", flowId));
+            var rfStep = new List<ReferenceStep>();
 
-            /*
-            
-            var basicFlow = new BasicFlow();
-            basicFlow.AddStep("Der erste Schritt");
-            basicFlow.AddStep("Der zweite Schritt");
-            basicFlow.AddStep("Der dritte Schritt");
+            var basicFlow = new Flow(flowId, "Die Standard-Nachbedingung.", nodes, rfStep);
 
-            var globalFlow = new GlobalAlternativeFlow();
+
+            flowId = new FlowIdentifier(FlowType.GlobalAlternative, 2);
+            nodes = new List<Node>();
+            nodes.Add(new Node("Der erste gf-Schritt", flowId));
+            nodes.Add(new Node("Der zweite gf-Schritt", flowId));
+            rfStep = new List<ReferenceStep>();
+
+            var globalFlow = new Flow(flowId, "Die gf-Nachbedingung", nodes, rfStep);
 
             // Basic flow does not have to end with ABORT or RESUME.
             var rucmRule = new RucmRule_24_25();
@@ -44,80 +48,88 @@ namespace UseCaseTest.RuleValidation
             checkResult = rucmRule.Check(globalFlow, basicFlow);
             Assert.IsTrue(checkResult.Count == 1);
 
-            globalFlow.AddStep("ABORT");
+            nodes.Add(new Node("ABORT", flowId));
+            globalFlow = new Flow(flowId, "Die gf-Nachbedingung", nodes, rfStep);
+
             checkResult = rucmRule.Check(globalFlow, basicFlow);
             Assert.IsTrue(checkResult.Count == 0);
 
             // Check if the form of the abort is correct
-            globalFlow = new GlobalAlternativeFlow();
-            globalFlow.AddStep("Hier Endet der UC ABORT");
+            nodes = new List<Node>();
+            nodes.Add(new Node("Der erste gf-Schritt", flowId));
+            nodes.Add(new Node("Hier Endet der UC ABORT", flowId));
+            globalFlow = new Flow(flowId, "Die gf-Nachbedingung", nodes, rfStep);
 
             checkResult = rucmRule.Check(globalFlow, basicFlow);
             Assert.IsTrue(checkResult.Count == 2);
 
-            globalFlow = new GlobalAlternativeFlow();
-            globalFlow.AddStep("Hier Endet der UC");
-            globalFlow.AddStep("RESUME STEP 5");
+            nodes = new List<Node>();
+            nodes.Add(new Node("Hier Endet der UC", flowId));
+            nodes.Add(new Node("RESUME STEP 5", flowId));
+            globalFlow = new Flow(flowId, "Die gf-Nachbedingung", nodes, rfStep);
 
             checkResult = rucmRule.Check(globalFlow, basicFlow);
             Assert.IsTrue(checkResult.Count == 2);
 
-            globalFlow = new GlobalAlternativeFlow();
-            globalFlow.AddStep("Hier Endet der UC");
-            globalFlow.AddStep("RESUME STEP %");
+            nodes = new List<Node>();
+            nodes.Add(new Node("Hier Endet der UC", flowId));
+            nodes.Add(new Node("RESUME STEP %", flowId));
+            globalFlow = new Flow(flowId, "Die gf-Nachbedingung", nodes, rfStep);
 
             checkResult = rucmRule.Check(globalFlow, basicFlow);
             Assert.IsTrue(checkResult.Count == 2);
 
-            globalFlow = new GlobalAlternativeFlow();
-            globalFlow.AddStep("Hier Endet der UC");
-            globalFlow.AddStep("deswegen RESUME STEP Der erste Schritt");
+            nodes = new List<Node>();
+            nodes.Add(new Node("Hier Endet der UC", flowId));
+            nodes.Add(new Node("deswegen RESUME STEP Der erste Schritt", flowId));
+            globalFlow = new Flow(flowId, "Die gf-Nachbedingung", nodes, rfStep);
 
             checkResult = rucmRule.Check(globalFlow, basicFlow);
             Assert.IsTrue(checkResult.Count == 2);
 
             // Check if specific alternative flow ends correctly
-            var specificFlow = new SpecificAlternativeFlow();
-            specificFlow.AddReferenceStep(new ReferenceStep(new FlowIdentifier(FlowType.Basic, 1), 2));
-            specificFlow.SetPostcondition("The status is crisis");
-            specificFlow.AddStep("IF blablabla THEN");
-            specificFlow.AddStep("RESUME STEP 1");
-            specificFlow.AddStep("ENDIF");
-            specificFlow.AddStep("IF blablabla THEN");
-            specificFlow.AddStep("RESUME STEP 2");
-            specificFlow.AddStep("ENDIF");
-            specificFlow.AddStep("IF blablabla THEN");
-            specificFlow.AddStep("do some stuff");
-            specificFlow.AddStep("DO");
-            specificFlow.AddStep("IF blablabla THEN");
-            specificFlow.AddStep("RESUME STEP 1");
-            specificFlow.AddStep("ENDIF");
-            specificFlow.AddStep("IF blablabla THEN");
-            specificFlow.AddStep("RESUME STEP 1");
-            specificFlow.AddStep("ENDIF");
-            specificFlow.AddStep("IF blablabla THEN");
-            specificFlow.AddStep("ABORT");
-            specificFlow.AddStep("ENDIF");
-            specificFlow.AddStep("UNTIL blablabla");
-            specificFlow.AddStep("ENDIF");
+            flowId = new FlowIdentifier(FlowType.SpecificAlternative, 3);
+            nodes = new List<Node>();
+            nodes.Add(new Node("IF blablabla THEN", flowId));
+            nodes.Add(new Node("RESUME STEP 1", flowId));
+            nodes.Add(new Node("ENDIF", flowId));
+            nodes.Add(new Node("IF blablabla THEN", flowId));
+            nodes.Add(new Node("RESUME STEP 2", flowId));
+            nodes.Add(new Node("ENDIF", flowId));
+            nodes.Add(new Node("IF blablabla THEN", flowId));
+            nodes.Add(new Node("do some stuff", flowId));
+            nodes.Add(new Node("DO", flowId));
+            nodes.Add(new Node("IF blablabla THEN", flowId));
+            nodes.Add(new Node("RESUME STEP 1", flowId));
+            nodes.Add(new Node("ENDIF", flowId));
+            nodes.Add(new Node("IF blablabla THEN", flowId));
+            nodes.Add(new Node("RESUME STEP 1", flowId));
+            nodes.Add(new Node("ENDIF", flowId));
+            nodes.Add(new Node("IF blablabla THEN", flowId));
+            nodes.Add(new Node("ABORT", flowId));
+            nodes.Add(new Node("ENDIF", flowId));
+            nodes.Add(new Node("UNTIL blablabla", flowId));
+            nodes.Add(new Node("ENDIF", flowId));
+            rfStep = new List<ReferenceStep>();
+            rfStep.Add(new ReferenceStep(new FlowIdentifier(FlowType.Basic, 1), 2));
+
+            var specificFlow = new Flow(flowId, "The status is crisis", nodes, rfStep);
 
             checkResult = rucmRule.Check(specificFlow, basicFlow);
             Assert.IsTrue(checkResult.Count == 0);
 
-            specificFlow = new SpecificAlternativeFlow();
-            specificFlow.AddReferenceStep(new ReferenceStep(new FlowIdentifier(FlowType.Basic, 1), 2));
-            specificFlow.SetPostcondition("The status is crisis");
-            specificFlow.AddStep("IF blablabla THEN");
-            specificFlow.AddStep("do some stuff");
-            specificFlow.AddStep("DO");
-            specificFlow.AddStep("do some stuff");
-            specificFlow.AddStep("UNTIL blablabla");
-            specificFlow.AddStep("ENDIF");
+            nodes = new List<Node>();
+            nodes.Add(new Node("IF blablabla THEN", flowId));
+            nodes.Add(new Node("do some stuff", flowId));
+            nodes.Add(new Node("DO", flowId));
+            nodes.Add(new Node("do some stuff", flowId));
+            nodes.Add(new Node("UNTIL blablabla", flowId));
+            nodes.Add(new Node("ENDIF", flowId));
+
+            specificFlow = new Flow(flowId, "The status is crisis", nodes, rfStep);
 
             checkResult = rucmRule.Check(specificFlow, basicFlow);
             Assert.IsTrue(checkResult.Count == 1);
-
-            */
         }
     }
 }

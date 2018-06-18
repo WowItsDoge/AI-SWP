@@ -5,9 +5,9 @@
 namespace UseCaseTest.RuleValidation
 {
     using NUnit.Framework;
-
+    using System.Collections.Generic;
     using UseCaseCore.RuleValidation.RucmRules;
-    using UseCaseCore.XmlParser;
+    using UseCaseCore.UcIntern;
 
     /// <summary>
     /// Test class for the rucm rule 26.
@@ -21,14 +21,15 @@ namespace UseCaseTest.RuleValidation
         [Test]
         public void Check26Test()
         {
-
-            /*
-            
             // Basic flow without postcondition
-            var basicFlow = new BasicFlow();
-            basicFlow.AddStep("Der erste Schritt");
-            basicFlow.AddStep("Der zweite Schritt");
-            basicFlow.AddStep("Der dritte Schritt");
+            var flowId = new FlowIdentifier(FlowType.Basic, 1);
+            var nodes = new List<Node>();
+            nodes.Add(new Node("Der erste Schritt", flowId));
+            nodes.Add(new Node("Der zweite Schritt", flowId));
+            nodes.Add(new Node("Der dritte Schritt", flowId));
+            var rfStep = new List<ReferenceStep>();
+
+            var basicFlow = new Flow(flowId, string.Empty, nodes, rfStep);
 
             var rucmRule = new RucmRule_26();
 
@@ -36,61 +37,70 @@ namespace UseCaseTest.RuleValidation
             Assert.IsTrue(checkResult.Count == 1);
 
             // Basic flow with postcondition
-            basicFlow.SetPostcondition("Die Nachbedingung");
+            basicFlow = new Flow(flowId, "Die Nachbedingung", nodes, rfStep);
 
             checkResult = rucmRule.Check(basicFlow);
             Assert.IsTrue(checkResult.Count == 0);
 
-            // BasicFlow with two set postconditions
-            basicFlow.SetPostcondition("Die zweite Nachbedingung");
+            // BasicFlow with null
+            basicFlow = new Flow(flowId, null, nodes, rfStep);
 
             checkResult = rucmRule.Check(basicFlow);
-            Assert.IsTrue(checkResult.Count == 0);
+            Assert.IsTrue(checkResult.Count == 1);
 
             // global flow without post condition
-            var globalFlow = new GlobalAlternativeFlow();
-            globalFlow.AddStep("Der erste gf-Schritt");
-            globalFlow.AddStep("Der zweite gf-Schritt");
-            globalFlow.SetId(1);
+            flowId = new FlowIdentifier(FlowType.GlobalAlternative, 2);
+            nodes = new List<Node>();
+            nodes.Add(new Node("Der erste gf-Schritt", flowId));
+            nodes.Add(new Node("Der zweite gf-Schritt", flowId));
+            rfStep = new List<ReferenceStep>();
+
+            var globalFlow = new Flow(flowId, string.Empty, nodes, rfStep);
 
             checkResult = rucmRule.Check(globalFlow, basicFlow);
             Assert.IsTrue(checkResult.Count == 1);
 
             // global flow with post condition
-            globalFlow.SetPostcondition("Die gf-Nachbedingung");
+            globalFlow = new Flow(flowId, "Die gf-Nachbedingung", nodes, rfStep);
 
             checkResult = rucmRule.Check(globalFlow, basicFlow);
             Assert.IsTrue(checkResult.Count == 0);
 
             // specific flow without post condition
-            var specflow = new SpecificAlternativeFlow();
-            specflow.AddStep("Der erste sf-Schritt");
-            specflow.AddStep("Der zweite sf-Schritt");
+            flowId = new FlowIdentifier(FlowType.SpecificAlternative, 3);
+            nodes = new List<Node>();
+            nodes.Add(new Node("Der erste sf-Schritt", flowId));
+            nodes.Add(new Node("Der zweite sf-Schritt", flowId));
+            rfStep = new List<ReferenceStep>();
+
+            var specflow = new Flow(flowId, string.Empty, nodes, rfStep);
 
             checkResult = rucmRule.Check(specflow, basicFlow);
             Assert.IsTrue(checkResult.Count == 1);
 
             // specific flow with post condition
-            specflow.SetPostcondition("Die sf-Nachbedingung");
+            specflow = new Flow(flowId, "Die sf-Nachbedingung", nodes, rfStep);
 
             checkResult = rucmRule.Check(specflow, basicFlow);
             Assert.IsTrue(checkResult.Count == 0);
 
             // bounded flow without post condition
-            var boundedFlow = new BoundedAlternativeFlow();
-            boundedFlow.AddStep("Der erste bf-Schritt");
-            boundedFlow.AddStep("Der zweite bf-Schritt");
+            flowId = new FlowIdentifier(FlowType.BoundedAlternative, 4);
+            nodes = new List<Node>();
+            nodes.Add(new Node("Der erste bf-Schritt", flowId));
+            nodes.Add(new Node("Der zweite bf-Schritt", flowId));
+            rfStep = new List<ReferenceStep>();
+
+            var boundedFlow = new Flow(flowId, string.Empty, nodes, rfStep);
 
             checkResult = rucmRule.Check(boundedFlow, basicFlow);
             Assert.IsTrue(checkResult.Count == 1);
 
             // bounded flow with post condition
-            boundedFlow.SetPostcondition("Die bf-Nachbedingung");
+            boundedFlow = new Flow(flowId, "Die bf-Nachbedingung", nodes, rfStep);
 
             checkResult = rucmRule.Check(boundedFlow, basicFlow);
             Assert.IsTrue(checkResult.Count == 0);
-
-            */
         }
     }
 }
