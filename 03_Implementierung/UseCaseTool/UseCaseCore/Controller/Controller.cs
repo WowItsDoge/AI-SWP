@@ -627,12 +627,7 @@ namespace UseCaseCore.Controller
                     MessageBox.Show("Fehler beim Einlesen der Datei.", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                     this.ruleValidator.AddExternalError(this.xmlParser.GetError());
-                    ErrorReport errorReport = this.ruleValidator.GetErrorReport();
-                    List<IError> errorList = errorReport.GetErrorList;
-                    if (this.WriteErrorReport != null)
-                    {
-                        this.WriteErrorReport(errorList);
-                    }
+                    this.ErrorReport();
                 }
             }
             else
@@ -678,6 +673,23 @@ namespace UseCaseCore.Controller
         }
 
         /// <summary>
+        /// Write a new error report
+        /// </summary>
+        /// <returns>error list</returns>
+        private List<IError> ErrorReport()
+        {
+            ErrorReport errorReport = this.ruleValidator.GetErrorReport();
+            List<IError> errorList = errorReport.GetErrorList;
+
+            if (this.WriteErrorReport != null)
+            {
+                this.WriteErrorReport(errorList);
+            }
+
+            return errorList;
+        }
+
+        /// <summary>
         /// BackgroundWorker to generate the error report
         /// </summary>
         /// <param name="sender">The sender</param>
@@ -688,8 +700,9 @@ namespace UseCaseCore.Controller
             if ((!this.backgroundWorkerGetErrorReport.CancellationPending) && (!this.backgroundWorkerValidFile.CancellationPending) && (!this.backgroundWorkerLoadFile.CancellationPending))
             {
                 //// this.ruleValidator.AddExternalError("Beispiel Fehler");
-                ErrorReport errorReport = this.ruleValidator.GetErrorReport();
-                List<IError> errorList = errorReport.GetErrorList;
+
+                List<IError> errorList = this.ErrorReport();
+
                 if (errorList.Count > 0)
                 {
                     this.BackgroundColor5 = Brushes.Red;
@@ -717,12 +730,7 @@ namespace UseCaseCore.Controller
                     {
                         this.backgroundWorkerGenerateMatrix.RunWorkerAsync();
                     }
-                }
-                
-                if (this.WriteErrorReport != null)
-                {
-                    this.WriteErrorReport(errorList);
-                }                
+                }                                
             }
             else
             {
