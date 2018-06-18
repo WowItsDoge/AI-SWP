@@ -56,11 +56,6 @@ namespace UseCaseTool
         }
 
         /// <summary>
-        /// Event that fires when the Matrix in the GUI got changed by the user
-        /// </summary>
-        public event Action<Scenario> MatrixChangedByUser;       
-
-        /// <summary>
         /// Gets or sets the list of errors
         /// </summary>
         public List<IError> ErrorList { get; set; }
@@ -71,6 +66,7 @@ namespace UseCaseTool
         /// <param name="obj">Error list</param>
         private void Controller_WriteErrorReport(List<UseCaseCore.RuleValidation.Errors.IError> obj)
         {
+            ErrorList.Clear();
             foreach (var error in obj)
             {
                 this.ErrorList.Add(error);
