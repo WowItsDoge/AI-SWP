@@ -149,6 +149,9 @@ namespace UseCaseCore.Controller
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the cancel button is visible
+        /// </summary>
         public bool CancelButtonEnabled
         {
             get
@@ -163,6 +166,9 @@ namespace UseCaseCore.Controller
             }
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the button to change the cycle depth is visible
+        /// </summary>
         public bool MatrixCycleDepthEnabled
         {
             get
@@ -177,6 +183,9 @@ namespace UseCaseCore.Controller
             }
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the graph button is visible
+        /// </summary>
         public bool GraphButtonsEnabled
         {
             get
@@ -513,7 +522,7 @@ namespace UseCaseCore.Controller
         public void MatrixFilePath(string filePath)
         {
             // Usecase da????
-            if (filePath != string.Empty)
+            if (this.matrix != null)
             {
                 this.matrix.Export(filePath);
             }
@@ -566,7 +575,7 @@ namespace UseCaseCore.Controller
         /// <summary>
         /// process to reset previous content
         /// </summary>
-        void ResetPreviousContent()
+        private void ResetPreviousContent()
         {
             this.BackgroundColor1 = new SolidColorBrush(Color.FromArgb(255, 65, 177, 255));
             this.BackgroundColor2 = new SolidColorBrush(Color.FromArgb(255, 65, 177, 255));
@@ -631,7 +640,7 @@ namespace UseCaseCore.Controller
                 MessageBox.Show("Vorgang wurde abgebrochen.", "Abbruch", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
-
+        
         /// <summary>
         /// BackgroundWorker to validate the file
         /// </summary>
@@ -709,11 +718,11 @@ namespace UseCaseCore.Controller
                         this.backgroundWorkerGenerateMatrix.RunWorkerAsync();
                     }
                 }
-
+                
                 if (this.WriteErrorReport != null)
                 {
                     this.WriteErrorReport(errorList);
-                }
+                }                
             }
             else
             {
