@@ -258,9 +258,11 @@ namespace UseCaseCore.XmlParser
         private bool ValidateRucmRules()
         {
             bool currentValidationResult = true;
+            bool functionReturnValue = true;
             this.rucmRuleValidator.Validate(this.basicFlow);
             foreach (var globalAlternativeFlow in this.globalAlternativeFlows)
             {
+                /*
                 if (currentValidationResult == true)
                 {
                     currentValidationResult = this.rucmRuleValidator.Validate(globalAlternativeFlow, this.basicFlow);
@@ -269,10 +271,17 @@ namespace UseCaseCore.XmlParser
                 {
                     break;
                 }
+                */
+                currentValidationResult = this.rucmRuleValidator.Validate(globalAlternativeFlow, this.basicFlow);
+                if (currentValidationResult == false)
+                {
+                    functionReturnValue = false;
+                }
             }
 
             foreach (var specificAlternativeFlow in this.specificAlternativeFlows)
             {
+                /*
                 if (currentValidationResult == true)
                 {
                     currentValidationResult = this.rucmRuleValidator.Validate(specificAlternativeFlow, this.basicFlow);
@@ -281,10 +290,17 @@ namespace UseCaseCore.XmlParser
                 {
                     break;
                 }
+                */
+                currentValidationResult = this.rucmRuleValidator.Validate(specificAlternativeFlow, this.basicFlow);
+                if (currentValidationResult == false)
+                {
+                    functionReturnValue = false;
+                }
             }
 
             foreach (var boundedAlternativeFlow in this.boundedAlternativeFlows)
             {
+                /*
                 if (currentValidationResult == true)
                 {
                     currentValidationResult = this.rucmRuleValidator.Validate(boundedAlternativeFlow, this.basicFlow);
@@ -293,9 +309,16 @@ namespace UseCaseCore.XmlParser
                 {
                     break;
                 }
+                */
+                currentValidationResult = this.rucmRuleValidator.Validate(boundedAlternativeFlow, this.basicFlow);
+                if (currentValidationResult == false)
+                {
+                    functionReturnValue = false;
+                }
             }
 
-            return currentValidationResult;
+            ////return currentValidationResult;
+            return functionReturnValue;
         }
 
         /// <summary>
