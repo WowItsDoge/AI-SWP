@@ -421,7 +421,12 @@ namespace UseCaseCore.XmlParser
                     basicFlowStepContent = basicFlowStepContent.NextSibling;
                 }
 
-                string postcondition = basicFlowStepContent.ChildNodes[2].InnerText.Trim();
+                string postcondition = string.Empty;
+                if (basicFlowStepContent.ChildNodes.Count == 3)
+                {
+                    postcondition = basicFlowStepContent.ChildNodes[2].InnerText.Trim();
+                }
+
                 this.basicFlow = new Flow(basicIdentifier, postcondition, basicSteps, new List<ReferenceStep>());
             }
             catch
@@ -469,7 +474,12 @@ namespace UseCaseCore.XmlParser
                         globalAlternativeFlowStepContent = globalAlternativeFlowStepContent.NextSibling;
                     }
 
-                    string postcondition = globalAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim();                   
+                    string postcondition = string.Empty;
+                    if (globalAlternativeFlowStepContent.ChildNodes.Count == 3)
+                    {
+                        postcondition = globalAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim();
+                    }   
+                                
                     tempList.Add(new Flow(globalIdentifier, postcondition, globalSteps, new List<ReferenceStep>()));                   
                 }
 
@@ -532,7 +542,12 @@ namespace UseCaseCore.XmlParser
                         specificAlternativeFlowStepContent = specificAlternativeFlowStepContent.NextSibling;
                     }
 
-                    string postcondition = specificAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim();                                       
+                    string postcondition = string.Empty;
+                    if (specificAlternativeFlowStepContent.ChildNodes.Count == 3)
+                    {
+                        postcondition = specificAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim();
+                    }  
+                                                     
                     tempList.Add(new Flow(specificIdentifier, postcondition, specificSteps, new List<ReferenceStep>() { referenceStep }));
                 }
 
@@ -595,6 +610,7 @@ namespace UseCaseCore.XmlParser
                                         ReferenceStep referenceStep = new ReferenceStep(flowIdentifier, referenceStepNumber);
                                         referenceSteps.Add(referenceStep);
                                     }
+
                                     break;
                                 }
 
@@ -610,7 +626,12 @@ namespace UseCaseCore.XmlParser
                         boundedAlternativeFlowStepContent = boundedAlternativeFlowStepContent.NextSibling;
                     }
 
-                    string postcondition = boundedAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim();
+                    string postcondition = string.Empty;
+                    if (boundedAlternativeFlowStepContent.ChildNodes.Count == 3)
+                    {
+                        postcondition = boundedAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim();
+                    }
+
                     tempList.Add(new Flow(boundedIdentifier, postcondition, boundedSteps, referenceSteps));                
                 }
 
@@ -679,6 +700,11 @@ namespace UseCaseCore.XmlParser
             keyWords.Add("RFS");
             keyWords.Add("Flow");
 
+            if (flowStepContent.NextSibling == null)
+            {
+                return true;
+            }
+
             if (flowStepContent.ChildNodes[1].InnerText.Trim().ToLower() == "Postcondition".ToLower())
             {
                 return true;
@@ -693,7 +719,7 @@ namespace UseCaseCore.XmlParser
             }
 
             int n;
-            if (int.TryParse(flowStepContent.ChildNodes[1].InnerText.Trim(),out n))
+            if (int.TryParse(flowStepContent.ChildNodes[1].InnerText.Trim(), out n))
             {
                 return false;
             }
