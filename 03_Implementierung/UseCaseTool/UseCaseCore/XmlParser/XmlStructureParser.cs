@@ -697,8 +697,6 @@ namespace UseCaseCore.XmlParser
             keyWords.Add("EXTENDED BY USE CASE");
             keyWords.Add("MEANWHILE");
             keyWords.Add("VALIDATE THAT");
-            keyWords.Add("RFS");
-            keyWords.Add("Flow");
 
             if (flowStepContent.NextSibling == null)
             {
