@@ -5,7 +5,7 @@
 namespace UseCaseTest.RuleValidation
 {
     using NUnit.Framework;
-
+    using System.Collections.Generic;
     using UseCaseCore.RuleValidation.RucmRules;
     using UseCaseCore.UcIntern;
     using UseCaseCore.XmlParser;
@@ -22,15 +22,15 @@ namespace UseCaseTest.RuleValidation
         [Test]
         public void Check19Test()
         {
-
-            /*
-            
             // Basic flow has nor RFS
-            var basicFlow = new BasicFlow();
-            basicFlow.SetPostcondition("Die Standard-Nachbedingung.");
-            basicFlow.AddStep("Der erste Schritt");
-            basicFlow.AddStep("Der zweite Schritt");
-            basicFlow.AddStep("Der dritte Schritt");
+            var flowId = new FlowIdentifier(FlowType.Basic, 1);
+            var nodes = new List<Node>();
+            nodes.Add(new Node("Der erste Schritt", flowId));
+            nodes.Add(new Node("Der zweite Schritt", flowId));
+            nodes.Add(new Node("Der dritte Schritt", flowId));
+            var rfStep = new List<ReferenceStep>();
+
+            var basicFlow = new Flow(flowId, "Die Standard-Nachbedingung.", nodes, rfStep);
 
             var rucmRule = new RucmRule_19();
 
@@ -38,80 +38,95 @@ namespace UseCaseTest.RuleValidation
             Assert.IsTrue(checkResult.Count == 0);
 
             // Also global flows have no rfs
-            var globalFlow = new GlobalAlternativeFlow();
-            globalFlow.AddStep("Der erste gf-Schritt");
-            globalFlow.AddStep("Der zweite gf-Schritt");
-            globalFlow.SetId(1);
-            globalFlow.SetPostcondition("Die gf-Nachbedingung");
+            flowId = new FlowIdentifier(FlowType.GlobalAlternative, 1);
+            nodes = new List<Node>();
+            nodes.Add(new Node("Der erste gf-Schritt", flowId));
+            nodes.Add(new Node("Der zweite gf-Schritt", flowId));
+            rfStep = new List<ReferenceStep>();
 
+            var globalFlow = new Flow(flowId, "Die gf-Nachbedingung", nodes, rfStep);
+            
             checkResult = rucmRule.Check(globalFlow, basicFlow);
             Assert.IsTrue(checkResult.Count == 0);
 
             // Specific alternative flow should have exactly one RFS
             // 0 RFS
-            var specificFlow = new SpecificAlternativeFlow();
-            specificFlow.AddStep("Der erste gf-Schritt");
-            specificFlow.AddStep("Der zweite gf-Schritt");
-            specificFlow.SetPostcondition("Die gf-Nachbedingung");
+            flowId = new FlowIdentifier(FlowType.SpecificAlternative, 2);
+            nodes = new List<Node>();
+            nodes.Add(new Node("Der erste sf-Schritt", flowId));
+            nodes.Add(new Node("Der zweite sf-Schritt", flowId));
+            rfStep = new List<ReferenceStep>();
+
+            var specificFlow = new Flow(flowId, "Die sf-Nachbedingung", nodes, rfStep);
 
             checkResult = rucmRule.Check(specificFlow, basicFlow);
             Assert.IsTrue(checkResult.Count == 1);
 
             // 1 RFS
-            specificFlow.AddReferenceStep(new ReferenceStep(new FlowIdentifier(FlowType.Basic, 1), 2));
+            rfStep.Add(new ReferenceStep(new FlowIdentifier(FlowType.Basic, 1), 2));
+            specificFlow = new Flow(flowId, "Die sf-Nachbedingung", nodes, rfStep);
+
             checkResult = rucmRule.Check(specificFlow, basicFlow);
             Assert.IsTrue(checkResult.Count == 0);
 
             // 2 RFS
-            specificFlow = new SpecificAlternativeFlow();
-            specificFlow.AddReferenceStep(new ReferenceStep(new FlowIdentifier(FlowType.Basic, 1), 1));
-            specificFlow.AddReferenceStep(new ReferenceStep(new FlowIdentifier(FlowType.Basic, 1), 2));
-            checkResult = rucmRule.Check(specificFlow, basicFlow);
-            Assert.IsTrue(checkResult.Count == 0);
+            rfStep.Add(new ReferenceStep(new FlowIdentifier(FlowType.Basic, 1), 1));
+            specificFlow = new Flow(flowId, "Die sf-Nachbedingung", nodes, rfStep);
 
-            // 1 invalid RFS
-            specificFlow = new SpecificAlternativeFlow();
-            specificFlow.AddReferenceStep(new ReferenceStep(new FlowIdentifier(FlowType.Basic, 1), 6));
             checkResult = rucmRule.Check(specificFlow, basicFlow);
             Assert.IsTrue(checkResult.Count == 1);
-            
+
+            // 1 invalid RFS
+            rfStep = new List<ReferenceStep>();
+            rfStep.Add(new ReferenceStep(new FlowIdentifier(FlowType.Basic, 1), 6));
+            specificFlow = new Flow(flowId, "Die sf-Nachbedingung", nodes, rfStep);
+
+            checkResult = rucmRule.Check(specificFlow, basicFlow);
+            Assert.IsTrue(checkResult.Count == 1);
+
             // bounded alternative flow should one or more RFS
             // 0 RFS
-            var boundedFlow = new BoundedAlternativeFlow();
-            boundedFlow.AddStep("Der erste gf-Schritt");
-            boundedFlow.AddStep("Der zweite gf-Schritt");
-            boundedFlow.SetPostcondition("Die gf-Nachbedingung");
+            flowId = new FlowIdentifier(FlowType.BoundedAlternative, 3);
+            nodes = new List<Node>();
+            nodes.Add(new Node("Der erste bf-Schritt", flowId));
+            nodes.Add(new Node("Der zweite bf-Schritt", flowId));
+            rfStep = new List<ReferenceStep>();
+
+            var boundedFlow = new Flow(flowId, "Die bf-Nachbedingung", nodes, rfStep);
 
             checkResult = rucmRule.Check(boundedFlow, basicFlow);
             Assert.IsTrue(checkResult.Count == 1);
 
             // 1 RFS
-            boundedFlow.AddReferenceStep(new ReferenceStep(new FlowIdentifier(FlowType.Basic, 1), 2));
+            rfStep.Add(new ReferenceStep(new FlowIdentifier(FlowType.Basic, 1), 2));
+            boundedFlow = new Flow(flowId, "Die bf-Nachbedingung", nodes, rfStep);
+            
             checkResult = rucmRule.Check(boundedFlow, basicFlow);
             Assert.IsTrue(checkResult.Count == 0);
 
             // 2 RFS
-            boundedFlow = new BoundedAlternativeFlow();
-            boundedFlow.AddReferenceStep(new ReferenceStep(new FlowIdentifier(FlowType.Basic, 1), 1));
-            boundedFlow.AddReferenceStep(new ReferenceStep(new FlowIdentifier(FlowType.Basic, 1), 2));
+            rfStep.Add(new ReferenceStep(new FlowIdentifier(FlowType.Basic, 1), 1));
+            boundedFlow = new Flow(flowId, "Die bf-Nachbedingung", nodes, rfStep);
+
             checkResult = rucmRule.Check(boundedFlow, basicFlow);
             Assert.IsTrue(checkResult.Count == 0);
-
+            
             // 1 invalid RFS
-            boundedFlow = new BoundedAlternativeFlow();
-            boundedFlow.AddReferenceStep(new ReferenceStep(new FlowIdentifier(FlowType.Basic, 1), 6));
+            rfStep.Add(new ReferenceStep(new FlowIdentifier(FlowType.Basic, 1), 6));
+            boundedFlow = new Flow(flowId, "Die bf-Nachbedingung", nodes, rfStep);
+
             checkResult = rucmRule.Check(boundedFlow, basicFlow);
             Assert.IsTrue(checkResult.Count == 1);
 
             // 2 invalid of 3 RFS
-            boundedFlow = new BoundedAlternativeFlow();
-            boundedFlow.AddReferenceStep(new ReferenceStep(new FlowIdentifier(FlowType.Basic, 1), 1));
-            boundedFlow.AddReferenceStep(new ReferenceStep(new FlowIdentifier(FlowType.Basic, 1), 6));
-            boundedFlow.AddReferenceStep(new ReferenceStep(new FlowIdentifier(FlowType.Basic, 1), 4));
+            rfStep = new List<ReferenceStep>();
+            rfStep.Add(new ReferenceStep(new FlowIdentifier(FlowType.Basic, 1), 2));
+            rfStep.Add(new ReferenceStep(new FlowIdentifier(FlowType.Basic, 1), 6));
+            rfStep.Add(new ReferenceStep(new FlowIdentifier(FlowType.Basic, 1), 4));
+            boundedFlow = new Flow(flowId, "Die bf-Nachbedingung", nodes, rfStep);
+
             checkResult = rucmRule.Check(boundedFlow, basicFlow);
             Assert.IsTrue(checkResult.Count == 2);
-
-            */
         }
     }
 }

@@ -26,7 +26,12 @@ namespace UseCaseTool
     /// Interaction logic for MatrixControl.xaml
     /// </summary>
     public partial class MatrixControl : UserControl
-    {
+    {        
+        /// <summary>
+        /// List of scenarios to be displayed
+        /// </summary>
+        private List<Scenario> scenarios;
+        
         /// <summary>
         /// Initializes a new instance of the MatrixControl class
         /// </summary>
@@ -35,28 +40,21 @@ namespace UseCaseTool
             this.InitializeComponent();
             this.scenarios = new List<Scenario>();
             this.matrixGrid.ItemsSource = this.Scenarios;
-            this.matrixGrid.RowEditEnding += MatrixGrid_RowEditEnding;
-        }
-
-        public event Action<Scenario> MatrixChangedByUser;
-
-        private void MatrixGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
-        {
-            if(this.MatrixChangedByUser != null)
-            {
-                this.MatrixChangedByUser(((Scenario)e.Row.Item));
-            }
+            this.matrixGrid.RowEditEnding += this.MatrixGrid_RowEditEnding;
         }
 
         /// <summary>
-        /// List of scenarios to be displayed
+        /// Event that fires when the Scenario Matrix gets changed by the user
         /// </summary>
-        private List<Scenario> scenarios;
-        
+        public event Action<Scenario> MatrixChangedByUser;
+
+        /// <summary>
+        /// Gets or sets the scenarios
+        /// </summary>
         public List<Scenario> Scenarios
         {
-            get { return scenarios; }
-            set { scenarios = value; }
+            get { return this.scenarios; }
+            set { this.scenarios = value; }
         }
                 
         /// <summary>
@@ -70,5 +68,17 @@ namespace UseCaseTool
             Dispatcher.Invoke(() => { matrixGrid.Items.Refresh(); });
         }
         
+        /// <summary>
+        /// Method that gets fires the MatrixChangeByUser event, when a row of the matrixGrid gets changed
+        /// </summary>
+        /// <param name="sender"> sender object </param>
+        /// <param name="e"> event arguments</param>
+        private void MatrixGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
+        {
+            if (this.MatrixChangedByUser != null)
+            {
+                this.MatrixChangedByUser((Scenario)e.Row.Item);
+            }
+        }
     }
 }

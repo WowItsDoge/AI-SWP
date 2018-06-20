@@ -30,27 +30,25 @@ namespace UseCaseCore.RuleValidation.RucmRules
             this.errors = new List<IError>();
             if (flowToCheck.Identifier.Type == FlowType.SpecificAlternative)
             {
-                var flow = flowToCheck;
-                var rfs = flow.ReferenceSteps;
-                if (rfs.Count == 0)
+                var rfs = flowToCheck.ReferenceSteps;
+                if (rfs.Count != 1)
                 {
-                    this.errors.Add(new FlowError(0, "Geben Sie im Feld RFS genau einen Referenzschritt an!", "Es wurde kein RFS gefunden."));
+                    this.errors.Add(new FlowError(flowToCheck.Identifier.Id, "Geben Sie im Feld RFS genau einen Referenzschritt an!", "Verletzung der Regel 19!"));
                 }
                 else
                 {
                     if (rfs[0].Step > referencedBasicFlow.Nodes.Count || rfs[0].Step == 0)
                     {
-                        this.errors.Add(new FlowError(0, "Bitte überprüfen Sie die Nummer des Referenzschrittes!", string.Format("Es wurde kein zum RFS {0} passender Step gefunden.", rfs[0].Step)));
+                        this.errors.Add(new FlowError(flowToCheck.Identifier.Id, string.Format("Bitte überprüfen Sie die Nummer des Referenzschrittes!\nEs wurde kein zum RFS {0} passender Step gefunden.", rfs[0].Step), "Verletzung der Regel 19!"));
                     }
                 }
             }
             else if (flowToCheck.Identifier.Type == FlowType.BoundedAlternative)
             {
-                var flow = flowToCheck;
-                var referenceSteps = flow.ReferenceSteps;
+                var referenceSteps = flowToCheck.ReferenceSteps;
                 if (referenceSteps.Count == 0)
                 {
-                    this.errors.Add(new FlowError(0, "Geben Sie im Feld RFS mindestens einen Referenzschritt an!", "Es wurde kein RFS gefunden."));
+                    this.errors.Add(new FlowError(flowToCheck.Identifier.Id, "Geben Sie im Feld RFS mindestens einen Referenzschritt an!", "Verletzung der Regel 19!"));
                 }
                 else
                 {
@@ -58,7 +56,7 @@ namespace UseCaseCore.RuleValidation.RucmRules
                     {
                         if (rfs.Step > referencedBasicFlow.Nodes.Count || rfs.Step == 0)
                         {
-                            this.errors.Add(new FlowError(0, "Bitte überprüfen Sie die Nummer des Referenzschrittes!", string.Format("Es wurde kein zum RFS {0} passender Step gefunden.", rfs.Step)));
+                            this.errors.Add(new FlowError(flowToCheck.Identifier.Id, string.Format("Bitte überprüfen Sie die Nummer des Referenzschrittes!\nEs wurde kein zum RFS {0} passender Step gefunden.", rfs.Step), "Verletzung der Regel 19!"));
                         }
                     }
                 }

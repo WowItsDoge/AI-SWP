@@ -149,6 +149,9 @@ namespace UseCaseCore.Controller
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the cancel button is visible
+        /// </summary>
         public bool CancelButtonEnabled
         {
             get
@@ -163,6 +166,9 @@ namespace UseCaseCore.Controller
             }
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the button to change the cycle depth is visible
+        /// </summary>
         public bool MatrixCycleDepthEnabled
         {
             get
@@ -177,6 +183,9 @@ namespace UseCaseCore.Controller
             }
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the graph button is visible
+        /// </summary>
         public bool GraphButtonsEnabled
         {
             get
@@ -513,7 +522,7 @@ namespace UseCaseCore.Controller
         public void MatrixFilePath(string filePath)
         {
             // Usecase da????
-            if (filePath != string.Empty)
+            if (this.matrix != null)
             {
                 this.matrix.Export(filePath);
             }
@@ -566,7 +575,7 @@ namespace UseCaseCore.Controller
         /// <summary>
         /// process to reset previous content
         /// </summary>
-        void ResetPreviousContent()
+        private void ResetPreviousContent()
         {
             this.BackgroundColor1 = new SolidColorBrush(Color.FromArgb(255, 65, 177, 255));
             this.BackgroundColor2 = new SolidColorBrush(Color.FromArgb(255, 65, 177, 255));
@@ -618,12 +627,7 @@ namespace UseCaseCore.Controller
                     MessageBox.Show("Fehler beim Einlesen der Datei.", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                     this.ruleValidator.AddExternalError(this.xmlParser.GetError());
-                    ErrorReport errorReport = this.ruleValidator.GetErrorReport();
-                    List<IError> errorList = errorReport.GetErrorList;
-                    if (this.WriteErrorReport != null)
-                    {
-                        this.WriteErrorReport(errorList);
-                    }
+                    this.ErrorReport();
                 }
             }
             else
@@ -631,7 +635,7 @@ namespace UseCaseCore.Controller
                 MessageBox.Show("Vorgang wurde abgebrochen.", "Abbruch", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
-
+        
         /// <summary>
         /// BackgroundWorker to validate the file
         /// </summary>
@@ -669,6 +673,23 @@ namespace UseCaseCore.Controller
         }
 
         /// <summary>
+        /// Write a new error report
+        /// </summary>
+        /// <returns>error list</returns>
+        private List<IError> ErrorReport()
+        {
+            ErrorReport errorReport = this.ruleValidator.GetErrorReport();
+            List<IError> errorList = errorReport.GetErrorList;
+
+            if (this.WriteErrorReport != null)
+            {
+                this.WriteErrorReport(errorList);
+            }
+
+            return errorList;
+        }
+
+        /// <summary>
         /// BackgroundWorker to generate the error report
         /// </summary>
         /// <param name="sender">The sender</param>
@@ -679,8 +700,9 @@ namespace UseCaseCore.Controller
             if ((!this.backgroundWorkerGetErrorReport.CancellationPending) && (!this.backgroundWorkerValidFile.CancellationPending) && (!this.backgroundWorkerLoadFile.CancellationPending))
             {
                 //// this.ruleValidator.AddExternalError("Beispiel Fehler");
-                ErrorReport errorReport = this.ruleValidator.GetErrorReport();
-                List<IError> errorList = errorReport.GetErrorList;
+
+                List<IError> errorList = this.ErrorReport();
+
                 if (errorList.Count > 0)
                 {
                     this.BackgroundColor5 = Brushes.Red;
@@ -708,12 +730,7 @@ namespace UseCaseCore.Controller
                     {
                         this.backgroundWorkerGenerateMatrix.RunWorkerAsync();
                     }
-                }
-
-                if (this.WriteErrorReport != null)
-                {
-                    this.WriteErrorReport(errorList);
-                }
+                }                                
             }
             else
             {

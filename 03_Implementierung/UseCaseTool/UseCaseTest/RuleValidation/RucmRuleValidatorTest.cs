@@ -11,7 +11,7 @@ namespace UseCaseTest.RuleValidation
     using System.IO;
     using UseCaseCore.RuleValidation;
     using UseCaseCore.RuleValidation.RucmRules;
-    using UseCaseCore.XmlParser;
+    using UseCaseCore.UcIntern;
 
     /// <summary>
     /// Test class for RUCMRuleValidator
@@ -24,10 +24,8 @@ namespace UseCaseTest.RuleValidation
         /// </summary>
         [Test]
         public void ValidateTest()
-        {
-            /*
-            
-            var dummyBasicFlow = new BasicFlow();
+        {        
+            var dummyBasicFlow = new Flow();
 
             var dummy1 = new DummyRule(0);
             var dummy2 = new DummyRule(1);
@@ -53,9 +51,7 @@ namespace UseCaseTest.RuleValidation
             rucmRuleValidator = new RucmRuleValidator(ruleList);
             result = rucmRuleValidator.Validate(dummyBasicFlow);
             Assert.IsTrue(result);
-            Assert.IsTrue(rucmRuleValidator.GetErrorReport().GetErrorList.Count == 0);
-
-            */
+            Assert.IsTrue(rucmRuleValidator.GetErrorReport().GetErrorList.Count == 0);            
         }
 
         /// <summary>
@@ -64,9 +60,6 @@ namespace UseCaseTest.RuleValidation
         [Test]
         public void ExportTest()
         {
-
-            /*
-            
             // Erfolgreicher Export ohne Mängel
             var tempPath = this.GetTempFile();
             var ruleList = new List<IRule>();
@@ -104,7 +97,7 @@ namespace UseCaseTest.RuleValidation
             // Erfolgreicher Export mit Validierungsmängel
             tempPath = this.GetTempFile();
             var dummy = new DummyRule(2, 2, 2);
-            var dummyBasicFlow = new BasicFlow();
+            var dummyBasicFlow = new Flow();
 
             ruleList = new List<IRule> { dummy };
             rucmRuleValidator = new RucmRuleValidator(ruleList);
@@ -150,8 +143,6 @@ namespace UseCaseTest.RuleValidation
             exportResult = rucmRuleValidator.Export(invalidPath);
 
             Assert.IsFalse(exportResult);
-
-             */
         }
 
         /// <summary>
@@ -160,9 +151,7 @@ namespace UseCaseTest.RuleValidation
         [Test]
         public void ResetTest()
         {
-
-            /*
-            var dummyBasicFlow = new BasicFlow();
+            var dummyBasicFlow = new Flow();
 
             var dummy1 = new DummyRule(0);
             var dummy2 = new DummyRule(1);
@@ -186,8 +175,6 @@ namespace UseCaseTest.RuleValidation
 
             Assert.IsFalse(result);
             Assert.IsTrue(rucmRuleValidator.GetErrorReport().GetErrorList.Count == 3);
-
-            */
         }
 
         /// <summary>

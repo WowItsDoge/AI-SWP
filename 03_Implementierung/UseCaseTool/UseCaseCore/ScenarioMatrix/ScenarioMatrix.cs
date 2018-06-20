@@ -42,8 +42,7 @@ namespace UseCaseCore.ScenarioMatrix
         {
             this.uc = uc;
             this.scenarios = new List<Scenario>();
-            this.cycleDepth = cycleDepth;
-            
+            this.cycleDepth = cycleDepth;            
         }
 
         /// <summary>
@@ -73,6 +72,8 @@ namespace UseCaseCore.ScenarioMatrix
             set
             {
                 this.cycleDepth = value;
+
+                // Refresh scenarios
                 this.CreateScenarios();
             }
         }
@@ -84,7 +85,7 @@ namespace UseCaseCore.ScenarioMatrix
         /// <returns> Returns true if successful </returns>
         public bool Export(string path)
         {
-            if (path == null) 
+            if (path == null || this.uc == null) 
             {
                 return false;
             }
@@ -99,12 +100,13 @@ namespace UseCaseCore.ScenarioMatrix
                     int i = 1;
                     foreach (Scenario s in this.scenarios)
                     {
-                        if(s.Comment != null || s.Comment == string.Empty)
+                        if (s.Comment != null || s.Comment == string.Empty) 
                         {
                             sw.WriteLine("// " + s.Comment);                            
                         }
+
                         sw.WriteLine("Scenario " + i.ToString() + ": " + s.Description);
-                        sw.WriteLine("");
+                        sw.WriteLine(string.Empty);
                         i++;
                     }
 
@@ -144,7 +146,7 @@ namespace UseCaseCore.ScenarioMatrix
             this.scenarios = new List<Scenario>(); // Clear all old scenarios to create new ones
 
             Scenario s = new Scenario();            
-            s.Nodes.Add(this.uc.Nodes[0]); // Startknoten hinzufügen
+            s.Nodes.Add(this.uc.Nodes[0]); // add start node
             s.Description += "Step 1, ";
 
             this.TraverseGraphRec(this.uc.EdgeMatrix, 0, s, this.CycleDepth);
@@ -160,9 +162,9 @@ namespace UseCaseCore.ScenarioMatrix
         /// <param name="newScenario"> new scenario to replace the old one </param>
         public void UpdateScenarioComment(Scenario newScenario)
         {
-            foreach(Scenario s in this.scenarios)
+            foreach (Scenario s in this.scenarios) 
             {
-                if(s.ID == newScenario.ID)
+                if (s.ID == newScenario.ID) 
                 {
                     s.Comment = newScenario.Comment;
                 }
@@ -187,6 +189,26 @@ namespace UseCaseCore.ScenarioMatrix
                 .Select((n, i) => new { n, i })
                 .Where(x => x.i > 0)
                 .Where(x => x.n.Equals(node2) && s.Nodes[x.i - 1].Equals(node1)).Count();            
+        }
+
+        /// <summary>
+        /// Counts amount of child nodes from a starting node (row in a matrix)
+        /// </summary>
+        /// <param name="matrix"> edge matrix of this use case </param>
+        /// <param name="row"> row representing the current node </param>
+        /// <returns> returns the amount of child nodes / edges </returns>
+        private static int CountEdgesPerRow(Matrix<bool> matrix, int row)
+        {
+            int amount = 0;
+            for (int i = 0; i < matrix.ColumnCount; i++)
+            {
+                if (matrix[row, i] == true)
+                {
+                    amount++;
+                }
+            }
+
+            return amount;
         }
 
         /// <summary>
@@ -248,32 +270,17 @@ namespace UseCaseCore.ScenarioMatrix
                     s.Description += "Step" + (i + 1).ToString() + ", ";
 
                     this.TraverseGraphRec(matrix, i, s, cycleDepth);
-                    
-                    if (stepsFound < 2) return;
+
+                    // If the current node doesnt have at least 2 child nodes, go back to the last node that did
+                    if (stepsFound < 2)
+                    {
+                        return;
+                    }
 
                     // Continue with old scenario 
                     s = new Scenario(savedScenario);
                 }
             }
-        }
-
-        /// <summary>
-        /// Counts amount of child nodes from a starting node (row in a matrix)
-        /// </summary>
-        /// <param name="matrix"> edge matrix of this use case </param>
-        /// <param name="row"> row representing the current node </param>
-        /// <returns> returns the amount of child nodes / edges </returns>
-        private static int CountEdgesPerRow(Matrix<bool> matrix, int row)
-        {
-            int amount = 0;
-            for (int i = 0; i < matrix.ColumnCount; i++)
-            {
-                if (matrix[row, i] == true)
-                {
-                    amount++;
-                }
-            }
-            return amount;
         }
     }
 }

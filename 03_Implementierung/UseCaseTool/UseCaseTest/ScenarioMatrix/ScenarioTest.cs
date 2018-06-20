@@ -67,5 +67,52 @@ namespace UseCaseTest.ScenarioMatrix
             Assert.AreEqual(s.Nodes.Count, 2);
 
         }
+
+        /// <summary>
+        /// Set a scenarios comment
+        /// </summary>
+        [Test]
+        public void Set_Comment_Successfull()
+        {
+            Scenario s = new Scenario();
+            s.Comment = "ABCDEFG";
+
+            Assert.AreEqual(s.Comment, "ABCDEFG");
+        }
+        
+        /// <summary>
+        /// Set a scenarios nodes
+        /// </summary>
+        [Test]
+        public void Set_Nodes_Successfull()
+        {
+            Node n1 = new Node("Step1", new FlowIdentifier(FlowType.Basic, 1));
+            Node n2 = new Node("Step2", new FlowIdentifier(FlowType.GlobalAlternative, 2));
+
+            List<Node> nodes = new List<Node>();
+            nodes.Add(n1);
+            nodes.Add(n2);
+
+            Scenario s = new Scenario();
+            s.Nodes = nodes;
+
+            Assert.AreEqual(s.Nodes.Count, 2);
+            Assert.AreEqual(s.Nodes[0], n1);
+            Assert.AreEqual(s.Nodes[1], n2);
+        }
+
+        /// <summary>
+        /// Get/Set a scenarios ID
+        /// </summary>
+        [Test]
+        public void Get_ID_Successful()
+        {
+            Scenario s = new Scenario();
+            s.ID = 1;
+
+            Assert.AreEqual(s.ID, 1);               
+        }
+
+
     }
 }

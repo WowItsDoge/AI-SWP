@@ -32,10 +32,10 @@ namespace UseCaseCore.RuleValidation.RucmRules
             // Check only if it is an alternative flow.
             if (referencedBasicFlow != new Flow())
             {
-                var stepsToCheck = (List<Node>) flowToCheck.Nodes;
+                var stepsToCheck = (List<Node>)flowToCheck.Nodes;
                 if (!this.CheckPathEnd(stepsToCheck, referencedBasicFlow))
                 {
-                    this.errors.Add(new FlowError(0, "Ein Flow muss immer mit ABORT oder einem gültigen RESUME STEP enden!", "Flow endet ungültig!"));
+                    this.errors.Add(new FlowError(flowToCheck.Identifier.Id, "Flow endet ungültig! \nEin Flow muss immer mit ABORT oder einem gültigen RESUME STEP enden!", "Verletzung der Regel 24/25!"));
                 }
             }
 
@@ -59,7 +59,7 @@ namespace UseCaseCore.RuleValidation.RucmRules
             {
                 if (this.ContainsEndKeyword(lastStep.StepDescription))
                 {
-                    return this.CheckForCorrectUsage(blockToCheck.Count, lastStep.StepDescription, referencedBasicFlow);
+                    return this.CheckForCorrectUsage(lastStep.Identifier.Id, lastStep.StepDescription, referencedBasicFlow);
                 }
                 else
                 {
@@ -138,17 +138,17 @@ namespace UseCaseCore.RuleValidation.RucmRules
                         }
                         else
                         {
-                            this.errors.Add(new StepError(referencedStepId, string.Format("Stellen Sie sicher, dass es einen Basic Step mit der Nummer {0} gibt!", numberToResume), "Der angegebene RESUME STEP konnte nicht gefunden werden!"));
+                            this.errors.Add(new StepError(referencedStepId, string.Format("Der angegebene RESUME STEP konnte nicht gefunden werden!\nStellen Sie sicher, dass es einen Basic Step mit der Nummer {0} gibt!", numberToResume), "Verletzung der Regel 24 / 25!"));
                         }
                     }
                     else
                     {
-                        this.errors.Add(new StepError(referencedStepId, "Stellen Sie sicher, dass die Vorgabe \"RESUME STEP [+ Nummer]\" eingehalten wird.", "Der angegebene RESUME STEP konnte nicht gefunden werden!"));
+                        this.errors.Add(new StepError(referencedStepId, "Der angegebene RESUME STEP konnte nicht gefunden werden!\nStellen Sie sicher, dass die Vorgabe \"RESUME STEP [+ Nummer]\" eingehalten wird.", "Verletzung der Regel 24/25!"));
                     }
                 }
                 else
                 {
-                    this.errors.Add(new StepError(referencedStepId, "Stellen Sie sicher, dass bei der Verwendung der Schlüsselwörter ABORT bzw. RESUME STEP die vorgegebene Struktur eingehalten wird!", "Ungültige Zeile"));
+                    this.errors.Add(new StepError(referencedStepId, "Ungültige Zeile\n Stellen Sie sicher, dass bei der Verwendung der Schlüsselwörter ABORT bzw. RESUME STEP die vorgegebene Struktur eingehalten wird!", "Verletzung der Regel 24/25!"));
                 }
             }
 
