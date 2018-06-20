@@ -109,7 +109,6 @@ namespace UseCaseCore.XmlParser
         /// <param name="rucmRuleValidator">The rule validator is passed in the constructor</param>
         public XmlStructureParser(IRucmRuleValidator rucmRuleValidator)
         {
-
             this.InitXmlParser();
             this.useCaseFile = null;
             this.useCaseFilePath = string.Empty;
@@ -173,9 +172,8 @@ namespace UseCaseCore.XmlParser
         }
 
         /// <summary>
-        /// If error(return value = false) has occurred at function “LoadXmlFile()” or “TryToFixMalformedXml()”, the error text can be read out.
+        /// Initializes the properties. Can be used to reset everything.
         /// </summary>
-        /// <returns>Returns a string with the error message if there was an error.</returns>
         public void InitXmlParser()
         {
             this.errorMessage = string.Empty;
@@ -344,10 +342,10 @@ namespace UseCaseCore.XmlParser
             this.outgoingUseCase.SecondaryActors = this.secondaryActor;
             this.outgoingUseCase.Dependency = this.dependency;
             this.outgoingUseCase.Generalization = this.generalization;
-            this.outgoingUseCase.SetBasicFlow(this.basicFlow);
-            this.outgoingUseCase.AddGlobalAlternativeFlow(this.globalAlternativeFlows);
-            this.outgoingUseCase.AddSpecificAlternativeFlow(this.specificAlternativeFlows);
-            this.outgoingUseCase.AddBoundedAlternativeFlow(this.boundedAlternativeFlows);
+            this.outgoingUseCase.BasicFlow = this.basicFlow;
+            this.outgoingUseCase.GlobalAlternativeFlows = this.globalAlternativeFlows;
+            this.outgoingUseCase.SpecificAlternativeFlows = this.specificAlternativeFlows;
+            this.outgoingUseCase.BoundedAlternativeFlows = this.boundedAlternativeFlows;
             this.outgoingUseCase.BuildGraph();
         }
 
@@ -406,7 +404,7 @@ namespace UseCaseCore.XmlParser
                 XmlNode basicFlowStepContent = basicFlowContent.NextSibling;
                 List<Node> basicSteps = new List<Node>();
                 FlowIdentifier basicIdentifier = new FlowIdentifier(FlowType.Basic, 0);
-                while (basicFlowStepContent.ChildNodes[1].InnerText.Trim().ToLower() != "Postcondition".ToLower())
+                while (this.FlowHasEnded(basicFlowStepContent) == false)
                 {          
                     switch (basicFlowStepContent.ChildNodes.Count)
                     {
@@ -454,7 +452,7 @@ namespace UseCaseCore.XmlParser
                     FlowIdentifier globalIdentifier = new FlowIdentifier(FlowType.GlobalAlternative, i);
                     XmlNode globalAlternativeFlowContent = globalAlternativeFlowNodes[i - 1].ParentNode.ParentNode.ParentNode.ParentNode;
                     XmlNode globalAlternativeFlowStepContent = globalAlternativeFlowContent;
-                    while (globalAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim().ToLower() != "Postcondition".ToLower())
+                    while (this.FlowHasEnded(globalAlternativeFlowStepContent) == false)
                     {
                         switch (globalAlternativeFlowStepContent.ChildNodes.Count)
                         {
@@ -506,7 +504,7 @@ namespace UseCaseCore.XmlParser
                     ReferenceStep referenceStep = new ReferenceStep();
                     XmlNode specificAlternativeFlowContent = specificAlternativeFlowNodes[i - 1].ParentNode.ParentNode.ParentNode.ParentNode;
                     XmlNode specificAlternativeFlowStepContent = specificAlternativeFlowContent;
-                    while (specificAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim().ToLower() != "Postcondition".ToLower())
+                    while (this.FlowHasEnded(specificAlternativeFlowStepContent) == false)
                     {
                         switch (specificAlternativeFlowStepContent.ChildNodes.Count)
                         {
@@ -569,38 +567,38 @@ namespace UseCaseCore.XmlParser
                     List<ReferenceStep> referenceSteps = new List<ReferenceStep>();
                     XmlNode boundedAlternativeFlowContent = boundedAlternativeFlowNodes[i - 1].ParentNode.ParentNode.ParentNode.ParentNode;
                     XmlNode boundedAlternativeFlowStepContent = boundedAlternativeFlowContent;
-                    while (boundedAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim().ToLower() != "Postcondition".ToLower())
+                    while (this.FlowHasEnded(boundedAlternativeFlowStepContent) == false)
                     {
                         switch (boundedAlternativeFlowStepContent.ChildNodes.Count)
                         {
                             case 2:
                                 string unparsedReferenceStep = boundedAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim().ToLower();
                                 //// help for rule 19
-                                if (unparsedReferenceStep.Contains("RFS".ToLower()) == false)   
+                                if (unparsedReferenceStep.Contains("RFS".ToLower()) == true)   
                                 {
+                                    string referenceStepNumbers = this.TrimReferenceStepNumber(unparsedReferenceStep);
+                                    if (referenceStepNumbers.Contains("-") == true)
+                                    {
+                                        int stepStartNumber = int.Parse(referenceStepNumbers.Split('-')[0]);
+                                        int stepEndNumber = int.Parse(referenceStepNumbers.Split('-')[1]);
+                                        for (int n = stepStartNumber; n <= stepEndNumber; n++)
+                                        {
+                                            FlowIdentifier flowIdentifier = new FlowIdentifier(FlowType.Basic, 0);
+                                            ReferenceStep referenceStep = new ReferenceStep(flowIdentifier, n);
+                                            referenceSteps.Add(referenceStep);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        int referenceStepNumber = int.Parse(referenceStepNumbers);
+                                        FlowIdentifier flowIdentifier = new FlowIdentifier(FlowType.Basic, 0);
+                                        ReferenceStep referenceStep = new ReferenceStep(flowIdentifier, referenceStepNumber);
+                                        referenceSteps.Add(referenceStep);
+                                    }
                                     break;
                                 }
 
-                                string referenceStepNumbers = this.TrimReferenceStepNumber(unparsedReferenceStep);
-                                if (referenceStepNumbers.Contains("-") == true)
-                                {
-                                    int stepStartNumber = int.Parse(referenceStepNumbers.Split('-')[0]);
-                                    int stepEndNumber = int.Parse(referenceStepNumbers.Split('-')[1]);
-                                    for (int n = stepStartNumber; n <= stepEndNumber; n++)
-                                    {
-                                        FlowIdentifier flowIdentifier = new FlowIdentifier(FlowType.Basic, 0);
-                                        ReferenceStep referenceStep = new ReferenceStep(flowIdentifier, n);
-                                        referenceSteps.Add(referenceStep);
-                                    }
-                                }
-                                else
-                                {
-                                    int referenceStepNumber = int.Parse(referenceStepNumbers);
-                                    FlowIdentifier flowIdentifier = new FlowIdentifier(FlowType.Basic, 0);
-                                    ReferenceStep referenceStep = new ReferenceStep(flowIdentifier, referenceStepNumber);
-                                    referenceSteps.Add(referenceStep);
-                                }
-
+                                boundedSteps.Add(new Node(boundedAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim(), boundedIdentifier));
                                 break;
                             case 3:
                                 boundedSteps.Add(new Node(boundedAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim(), boundedIdentifier));
@@ -654,6 +652,66 @@ namespace UseCaseCore.XmlParser
             }
 
             return flowNodeList;
+        }
+
+        /// <summary>
+        /// Checks if the flow has ended.
+        /// </summary>
+        /// <param name="flowStepContent">The step content of the current flow.</param>
+        /// <returns>Returns true if the flow has ended, false otherwise.</returns>
+        private bool FlowHasEnded(XmlNode flowStepContent)
+        {
+            List<string> keyWords = new List<string>();
+            keyWords.Add("IF");
+            keyWords.Add("THEN");
+            keyWords.Add("ELSE");
+            keyWords.Add("ELSEIF");
+            keyWords.Add("ENDIF");
+            keyWords.Add("DO");
+            keyWords.Add("UNTIL");
+            keyWords.Add("RESUME");
+            keyWords.Add("RESUME STEP");
+            keyWords.Add("ABORT");
+            keyWords.Add("INCLUDE USE CASE");
+            keyWords.Add("EXTENDED BY USE CASE");
+            keyWords.Add("MEANWHILE");
+            keyWords.Add("VALIDATE THAT");
+            keyWords.Add("RFS");
+            keyWords.Add("Flow");
+
+            if (flowStepContent.ChildNodes[1].InnerText.Trim().ToLower() == "Postcondition".ToLower())
+            {
+                return true;
+            }
+
+            foreach (var keyword in keyWords)
+            {
+                if (flowStepContent.ChildNodes[1].InnerText.Trim().Contains(keyword))
+                {
+                    return false;
+                }
+            }
+
+            int n;
+            if (int.TryParse(flowStepContent.ChildNodes[1].InnerText.Trim(),out n))
+            {
+                return false;
+            }
+
+            foreach (var keyword in keyWords)
+            {
+                if (flowStepContent.NextSibling.ChildNodes[1].InnerText.Trim().Contains(keyword))
+                {
+                    return false;
+                }
+            }
+
+            if (int.TryParse(flowStepContent.NextSibling.ChildNodes[1].InnerText.Trim(), out n))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>
