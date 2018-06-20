@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\NUnit3TestAdapter.3.10.0\build\net35\NUnit3TestAdapter.props" Condition="Exists('..\packages\NUnit3TestAdapter.3.10.0\build\net35\NUnit3TestAdapter.props')" />
   <Import Project="..\packages\NUnit.3.10.1\build\NUnit.props" Condition="Exists('..\packages\NUnit.3.10.1\build\NUnit.props')" />
+  <Import Project="..\packages\NUnit3TestAdapter.3.10.0\build\net35\NUnit3TestAdapter.props" Condition="Exists('..\packages\NUnit3TestAdapter.3.10.0\build\net35\NUnit3TestAdapter.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -38,9 +38,8 @@
       <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net45\ControlzEx.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DocumentFormat.OpenXml, Version=2.8.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
-      <HintPath>..\packages\DocumentFormat.OpenXml.2.8.1\lib\net40\DocumentFormat.OpenXml.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="DocumentFormat.OpenXml, Version=0.0.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenXMLSDK-MOT.2.7.1\lib\net45\DocumentFormat.OpenXml.dll</HintPath>
     </Reference>
     <Reference Include="MahApps.Metro, Version=1.6.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.6.4\lib\net45\MahApps.Metro.dll</HintPath>
@@ -48,7 +47,6 @@
     </Reference>
     <Reference Include="nunit.framework, Version=3.10.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\packages\NUnit.3.10.1\lib\net45\nunit.framework.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="OpenXmlPowerTools, Version=4.5.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenXmlPowerTools.4.5.3.2\lib\net45\OpenXmlPowerTools.dll</HintPath>
@@ -115,15 +113,20 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="XmlParser\Testdateien\UseCaseTemplateExample - BoundedAlternativeFlow one RFS.docm" />
+    <None Include="XmlParser\Testdateien\UseCaseTemplateExample - BoundedAlternativeFlow mit einem RFS.docm" />
     <None Include="XmlParser\Testdateien\UseCaseTemplateExample - Kein Basic Flow.docm" />
     <None Include="XmlParser\Testdateien\UseCaseTemplateExample - Kein UseCase Name.docm" />
     <None Include="XmlParser\Testdateien\UseCaseTemplateExample - Keine Fehler - 2.docm" />
+    <None Include="XmlParser\Testdateien\UseCaseTemplateExample - Keine Fehler aber mit Formatierungsänderungen.docm" />
     <None Include="XmlParser\Testdateien\UseCaseTemplateExample - Keine Fehler.docm" />
     <None Include="XmlParser\Testdateien\UseCaseTemplateExample - Keine Flows.docm" />
+    <None Include="XmlParser\Testdateien\UseCaseTemplateExample - Regel 19 und 26 verletzt.docm" />
     <None Include="XmlParser\Testdateien\UseCaseTemplateExample - Regel 19 verletzt.docm" />
+    <None Include="XmlParser\Testdateien\UseCaseTemplateExample - Regel 23 verletzt.docm" />
+    <None Include="XmlParser\Testdateien\UseCaseTemplateExample - Regel 24 und 25 verletzt.docm" />
+    <None Include="XmlParser\Testdateien\UseCaseTemplateExample - Regel 26 verletzt.docm" />
     <None Include="XmlParser\Testdateien\UseCaseTemplateExample - Worst Case.docm" />
-    <None Include="XmlParser\Testdateien\UseCaseTemplateExample - XML Kaputt.docm" />
+    <None Include="XmlParser\Testdateien\UseCaseTemplateExample - XML-Struktur defekt.docm" />
     <None Include="XmlParser\Testdateien\UseCaseTemplateExample - Zwei Basic Flows.docm" />
     <None Include="XmlParser\Testdateien\UseCaseTemplateExample - Zwei UseCase Namen.docm" />
   </ItemGroup>
@@ -132,8 +135,8 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\NUnit.3.10.1\build\NUnit.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NUnit.3.10.1\build\NUnit.props'))" />
     <Error Condition="!Exists('..\packages\NUnit3TestAdapter.3.10.0\build\net35\NUnit3TestAdapter.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NUnit3TestAdapter.3.10.0\build\net35\NUnit3TestAdapter.props'))" />
+    <Error Condition="!Exists('..\packages\NUnit.3.10.1\build\NUnit.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NUnit.3.10.1\build\NUnit.props'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

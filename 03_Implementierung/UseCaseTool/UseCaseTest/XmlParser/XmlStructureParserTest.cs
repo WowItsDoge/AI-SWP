@@ -19,6 +19,11 @@ namespace UseCaseTest.XmlParser
     [TestFixture]
     public class XmlStructureParserTest
     {
+        //// Die auskommentieren Testfälle werden nichtmehr benötigt,
+        //// da nun zugunsten der Programmuniversalität und -teilweiterverwendung
+        //// statt den eigenen Flow-Klassen, die Flow-Klassen von "UcIntern" mitverwendet werden
+        //// und in "UcIntern-Test" bereits Testfälle existieren
+
         /*
         /// <summary>
         /// Creates a new basic flow instance.
@@ -362,6 +367,31 @@ namespace UseCaseTest.XmlParser
         }
 
         /// <summary>
+        /// Testfuction for ParseXmlFile function
+        /// Test with correct sample file but with formatting changes
+        /// </summary>
+        [Test]
+        public void ParseXmlFileTestWithCorrectXmlSampleFileButWithFormattingChanges()
+        {
+            // Arrange
+            IRucmRuleValidator testrucmRuleValidator = new RucmRuleValidator(RucmRuleRepository.Rules);
+            XmlStructureParser testxmlStructureParser = new XmlStructureParser(testrucmRuleValidator);
+            string filePath = "UseCaseTest\\XmlParser\\Testdateien\\UseCaseTemplateExample - Keine Fehler aber mit Formatierungsänderungen.docm";
+            UseCase testUseCase = new UseCase();
+            bool resultLoadXmlFile = false;
+            bool resultParseXmlFile = false;
+
+            // Act
+            resultLoadXmlFile = testxmlStructureParser.LoadXmlFile(filePath);
+            resultParseXmlFile = testxmlStructureParser.ParseXmlFile(out testUseCase);
+
+            // Assert
+            Assert.IsTrue(resultLoadXmlFile);
+            Assert.IsTrue(resultParseXmlFile);
+            Assert.IsNotNull(testUseCase);
+        }
+
+        /// <summary>
         /// Testfuction for LoadXmlFile function
         /// Test with broken sample file
         /// </summary>
@@ -371,7 +401,7 @@ namespace UseCaseTest.XmlParser
             // Arrange
             IRucmRuleValidator testrucmRuleValidator = new RucmRuleValidator(RucmRuleRepository.Rules);
             XmlStructureParser testxmlStructureParser = new XmlStructureParser(testrucmRuleValidator);
-            string filePath = "UseCaseTest\\XmlParser\\Testdateien\\UseCaseTemplateExample - XML Kaputt.docm";
+            string filePath = "UseCaseTest\\XmlParser\\Testdateien\\UseCaseTemplateExample - XML-Struktur defekt.docm";
             bool result = false;
 
             // Act
@@ -491,7 +521,7 @@ namespace UseCaseTest.XmlParser
             // Arrange
             IRucmRuleValidator testrucmRuleValidator = new RucmRuleValidator(RucmRuleRepository.Rules);
             XmlStructureParser testxmlStructureParser = new XmlStructureParser(testrucmRuleValidator);
-            string filePath = "UseCaseTest\\XmlParser\\Testdateien\\UseCaseTemplateExample - BoundedAlternativeFlow one RFS.docm";
+            string filePath = "UseCaseTest\\XmlParser\\Testdateien\\UseCaseTemplateExample - BoundedAlternativeFlow mit einem RFS.docm";
             UseCase testUseCase = new UseCase();
             bool resultLoadXmlFile = false;
             bool resultParseXmlFile = false;
@@ -567,6 +597,106 @@ namespace UseCaseTest.XmlParser
             IRucmRuleValidator testrucmRuleValidator = new RucmRuleValidator(RucmRuleRepository.Rules);
             XmlStructureParser testxmlStructureParser = new XmlStructureParser(testrucmRuleValidator);
             string filePath = "UseCaseTest\\XmlParser\\Testdateien\\UseCaseTemplateExample - Regel 19 verletzt.docm";
+            UseCase testUseCase = new UseCase();
+            bool resultLoadXmlFile = false;
+            bool resultParseXmlFile = false;
+
+            // Act
+            resultLoadXmlFile = testxmlStructureParser.LoadXmlFile(filePath);
+            resultParseXmlFile = testxmlStructureParser.ParseXmlFile(out testUseCase);
+
+            // Assert
+            Assert.IsTrue(resultLoadXmlFile);
+            Assert.IsFalse(resultParseXmlFile);
+            Assert.IsNotNull(testUseCase);
+        }
+
+        /// <summary>
+        /// Testfuction for ParseXmlFile function
+        /// Test with RUCM validation rule 23 failed sample file
+        /// </summary>
+        [Test]
+        public void ParseXmlFileTestWithRucmValidationRule23FailedSampleFile()
+        {
+            // Arrange
+            IRucmRuleValidator testrucmRuleValidator = new RucmRuleValidator(RucmRuleRepository.Rules);
+            XmlStructureParser testxmlStructureParser = new XmlStructureParser(testrucmRuleValidator);
+            string filePath = "UseCaseTest\\XmlParser\\Testdateien\\UseCaseTemplateExample - Regel 23 verletzt.docm";
+            UseCase testUseCase = new UseCase();
+            bool resultLoadXmlFile = false;
+            bool resultParseXmlFile = false;
+
+            // Act
+            resultLoadXmlFile = testxmlStructureParser.LoadXmlFile(filePath);
+            resultParseXmlFile = testxmlStructureParser.ParseXmlFile(out testUseCase);
+
+            // Assert
+            Assert.IsTrue(resultLoadXmlFile);
+            Assert.IsFalse(resultParseXmlFile);
+            Assert.IsNotNull(testUseCase);
+        }
+
+        /// <summary>
+        /// Testfuction for ParseXmlFile function
+        /// Test with RUCM validation rule 26 failed sample file
+        /// </summary>
+        [Test]
+        public void ParseXmlFileTestWithRucmValidationRule26FailedSampleFile()
+        {
+            // Arrange
+            IRucmRuleValidator testrucmRuleValidator = new RucmRuleValidator(RucmRuleRepository.Rules);
+            XmlStructureParser testxmlStructureParser = new XmlStructureParser(testrucmRuleValidator);
+            string filePath = "UseCaseTest\\XmlParser\\Testdateien\\UseCaseTemplateExample - Regel 26 verletzt.docm";
+            UseCase testUseCase = new UseCase();
+            bool resultLoadXmlFile = false;
+            bool resultParseXmlFile = false;
+
+            // Act
+            resultLoadXmlFile = testxmlStructureParser.LoadXmlFile(filePath);
+            resultParseXmlFile = testxmlStructureParser.ParseXmlFile(out testUseCase);
+
+            // Assert
+            Assert.IsTrue(resultLoadXmlFile);
+            Assert.IsFalse(resultParseXmlFile);
+            Assert.IsNotNull(testUseCase);
+        }
+
+        /// <summary>
+        /// Testfuction for ParseXmlFile function
+        /// Test with RUCM validation rule 19 and 26 failed sample file
+        /// </summary>
+        [Test]
+        public void ParseXmlFileTestWithRucmValidationRule19and26FailedSampleFile()
+        {
+            // Arrange
+            IRucmRuleValidator testrucmRuleValidator = new RucmRuleValidator(RucmRuleRepository.Rules);
+            XmlStructureParser testxmlStructureParser = new XmlStructureParser(testrucmRuleValidator);
+            string filePath = "UseCaseTest\\XmlParser\\Testdateien\\UseCaseTemplateExample - Regel 19 und 26 verletzt.docm";
+            UseCase testUseCase = new UseCase();
+            bool resultLoadXmlFile = false;
+            bool resultParseXmlFile = false;
+
+            // Act
+            resultLoadXmlFile = testxmlStructureParser.LoadXmlFile(filePath);
+            resultParseXmlFile = testxmlStructureParser.ParseXmlFile(out testUseCase);
+
+            // Assert
+            Assert.IsTrue(resultLoadXmlFile);
+            Assert.IsFalse(resultParseXmlFile);
+            Assert.IsNotNull(testUseCase);
+        }
+
+        /// <summary>
+        /// Testfuction for ParseXmlFile function
+        /// Test with RUCM validation rule 24 and 25 failed sample file
+        /// </summary>
+        [Test]
+        public void ParseXmlFileTestWithRucmValidationRule24and25FailedSampleFile()
+        {
+            // Arrange
+            IRucmRuleValidator testrucmRuleValidator = new RucmRuleValidator(RucmRuleRepository.Rules);
+            XmlStructureParser testxmlStructureParser = new XmlStructureParser(testrucmRuleValidator);
+            string filePath = "UseCaseTest\\XmlParser\\Testdateien\\UseCaseTemplateExample - Regel 24 und 25 verletzt.docm";
             UseCase testUseCase = new UseCase();
             bool resultLoadXmlFile = false;
             bool resultParseXmlFile = false;
