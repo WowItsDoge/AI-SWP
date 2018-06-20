@@ -51,12 +51,10 @@ namespace UseCaseCore.UcIntern
         /// <summary>
         /// A resume step.
         /// <para/>
-        /// Two ore one matching groups.
-        /// For two groups it specifies the step in the basic flow to resume to (both groups equal).
-        /// For three groups it specifies the flow in the second group and the step in the flow in the third group (first group both combined).
+        /// One group holding the number of the basic step to resume to.
         /// Don't forget that C# puts the full match into an additional group at index 0!
         /// </summary>
-        public static readonly StepType Resume = new StepType(7, new[] { @"\bRESUME\b (([^ ]*) ([0-9]+)|([0-9]+))" });
+        public static readonly StepType Resume = new StepType(7, new[] { @"\bRESUME STEP\b ([0-9]+)", @"\bRESUME\b ([0-9]+)" });
 
         /// <summary>
         /// An abort step.

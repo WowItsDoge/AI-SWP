@@ -2345,7 +2345,7 @@ namespace UseCaseTest.UcIntern
             // Arrange
             List<Node> nodes = new List<Node>();
             nodes.Add(new Node("The use case starts.", flowIdentifierBasic));
-            nodes.Add(new Node("RESUME 12 ", flowIdentifierBasic));
+            nodes.Add(new Node("RESUME STEP 12 ", flowIdentifierBasic));
             nodes.Add(new Node("The use case starts.", flowIdentifierBasic));
             Matrix<bool> expectedEdgeMatrix = new Matrix<bool>(
                 new bool[,]
@@ -3131,7 +3131,23 @@ namespace UseCaseTest.UcIntern
         /// Tests if the correct type for an resume statement is returned.
         /// </summary>
         [Test]
-        public void GetResumeType()
+        public void GetResumeType1()
+        {
+            // Arrange
+            string stepDescription = "RESUME STEP 13";
+            StepType expectedStepType = StepType.Resume;
+
+            // Act
+
+            // Assert
+            Assert.AreEqual(expectedStepType, GraphBuilder.GetStepType(stepDescription));
+        }
+
+        /// <summary>
+        /// Tests if the correct type for an resume statement is returned.
+        /// </summary>
+        [Test]
+        public void GetResumeType2()
         {
             // Arrange
             string stepDescription = "RESUME 13";
@@ -3141,6 +3157,40 @@ namespace UseCaseTest.UcIntern
 
             // Assert
             Assert.AreEqual(expectedStepType, GraphBuilder.GetStepType(stepDescription));
+        }
+
+        /// <summary>
+        /// Tests if the correct value for an resume statement is returned.
+        /// </summary>
+        [Test]
+        public void GetResumeValue1()
+        {
+            // Arrange
+            string stepDescription = "RESUME STEP 4";
+            ExternalEdge expectedExternalEdge = new ExternalEdge(0, new ReferenceStep(flowIdentifierBasic, 3));
+
+            // Act
+            ExternalEdge externalEdge = GraphBuilder.GetExternalEdgeForResumeStep(stepDescription, 0);
+
+            // Assert
+            Assert.AreEqual(expectedExternalEdge, externalEdge); ;
+        }
+
+        /// <summary>
+        /// Tests if the correct value for an resume statement is returned.
+        /// </summary>
+        [Test]
+        public void GetResumeValue2()
+        {
+            // Arrange
+            string stepDescription = "RESUME 19";
+            ExternalEdge expectedExternalEdge = new ExternalEdge(0, new ReferenceStep(flowIdentifierBasic, 18));
+
+            // Act
+            ExternalEdge externalEdge = GraphBuilder.GetExternalEdgeForResumeStep(stepDescription, 0);
+
+            // Assert
+            Assert.AreEqual(expectedExternalEdge, externalEdge);
         }
 
         /// <summary>
