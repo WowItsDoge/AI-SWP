@@ -109,20 +109,9 @@ namespace UseCaseCore.XmlParser
         /// <param name="rucmRuleValidator">The rule validator is passed in the constructor</param>
         public XmlStructureParser(IRucmRuleValidator rucmRuleValidator)
         {
-            this.errorMessage = string.Empty;
-            this.useCaseName = string.Empty;
-            this.briefDescription = string.Empty;
-            this.precondition = string.Empty;
-            this.primaryActor = string.Empty;
-            this.secondaryActor = string.Empty;
-            this.dependency = string.Empty;
-            this.generalization = string.Empty;
-            this.basicFlow = new Flow();
-            this.globalAlternativeFlows = new List<Flow>();
-            this.specificAlternativeFlows = new List<Flow>();
-            this.boundedAlternativeFlows = new List<Flow>();
+
+            this.InitXmlParser();
             this.useCaseFile = null;
-            this.useCaseXml = new XmlDocument();
             this.useCaseFilePath = string.Empty;
             this.rucmRuleValidator = rucmRuleValidator;
         }
@@ -184,6 +173,27 @@ namespace UseCaseCore.XmlParser
         }
 
         /// <summary>
+        /// If error(return value = false) has occurred at function “LoadXmlFile()” or “TryToFixMalformedXml()”, the error text can be read out.
+        /// </summary>
+        /// <returns>Returns a string with the error message if there was an error.</returns>
+        public void InitXmlParser()
+        {
+            this.errorMessage = string.Empty;
+            this.useCaseName = string.Empty;
+            this.briefDescription = string.Empty;
+            this.precondition = string.Empty;
+            this.primaryActor = string.Empty;
+            this.secondaryActor = string.Empty;
+            this.dependency = string.Empty;
+            this.generalization = string.Empty;
+            this.basicFlow = new Flow();
+            this.globalAlternativeFlows = new List<Flow>();
+            this.specificAlternativeFlows = new List<Flow>();
+            this.boundedAlternativeFlows = new List<Flow>();
+            this.useCaseXml = new XmlDocument();
+        }
+
+        /// <summary>
         /// If external xml file contains easy structural errors (for example missing bracket on line 50), it can be tried to repair automatically. Attention: Source file on storage medium will be overwritten!
         /// </summary>
         /// <returns>Returns true if the malformed xml could be fixed, otherwise false.</returns>
@@ -199,6 +209,7 @@ namespace UseCaseCore.XmlParser
         /// <returns>Returns true if the file was analyzed successfully, otherwise false.</returns>
         public bool ParseXmlFile(out UseCase useCase)
         {
+            this.InitXmlParser();
             try
             {
                 this.useCaseXml.LoadXml(this.useCaseFile.MainDocumentPart.Document.InnerXml);
