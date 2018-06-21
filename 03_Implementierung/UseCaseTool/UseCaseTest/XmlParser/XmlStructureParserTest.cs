@@ -304,24 +304,6 @@ namespace UseCaseTest.XmlParser
         }
 
         /// <summary>
-        /// Testfuction for TryToFixMalformedXml function
-        /// </summary>
-        [Test]
-        public void TryToFixMalformedXmlTest()
-        {
-            // Arrange
-            IRucmRuleValidator testrucmRuleValidator = new RucmRuleValidator(RucmRuleRepository.Rules);
-            XmlStructureParser testxmlStructureParser = new XmlStructureParser(testrucmRuleValidator);
-            bool result = false;
-
-            // Act
-            result = testxmlStructureParser.TryToFixMalformedXml();
-
-            // Assert
-            Assert.IsFalse(result);
-        }
-
-        /// <summary>
         /// Testfuction for LoadXmlFile function
         /// Test with correct sample file
         /// </summary>
