@@ -71,7 +71,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controller\Controller.cs" />
-    <Compile Include="Example.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RuleValidation\ErrorReport.cs" />
     <Compile Include="RuleValidation\Errors\FlowError.cs" />
