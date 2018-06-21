@@ -413,6 +413,9 @@ namespace UseCaseCore.Controller
             //// ToDo: reset Fehlerbericht
             this.ruleValidator.Reset();
 
+            this.matrix.ClearMatrix();
+            this.GraphCreated(null);
+
             //// neu zeichnen??!?!?!
 
             this.backgroundWorkerLoadFile.DoWork -= new DoWorkEventHandler(this.BackgroundWorkerLoadFile_DoWork);
