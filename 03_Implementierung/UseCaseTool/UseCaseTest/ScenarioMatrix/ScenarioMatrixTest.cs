@@ -170,8 +170,8 @@ namespace UseCaseTest.ScenarioMatrix
             Node n2 = new Node("Schritt 2", new FlowIdentifier(FlowType.Basic, 1));
             Node n3 = new Node("Schritt 3", new FlowIdentifier(FlowType.Basic, 1));
             Node n4 = new Node("Schritt 4", new FlowIdentifier(FlowType.Basic, 1));
-            Node n5 = new Node("Schritt 5", new FlowIdentifier(FlowType.Basic, 1));
-            Node n6 = new Node("Schritt 6", new FlowIdentifier(FlowType.Basic, 1));
+            Node n5 = new Node("Schritt 5", new FlowIdentifier(FlowType.SpecificAlternative, 2));
+            Node n6 = new Node("Schritt 6", new FlowIdentifier(FlowType.SpecificAlternative, 3));
 
             List<Node> nodes = new List<Node>();
             nodes.Add(n1);
@@ -180,6 +180,12 @@ namespace UseCaseTest.ScenarioMatrix
             nodes.Add(n4);
             nodes.Add(n5);
             nodes.Add(n6);
+
+            List<Node> basicFlow = new List<Node>();
+            basicFlow.Add(n1);
+            basicFlow.Add(n2);
+            basicFlow.Add(n3);
+            basicFlow.Add(n4);
 
             List<Node> expectedScenario1 = new List<Node>();
             expectedScenario1.Add(n1);
@@ -195,6 +201,7 @@ namespace UseCaseTest.ScenarioMatrix
             TestUseCase uc = new TestUseCase();
             uc.SetEdgeMatrix(m);
             uc.SetNodes(nodes);
+            uc.BasicFlow = new Flow(new FlowIdentifier(FlowType.Basic, 1), "egal", nodes, new List<ReferenceStep>());
 
             ScenarioMatrix sm = new ScenarioMatrix(uc, cycleDepth);
             sm.CreateScenarios();
@@ -223,13 +230,13 @@ namespace UseCaseTest.ScenarioMatrix
             uint cycleDepth = 2;
 
             Matrix<bool> m = new Matrix<bool>(matrixA);
-            
+
             Node n1 = new Node("Schritt 1", new FlowIdentifier(FlowType.Basic, 1));
             Node n2 = new Node("Schritt 2", new FlowIdentifier(FlowType.Basic, 1));
             Node n3 = new Node("Schritt 3", new FlowIdentifier(FlowType.Basic, 1));
             Node n4 = new Node("Schritt 4", new FlowIdentifier(FlowType.Basic, 1));
-            Node n5 = new Node("Schritt 5", new FlowIdentifier(FlowType.Basic, 1));
-            Node n6 = new Node("Schritt 6", new FlowIdentifier(FlowType.Basic, 1));
+            Node n5 = new Node("Schritt 5", new FlowIdentifier(FlowType.SpecificAlternative, 2));
+            Node n6 = new Node("Schritt 6", new FlowIdentifier(FlowType.SpecificAlternative, 3));
 
             List<Node> nodes = new List<Node>();
             nodes.Add(n1);
@@ -238,6 +245,12 @@ namespace UseCaseTest.ScenarioMatrix
             nodes.Add(n4);
             nodes.Add(n5);
             nodes.Add(n6);
+            
+            List<Node> basicFlow = new List<Node>();
+            basicFlow.Add(n1);
+            basicFlow.Add(n2);
+            basicFlow.Add(n3);
+            basicFlow.Add(n4);
 
             List<Node> expectedScenario1 = new List<Node>();
             expectedScenario1.Add(n1);
@@ -270,6 +283,7 @@ namespace UseCaseTest.ScenarioMatrix
             TestUseCase uc = new TestUseCase();
             uc.SetEdgeMatrix(m);
             uc.SetNodes(nodes);
+            uc.BasicFlow = new Flow(new FlowIdentifier(FlowType.Basic, 1), "egal", nodes, new List<ReferenceStep>());
 
             ScenarioMatrix sm = new ScenarioMatrix(uc, cycleDepth);
             sm.CreateScenarios();
@@ -304,8 +318,8 @@ namespace UseCaseTest.ScenarioMatrix
             Node n1 = new Node("Schritt 1", new FlowIdentifier(FlowType.Basic, 1));
             Node n2 = new Node("Schritt 2", new FlowIdentifier(FlowType.Basic, 1));
             Node n3 = new Node("Schritt 3", new FlowIdentifier(FlowType.Basic, 1));
-            Node n4 = new Node("Schritt 4", new FlowIdentifier(FlowType.Basic, 1));
             Node n5 = new Node("Schritt 5", new FlowIdentifier(FlowType.Basic, 1));
+            Node n4 = new Node("Schritt 4", new FlowIdentifier(FlowType.SpecificAlternative, 2));
 
             List<Node> nodes = new List<Node>();
             nodes.Add(n1);
@@ -313,6 +327,12 @@ namespace UseCaseTest.ScenarioMatrix
             nodes.Add(n3);
             nodes.Add(n4);
             nodes.Add(n5);
+
+            List<Node> basicFlow = new List<Node>();
+            basicFlow.Add(n1);
+            basicFlow.Add(n2);
+            basicFlow.Add(n3);
+            basicFlow.Add(n5);
 
             List<Node> expectedScenario1 = new List<Node>();
             expectedScenario1.Add(n1);
@@ -328,6 +348,7 @@ namespace UseCaseTest.ScenarioMatrix
             TestUseCase uc = new TestUseCase();
             uc.SetEdgeMatrix(m);
             uc.SetNodes(nodes);
+            uc.BasicFlow = new Flow(new FlowIdentifier(FlowType.Basic, 1), "egal", basicFlow, new List<ReferenceStep>());
 
             ScenarioMatrix sm = new ScenarioMatrix(uc, cycleDepth);
             sm.CreateScenarios();
@@ -360,8 +381,8 @@ namespace UseCaseTest.ScenarioMatrix
             Node n1 = new Node("Schritt 1", new FlowIdentifier(FlowType.Basic, 1));
             Node n2 = new Node("Schritt 2", new FlowIdentifier(FlowType.Basic, 1));
             Node n3 = new Node("Schritt 3", new FlowIdentifier(FlowType.Basic, 1));
-            Node n4 = new Node("Schritt 4", new FlowIdentifier(FlowType.Basic, 1));
             Node n5 = new Node("Schritt 5", new FlowIdentifier(FlowType.Basic, 1));
+            Node n4 = new Node("Schritt 4", new FlowIdentifier(FlowType.SpecificAlternative, 2));
 
             List<Node> nodes = new List<Node>();
             nodes.Add(n1);
@@ -369,6 +390,12 @@ namespace UseCaseTest.ScenarioMatrix
             nodes.Add(n3);
             nodes.Add(n4);
             nodes.Add(n5);
+
+            List<Node> basicFlow = new List<Node>();
+            basicFlow.Add(n1);
+            basicFlow.Add(n2);
+            basicFlow.Add(n3);
+            basicFlow.Add(n5);
 
             List<Node> expectedScenario1 = new List<Node>();
             expectedScenario1.Add(n1);
@@ -418,6 +445,7 @@ namespace UseCaseTest.ScenarioMatrix
             TestUseCase uc = new TestUseCase();
             uc.SetEdgeMatrix(m);
             uc.SetNodes(nodes);
+            uc.BasicFlow = new Flow(new FlowIdentifier(FlowType.Basic, 1), "egal", basicFlow, new List<ReferenceStep>());
 
             ScenarioMatrix sm = new ScenarioMatrix(uc, cycleDepth);
             sm.CreateScenarios();
@@ -457,8 +485,8 @@ namespace UseCaseTest.ScenarioMatrix
             Node n2 = new Node("Schritt 2", new FlowIdentifier(FlowType.Basic, 1));
             Node n3 = new Node("Schritt 3", new FlowIdentifier(FlowType.Basic, 1));
             Node n4 = new Node("Schritt 4", new FlowIdentifier(FlowType.Basic, 1));
-            Node n5 = new Node("Schritt 5", new FlowIdentifier(FlowType.Basic, 1));
-            Node n6 = new Node("Schritt 6", new FlowIdentifier(FlowType.Basic, 1));
+            Node n5 = new Node("Schritt 5", new FlowIdentifier(FlowType.SpecificAlternative, 2));
+            Node n6 = new Node("Schritt 6", new FlowIdentifier(FlowType.SpecificAlternative, 3));
 
             List<Node> nodes = new List<Node>();
             nodes.Add(n1);
@@ -467,10 +495,17 @@ namespace UseCaseTest.ScenarioMatrix
             nodes.Add(n4);
             nodes.Add(n5);
             nodes.Add(n6);
+            
+            List<Node> basicFlow = new List<Node>();
+            basicFlow.Add(n1);
+            basicFlow.Add(n2);
+            basicFlow.Add(n3);
+            basicFlow.Add(n4);
 
             TestUseCase uc = new TestUseCase();
             uc.SetEdgeMatrix(m);
             uc.SetNodes(nodes);
+            uc.BasicFlow = new Flow(new FlowIdentifier(FlowType.Basic, 1), "egal", basicFlow, new List<ReferenceStep>());
 
             ScenarioMatrix sm = new ScenarioMatrix(uc, cycleDepth);
             sm.CreateScenarios();
@@ -515,8 +550,8 @@ namespace UseCaseTest.ScenarioMatrix
             Node n2 = new Node("Schritt 2", new FlowIdentifier(FlowType.Basic, 1));
             Node n3 = new Node("Schritt 3", new FlowIdentifier(FlowType.Basic, 1));
             Node n4 = new Node("Schritt 4", new FlowIdentifier(FlowType.Basic, 1));
-            Node n5 = new Node("Schritt 5", new FlowIdentifier(FlowType.Basic, 1));
-            Node n6 = new Node("Schritt 6", new FlowIdentifier(FlowType.Basic, 1));
+            Node n5 = new Node("Schritt 5", new FlowIdentifier(FlowType.SpecificAlternative, 2));
+            Node n6 = new Node("Schritt 6", new FlowIdentifier(FlowType.SpecificAlternative, 3));
 
             List<Node> nodes = new List<Node>();
             nodes.Add(n1);
@@ -526,9 +561,16 @@ namespace UseCaseTest.ScenarioMatrix
             nodes.Add(n5);
             nodes.Add(n6);
 
+            List<Node> basicFlow = new List<Node>();
+            basicFlow.Add(n1);
+            basicFlow.Add(n2);
+            basicFlow.Add(n3);
+            basicFlow.Add(n4);
+
             TestUseCase uc = new TestUseCase();
             uc.SetEdgeMatrix(m);
             uc.SetNodes(nodes);
+            uc.BasicFlow = new Flow(new FlowIdentifier(FlowType.Basic, 1), "egal", basicFlow, new List<ReferenceStep>());
 
             ScenarioMatrix sm = new ScenarioMatrix(uc, cycleDepth);
             sm.CreateScenarios();
@@ -590,8 +632,8 @@ namespace UseCaseTest.ScenarioMatrix
             Node n2 = new Node("Schritt 2", new FlowIdentifier(FlowType.Basic, 1));
             Node n3 = new Node("Schritt 3", new FlowIdentifier(FlowType.Basic, 1));
             Node n4 = new Node("Schritt 4", new FlowIdentifier(FlowType.Basic, 1));
-            Node n5 = new Node("Schritt 5", new FlowIdentifier(FlowType.Basic, 1));
-            Node n6 = new Node("Schritt 6", new FlowIdentifier(FlowType.Basic, 1));
+            Node n5 = new Node("Schritt 5", new FlowIdentifier(FlowType.SpecificAlternative, 2));
+            Node n6 = new Node("Schritt 6", new FlowIdentifier(FlowType.SpecificAlternative, 3));
 
             List<Node> nodes = new List<Node>();
             nodes.Add(n1);
@@ -600,6 +642,12 @@ namespace UseCaseTest.ScenarioMatrix
             nodes.Add(n4);
             nodes.Add(n5);
             nodes.Add(n6);
+
+            List<Node> basicFlow = new List<Node>();
+            basicFlow.Add(n1);
+            basicFlow.Add(n2);
+            basicFlow.Add(n3);
+            basicFlow.Add(n4);
 
             List<Node> expectedScenario1 = new List<Node>();
             expectedScenario1.Add(n1);
@@ -632,6 +680,7 @@ namespace UseCaseTest.ScenarioMatrix
             TestUseCase uc = new TestUseCase();
             uc.SetEdgeMatrix(m);
             uc.SetNodes(nodes);
+            uc.BasicFlow = new Flow(new FlowIdentifier(FlowType.Basic, 1), "egal", basicFlow, new List<ReferenceStep>());
 
             ScenarioMatrix sm = new ScenarioMatrix(uc, cycleDepth);
             sm.CreateScenarios();
@@ -723,13 +772,15 @@ namespace UseCaseTest.ScenarioMatrix
 
             Node n1 = new Node("Step1", new FlowIdentifier(FlowType.Basic, 1));
             Node n2 = new Node("Step2", new FlowIdentifier(FlowType.Basic, 1));
+
             List<Node> nodes = new List<Node>();
             nodes.Add(n1);
             nodes.Add(n2);
-
+                        
             TestUseCase uc = new TestUseCase();
             uc.SetNodes(nodes);
             uc.SetEdgeMatrix(m);
+            uc.BasicFlow = new Flow(new FlowIdentifier(FlowType.Basic, 1), "egal", nodes, new List<ReferenceStep>());
 
             ScenarioMatrix sm = new ScenarioMatrix(uc, 1);
             sm.CreateScenarios();
@@ -777,6 +828,7 @@ namespace UseCaseTest.ScenarioMatrix
 
             Node n1 = new Node("Step1", new FlowIdentifier(FlowType.Basic, 1));
             Node n2 = new Node("Step2", new FlowIdentifier(FlowType.Basic, 1));
+
             List<Node> nodes = new List<Node>();
             nodes.Add(n1);
             nodes.Add(n2);
@@ -784,6 +836,7 @@ namespace UseCaseTest.ScenarioMatrix
             TestUseCase uc = new TestUseCase();
             uc.SetNodes(nodes);
             uc.SetEdgeMatrix(m);
+            uc.BasicFlow = new Flow(new FlowIdentifier(FlowType.Basic, 1), "egal", nodes, new List<ReferenceStep>());
 
             ScenarioMatrix sm = new ScenarioMatrix(uc, 1);
             sm.CreateScenarios();
