@@ -124,13 +124,16 @@ namespace UseCaseCore.XmlParser
         {
             try
             {
-                //// copy file to windows temp folder to fix the problem with write access if file is opened
+                //// Copy usecase xml-file to windows user temp folder to fix the problem that the file is opened in write access
                 string fileName = filePath.Substring(filePath.LastIndexOf("\\") + 1);
                 string newFilePath = Path.Combine(Path.GetTempPath(), fileName);
                 File.Copy(filePath, newFilePath, true);
                 this.useCaseFilePath = newFilePath;
 
+                //// Open and load usecase xml-file
                 this.useCaseFile = WordprocessingDocument.Open(this.useCaseFilePath, true);
+
+                //// Set and apply settings for opended and loaded usecase xml-file
                 SimplifyMarkupSettings settings = new SimplifyMarkupSettings
                 {
                     AcceptRevisions = false,
@@ -152,12 +155,19 @@ namespace UseCaseCore.XmlParser
                     NormalizeXml = true,
                 };
                 MarkupSimplifier.SimplifyMarkup(this.useCaseFile, settings);
+
                 return true;
             }
             catch (Exception ex)
             {
+                //// General error while loading the usecase xml-file
+
+                //// Save the error message
                 this.errorMessage = ex.Message.ToString();
+
+                //// Close usecase file and delete temporary file from windows user temp folder
                 File.Delete(this.useCaseFilePath);
+
                 return false;
             }
         }
@@ -192,15 +202,6 @@ namespace UseCaseCore.XmlParser
         }
 
         /// <summary>
-        /// If external xml file contains easy structural errors (for example missing bracket on line 50), it can be tried to repair automatically. Attention: Source file on storage medium will be overwritten!
-        /// </summary>
-        /// <returns>Returns true if the malformed xml could be fixed, otherwise false.</returns>
-        public bool TryToFixMalformedXml()
-        {
-            return false;
-        }
-
-        /// <summary>
         /// Analyzes the previously read xml file.
         /// </summary>
         /// <param name="useCase">Out parameter for the whole internal use case representation.</param>
@@ -208,10 +209,13 @@ namespace UseCaseCore.XmlParser
         public bool ParseXmlFile(out UseCase useCase)
         {
             this.InitXmlParser();
+
             try
             {
+                //// Load usecase xml-file and normalize xml-structure
                 this.useCaseXml.LoadXml(this.useCaseFile.MainDocumentPart.Document.InnerXml);
-                this.useCaseXml.Normalize(); //// TODO: useful?
+                this.useCaseXml.Normalize();
+
                 if (this.useCaseXml.DocumentElement.ChildNodes == null)
                 {
                     useCase = null;
@@ -221,6 +225,7 @@ namespace UseCaseCore.XmlParser
                     return false;
                 }
 
+                //// Read out usecase properties
                 this.useCaseName = this.ParseRucmProperty("Use Case Name");
                 this.briefDescription = this.ParseRucmProperty("Brief Description");
                 this.precondition = this.ParseRucmProperty("Precondition");
@@ -233,10 +238,12 @@ namespace UseCaseCore.XmlParser
                 this.GetSpecificAlternativeFlows();
                 this.GetBoundedAlternativeFlows();
 
+                //// Validate the usecase properties and flows with the rucm rules
                 bool rucmValidationResult = this.ValidateRucmRules();
 
                 if (rucmValidationResult == true)
                 {
+                    //// Create internal usecase structure
                     this.SetOutgoingUseCaseParameter();
                 }
                 else
@@ -244,18 +251,28 @@ namespace UseCaseCore.XmlParser
                     this.errorMessage = "RUCM rule validation failed!";
                 }
 
+                //// Close usecase file and delete temporary file from windows user temp folder
                 this.useCaseFile.Close();
                 File.Delete(this.useCaseFilePath);
 
+                //// Pass the internal usecase structure
                 useCase = this.outgoingUseCase;
                 return rucmValidationResult;
             }
             catch (Exception ex)
             {
+                //// General error while reading the usecase xml-file
+
+                //// Clear internal usecase structure
                 useCase = null;
+
+                //// Save the error message
                 this.errorMessage = ex.Message.ToString();
+
+                //// Close usecase file and delete temporary file from windows user temp folder
                 this.useCaseFile.Close();
                 File.Delete(this.useCaseFilePath);
+
                 return false;
             }
         }
@@ -269,35 +286,43 @@ namespace UseCaseCore.XmlParser
             bool currentValidationResult = true;
             bool functionReturnValue = true;
 
+            //// Validate the basic flow
             currentValidationResult = this.rucmRuleValidator.Validate(this.basicFlow);
             if (currentValidationResult == false)
             {
+                //// Error in validation
                 functionReturnValue = false;
             }
 
+            //// Validate the global alternative flows
             foreach (var globalAlternativeFlow in this.globalAlternativeFlows)
             {
                 currentValidationResult = this.rucmRuleValidator.Validate(globalAlternativeFlow, this.basicFlow);
                 if (currentValidationResult == false)
                 {
+                    //// Error in validation
                     functionReturnValue = false;
                 }
             }
 
+            //// Validate the specific alternative flows
             foreach (var specificAlternativeFlow in this.specificAlternativeFlows)
             {
                 currentValidationResult = this.rucmRuleValidator.Validate(specificAlternativeFlow, this.basicFlow);
                 if (currentValidationResult == false)
                 {
+                    //// Error in validation
                     functionReturnValue = false;
                 }
             }
 
+            //// Validate the bounded alternative flows
             foreach (var boundedAlternativeFlow in this.boundedAlternativeFlows)
             {
                 currentValidationResult = this.rucmRuleValidator.Validate(boundedAlternativeFlow, this.basicFlow);
                 if (currentValidationResult == false)
                 {
+                    //// Error in validation
                     functionReturnValue = false;
                 }
             }
@@ -310,6 +335,7 @@ namespace UseCaseCore.XmlParser
         /// </summary>
         private void SetOutgoingUseCaseParameter()
         {
+            //// Create internal usecase structure
             this.outgoingUseCase.UseCaseName = this.useCaseName;
             this.outgoingUseCase.BriefDescription = this.briefDescription;
             this.outgoingUseCase.Precondition = this.precondition;
@@ -332,8 +358,11 @@ namespace UseCaseCore.XmlParser
         private string ParseRucmProperty(string propertyName)
         {
             XmlNodeList propertyNode = null;
+
+            //// Get the xml node list for the usecase property name (only for property name, not for flows!)
             propertyNode = this.GetXmlNodeList(propertyName);
 
+            //// Check for errors: Only one equal property allowed
             if (propertyNode.Count == 0)
             {
                 throw new Exception("Error: Use-Case property " + "\"" + propertyName + "\"" + " not found");
@@ -346,6 +375,7 @@ namespace UseCaseCore.XmlParser
 
             try
             {
+                //// Get the content for the property name
                 string propertyContent = propertyNode[0].ParentNode.ParentNode.ParentNode.ParentNode.ChildNodes[1].InnerText.Trim();
                 return propertyContent;
             }
@@ -361,8 +391,11 @@ namespace UseCaseCore.XmlParser
         private void GetBasicFlow()
         {
             XmlNodeList basicFlowNode = null;
+
+            //// Get the xml node list for the flow
             basicFlowNode = this.GetXmlNodeList("Basic Flow");
 
+            //// Check for errors: Only one basic flow allowed
             if (basicFlowNode.Count == 0)
             {
                 throw new Exception("Error: No Basic Flow found");
@@ -375,33 +408,47 @@ namespace UseCaseCore.XmlParser
 
             try
             {
+                //// Get the content for the flow
                 XmlNode basicFlowContent = basicFlowNode[0].ParentNode.ParentNode.ParentNode.ParentNode;
+
+                //// Read out the next step content inside the flow
                 XmlNode basicFlowStepContent = basicFlowContent.NextSibling;
+
                 List<Node> basicSteps = new List<Node>();
+
+                //// Identifier for the flow is always zero
                 FlowIdentifier basicIdentifier = new FlowIdentifier(FlowType.Basic, 0);
+
+                //// Check if flow has ended
                 while (this.FlowHasEnded(basicFlowStepContent) == false)
-                {          
+                {    
+                    //// Check how many child nodes exists in current step content and read out the content
                     switch (basicFlowStepContent.ChildNodes.Count)
                     {
                         case 2:
+                            //// Content has no step number --> for example "DO" or "IF ..."
                             basicSteps.Add(new Node(basicFlowStepContent.ChildNodes[1].InnerText.Trim(), basicIdentifier));
                             break;
                         case 3:
+                            //// Content has a step number
                             basicSteps.Add(new Node(basicFlowStepContent.ChildNodes[2].InnerText.Trim(), basicIdentifier));
                             break;
                         default:
                             break;
                     }
 
+                    //// Read out the next step content inside the flow
                     basicFlowStepContent = basicFlowStepContent.NextSibling;
                 }
 
+                //// Read out the postcondition
                 string postcondition = string.Empty;
                 if (basicFlowStepContent.ChildNodes.Count == 3)
                 {
                     postcondition = basicFlowStepContent.ChildNodes[2].InnerText.Trim();
                 }
 
+                //// Create the internal basic flow
                 this.basicFlow = new Flow(basicIdentifier, postcondition, basicSteps, new List<ReferenceStep>());
             }
             catch
@@ -416,8 +463,11 @@ namespace UseCaseCore.XmlParser
         private void GetGlobalAlternativeFlows()
         {
             XmlNodeList globalAlternativeFlowNodes = null;
+
+            //// Get the xml node list for the flow
             globalAlternativeFlowNodes = this.GetXmlNodeList("Global Alternative Flow");
 
+            //// Exit if no flow exists
             if (globalAlternativeFlowNodes.Count == 0)
             {
                 return;
@@ -425,40 +475,56 @@ namespace UseCaseCore.XmlParser
 
             try
             {
-                List<Flow> tempList = new List<Flow>();
+                //// Create temporary flow list
+                List<Flow> temporaryFlowList = new List<Flow>();
+
+                //// Read out every existing flow
                 for (int i = 1; i <= globalAlternativeFlowNodes.Count; i++)
                 {
                     List<Node> globalSteps = new List<Node>();
+
+                    //// Identifier for the flow is the current loop runs
                     FlowIdentifier globalIdentifier = new FlowIdentifier(FlowType.GlobalAlternative, i);
+
+                    //// Get the content for the flow
                     XmlNode globalAlternativeFlowContent = globalAlternativeFlowNodes[i - 1].ParentNode.ParentNode.ParentNode.ParentNode;
                     XmlNode globalAlternativeFlowStepContent = globalAlternativeFlowContent;
+
+                    //// Check if flow has ended
                     while (this.FlowHasEnded(globalAlternativeFlowStepContent) == false)
                     {
+                        //// Check how many child nodes exists in current step content and read out the content
                         switch (globalAlternativeFlowStepContent.ChildNodes.Count)
                         {
                             case 2:
+                                //// Content has no step number --> for example "DO" or "IF ..."
                                 globalSteps.Add(new Node(globalAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim(), globalIdentifier));
                                 break;
                             case 3:
+                                //// Content has a step number
                                 globalSteps.Add(new Node(globalAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim(), globalIdentifier));
                                 break;
                             default:
                                 break;
                         }
 
+                        //// Read out the next step content inside the flow
                         globalAlternativeFlowStepContent = globalAlternativeFlowStepContent.NextSibling;
                     }
 
+                    //// Read out the postcondition
                     string postcondition = string.Empty;
                     if (globalAlternativeFlowStepContent.ChildNodes.Count == 3)
                     {
                         postcondition = globalAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim();
                     }   
-                                
-                    tempList.Add(new Flow(globalIdentifier, postcondition, globalSteps, new List<ReferenceStep>()));                   
+                         
+                    //// Add the flow to temporary list       
+                    temporaryFlowList.Add(new Flow(globalIdentifier, postcondition, globalSteps, new List<ReferenceStep>()));                   
                 }
 
-                this.globalAlternativeFlows = tempList;
+                //// Create the internal global alternative flows
+                this.globalAlternativeFlows = temporaryFlowList;
             }
             catch
             {
@@ -472,8 +538,11 @@ namespace UseCaseCore.XmlParser
         private void GetSpecificAlternativeFlows()
         {
             XmlNodeList specificAlternativeFlowNodes = null;
+
+            //// Get the xml node list for the flow
             specificAlternativeFlowNodes = this.GetXmlNodeList("Specific Alternative Flow");
 
+            //// Exit if no flow exists
             if (specificAlternativeFlowNodes.Count == 0)
             {
                 return;
@@ -481,21 +550,34 @@ namespace UseCaseCore.XmlParser
 
             try
             {
-                List<Flow> tempList = new List<Flow>();
+                //// Create temporary flow list
+                List<Flow> temporaryFlowList = new List<Flow>();
+
+                //// Read out every existing flow
                 for (int i = 1; i <= specificAlternativeFlowNodes.Count; i++)
                 {
                     List<Node> specificSteps = new List<Node>();
+
+                    //// Identifier for the flow is the current loop runs
                     FlowIdentifier specificIdentifier = new FlowIdentifier(FlowType.SpecificAlternative, i);
+
                     ReferenceStep referenceStep = new ReferenceStep();
+
+                    //// Get the content for the flow
                     XmlNode specificAlternativeFlowContent = specificAlternativeFlowNodes[i - 1].ParentNode.ParentNode.ParentNode.ParentNode;
                     XmlNode specificAlternativeFlowStepContent = specificAlternativeFlowContent;
+
+                    //// Check if flow has ended
                     while (this.FlowHasEnded(specificAlternativeFlowStepContent) == false)
                     {
+                        //// Check how many child nodes exists in current step content and read out the content
                         switch (specificAlternativeFlowStepContent.ChildNodes.Count)
                         {
                             case 2:
+                                //// Content has no step number --> for example "DO" or "IF ..."
                                 string unparsedReferenceStep = specificAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim().ToLower();
-                                //// help for rule 19
+                                
+                                //// Help query for rucm rule 19
                                 if (unparsedReferenceStep.Contains("RFS".ToLower()))   
                                 {
                                     unparsedReferenceStep = this.TrimReferenceStepNumber(unparsedReferenceStep);
@@ -508,25 +590,30 @@ namespace UseCaseCore.XmlParser
                                 specificSteps.Add(new Node(specificAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim(), specificIdentifier));
                                 break;
                             case 3:
+                                //// Content has a step number
                                 specificSteps.Add(new Node(specificAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim(), specificIdentifier));
                                 break;
                             default:
                                 break;
                         }
 
+                        //// Read out the next step content inside the flow
                         specificAlternativeFlowStepContent = specificAlternativeFlowStepContent.NextSibling;
                     }
 
+                    //// Read out the postcondition
                     string postcondition = string.Empty;
                     if (specificAlternativeFlowStepContent.ChildNodes.Count == 3)
                     {
                         postcondition = specificAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim();
-                    }  
-                                                     
-                    tempList.Add(new Flow(specificIdentifier, postcondition, specificSteps, new List<ReferenceStep>() { referenceStep }));
+                    }
+
+                    //// Add the flow to temporary list                      
+                    temporaryFlowList.Add(new Flow(specificIdentifier, postcondition, specificSteps, new List<ReferenceStep>() { referenceStep }));
                 }
 
-                this.specificAlternativeFlows = tempList;
+                //// Create the internal specific alternative flows
+                this.specificAlternativeFlows = temporaryFlowList;
             }
             catch
             {
@@ -540,8 +627,11 @@ namespace UseCaseCore.XmlParser
         private void GetBoundedAlternativeFlows()
         {
             XmlNodeList boundedAlternativeFlowNodes = null;
+
+            //// Get the xml node list for the flow
             boundedAlternativeFlowNodes = this.GetXmlNodeList("Bounded Alternative Flow");
 
+            //// Exit if no flow exists
             if (boundedAlternativeFlowNodes.Count == 0)
             {
                 return;
@@ -549,23 +639,38 @@ namespace UseCaseCore.XmlParser
 
             try
             {
-                List<Flow> tempList = new List<Flow>();
+                //// Create temporary flow list
+                List<Flow> temporaryFlowList = new List<Flow>();
+
+                //// Read out every existing flow
                 for (int i = 1; i <= boundedAlternativeFlowNodes.Count; i++)
                 {
                     List<Node> boundedSteps = new List<Node>();
+
+                    //// Identifier for the flow is the current loop runs
                     FlowIdentifier boundedIdentifier = new FlowIdentifier(FlowType.BoundedAlternative, i);
+
                     List<ReferenceStep> referenceSteps = new List<ReferenceStep>();
+
+                    //// Get the content for the flow
                     XmlNode boundedAlternativeFlowContent = boundedAlternativeFlowNodes[i - 1].ParentNode.ParentNode.ParentNode.ParentNode;
                     XmlNode boundedAlternativeFlowStepContent = boundedAlternativeFlowContent;
+
+                    //// Check if flow has ended
                     while (this.FlowHasEnded(boundedAlternativeFlowStepContent) == false)
                     {
+                        //// Check how many child nodes exists in current step content and read out the content
                         switch (boundedAlternativeFlowStepContent.ChildNodes.Count)
                         {
                             case 2:
+                                //// Content has no step number --> for example "DO" or "IF ..."
                                 string unparsedReferenceStep = boundedAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim().ToLower();
-                                //// help for rule 19
+
+                                //// Help query for rucm rule 19
                                 if (unparsedReferenceStep.Contains("RFS".ToLower()) == true)   
                                 {
+                                    //// Check if reference step numbers are separated by hyphen
+                                    //// For example: "RFS Basic Flow 3-6"
                                     string referenceStepNumbers = this.TrimReferenceStepNumber(unparsedReferenceStep);
                                     if (referenceStepNumbers.Contains("-") == true)
                                     {
@@ -592,25 +697,30 @@ namespace UseCaseCore.XmlParser
                                 boundedSteps.Add(new Node(boundedAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim(), boundedIdentifier));
                                 break;
                             case 3:
+                                //// Content has a step number
                                 boundedSteps.Add(new Node(boundedAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim(), boundedIdentifier));
                                 break;
                             default:
                                 break;
                         }
 
+                        //// Read out the next step content inside the flow
                         boundedAlternativeFlowStepContent = boundedAlternativeFlowStepContent.NextSibling;
                     }
 
+                    //// Read out the postcondition
                     string postcondition = string.Empty;
                     if (boundedAlternativeFlowStepContent.ChildNodes.Count == 3)
                     {
                         postcondition = boundedAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim();
                     }
 
-                    tempList.Add(new Flow(boundedIdentifier, postcondition, boundedSteps, referenceSteps));                
+                    //// Add the flow to temporary list  
+                    temporaryFlowList.Add(new Flow(boundedIdentifier, postcondition, boundedSteps, referenceSteps));                
                 }
 
-                this.boundedAlternativeFlows = tempList;
+                //// Create the internal bounded alternative flows
+                this.boundedAlternativeFlows = temporaryFlowList;
             }
             catch
             {
@@ -628,6 +738,8 @@ namespace UseCaseCore.XmlParser
             XmlNode root = this.useCaseXml.DocumentElement;
             XmlNodeList flowNodeList = null;
 
+            //// Create a list for search words by trimming the search word string at the blank signs from the right on
+            //// Improves the readout stability for the usecase quite a lot !!!
             List<string> searchWordList = new List<string>();
             int charPosition = searchWord.Length;
             while (charPosition > 0)
@@ -639,10 +751,12 @@ namespace UseCaseCore.XmlParser
 
             for (int i = 1; i <= searchWordList.Count; i++)
             {
+                //// Find xml node list
                 string xPathFilter = "//*/text()[normalize-space(.)='" + searchWordList[i - 1] + "']/parent::*";
                 flowNodeList = root.SelectNodes(xPathFilter);
                 if (flowNodeList.Count > 0)
                 {
+                    //// Xml node list was found
                     break;
                 }
             }
@@ -657,6 +771,8 @@ namespace UseCaseCore.XmlParser
         /// <returns>Returns true if the flow has ended, false otherwise.</returns>
         private bool FlowHasEnded(XmlNode flowStepContent)
         {
+            //// Create keyword list
+            //// Flow can not be ending with a keyword
             List<string> keyWords = new List<string>();
             keyWords.Add("IF");
             keyWords.Add("THEN");
@@ -673,39 +789,45 @@ namespace UseCaseCore.XmlParser
             keyWords.Add("MEANWHILE");
             keyWords.Add("VALIDATE THAT");
 
+            //// Check if usecase xml document is ending
             if (flowStepContent.NextSibling == null)
             {
                 return true;
             }
 
+            //// Check if current step content is the postcondition
             if (flowStepContent.ChildNodes[1].InnerText.Trim().ToLower() == "Postcondition".ToLower())
             {
                 return true;
             }
 
+            //// Check if current step content contains a keyword
             foreach (var keyword in keyWords)
             {
-                if (flowStepContent.ChildNodes[1].InnerText.Trim().Contains(keyword))
+                if (flowStepContent.ChildNodes[1].InnerText.Trim().Contains(keyword) == true)
                 {
                     return false;
                 }
             }
 
+            //// Check if current step content is a flow step
             int n;
-            if (int.TryParse(flowStepContent.ChildNodes[1].InnerText.Trim(), out n))
+            if (int.TryParse(flowStepContent.ChildNodes[1].InnerText.Trim(), out n) == true)
             {
                 return false;
             }
 
+            //// Check if next step content contains a keyword
             foreach (var keyword in keyWords)
             {
-                if (flowStepContent.NextSibling.ChildNodes[1].InnerText.Trim().Contains(keyword))
+                if (flowStepContent.NextSibling.ChildNodes[1].InnerText.Trim().Contains(keyword) == true)
                 {
                     return false;
                 }
             }
 
-            if (int.TryParse(flowStepContent.NextSibling.ChildNodes[1].InnerText.Trim(), out n))
+            //// Check if next step content is a flow step
+            if (int.TryParse(flowStepContent.NextSibling.ChildNodes[1].InnerText.Trim(), out n) == true)
             {
                 return false;
             }
@@ -714,12 +836,13 @@ namespace UseCaseCore.XmlParser
         }
 
         /// <summary>
-        /// Trim basic flow reference step number
+        /// Trim the flow reference step number
         /// </summary>
         /// <param name="searchWord">Defines the search word with which you want to search</param>
-        /// <returns>Returns the basic flow reference step number</returns>
+        /// <returns>Returns the flow reference step number</returns>
         private string TrimReferenceStepNumber(string searchWord)
         {
+            //// Replace the static word expressions from the search word
             searchWord = searchWord.Replace("RFS".ToLower(), string.Empty);
             searchWord = searchWord.Replace("Basic".ToLower(), string.Empty);
             searchWord = searchWord.Replace("Flow".ToLower(), string.Empty);
