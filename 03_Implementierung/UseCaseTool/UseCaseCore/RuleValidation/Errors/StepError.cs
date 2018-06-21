@@ -43,7 +43,7 @@ namespace UseCaseCore.RuleValidation.Errors
         /// <returns>this instance as a string</returns>
         public override string ToString()
         {
-            return "Error in Step " + this.stepReferenceNumber + ": " + this.errorMessage + "\t" + this.resolveMessage + "\n";
+            return "Fehler in Step " + this.stepReferenceNumber + ": " + this.errorMessage + "\t" + this.resolveMessage + "\n";
         }
     }
 }
