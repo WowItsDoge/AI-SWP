@@ -105,9 +105,6 @@ namespace UseCaseCore.Controller
         /// </summary>
         private uint currentCycleDepth = 1;
 
-        private Visibility visibilityOk = Visibility.Hidden;
-        private Visibility visibilityFail = Visibility.Hidden;
-
         /// <summary>
         /// If no graph is drawn, the cancel button is ineffective
         /// </summary>
@@ -286,176 +283,6 @@ namespace UseCaseCore.Controller
         }
 
         /// <summary>
-        /// Gets or sets the visibility of the ok image1
-        /// </summary>
-        public Visibility VisibilityOk1
-        {
-            get
-            {
-                return this.visibilityOk;
-            }
-
-            set
-            {
-                this.visibilityOk = value;
-                this.OnPropertyChanged();
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the visibility of the ok image2
-        /// </summary>
-        public Visibility VisibilityOk2
-        {
-            get
-            {
-                return this.visibilityOk;
-            }
-
-            set
-            {
-                this.visibilityOk = value;
-                this.OnPropertyChanged();
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the visibility of the ok image3
-        /// </summary>
-        public Visibility VisibilityOk3
-        {
-            get
-            {
-                return this.visibilityOk;
-            }
-
-            set
-            {
-                this.visibilityOk = value;
-                this.OnPropertyChanged();
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the visibility of the ok image4
-        /// </summary>
-        public Visibility VisibilityOk4
-        {
-            get
-            {
-                return this.visibilityOk;
-            }
-
-            set
-            {
-                this.visibilityOk = value;
-                this.OnPropertyChanged();
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the visibility of the ok image5
-        /// </summary>
-        public Visibility VisibilityOk5
-        {
-            get
-            {
-                return this.visibilityOk;
-            }
-
-            set
-            {
-                this.visibilityOk = value;
-                this.OnPropertyChanged();
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the visibility of the fail image1
-        /// </summary>
-        public Visibility VisibilityFail1
-        {
-            get
-            {
-                return this.visibilityFail;
-            }
-
-            set
-            {
-                this.visibilityFail = value;
-                this.OnPropertyChanged();
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the visibility of the fail image2
-        /// </summary>
-        public Visibility VisibilityFail2
-        {
-            get
-            {
-                return this.visibilityFail;
-            }
-
-            set
-            {
-                this.visibilityFail = value;
-                this.OnPropertyChanged();
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the visibility of the fail image3
-        /// </summary>
-        public Visibility VisibilityFail3
-        {
-            get
-            {
-                return this.visibilityFail;
-            }
-
-            set
-            {
-                this.visibilityFail = value;
-                this.OnPropertyChanged();
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the visibility of the fail image4
-        /// </summary>
-        public Visibility VisibilityFail4
-        {
-            get
-            {
-                return this.visibilityFail;
-            }
-
-            set
-            {
-                this.visibilityFail = value;
-                this.OnPropertyChanged();
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the visibility of the fail image5
-        /// </summary>
-        public Visibility VisibilityFail5
-        {
-            get
-            {
-                return this.visibilityFail;
-            }
-
-            set
-            {
-                this.visibilityFail = value;
-                this.OnPropertyChanged();
-            }
-        }
-
-        /// <summary>
         /// Tell the system path and file name of the XML UseCase file. The string para-meter contains the path to the new file.
         /// </summary>
         /// <param name="filePath">The currently selected path</param>
@@ -610,7 +437,6 @@ namespace UseCaseCore.Controller
                 if (this.xmlParser.LoadXmlFile(this.currentFilePath))
                 {
                     this.BackgroundColor1 = Brushes.LimeGreen;
-                    this.VisibilityOk1 = Visibility.Visible;
 
                     this.backgroundWorkerValidFile.WorkerSupportsCancellation = true;
                     this.backgroundWorkerValidFile.DoWork += new DoWorkEventHandler(this.BackgroundWorkerValidFile_DoWork);
@@ -623,7 +449,6 @@ namespace UseCaseCore.Controller
                 else
                 {
                     this.BackgroundColor1 = Brushes.Red;
-                    this.VisibilityFail1 = Visibility.Visible;
                     MessageBox.Show("Fehler beim Einlesen der Datei.", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                     this.ruleValidator.AddExternalError(this.xmlParser.GetError());
@@ -649,12 +474,10 @@ namespace UseCaseCore.Controller
                 if (this.xmlParser.ParseXmlFile(out this.useCase))
                 {
                     this.BackgroundColor2 = Brushes.LimeGreen;
-                    this.VisibilityOk2 = Visibility.Visible;
                 }
                 else
                 {
                     this.BackgroundColor2 = Brushes.Red;
-                    this.VisibilityFail2 = Visibility.Visible;
                     //// MessageBox.Show("Fehler beim Validieren der Datei.", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }   
 
@@ -706,13 +529,11 @@ namespace UseCaseCore.Controller
                 if (errorList.Count > 0)
                 {
                     this.BackgroundColor5 = Brushes.Red;
-                    this.VisibilityFail5 = Visibility.Visible;
                     MessageBox.Show("Fehler in UseCase aufgetreten. Mängelbericht für weitere Infos abrufen.", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 else
                 {
                     this.BackgroundColor5 = Brushes.LimeGreen;
-                    this.VisibilityOk5 = Visibility.Visible;
                     this.MatrixCycleDepthEnabled = true;
 
                     this.backgroundWorkerGenerateGraph.DoWork += new DoWorkEventHandler(this.BackgroundWorkerGenerateGraph_DoWork);
@@ -751,13 +572,11 @@ namespace UseCaseCore.Controller
                 if (this.GraphCreated(this.useCase))
                 {
                     this.BackgroundColor4 = Brushes.LimeGreen;
-                    this.VisibilityOk4 = Visibility.Visible;
                     this.GraphButtonsEnabled = true;
                 }
                 else
                 {
                     this.BackgroundColor4 = Brushes.Red;
-                    this.VisibilityFail4 = Visibility.Visible;
                     MessageBox.Show("Fehler beim Erstellen des Graphen.", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
@@ -782,13 +601,11 @@ namespace UseCaseCore.Controller
                 if (this.matrix.CreateScenarios())
                 {
                     this.BackgroundColor3 = Brushes.LimeGreen;
-                    this.VisibilityOk3 = Visibility.Visible;
                     this.MatrixCycleDepthEnabled = true;
                 }
                 else
                 {
                     this.BackgroundColor3 = Brushes.Red;
-                    this.VisibilityFail3 = Visibility.Visible;
                     MessageBox.Show("Fehler beim Erstellen der Szenariomatrix aufgetreten.", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
