@@ -109,50 +109,6 @@ namespace UseCaseCore.UcIntern
         public IReadOnlyList<Flow> BoundedAlternativeFlows { get; set; }
 
         /// <summary>
-        /// Sets a basic flow for the use-case. It consists of a list of steps numbered by their position in the list and a postcondition as string.
-        /// </summary>
-        /// <param name="basicFlow">The basic flow.</param>
-        //// public void SetBasicFlow(List<string> steps, string postcondition)
-        [Obsolete("Use property BasicFlow instead.")]
-        public void SetBasicFlow(Flow basicFlow)
-        {
-            this.BasicFlow = basicFlow;
-        }
-
-        /// <summary>
-        /// Adds a specific alternative flow with an unique id (unique for all specific alternative flows added to this use-case), a list of steps numbered by their position in the list,
-        /// a postcondition and a reference step that describes the step from which this alternative flow may start.
-        /// </summary>
-        /// <param name="specificAlternativeFlows">The specific alternative flow.</param>
-        [Obsolete("Use property SpecificAlternativeFlow instead.")]
-        public void AddSpecificAlternativeFlow(List<Flow> specificAlternativeFlows)
-        {
-            this.SpecificAlternativeFlows = specificAlternativeFlows;
-        }
-
-        /// <summary>
-        /// Adds a global alternative flow with an unique id (unique for all global alternative flows added to this use-case),
-        /// a list of steps numbered by their position in the list and a postcondition.
-        /// </summary>
-        /// <param name="globalAlternativeFlows">The global alternative flow.</param>
-        [Obsolete("Use property GlobalAlternativeFlow instead.")]
-        public void AddGlobalAlternativeFlow(List<Flow> globalAlternativeFlows)
-        {
-            this.GlobalAlternativeFlows = globalAlternativeFlows;
-        }
-
-        /// <summary>
-        /// Adds a bounded alternative flow with an unique id (unique for all bounded alternative flows added to this use-case), a list of steps numbered by their position in the list,
-        /// a postcondition and a list of reference steps that describe the steps from which this alternative flow may start.
-        /// </summary>
-        /// <param name="boundedAlternativeFlow">The bounded alternative flow.</param>
-        [Obsolete("Use property BoundedAlternativeFlow instead.")]
-        public void AddBoundedAlternativeFlow(List<Flow> boundedAlternativeFlow)
-        {
-            this.BoundedAlternativeFlows = boundedAlternativeFlow;
-        }
-
-        /// <summary>
         /// Signals the end of the description of the use-case and builds the internal graph-representation.
         /// Before calling BuildGraph only the setters and methods starting with ""Set"" and ""Add"" are allowed to be called.
         /// After using these methods to describe the use-case, BuildGraph is called and the given description is used to build a graph representation.

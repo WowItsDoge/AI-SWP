@@ -211,7 +211,7 @@ namespace UseCaseCore.UcIntern
         {
             return BitShifter.ShiftAndWrap(this.ColumnCount.GetHashCode(), 1)
                 ^ BitShifter.ShiftAndWrap(this.StandardReturnObject?.GetHashCode() ?? 1, 1)
-                ^ this.Entries?.GetHashCode() ?? 0;
+                ^ this.Entries.GetHashCode();
         }
 
         /// <summary>

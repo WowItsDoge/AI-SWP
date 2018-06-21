@@ -515,7 +515,7 @@ namespace UseCaseTest.UcIntern
         {
             // Arrange
             Matrix<object> m1 = new Matrix<object>(9, 3, new object()),
-                m2 = new Matrix<object>(3, 6, new object());
+                m2 = new Matrix<object>(3, 6, null);
             m1[1, 1] = new object();
             m2[1, 2] = new object();
 

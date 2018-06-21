@@ -209,7 +209,7 @@ namespace UseCaseCore.UcIntern
             return BitShifter.ShiftAndWrap(this.RowCount.GetHashCode(), 2)
                 ^ BitShifter.ShiftAndWrap(this.ColumnCount.GetHashCode(), 1)
                 ^ BitShifter.ShiftAndWrap(this.StandardReturnObject?.GetHashCode() ?? 1, 1)
-                ^ this.Rows?.GetHashCode() ?? 0;
+                ^ this.Rows.GetHashCode();
         }
 
         /// <summary>
