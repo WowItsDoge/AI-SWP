@@ -148,8 +148,16 @@ namespace UseCaseTool
 
             if (openXmlFileDialog.FileName != string.Empty)
             {
-                var result = openXmlFileDialog.FileName.Substring(openXmlFileDialog.FileName.Length - 40);
-                selectedFile.Text = string.Concat(" ... ", result);
+                if (openXmlFileDialog.FileName.Length < 40)
+                {
+                    selectedFile.Text = openXmlFileDialog.FileName;
+                }
+                else
+                {
+                    var result = openXmlFileDialog.FileName.Substring(openXmlFileDialog.FileName.Length - 40);
+                    selectedFile.Text = string.Concat(" ... ", result);
+                }
+
                 this.controller.CurrentXmlFilePath(openXmlFileDialog.FileName);
             }
         }
@@ -305,16 +313,6 @@ namespace UseCaseTool
         private void ZoomAll_Click(object sender, RoutedEventArgs e)
         {
             this.GraphControl.UpdateGraphView();
-        }
-
-        private void ScrollbarX_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            GraphControl.SetPosition(ScrollbarX.Value, ScrollbarY.Value);
-        }
-
-        private void ScrollbarY_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            GraphControl.SetPosition(ScrollbarX.Value, ScrollbarY.Value);
         }
 
         private void ChangeColor_Click(object sender, RoutedEventArgs e)
