@@ -31,10 +31,13 @@ namespace UseCaseTest.RuleValidation
             var rfStep = new List<ReferenceStep>();
 
             var basicFlow = new Flow(flowId, "Die Standard-Nachbedingung.", nodes, rfStep);
+            var globalFlows = new List<Flow>();
+            var specificFlows = new List<Flow>();
+            var boundedFlows = new List<Flow>();
 
             var rucmRule = new RucmRule_19();
 
-            var checkResult = rucmRule.Check(basicFlow);
+            var checkResult = rucmRule.Check(basicFlow, globalFlows, specificFlows, boundedFlows);
             Assert.IsTrue(checkResult.Count == 0);
 
             // Also global flows have no rfs
@@ -45,8 +48,9 @@ namespace UseCaseTest.RuleValidation
             rfStep = new List<ReferenceStep>();
 
             var globalFlow = new Flow(flowId, "Die gf-Nachbedingung", nodes, rfStep);
+            globalFlows.Add(globalFlow);
             
-            checkResult = rucmRule.Check(globalFlow, basicFlow);
+            checkResult = rucmRule.Check(basicFlow, globalFlows, specificFlows, boundedFlows);
             Assert.IsTrue(checkResult.Count == 0);
 
             // Specific alternative flow should have exactly one RFS
@@ -58,30 +62,44 @@ namespace UseCaseTest.RuleValidation
             rfStep = new List<ReferenceStep>();
 
             var specificFlow = new Flow(flowId, "Die sf-Nachbedingung", nodes, rfStep);
+            globalFlows.Clear();
+            specificFlows.Add(specificFlow);
 
-            checkResult = rucmRule.Check(specificFlow, basicFlow);
+            checkResult = rucmRule.Check(basicFlow, globalFlows, specificFlows, boundedFlows);
             Assert.IsTrue(checkResult.Count == 1);
 
             // 1 RFS
             rfStep.Add(new ReferenceStep(new FlowIdentifier(FlowType.Basic, 1), 2));
             specificFlow = new Flow(flowId, "Die sf-Nachbedingung", nodes, rfStep);
+            specificFlows = new List<Flow>
+            {
+                specificFlow
+            };
 
-            checkResult = rucmRule.Check(specificFlow, basicFlow);
+            checkResult = rucmRule.Check(basicFlow, globalFlows, specificFlows, boundedFlows);
             Assert.IsTrue(checkResult.Count == 0);
 
             // 2 RFS
             rfStep.Add(new ReferenceStep(new FlowIdentifier(FlowType.Basic, 1), 1));
             specificFlow = new Flow(flowId, "Die sf-Nachbedingung", nodes, rfStep);
+            specificFlows = new List<Flow>
+            {
+                specificFlow
+            };
 
-            checkResult = rucmRule.Check(specificFlow, basicFlow);
+            checkResult = rucmRule.Check(basicFlow, globalFlows, specificFlows, boundedFlows);
             Assert.IsTrue(checkResult.Count == 1);
 
             // 1 invalid RFS
             rfStep = new List<ReferenceStep>();
             rfStep.Add(new ReferenceStep(new FlowIdentifier(FlowType.Basic, 1), 6));
             specificFlow = new Flow(flowId, "Die sf-Nachbedingung", nodes, rfStep);
+            specificFlows = new List<Flow>
+            {
+                specificFlow
+            };
 
-            checkResult = rucmRule.Check(specificFlow, basicFlow);
+            checkResult = rucmRule.Check(basicFlow, globalFlows, specificFlows, boundedFlows);
             Assert.IsTrue(checkResult.Count == 1);
 
             // bounded alternative flow should one or more RFS
@@ -93,29 +111,46 @@ namespace UseCaseTest.RuleValidation
             rfStep = new List<ReferenceStep>();
 
             var boundedFlow = new Flow(flowId, "Die bf-Nachbedingung", nodes, rfStep);
+            specificFlows.Clear();
+            boundedFlows = new List<Flow>
+            {
+                boundedFlow
+            };
 
-            checkResult = rucmRule.Check(boundedFlow, basicFlow);
+            checkResult = rucmRule.Check(basicFlow, globalFlows, specificFlows, boundedFlows);
             Assert.IsTrue(checkResult.Count == 1);
 
             // 1 RFS
             rfStep.Add(new ReferenceStep(new FlowIdentifier(FlowType.Basic, 1), 2));
             boundedFlow = new Flow(flowId, "Die bf-Nachbedingung", nodes, rfStep);
-            
-            checkResult = rucmRule.Check(boundedFlow, basicFlow);
+            boundedFlows = new List<Flow>
+            {
+                boundedFlow
+            };
+
+            checkResult = rucmRule.Check(basicFlow, globalFlows, specificFlows, boundedFlows);
             Assert.IsTrue(checkResult.Count == 0);
 
             // 2 RFS
             rfStep.Add(new ReferenceStep(new FlowIdentifier(FlowType.Basic, 1), 1));
             boundedFlow = new Flow(flowId, "Die bf-Nachbedingung", nodes, rfStep);
+            boundedFlows = new List<Flow>
+            {
+                boundedFlow
+            };
 
-            checkResult = rucmRule.Check(boundedFlow, basicFlow);
+            checkResult = rucmRule.Check(basicFlow, globalFlows, specificFlows, boundedFlows);
             Assert.IsTrue(checkResult.Count == 0);
             
             // 1 invalid RFS
             rfStep.Add(new ReferenceStep(new FlowIdentifier(FlowType.Basic, 1), 6));
             boundedFlow = new Flow(flowId, "Die bf-Nachbedingung", nodes, rfStep);
+            boundedFlows = new List<Flow>
+            {
+                boundedFlow
+            };
 
-            checkResult = rucmRule.Check(boundedFlow, basicFlow);
+            checkResult = rucmRule.Check(basicFlow, globalFlows, specificFlows, boundedFlows);
             Assert.IsTrue(checkResult.Count == 1);
 
             // 2 invalid of 3 RFS
@@ -124,8 +159,12 @@ namespace UseCaseTest.RuleValidation
             rfStep.Add(new ReferenceStep(new FlowIdentifier(FlowType.Basic, 1), 6));
             rfStep.Add(new ReferenceStep(new FlowIdentifier(FlowType.Basic, 1), 4));
             boundedFlow = new Flow(flowId, "Die bf-Nachbedingung", nodes, rfStep);
+            boundedFlows = new List<Flow>
+            {
+                boundedFlow
+            };
 
-            checkResult = rucmRule.Check(boundedFlow, basicFlow);
+            checkResult = rucmRule.Check(basicFlow, globalFlows, specificFlows, boundedFlows);
             Assert.IsTrue(checkResult.Count == 2);
         }
     }

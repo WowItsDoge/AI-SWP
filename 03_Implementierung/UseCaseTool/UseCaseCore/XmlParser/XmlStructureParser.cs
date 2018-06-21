@@ -283,51 +283,7 @@ namespace UseCaseCore.XmlParser
         /// <returns>Returns true if the validation was successful.</returns>
         private bool ValidateRucmRules()
         {
-            bool currentValidationResult = true;
-            bool functionReturnValue = true;
-
-            //// Validate the basic flow
-            currentValidationResult = this.rucmRuleValidator.Validate(this.basicFlow);
-            if (currentValidationResult == false)
-            {
-                //// Error in validation
-                functionReturnValue = false;
-            }
-
-            //// Validate the global alternative flows
-            foreach (var globalAlternativeFlow in this.globalAlternativeFlows)
-            {
-                currentValidationResult = this.rucmRuleValidator.Validate(globalAlternativeFlow, this.basicFlow);
-                if (currentValidationResult == false)
-                {
-                    //// Error in validation
-                    functionReturnValue = false;
-                }
-            }
-
-            //// Validate the specific alternative flows
-            foreach (var specificAlternativeFlow in this.specificAlternativeFlows)
-            {
-                currentValidationResult = this.rucmRuleValidator.Validate(specificAlternativeFlow, this.basicFlow);
-                if (currentValidationResult == false)
-                {
-                    //// Error in validation
-                    functionReturnValue = false;
-                }
-            }
-
-            //// Validate the bounded alternative flows
-            foreach (var boundedAlternativeFlow in this.boundedAlternativeFlows)
-            {
-                currentValidationResult = this.rucmRuleValidator.Validate(boundedAlternativeFlow, this.basicFlow);
-                if (currentValidationResult == false)
-                {
-                    //// Error in validation
-                    functionReturnValue = false;
-                }
-            }
-
-            return functionReturnValue;
+            return this.rucmRuleValidator.Validate(this.basicFlow, this.globalAlternativeFlows, this.specificAlternativeFlows, this.boundedAlternativeFlows);        
         }
 
         /// <summary>

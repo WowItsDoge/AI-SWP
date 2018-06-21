@@ -22,20 +22,25 @@ namespace UseCaseCore.RuleValidation.RucmRules
         /// <summary>
         /// Can be used to check if a flow violates against this rule.
         /// </summary>
-        /// <param name="flowToCheck">The flow to check for violations.</param>
-        /// <param name="referencedBasicFlow">The referenced flow by the flow to check.</param>
+        /// <param name="basicFlow">The basic flow that has to be checked.</param>
+        /// <param name="globalAlternativeFlows">The global alternative flows that have to be checked.</param>
+        /// <param name="specificAlternativeFlows">The specific alternative flows that have to be checked.</param>
+        /// <param name="boundedAlternativeFlows">The bounded alternative flows that have to be checked.</param>
         /// <returns>A list containing the errors that occurred during the check.</returns>
-        public override List<IError> Check(Flow flowToCheck, Flow referencedBasicFlow = new Flow())
+        public override List<IError> Check(Flow basicFlow, List<Flow> globalAlternativeFlows, List<Flow> specificAlternativeFlows, List<Flow> boundedAlternativeFlows)
         {
             this.errors = new List<IError>();
+            var flowsToCheck = new List<Flow>();
+            flowsToCheck.AddRange(globalAlternativeFlows);
+            flowsToCheck.AddRange(specificAlternativeFlows);
+            flowsToCheck.AddRange(boundedAlternativeFlows);
 
-            // Check only if it is an alternative flow.
-            if (referencedBasicFlow != new Flow())
+            foreach (var flow in flowsToCheck)
             {
-                var stepsToCheck = (List<Node>)flowToCheck.Nodes;
-                if (!this.CheckPathEnd(stepsToCheck, referencedBasicFlow))
+                var stepsToCheck = (List<Node>)flow.Nodes;
+                if (!this.CheckPathEnd(stepsToCheck, basicFlow))
                 {
-                    this.errors.Add(new FlowError(flowToCheck.Identifier.Id, "Flow endet ungültig! \nEin Flow muss immer mit ABORT oder einem gültigen RESUME STEP enden!", "Verletzung der Regel 24/25!"));
+                    this.errors.Add(new FlowError(flow.Identifier.Id, "Flow endet ungültig! \nEin Flow muss immer mit ABORT oder einem gültigen RESUME STEP enden!", "Verletzung der Regel 24/25!"));
                 }
             }
 

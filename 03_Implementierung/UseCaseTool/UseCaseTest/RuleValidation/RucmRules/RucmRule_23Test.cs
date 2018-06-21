@@ -34,10 +34,13 @@ namespace UseCaseTest.RuleValidation
             var rfStep = new List<ReferenceStep>();
 
             var basicFlow = new Flow(flowId, "Die Standard-Nachbedingung.", nodes, rfStep);
+            var globalFlows = new List<Flow>();
+            var specificFlows = new List<Flow>();
+            var boundedFlows = new List<Flow>();
 
             var rucmRule = new RucmRule_23();
 
-            var result = rucmRule.Check(basicFlow);
+            var result = rucmRule.Check(basicFlow, globalFlows, specificFlows, boundedFlows);
             Assert.IsTrue(result.Count == 0);
 
             // Check no DO-UNTIL
@@ -47,7 +50,7 @@ namespace UseCaseTest.RuleValidation
 
             basicFlow = new Flow(flowId, "Die Standard-Nachbedingung.", nodes, rfStep);
 
-            result = rucmRule.Check(basicFlow);
+            result = rucmRule.Check(basicFlow, globalFlows, specificFlows, boundedFlows);
             Assert.IsTrue(result.Count == 0);
 
             // Check for a nested DO-UNTIL
@@ -63,7 +66,7 @@ namespace UseCaseTest.RuleValidation
 
             basicFlow = new Flow(flowId, "Die Standard-Nachbedingung.", nodes, rfStep);
 
-            result = rucmRule.Check(basicFlow);
+            result = rucmRule.Check(basicFlow, globalFlows, specificFlows, boundedFlows);
             Assert.IsTrue(result.Count == 0);
 
             // Check for two seperate DOs
@@ -79,7 +82,7 @@ namespace UseCaseTest.RuleValidation
 
             basicFlow = new Flow(flowId, "Die Standard-Nachbedingung.", nodes, rfStep);
 
-            result = rucmRule.Check(basicFlow);
+            result = rucmRule.Check(basicFlow, globalFlows, specificFlows, boundedFlows);
             Assert.IsTrue(result.Count == 0);
 
             // Check for a DO without UNTIL
@@ -91,7 +94,7 @@ namespace UseCaseTest.RuleValidation
 
             basicFlow = new Flow(flowId, "Die Standard-Nachbedingung.", nodes, rfStep);
 
-            result = rucmRule.Check(basicFlow);
+            result = rucmRule.Check(basicFlow, globalFlows, specificFlows, boundedFlows);
             Assert.IsTrue(result.Count == 2);
 
             // Check for a UNTIL without DO
@@ -103,7 +106,7 @@ namespace UseCaseTest.RuleValidation
 
             basicFlow = new Flow(flowId, "Die Standard-Nachbedingung.", nodes, rfStep);
 
-            result = rucmRule.Check(basicFlow);
+            result = rucmRule.Check(basicFlow, globalFlows, specificFlows, boundedFlows);
             Assert.IsTrue(result.Count == 2);
 
             // Check for a UNTIL on the end
@@ -116,7 +119,7 @@ namespace UseCaseTest.RuleValidation
 
             basicFlow = new Flow(flowId, "Die Standard-Nachbedingung.", nodes, rfStep);
 
-            result = rucmRule.Check(basicFlow);
+            result = rucmRule.Check(basicFlow, globalFlows, specificFlows, boundedFlows);
             Assert.IsTrue(result.Count == 2);
 
             // Check for a DO-UNTIL without a Stopcondition
@@ -129,7 +132,7 @@ namespace UseCaseTest.RuleValidation
 
             basicFlow = new Flow(flowId, "Die Standard-Nachbedingung.", nodes, rfStep);
 
-            result = rucmRule.Check(basicFlow);
+            result = rucmRule.Check(basicFlow, globalFlows, specificFlows, boundedFlows);
             Assert.IsTrue(result.Count == 2);
 
             // Check for a DO-UNTIL without the stuff TODO in the DO
@@ -141,7 +144,7 @@ namespace UseCaseTest.RuleValidation
 
             basicFlow = new Flow(flowId, "Die Standard-Nachbedingung.", nodes, rfStep);
 
-            result = rucmRule.Check(basicFlow);
+            result = rucmRule.Check(basicFlow, globalFlows, specificFlows, boundedFlows);
             Assert.IsTrue(result.Count == 2);
         }
     }

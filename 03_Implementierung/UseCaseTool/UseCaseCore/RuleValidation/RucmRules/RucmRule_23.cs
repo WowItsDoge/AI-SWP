@@ -21,16 +21,27 @@ namespace UseCaseCore.RuleValidation.RucmRules
         /// <summary>
         /// Can be used to check if a flow violates against this rule.
         /// </summary>
-        /// <param name="flowToCheck">The flow to check for violations.</param>
-        /// <param name="referencedBasicFlow">The referenced flow by the flow to check.</param>
+        /// <param name="basicFlow">The basic flow that has to be checked.</param>
+        /// <param name="globalAlternativeFlows">The global alternative flows that have to be checked.</param>
+        /// <param name="specificAlternativeFlows">The specific alternative flows that have to be checked.</param>
+        /// <param name="boundedAlternativeFlows">The bounded alternative flows that have to be checked.</param>
         /// <returns>A list containing the errors that occurred during the check.</returns>
-        public override List<IError> Check(Flow flowToCheck, Flow referencedBasicFlow = new Flow())
+        public override List<IError> Check(Flow basicFlow, List<Flow> globalAlternativeFlows, List<Flow> specificAlternativeFlows, List<Flow> boundedAlternativeFlows)
         {
             this.errors = new List<IError>();
-            if (!this.CheckStepsForCompleteLoop((List<Node>)flowToCheck.Nodes))
+            var completeFlowList = new List<Flow>();
+            completeFlowList.Add(basicFlow);
+            completeFlowList.AddRange(globalAlternativeFlows);
+            completeFlowList.AddRange(specificAlternativeFlows);
+            completeFlowList.AddRange(boundedAlternativeFlows);
+
+            foreach (var flow in completeFlowList)
             {
-                this.errors.Add(new FlowError(flowToCheck.Identifier.Id, "Flow enthält ungültige Schleife! \nEin Flow muss eine immer geschlossene DO-UNTIL Schleife enthalten.", "Verletzung der Regel 23!"));
-            }            
+                if (!this.CheckStepsForCompleteLoop((List<Node>)flow.Nodes))
+                {
+                    this.errors.Add(new FlowError(flow.Identifier.Id, "Flow enthält ungültige Schleife! \nEin Flow muss eine immer geschlossene DO-UNTIL Schleife enthalten.", "Verletzung der Regel 23!"));
+                }
+            }     
 
             return this.errors;
         }
