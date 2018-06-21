@@ -221,6 +221,31 @@ namespace UseCaseCore.ScenarioMatrix
         }
 
         /// <summary>
+        /// Returns wether a Scenario is the Use Cases Basic Flow
+        /// </summary>
+        /// <param name="s">Scenario to check</param>
+        /// <returns>Returns true if the scenario is the basic flow</returns>
+        private bool IsScenarioBasicFlow(Scenario s)
+        {
+            if (s.Nodes.Count != this.uc.BasicFlow.Nodes.Count)
+            {
+                return false;
+            }
+            int i = 0;
+            foreach (Node n in s.Nodes)
+            {
+                if(n.StepDescription != this.uc.BasicFlow.Nodes[i].StepDescription
+                    || n.Identifier != this.uc.BasicFlow.Nodes[i].Identifier)
+                {
+                    return false;
+                }
+                i++;
+            }
+
+            return true;
+        }
+
+        /// <summary>
         /// Gives every Scenario an ID > 1
         /// </summary>
         private void EnmuerateScenarioIds()
@@ -254,6 +279,26 @@ namespace UseCaseCore.ScenarioMatrix
         private void TraverseGraphRec(Matrix<bool> matrix, int startnode, Scenario s, uint cycleDepth)
         { 
             int stepsFound = CountEdgesPerRow(matrix, startnode);
+            
+            //If the node is the last node of the basic flow add a scenario for the basic flow and continue traversing
+            if(this.uc.Nodes[startnode].StepDescription == this.uc.BasicFlow.Nodes.Last().StepDescription)
+            {
+                Scenario s1 = new Scenario(s);
+                s1.Description = Regex.Replace(s1.Description, "(.*),", "$1"); // Remove last comma
+
+                if (this.IsScenarioBasicFlow(s))
+                {
+                    s1.Comment = "Basic Flow";
+                }
+
+                this.scenarios.Add(s1);
+
+                //If the basic flows last node doesnt have any other edges, return so this scenario doesnt get included twice
+                if(stepsFound == 0)
+                {
+                    return;
+                }
+            }
 
             // If no next steps were found for the current steps, the scenario is finished and can be added to the list
             if (stepsFound == 0)
