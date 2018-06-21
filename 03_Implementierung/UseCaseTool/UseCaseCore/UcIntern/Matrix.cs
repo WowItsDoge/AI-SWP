@@ -206,10 +206,10 @@ namespace UseCaseCore.UcIntern
         /// <returns>A hash code for the current object.</returns>
         public override int GetHashCode()
         {
-            return BitShifter.ShiftAndWrap(this.RowCount.GetHashCode(), 2)
-                ^ BitShifter.ShiftAndWrap(this.ColumnCount.GetHashCode(), 1)
-                ^ BitShifter.ShiftAndWrap(this.StandardReturnObject?.GetHashCode() ?? 1, 1)
-                ^ this.Rows?.GetHashCode() ?? 0;
+            return BitShifter.ShiftAndWrap(this.RowCount.GetHashCode(), 11)
+                ^ BitShifter.ShiftAndWrap(this.ColumnCount.GetHashCode(), 7)
+                ^ BitShifter.ShiftAndWrap(this.StandardReturnObject?.GetHashCode() ?? 1, 3)
+                ^ this.Rows.GetHashCode();
         }
 
         /// <summary>

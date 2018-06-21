@@ -249,7 +249,7 @@ namespace UseCaseTest.UcIntern
         {
             // Arrange
             Entry<object> e1 = new Entry<object>(7, new object()),
-                e2 = new Entry<object>(3, new object());
+                e2 = new Entry<object>(3, null);
 
             // Act
 
