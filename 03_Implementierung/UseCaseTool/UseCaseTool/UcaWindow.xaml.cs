@@ -20,6 +20,13 @@ namespace UseCaseTool
     public partial class UcaWindow : MetroWindow
     {
         /// <summary>
+        /// Save the current graph view condition
+        /// true: with description
+        /// false: withou description
+        /// </summary>
+        private bool DisplayConditions = true;
+
+        /// <summary>
         /// That's storage for the originally broad sidebar.
         /// </summary>
         private double oldWidth = 0;
@@ -101,36 +108,8 @@ namespace UseCaseTool
         private bool Controller_GraphCreated(UseCaseCore.UcIntern.UseCase useCase)
         {
             var success = this.GraphControl.UpdateGraphView(useCase);
-
-            //// UpdateGraphScrollbar();
-
-            //// GraphControl.GraphVisualisationChanged += GraphControl_GraphVisualisationChanged;
-
             return success;
         }
-
-        /*
-        private void GraphControl_GraphVisualisationChanged(object sender, EventArgs e)
-        {
-            UpdateGraphScrollbar();
-        }
-
-        private void UpdateGraphScrollbar()
-        {
-            var rangeX = GraphControl.GetGraphRangeX();
-            var rangeY = GraphControl.GetGraphRangeY();
-
-            Dispatcher.Invoke(() => {
-                ScrollbarX.Minimum = rangeX.Item1;
-                ScrollbarX.Maximum = rangeX.Item2;
-                ScrollbarY.Minimum = rangeY.Item1;
-                ScrollbarY.Maximum = rangeY.Item2;
-
-                ScrollbarY.Value = GraphControl.GetGraphY();
-                ScrollbarX.Value = GraphControl.GetGraphX();
-            });
-        }
-        */
 
         /// <summary>
         /// Button to open the dialog with which you can select the file
@@ -310,18 +289,42 @@ namespace UseCaseTool
             }
         }
 
+        /// <summary>
+        /// Chance zoom level
+        /// </summary>
+        /// <param name="sender">The sender</param>
+        /// <param name="e">The e</param>
         private void ZoomAll_Click(object sender, RoutedEventArgs e)
         {
             this.GraphControl.UpdateGraphView();
         }
 
+        /// <summary>
+        /// Chance color of graph view
+        /// </summary>
+        /// <param name="sender">The sender</param>
+        /// <param name="e">The e</param>
         private void ChangeColor_Click(object sender, RoutedEventArgs e)
         {
             GraphControl.ChangeGraphColors();
         }
-
-        //// ToDo...
-        //// - Reset Mängelbericht
-        //// - ... 
+        /// <summary>
+        /// Add description graph view
+        /// </summary>
+        /// <param name="sender">The sender</param>
+        /// <param name="e">The e</param>
+        private void AddDescription_Click(object sender, RoutedEventArgs e)
+        {
+            if (DisplayConditions)
+            {
+                GraphControl.ChangeDisplayConditions(!DisplayConditions);
+                DisplayConditions = false;
+            }
+            else
+            {
+                GraphControl.ChangeDisplayConditions(!DisplayConditions);
+                DisplayConditions = true;
+            }
+        }
     }
 }

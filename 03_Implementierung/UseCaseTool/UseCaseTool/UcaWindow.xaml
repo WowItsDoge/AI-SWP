@@ -112,7 +112,13 @@
 
                         <Button x:Name="changeColor" HorizontalAlignment="Left" Height="25" Margin="5,115,0,0" VerticalAlignment="Top" Width="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Click="ChangeColor_Click" ToolTip="Farben neu auswählen" IsEnabled="{Binding Path=GraphButtonsEnabled}">
                             <StackPanel>
-                                <Image Source="/images/colors.png" Height="11"/>
+                                <Image Source="/images/colors.png" Height="13"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button x:Name="addDescription" HorizontalAlignment="Left" Height="25" Margin="5,155,0,0" VerticalAlignment="Top" Width="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Click="AddDescription_Click" ToolTip="Farben neu auswählen" IsEnabled="{Binding Path=GraphButtonsEnabled}">
+                            <StackPanel>
+                                <Image Source="/images/addDescription.png" Height="11"/>
                             </StackPanel>
                         </Button>
                     </Grid>
