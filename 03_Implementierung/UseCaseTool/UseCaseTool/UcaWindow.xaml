@@ -6,8 +6,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UseCaseTool"
         xmlns:UseCaseTool="clr-namespace:UseCaseTool" x:Class="UseCaseTool.UcaWindow"
-        mc:Ignorable="d"
-        Title="Use-Case Visualizer" Height="600" Width="1200" MinHeight="400" MinWidth="900">
+        mc:Ignorable="d" Icon="Icons\Anwendungsicon.ico" IconScalingMode="NoScaleSmallerFrame"
+         Title="Use-Case Visualizer" Height="600" Width="1200" MinHeight="400" MinWidth="900">
 
     <Grid x:Name="mainGrid">
         <Grid.RowDefinitions>

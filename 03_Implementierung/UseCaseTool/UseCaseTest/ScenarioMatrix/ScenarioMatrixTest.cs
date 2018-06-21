@@ -738,6 +738,7 @@ namespace UseCaseTest.ScenarioMatrix
 
             Scenario s1 = new Scenario(sm.GetScenarios()[0]);
             s1.Comment = "Apfelkuchen";
+            s1.ID = sm.GetScenarios()[0].ID;
 
             sm.UpdateScenarioComment(s1);
 
@@ -759,6 +760,39 @@ namespace UseCaseTest.ScenarioMatrix
             {
                 File.Delete(filename);
             }
+        }
+
+        /// <summary>
+        /// Clears the scenarios in the matrix
+        /// </summary>
+        [Test]
+        public void Clear_Matrix_Successful()
+        {
+            bool[,] matrixA = new bool[,]  //// 1 2                    
+              { { false, true} ,           // 1 O X
+              { false, false}              // 2 O O
+              };
+
+            Matrix<bool> m = new Matrix<bool>(matrixA);
+
+            Node n1 = new Node("Step1", new FlowIdentifier(FlowType.Basic, 1));
+            Node n2 = new Node("Step2", new FlowIdentifier(FlowType.Basic, 1));
+            List<Node> nodes = new List<Node>();
+            nodes.Add(n1);
+            nodes.Add(n2);
+
+            TestUseCase uc = new TestUseCase();
+            uc.SetNodes(nodes);
+            uc.SetEdgeMatrix(m);
+
+            ScenarioMatrix sm = new ScenarioMatrix(uc, 1);
+            sm.CreateScenarios();
+
+            Assert.AreEqual(sm.GetScenarios().Count, 1);
+
+            sm.ClearMatrix();
+
+            Assert.AreEqual(sm.GetScenarios().Count, 0);
         }
 
     }
