@@ -296,7 +296,10 @@ namespace UseCaseTool
         /// <param name="e">The e</param>
         private void NumericUpDownValueChanged(object sender, RoutedPropertyChangedEventArgs<double?> e)
         {
-            this.controller.ChangeCycleDepth((uint)CycleDepth.Value);
+            if(CycleDepth.Value != null)
+            {
+                this.controller.ChangeCycleDepth((uint)CycleDepth.Value);
+            }
         }
 
         private void ZoomAll_Click(object sender, RoutedEventArgs e)
