@@ -6,8 +6,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UseCaseTool"
         xmlns:UseCaseTool="clr-namespace:UseCaseTool" x:Class="UseCaseTool.UcaWindow"
-        mc:Ignorable="d"
-        Title="Use-Case Visualizer" Height="600" Width="1200" MinHeight="400" MinWidth="900">
+        mc:Ignorable="d" Icon="Icons\Anwendungsicon.ico" IconScalingMode="NoScaleSmallerFrame"
+         Title="Use-Case Visualizer" Height="600" Width="1200" MinHeight="400" MinWidth="900">
 
     <Grid x:Name="mainGrid">
         <Grid.RowDefinitions>
@@ -42,7 +42,7 @@
         </Grid>
 
         <Grid x:Name="GridColumn1" Grid.Column="1" Grid.RowSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1">
-            <Button x:Name="sidebarShow" HorizontalAlignment="Left" Margin="0,-1,0,-4" VerticalAlignment="Stretch" Click="SidebarShowClick" BorderThickness="0" Visibility="Collapsed" Background="#41B1E1" Content="&gt;" FontWeight="Bold" Foreground="White" VerticalContentAlignment="Center" Width="18"/>
+            <Button x:Name="sidebarShow" HorizontalAlignment="Left" Margin="0,-5,0,-9" VerticalAlignment="Stretch" Click="SidebarShowClick" BorderThickness="0" Visibility="Collapsed" Background="#41B1E1" Content="&gt;" FontWeight="Bold" Foreground="White" VerticalContentAlignment="Center" Width="18"/>
             <TabControl x:Name="tabControl" HorizontalAlignment="Stretch" Margin="34,10,10,10" VerticalAlignment="Stretch">
                 <TabItem Header="Mängelbericht">
                     <Grid Background="#FFE5E5E5">
@@ -55,9 +55,17 @@
                 </TabItem>
                 <TabItem Header="Szenariomatrix">
                     <Grid Background="#FFE5E5E5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="29"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
                         <UseCaseTool:MatrixControl x:Name="MatrixControl"/>
-                        <Label x:Name="cycleDepth" Content="Zyklustiefe:" HorizontalAlignment="Right" Margin="0,0,60,0" VerticalAlignment="Bottom" Width="100" FontSize="16" Height="29"/>
-                        <Controls:NumericUpDown x:Name="CycleDepth" HorizontalAlignment="Right" Value="1" Minimum="1" Maximum="20" Interval="1" Margin="0,0,0,0" VerticalAlignment="Bottom" Height="15" ValueChanged="NumericUpDownValueChanged" IsEnabled="{Binding Path=MatrixCycleDepthEnabled}"/>
+                        <Label x:Name="cycleDepth" Content="Zyklustiefe:" HorizontalAlignment="Right" Margin="0,0,60,1" VerticalAlignment="Bottom" Width="100" FontSize="16" Height="29" Grid.Row="1"/>
+                        <Controls:NumericUpDown x:Name="CycleDepth" HorizontalAlignment="Right" Value="1" Minimum="1" Maximum="20" Interval="1" Margin="0,0,2,1" Grid.Row="1" VerticalAlignment="Bottom" Height="15" ValueChanged="NumericUpDownValueChanged" IsEnabled="{Binding Path=MatrixCycleDepthEnabled}"/>
                     </Grid>
                 </TabItem>
                 <TabItem Header="Graph">
@@ -79,8 +87,6 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="auto"/>
                             </Grid.ColumnDefinitions>
-                            <ScrollBar x:Name="ScrollbarX" Grid.Row="1" Grid.Column="0" Orientation="Horizontal" ValueChanged="ScrollbarX_ValueChanged"></ScrollBar>
-                            <ScrollBar x:Name="ScrollbarY" Grid.Row="0" Grid.Column="1" ValueChanged="ScrollbarY_ValueChanged"></ScrollBar>
 
                             <UseCaseTool:GraphViewerControl x:Name="GraphControl"  Margin="0,0,0,0" Grid.Row="0" Grid.Column="0"/>
 
