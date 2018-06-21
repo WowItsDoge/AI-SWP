@@ -218,10 +218,16 @@ namespace UseCaseCore.XmlParser
 
                 if (this.useCaseXml.DocumentElement.ChildNodes == null)
                 {
+                    //// Clear internal usecase structure
                     useCase = null;
+
+                    //// Set the error message
                     this.errorMessage = "UseCase-Dateistruktur defekt! (Die Datei enthält keine XML-Child-Nodes)";
+
+                    //// Close usecase file and delete temporary file from windows user temp folder
                     this.useCaseFile.Close();
                     File.Delete(this.useCaseFilePath);
+
                     return false;
                 }
 
@@ -751,6 +757,8 @@ namespace UseCaseCore.XmlParser
             keyWords.Add("MEANWHILE");
             keyWords.Add("VALIDATE THAT");
 
+            int n;
+
             //// Check if usecase xml document is ending
             if (flowStepContent.NextSibling == null)
             {
@@ -773,7 +781,6 @@ namespace UseCaseCore.XmlParser
             }
 
             //// Check if current step content is a flow step
-            int n;
             if (int.TryParse(flowStepContent.ChildNodes[1].InnerText.Trim(), out n) == true)
             {
                 return false;
@@ -811,5 +818,6 @@ namespace UseCaseCore.XmlParser
             searchWord = searchWord.Trim();
             return searchWord;
         }
+
     }
 }
