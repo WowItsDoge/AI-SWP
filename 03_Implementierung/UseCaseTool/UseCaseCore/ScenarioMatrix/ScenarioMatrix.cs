@@ -172,6 +172,15 @@ namespace UseCaseCore.ScenarioMatrix
         }
 
         /// <summary>
+        /// Clears the Matrix and all Scenarios
+        /// </summary>
+        public void ClearMatrix()
+        {
+            this.scenarios = new List<Scenario>();
+            this.CreateMatrix();
+        }
+
+        /// <summary>
         /// Returns the amount of Edges from node1 to node2 in a scenario
         /// </summary>
         /// <param name="node1"> start node of the edge </param>
