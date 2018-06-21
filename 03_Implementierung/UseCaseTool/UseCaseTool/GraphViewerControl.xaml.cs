@@ -57,6 +57,11 @@ namespace UseCaseTool
         private bool displayGraphTitles;
 
         /// <summary>
+        /// If true, the graph is displayed with conditions
+        /// </summary>
+        private bool displayGraphConditions;
+
+        /// <summary>
         /// The graph transform matrix after the initialization
         /// </summary>
         private double[][] initialTransform;
@@ -73,6 +78,7 @@ namespace UseCaseTool
             GraphViewerControl.flowIdPalette = new List<Tuple<int, string[], int>>();
 
             this.displayGraphTitles = true;
+            this.displayGraphConditions = true;
 
             // create a viewer object 
             this.viewer = new Microsoft.Msagl.GraphViewerGdi.GViewer();
@@ -149,11 +155,18 @@ namespace UseCaseTool
         public bool UpdateGraphView(UseCase useCase)
         {
             this.useCase = useCase;
-
             this.graph = new Microsoft.Msagl.Drawing.Graph("graph");
 
             var layoutSettings = (Microsoft.Msagl.Layout.Layered.SugiyamaLayoutSettings)graph.LayoutAlgorithmSettings;
             layoutSettings.EdgeRoutingSettings.EdgeRoutingMode = Microsoft.Msagl.Core.Routing.EdgeRoutingMode.SplineBundling;
+
+            // if no graph should be displayed
+            if (this.useCase == null)
+            {
+                this.viewer.Graph = this.graph;
+
+                return false;
+            }
 
             for (int n1 = 0; n1 < useCase.Nodes.Count; n1++)
             {
@@ -173,6 +186,14 @@ namespace UseCaseTool
                         SetNodeStyle(node2, nodeTitle2, useCase.Nodes[n2].Identifier.GetHashCode());
 
                         edge.Attr.Color = GetNodeColor(nodeTitle1, useCase.Nodes[n1].Identifier.GetHashCode());
+
+                        UseCaseCore.UcIntern.Condition condition = useCase.ConditionMatrix[n1, n2] ?? new UseCaseCore.UcIntern.Condition();
+                        if (this.displayGraphConditions && condition.ConditionText != null)
+                        {
+                            edge.LabelText = condition.ConditionText + " is " + condition.ConditionState;
+                            edge.Label.FontSize = node1.Label.FontSize / 2;
+                            edge.Label.FontColor = node1.Attr.FillColor;
+                        }
 
                         if (useCase.Nodes[n1].Identifier.Id == useCase.Nodes[n2].Identifier.Id &&
                             useCase.Nodes[n1].Identifier.Type == FlowType.Basic &&
@@ -222,6 +243,17 @@ namespace UseCaseTool
         }
 
         /// <summary>
+        /// This method changes the graph conditions
+        /// </summary>
+        /// <param name="displayGraphTitles"></param>
+        public void ChangeDisplayConditions(bool displayGraphConditions)
+        {
+            this.displayGraphConditions = displayGraphConditions;
+
+            UpdateGraphView();
+        }
+
+        /// <summary>
         /// Get the horizontal graph range
         /// </summary>
         /// <returns>the minimum and maximum x value</returns>
@@ -259,6 +291,11 @@ namespace UseCaseTool
             var transformMatrix = this.GetTransformMatrix();
 
             return transformMatrix[1][2];
+        }
+
+        public void ClearGraph()
+        {
+            this.useCase = null;
         }
 
         /// <summary>
