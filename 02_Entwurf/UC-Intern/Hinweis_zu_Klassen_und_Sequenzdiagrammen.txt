@@ -1,0 +1,1 @@
+Aktulle Klassendigramme können aus dem Code erstellt werden. Das Sequenzdiagramm ist veraltet und nicht mehr aktuell.
