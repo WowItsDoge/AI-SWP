@@ -162,8 +162,8 @@ namespace UseCaseCore.XmlParser
             {
                 //// General error while loading the usecase xml-file
 
-                //// Save the error message
-                this.errorMessage = ex.Message.ToString();
+                //// Set the error message
+                this.errorMessage = "Fehler beim Laden der UseCase-Datei: " + "\"" + ex.Message.ToString() + "\"";
 
                 //// Close usecase file and delete temporary file from windows user temp folder
                 File.Delete(this.useCaseFilePath);
@@ -173,9 +173,9 @@ namespace UseCaseCore.XmlParser
         }
 
         /// <summary>
-        /// If error(return value = false) has occurred at function “LoadXmlFile()” or “TryToFixMalformedXml()”, the error text can be read out.
+        /// If error has occurred, the error text can be read out.
         /// </summary>
-        /// <returns>Returns a string with the error message if there was an error.</returns>
+        /// <returns>Returns a string with the error message, but only if there was an error.</returns>
         public string GetError()
         {
             return this.errorMessage;
@@ -218,10 +218,16 @@ namespace UseCaseCore.XmlParser
 
                 if (this.useCaseXml.DocumentElement.ChildNodes == null)
                 {
+                    //// Clear internal usecase structure
                     useCase = null;
-                    this.errorMessage = "Use case document corrupted (no child nodes found!)";
+
+                    //// Set the error message
+                    this.errorMessage = "UseCase-Dateistruktur defekt! (Die Datei enthält keine XML-Child-Nodes)";
+
+                    //// Close usecase file and delete temporary file from windows user temp folder
                     this.useCaseFile.Close();
                     File.Delete(this.useCaseFilePath);
+
                     return false;
                 }
 
@@ -238,26 +244,32 @@ namespace UseCaseCore.XmlParser
                 this.GetSpecificAlternativeFlows();
                 this.GetBoundedAlternativeFlows();
 
-                //// Validate the usecase properties and flows with the rucm rules
-                bool rucmValidationResult = this.ValidateRucmRules();
-
-                if (rucmValidationResult == true)
-                {
-                    //// Create internal usecase structure
-                    this.SetOutgoingUseCaseParameter();
-                }
-                else
-                {
-                    this.errorMessage = "RUCM rule validation failed!";
-                }
-
                 //// Close usecase file and delete temporary file from windows user temp folder
                 this.useCaseFile.Close();
                 File.Delete(this.useCaseFilePath);
 
-                //// Pass the internal usecase structure
-                useCase = this.outgoingUseCase;
-                return rucmValidationResult;
+                //// Validate the usecase properties and flows with the rucm rules
+                bool rucmValidationResult = this.ValidateRucmRules();
+                if (rucmValidationResult == true)
+                {
+                    //// Create internal usecase structure
+                    this.SetOutgoingUseCaseParameter();
+
+                    //// Pass out the internal usecase structure
+                    useCase = this.outgoingUseCase;
+
+                    return true;
+                }
+                else
+                {
+                    //// Set the error message
+                    this.errorMessage = "UseCase RUCM-Validierung fehlerhaft!";
+
+                    //// Clear internal usecase structure
+                    useCase = null;
+
+                    return false;
+                }
             }
             catch (Exception ex)
             {
@@ -266,8 +278,8 @@ namespace UseCaseCore.XmlParser
                 //// Clear internal usecase structure
                 useCase = null;
 
-                //// Save the error message
-                this.errorMessage = ex.Message.ToString();
+                //// Set the error message
+                this.errorMessage = "Fehler beim Auslesen der UseCase-Datei: " + "\"" + ex.Message.ToString() + "\"";
 
                 //// Close usecase file and delete temporary file from windows user temp folder
                 this.useCaseFile.Close();
@@ -321,12 +333,12 @@ namespace UseCaseCore.XmlParser
             //// Check for errors: Only one equal property allowed
             if (propertyNode.Count == 0)
             {
-                throw new Exception("Error: Use-Case property " + "\"" + propertyName + "\"" + " not found");
+                throw new Exception("Fehler: UseCase-Eigenschaft " + "\"" + propertyName + "\"" + " nicht gefunden!");
             }
 
             if (propertyNode.Count > 1)
             {
-                throw new Exception("Error: More than one Use-Case property " + "\"" + propertyName + "\"" + " found");
+                throw new Exception("Fehler: Mehr als eine UseCase-Eigenschaft " + "\"" + propertyName + "\"" + " gefunden!");
             }
 
             try
@@ -337,7 +349,7 @@ namespace UseCaseCore.XmlParser
             }
             catch
             {
-                throw new Exception("Error: Content for " + "\"" + propertyName + "\"" + " not found");
+                throw new Exception("Fehler: Inhalt für " + "\"" + propertyName + "\"" + " nicht gefunden!");
             }
         }
 
@@ -354,12 +366,12 @@ namespace UseCaseCore.XmlParser
             //// Check for errors: Only one basic flow allowed
             if (basicFlowNode.Count == 0)
             {
-                throw new Exception("Error: No Basic Flow found");
+                throw new Exception("Fehler: Keinen Basic-Flow in UseCase-Datei gefunden!");
             }
 
             if (basicFlowNode.Count > 1)
             {
-                throw new Exception("Error: Document contains more than one Basic Flow");
+                throw new Exception("Fehler: UseCase-Datei enthält mehr als einen Basic-Flow!");
             }
 
             try
@@ -409,7 +421,7 @@ namespace UseCaseCore.XmlParser
             }
             catch
             {
-                throw new Exception("Error: Content for basic flow not found");
+                throw new Exception("Fehler: Inhalt für Basic-Flow nicht gefunden!");
             }
         }
 
@@ -484,7 +496,7 @@ namespace UseCaseCore.XmlParser
             }
             catch
             {
-                throw new Exception("Error: Content for global alternative flow not found");
+                throw new Exception("Fehler: Inhalt für Global-Alternative-Flow nicht gefunden!");
             }
         }
 
@@ -573,7 +585,7 @@ namespace UseCaseCore.XmlParser
             }
             catch
             {
-                throw new Exception("Error: Content for specified alternative flow not found");
+                throw new Exception("Fehler: Inhalt für Specific-Alternative-Flow nicht gefunden!");
             }
         }
 
@@ -680,7 +692,7 @@ namespace UseCaseCore.XmlParser
             }
             catch
             {
-                throw new Exception("Error: Content for bounded alternative flow not found");
+                throw new Exception("Fehler: Inhalt für Bounded-Alternative-Flow nicht gefunden!");
             }
         }
 
@@ -745,6 +757,8 @@ namespace UseCaseCore.XmlParser
             keyWords.Add("MEANWHILE");
             keyWords.Add("VALIDATE THAT");
 
+            int n;
+
             //// Check if usecase xml document is ending
             if (flowStepContent.NextSibling == null)
             {
@@ -767,7 +781,6 @@ namespace UseCaseCore.XmlParser
             }
 
             //// Check if current step content is a flow step
-            int n;
             if (int.TryParse(flowStepContent.ChildNodes[1].InnerText.Trim(), out n) == true)
             {
                 return false;
@@ -805,5 +818,6 @@ namespace UseCaseCore.XmlParser
             searchWord = searchWord.Trim();
             return searchWord;
         }
+
     }
 }
