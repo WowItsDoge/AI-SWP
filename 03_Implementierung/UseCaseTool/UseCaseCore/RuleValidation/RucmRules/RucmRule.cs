@@ -23,6 +23,15 @@ namespace UseCaseCore.RuleValidation.RucmRules
         public abstract List<IError> Check(Flow flowToCheck, Flow referencedBasicFlow = new Flow());
 
         /// <summary>
+        /// Can be used to get temporary errors. If a rule generates errors that could be removed again during the validation process, the errors can be received by this method.
+        /// </summary>
+        /// <returns>A list containing the temporary errors</returns>
+        public virtual List<IError> GetTemporaryErrors()
+        {
+            return new List<IError>();
+        }
+
+        /// <summary>
         /// Checks if a string contains an ending keyword.
         /// </summary>
         /// <param name="stepToCheck">A string to check for the keywords.</param>
