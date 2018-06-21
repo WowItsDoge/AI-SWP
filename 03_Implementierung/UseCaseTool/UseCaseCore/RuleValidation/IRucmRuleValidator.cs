@@ -4,6 +4,7 @@
 
 namespace UseCaseCore.RuleValidation
 {
+    using System.Collections.Generic;
     using UcIntern;
 
     /// <summary>
@@ -15,12 +16,12 @@ namespace UseCaseCore.RuleValidation
         /// Validates one flow against all the RUCM-Rules. 
         /// For each violation an IError is added to the ErrorReport. 
         /// </summary>
-        /// <param name="flowToCheck">The flow that has to be checked.</param>
-        /// <param name="referencedBasicFlow">If the flowToCheck is the „Basic Flow“ no „Reference Flow“ has to be passed,
-        /// if the flowToCheck is an „Alternative Flow“, the referencedBasicFlow has to be passed in order to validate it properly.</param>
+        /// <param name="basicFlow">The basic flow that has to be checked.</param>
+        /// <param name="globalAlternativeFlows">The global alternative flows that have to be checked.</param>
+        /// <param name="specificAlternativeFlows">The specific alternative flows that have to be checked.</param>
+        /// <param name="boundedAlternativeFlows">The bounded alternative flows that have to be checked.</param>
         /// <returns>Returns true if there was no violation found, otherwise false.</returns>
-        //// bool Validate(Flow flowToCheck, Flow referencedBasicFlow = null);
-        bool Validate(Flow flowToCheck, Flow referencedBasicFlow = new Flow());
+        bool Validate(Flow basicFlow, List<Flow> globalAlternativeFlows, List<Flow> specificAlternativeFlows, List<Flow> boundedAlternativeFlows);
 
         /// <summary>
         /// Method can be called to add an external GeneralError to the ErrorReport, e.g. if the XML file could not be read.

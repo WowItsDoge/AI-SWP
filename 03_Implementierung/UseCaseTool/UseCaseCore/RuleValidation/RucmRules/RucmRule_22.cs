@@ -19,36 +19,18 @@ namespace UseCaseCore.RuleValidation.RucmRules
         private List<IError> errors;
 
         /// <summary>
-        /// The dictionary containing the number of the basic flow step that contains VALIDATES THAT and a value indicating whether a RFS already occurred. 
-        /// </summary>
-        private Dictionary<int, bool> validatesOccurred = new Dictionary<int, bool>();
-
-        /// <summary>
         /// Can be used to check if a flow violates against this rule.
         /// </summary>
-        /// <param name="flowToCheck">The flow to check for violations.</param>
-        /// <param name="referencedBasicFlow">The referenced flow by the flow to check.</param>
+        /// <param name="basicFlow">The basic flow that has to be checked.</param>
+        /// <param name="globalAlternativeFlows">The global alternative flows that have to be checked.</param>
+        /// <param name="specificAlternativeFlows">The specific alternative flows that have to be checked.</param>
+        /// <param name="boundedAlternativeFlows">The bounded alternative flows that have to be checked.</param>
         /// <returns>A list containing the errors that occurred during the check.</returns>
-        public override List<IError> Check(Flow flowToCheck, Flow referencedBasicFlow = new Flow())
+        public override List<IError> Check(Flow basicFlow, List<Flow> globalAlternativeFlows, List<Flow> specificAlternativeFlows, List<Flow> boundedAlternativeFlows)
         {
             this.errors = new List<IError>();
 
-            // reset temp-error dictionary on new basic Flow
-            if (flowToCheck.Identifier.Type == FlowType.Basic)
-            {
-                this.validatesOccurred = new Dictionary<int, bool>();
-            }
-
             return this.errors;
-        }
-
-        /// <summary>
-        /// Can be used to get temporary errors. If a rule generates errors that could be removed again during the validation process, the errors can be received by this method.
-        /// </summary>
-        /// <returns>A list containing the temporary errors</returns>
-        public override List<IError> GetTemporaryErrors()
-        {
-            return new List<IError>();
         }
     }
 }

@@ -21,42 +21,44 @@ namespace UseCaseCore.RuleValidation.RucmRules
         /// <summary>
         /// Can be used to check if a flow violates against this rule.
         /// </summary>
-        /// <param name="flowToCheck">The flow to check for violations.</param>
-        /// <param name="referencedBasicFlow">The referenced flow by the flow to check.</param>
+        /// <param name="basicFlow">The basic flow that has to be checked.</param>
+        /// <param name="globalAlternativeFlows">The global alternative flows that have to be checked.</param>
+        /// <param name="specificAlternativeFlows">The specific alternative flows that have to be checked.</param>
+        /// <param name="boundedAlternativeFlows">The bounded alternative flows that have to be checked.</param>
         /// <returns>A list containing the errors that occurred during the check.</returns>
-        //// public override List<IError> Check(Flow flowToCheck, Flow referencedBasicFlow = null)
-        public override List<IError> Check(Flow flowToCheck, Flow referencedBasicFlow = new Flow())
+        public override List<IError> Check(Flow basicFlow, List<Flow> globalAlternativeFlows, List<Flow> specificAlternativeFlows, List<Flow> boundedAlternativeFlows)
         {
             this.errors = new List<IError>();
-            if (flowToCheck.Identifier.Type == FlowType.SpecificAlternative)
+            foreach (var specificFlow in specificAlternativeFlows)
             {
-                var rfs = flowToCheck.ReferenceSteps;
+                var rfs = specificFlow.ReferenceSteps;
                 if (rfs.Count != 1)
                 {
-                    this.errors.Add(new FlowError(flowToCheck.Identifier.Id, "Geben Sie im Feld RFS genau einen Referenzschritt an!", "Verletzung der Regel 19!"));
+                    this.errors.Add(new FlowError(specificFlow.Identifier.Id, "Geben Sie im Feld RFS genau einen Referenzschritt an!", "Verletzung der Regel 19!"));
                 }
                 else
                 {
-                    if (rfs[0].Step > referencedBasicFlow.Nodes.Count || rfs[0].Step == 0)
+                    if (rfs[0].Step > basicFlow.Nodes.Count || rfs[0].Step == 0)
                     {
-                        this.errors.Add(new FlowError(flowToCheck.Identifier.Id, string.Format("Bitte überprüfen Sie die Nummer des Referenzschrittes!\nEs wurde kein zum RFS {0} passender Step gefunden.", rfs[0].Step), "Verletzung der Regel 19!"));
+                        this.errors.Add(new FlowError(specificFlow.Identifier.Id, string.Format("Bitte überprüfen Sie die Nummer des Referenzschrittes!\nEs wurde kein zum RFS {0} passender Step gefunden.", rfs[0].Step), "Verletzung der Regel 19!"));
                     }
                 }
             }
-            else if (flowToCheck.Identifier.Type == FlowType.BoundedAlternative)
+
+            foreach (var boundedFlow in boundedAlternativeFlows)
             {
-                var referenceSteps = flowToCheck.ReferenceSteps;
+                var referenceSteps = boundedFlow.ReferenceSteps;
                 if (referenceSteps.Count == 0)
                 {
-                    this.errors.Add(new FlowError(flowToCheck.Identifier.Id, "Geben Sie im Feld RFS mindestens einen Referenzschritt an!", "Verletzung der Regel 19!"));
+                    this.errors.Add(new FlowError(boundedFlow.Identifier.Id, "Geben Sie im Feld RFS mindestens einen Referenzschritt an!", "Verletzung der Regel 19!"));
                 }
                 else
                 {
                     foreach (var rfs in referenceSteps)
                     {
-                        if (rfs.Step > referencedBasicFlow.Nodes.Count || rfs.Step == 0)
+                        if (rfs.Step > basicFlow.Nodes.Count || rfs.Step == 0)
                         {
-                            this.errors.Add(new FlowError(flowToCheck.Identifier.Id, string.Format("Bitte überprüfen Sie die Nummer des Referenzschrittes!\nEs wurde kein zum RFS {0} passender Step gefunden.", rfs.Step), "Verletzung der Regel 19!"));
+                            this.errors.Add(new FlowError(boundedFlow.Identifier.Id, string.Format("Bitte überprüfen Sie die Nummer des Referenzschrittes!\nEs wurde kein zum RFS {0} passender Step gefunden.", rfs.Step), "Verletzung der Regel 19!"));
                         }
                     }
                 }

@@ -25,10 +25,8 @@ namespace UseCaseTest.RuleValidation
             var flowId = new FlowIdentifier(FlowType.Basic, 1);
             var nodes = new List<Node>();
             nodes.Add(new Node("Der erste Schritt", flowId));
-            nodes.Add(new Node("DO", flowId));
-            nodes.Add(new Node("Der erste Schritt im Do", flowId));
-            nodes.Add(new Node("Der zweite Schritt im Do", flowId));
-            nodes.Add(new Node("UNTIL Stop", flowId));
+            nodes.Add(new Node("VALIDATES THAT the use case is valid", flowId));
+            nodes.Add(new Node("VALIDATES THAT the use case is valid again", flowId));
             nodes.Add(new Node("Der zweite Schritt", flowId));
             nodes.Add(new Node("Der dritte Schritt", flowId));
             var rfStep = new List<ReferenceStep>();

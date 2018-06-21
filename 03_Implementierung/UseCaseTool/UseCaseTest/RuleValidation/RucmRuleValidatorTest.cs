@@ -26,6 +26,9 @@ namespace UseCaseTest.RuleValidation
         public void ValidateTest()
         {        
             var dummyBasicFlow = new Flow();
+            var dummyGlobalFlows = new List<Flow>();
+            var dummySpecificFlows = new List<Flow>();
+            var dummyBoundedFlows = new List<Flow>();
 
             var dummy1 = new DummyRule(0);
             var dummy2 = new DummyRule(1);
@@ -34,7 +37,7 @@ namespace UseCaseTest.RuleValidation
             // Test validation with 3 rules and 3 errors
             var ruleList = new List<IRule> { dummy1, dummy2, dummy3 };
             var rucmRuleValidator = new RucmRuleValidator(ruleList);
-            var result = rucmRuleValidator.Validate(dummyBasicFlow);
+            var result = rucmRuleValidator.Validate(dummyBasicFlow, dummyGlobalFlows, dummySpecificFlows, dummyBoundedFlows);
 
             Assert.IsFalse(result);
             Assert.IsTrue(rucmRuleValidator.GetErrorReport().GetErrorList.Count == 3);
@@ -42,20 +45,20 @@ namespace UseCaseTest.RuleValidation
             // Test validation with 2 rules and 2 errors
             ruleList = new List<IRule> { dummy1, dummy3 };
             rucmRuleValidator = new RucmRuleValidator(ruleList);
-            result = rucmRuleValidator.Validate(dummyBasicFlow);
+            result = rucmRuleValidator.Validate(dummyBasicFlow, dummyGlobalFlows, dummySpecificFlows, dummyBoundedFlows);
             Assert.IsFalse(result);
             Assert.IsTrue(rucmRuleValidator.GetErrorReport().GetErrorList.Count == 2);
 
             // Test validation with 1 rules and 0 errors
             ruleList = new List<IRule> { dummy1 };
             rucmRuleValidator = new RucmRuleValidator(ruleList);
-            result = rucmRuleValidator.Validate(dummyBasicFlow);
+            result = rucmRuleValidator.Validate(dummyBasicFlow, dummyGlobalFlows, dummySpecificFlows, dummyBoundedFlows);
             Assert.IsTrue(result);
-            Assert.IsTrue(rucmRuleValidator.GetErrorReport().GetErrorList.Count == 0);            
+            Assert.IsTrue(rucmRuleValidator.GetErrorReport().GetErrorList.Count == 0);
         }
 
         /// <summary>
-        /// Tests the export funcion
+        /// Tests the export function
         /// </summary>
         [Test]
         public void ExportTest()
@@ -98,10 +101,13 @@ namespace UseCaseTest.RuleValidation
             tempPath = this.GetTempFile();
             var dummy = new DummyRule(2, 2, 2);
             var dummyBasicFlow = new Flow();
+            var dummyGlobalFlows = new List<Flow>();
+            var dummySpecificFlows = new List<Flow>();
+            var dummyBoundedFlows = new List<Flow>();
 
             ruleList = new List<IRule> { dummy };
             rucmRuleValidator = new RucmRuleValidator(ruleList);
-            rucmRuleValidator.Validate(dummyBasicFlow);
+            rucmRuleValidator.Validate(dummyBasicFlow, dummyGlobalFlows, dummySpecificFlows, dummyBoundedFlows);
             exportResult = rucmRuleValidator.Export(tempPath);
 
             try
@@ -109,8 +115,8 @@ namespace UseCaseTest.RuleValidation
                 Assert.IsTrue(exportResult);
                 Assert.IsTrue(File.Exists(tempPath));
                 var expectedText = ErrorReport.ExportHeader + ErrorReport.GeneralErrorHeader + "Error #1\nError #2\n" + 
-                    ErrorReport.FlowErrorHeader + "Error in Flow 1: Error #1\tLösung zu: 1\n" + "Error in Flow 2: Error #2\tLösung zu: 2\n" +
-                    ErrorReport.StepErrorHeader + "Error in Step 1: Error #1\tLösung zu: 1\n" + "Error in Step 2: Error #2\tLösung zu: 2\n";
+                    ErrorReport.FlowErrorHeader + "Fehler in Flow 1: Error #1\tLösung zu: 1\n" + "Fehler in Flow 2: Error #2\tLösung zu: 2\n" +
+                    ErrorReport.StepErrorHeader + "Fehler in Step 1: Error #1\tLösung zu: 1\n" + "Fehler in Step 2: Error #2\tLösung zu: 2\n";
                 Assert.IsTrue(File.ReadAllText(tempPath) == expectedText);
             }
             finally
@@ -123,7 +129,7 @@ namespace UseCaseTest.RuleValidation
             dummy = new DummyRule(2);
             ruleList = new List<IRule> { dummy };
             rucmRuleValidator = new RucmRuleValidator(ruleList);
-            rucmRuleValidator.Validate(dummyBasicFlow);
+            rucmRuleValidator.Validate(dummyBasicFlow, dummyGlobalFlows, dummySpecificFlows, dummyBoundedFlows);
             File.WriteAllText(tempPath, "Test");
             exportResult = rucmRuleValidator.Export(tempPath);
 
@@ -152,6 +158,9 @@ namespace UseCaseTest.RuleValidation
         public void ResetTest()
         {
             var dummyBasicFlow = new Flow();
+            var dummyGlobalFlows = new List<Flow>();
+            var dummySpecificFlows = new List<Flow>();
+            var dummyBoundedFlows = new List<Flow>();
 
             var dummy1 = new DummyRule(0);
             var dummy2 = new DummyRule(1);
@@ -160,7 +169,7 @@ namespace UseCaseTest.RuleValidation
             // Test validation with 3 rules and 3 errors
             var ruleList = new List<IRule> { dummy1, dummy2, dummy3 };
             var rucmRuleValidator = new RucmRuleValidator(ruleList);
-            var result = rucmRuleValidator.Validate(dummyBasicFlow);
+            var result = rucmRuleValidator.Validate(dummyBasicFlow, dummyGlobalFlows, dummySpecificFlows, dummyBoundedFlows);
 
             Assert.IsFalse(result);
             Assert.IsTrue(rucmRuleValidator.GetErrorReport().GetErrorList.Count == 3);
@@ -171,7 +180,7 @@ namespace UseCaseTest.RuleValidation
             Assert.IsTrue(rucmRuleValidator.GetErrorReport().GetErrorList.Count == 0);
 
             // And validate again
-            result = rucmRuleValidator.Validate(dummyBasicFlow);
+            result = rucmRuleValidator.Validate(dummyBasicFlow, dummyGlobalFlows, dummySpecificFlows, dummyBoundedFlows);
 
             Assert.IsFalse(result);
             Assert.IsTrue(rucmRuleValidator.GetErrorReport().GetErrorList.Count == 3);
