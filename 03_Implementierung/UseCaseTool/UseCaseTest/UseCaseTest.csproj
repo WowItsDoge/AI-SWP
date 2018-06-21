@@ -113,22 +113,23 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="XmlParser\Testdateien\UseCaseTemplateExample - BoundedAlternativeFlow mit einem RFS.docm" />
-    <None Include="XmlParser\Testdateien\UseCaseTemplateExample - Kein Basic Flow.docm" />
-    <None Include="XmlParser\Testdateien\UseCaseTemplateExample - Kein UseCase Name.docm" />
-    <None Include="XmlParser\Testdateien\UseCaseTemplateExample - Keine Fehler - 2.docm" />
-    <None Include="XmlParser\Testdateien\UseCaseTemplateExample - Keine Fehler aber mit Formatierungsänderungen.docm" />
-    <None Include="XmlParser\Testdateien\UseCaseTemplateExample - Keine Fehler.docm" />
-    <None Include="XmlParser\Testdateien\UseCaseTemplateExample - Keine Flows.docm" />
-    <None Include="XmlParser\Testdateien\UseCaseTemplateExample - Regel 19 und 26 verletzt.docm" />
-    <None Include="XmlParser\Testdateien\UseCaseTemplateExample - Regel 19 verletzt.docm" />
-    <None Include="XmlParser\Testdateien\UseCaseTemplateExample - Regel 23 verletzt.docm" />
-    <None Include="XmlParser\Testdateien\UseCaseTemplateExample - Regel 24 und 25 verletzt.docm" />
-    <None Include="XmlParser\Testdateien\UseCaseTemplateExample - Regel 26 verletzt.docm" />
-    <None Include="XmlParser\Testdateien\UseCaseTemplateExample - Worst Case.docm" />
-    <None Include="XmlParser\Testdateien\UseCaseTemplateExample - XML-Struktur defekt.docm" />
-    <None Include="XmlParser\Testdateien\UseCaseTemplateExample - Zwei Basic Flows.docm" />
-    <None Include="XmlParser\Testdateien\UseCaseTemplateExample - Zwei UseCase Namen.docm" />
+    <None Include="XmlParser\Testdateien\UseCaseBeispiel - BoundedAlternativeFlow mit einem RFS.docm" />
+    <None Include="XmlParser\Testdateien\UseCaseBeispiel - Kein Basic Flow.docm" />
+    <None Include="XmlParser\Testdateien\UseCaseBeispiel - Kein UseCase Name.docm" />
+    <None Include="XmlParser\Testdateien\UseCaseBeispiel - Keine Fehler - 2.docm" />
+    <None Include="XmlParser\Testdateien\UseCaseBeispiel - Keine Fehler aber mit Formatierungsänderungen.docm" />
+    <None Include="XmlParser\Testdateien\UseCaseBeispiel - Keine Fehler.docm" />
+    <None Include="XmlParser\Testdateien\UseCaseBeispiel - Keine Flows.docm" />
+    <None Include="XmlParser\Testdateien\UseCaseBeispiel - Regel 19 und 26 verletzt.docm" />
+    <None Include="XmlParser\Testdateien\UseCaseBeispiel - Regel 19 verletzt.docm" />
+    <None Include="XmlParser\Testdateien\UseCaseBeispiel - Regel 19, 23, 24, 25 und 26 verletzt.docm" />
+    <None Include="XmlParser\Testdateien\UseCaseBeispiel - Regel 23 verletzt.docm" />
+    <None Include="XmlParser\Testdateien\UseCaseBeispiel - Regel 24 und 25 verletzt.docm" />
+    <None Include="XmlParser\Testdateien\UseCaseBeispiel - Regel 26 verletzt.docm" />
+    <None Include="XmlParser\Testdateien\UseCaseBeispiel - Worst-Case Szenario.docm" />
+    <None Include="XmlParser\Testdateien\UseCaseBeispiel - XML-Struktur defekt.docm" />
+    <None Include="XmlParser\Testdateien\UseCaseBeispiel - Zwei Basic Flows.docm" />
+    <None Include="XmlParser\Testdateien\UseCaseBeispiel - Zwei UseCase Namen.docm" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
