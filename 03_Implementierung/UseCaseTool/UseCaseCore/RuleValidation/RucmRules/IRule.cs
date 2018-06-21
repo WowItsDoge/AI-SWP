@@ -21,5 +21,11 @@ namespace UseCaseCore.RuleValidation.RucmRules
         /// <returns>A list containing the errors that occurred during the check.</returns>
         //// List<IError> Check(Flow flowToCheck, Flow referencedBasicFlow = null);
         List<IError> Check(Flow flowToCheck, Flow referencedBasicFlow = new Flow());
+
+        /// <summary>
+        /// Can be used to get temporary errors. If a rule generates errors that could be removed again during the validation process, the errors can be received by this method.
+        /// </summary>
+        /// <returns>A list containing the temporary errors</returns>
+        List<IError> GetTemporaryErrors();
     }
 }
