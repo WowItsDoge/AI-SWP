@@ -27,16 +27,6 @@ namespace UseCaseTool
     public partial class GraphViewerControl : UserControl
     {
         /// <summary>
-        /// reference to the viewer control
-        /// </summary>
-        private Microsoft.Msagl.GraphViewerGdi.GViewer viewer;
-
-        /// <summary>
-        /// reference to the visible graph
-        /// </summary>
-        private Microsoft.Msagl.Drawing.Graph graph;
-
-        /// <summary>
         /// List of node title and node color elements
         /// </summary>
         private static List<Tuple<string, Microsoft.Msagl.Drawing.Color>> nodeColors;
@@ -45,6 +35,16 @@ namespace UseCaseTool
         /// List of flow id, flow color palette, last color id used
         /// </summary>
         private static List<Tuple<int, string[], int>> flowIdPalette;
+
+        /// <summary>
+        /// reference to the viewer control
+        /// </summary>
+        private Microsoft.Msagl.GraphViewerGdi.GViewer viewer;
+
+        /// <summary>
+        /// reference to the visible graph
+        /// </summary>
+        private Microsoft.Msagl.Drawing.Graph graph;
 
         /// <summary>
         /// Reference to the use case object
@@ -142,8 +142,8 @@ namespace UseCaseTool
             }
 
             this.viewer.Transform = new Microsoft.Msagl.Core.Geometry.Curves.PlaneTransformation(
-                initialTransform[0][0], initialTransform[0][1], initialTransform[0][2] + x,
-                initialTransform[1][0], initialTransform[1][1], initialTransform[1][2] + y);
+                this.initialTransform[0][0], this.initialTransform[0][1], this.initialTransform[0][2] + x,
+                this.initialTransform[1][0], this.initialTransform[1][1], this.initialTransform[1][2] + y);
 
             this.viewer.DrawingPanel.Invalidate();
         }
@@ -152,12 +152,13 @@ namespace UseCaseTool
         /// displays the graph
         /// </summary>
         /// <param name="useCase">the use case to display</param>
+        /// <returns>true, if the graph could be displayed</returns>
         public bool UpdateGraphView(UseCase useCase)
         {
             this.useCase = useCase;
             this.graph = new Microsoft.Msagl.Drawing.Graph("graph");
 
-            var layoutSettings = (Microsoft.Msagl.Layout.Layered.SugiyamaLayoutSettings)graph.LayoutAlgorithmSettings;
+            var layoutSettings = (Microsoft.Msagl.Layout.Layered.SugiyamaLayoutSettings)this.graph.LayoutAlgorithmSettings;
             layoutSettings.EdgeRoutingSettings.EdgeRoutingMode = Microsoft.Msagl.Core.Routing.EdgeRoutingMode.SplineBundling;
 
             // if no graph should be displayed
@@ -174,34 +175,7 @@ namespace UseCaseTool
                 {
                     if (IsConnected(n1, n2, useCase))
                     {
-                        string nodeTitle1 = GetNodeTitle(useCase.Nodes[n1], n1);
-                        string nodeTitle2 = GetNodeTitle(useCase.Nodes[n2], n2);
-
-                        var edge = this.graph.AddEdge(nodeTitle1, nodeTitle2);
-
-                        var node1 = this.graph.FindNode(nodeTitle1);
-                        SetNodeStyle(node1, nodeTitle1, useCase.Nodes[n1].Identifier.GetHashCode());
-
-                        var node2 = this.graph.FindNode(nodeTitle2);
-                        SetNodeStyle(node2, nodeTitle2, useCase.Nodes[n2].Identifier.GetHashCode());
-
-                        edge.Attr.Color = GetNodeColor(nodeTitle1, useCase.Nodes[n1].Identifier.GetHashCode());
-
-                        UseCaseCore.UcIntern.Condition condition = useCase.ConditionMatrix[n1, n2] ?? new UseCaseCore.UcIntern.Condition();
-                        if (this.displayGraphConditions && condition.ConditionText != null)
-                        {
-                            edge.LabelText = condition.ConditionText + " is " + condition.ConditionState;
-                            edge.Label.FontSize = node1.Label.FontSize / 2;
-                            edge.Label.FontColor = node1.Attr.FillColor;
-                        }
-
-                        if (useCase.Nodes[n1].Identifier.Id == useCase.Nodes[n2].Identifier.Id &&
-                            useCase.Nodes[n1].Identifier.Type == FlowType.Basic &&
-                            useCase.Nodes[n2].Identifier.Type == FlowType.Basic &&
-                            n1 < n2)
-                        {
-                            graph.LayerConstraints.AddSequenceOfUpDownVerticalConstraint(node1, node2);
-                        }
+                        this.GenerateNodes(n1, n2, useCase);
                     }
                 }
             }
@@ -209,15 +183,18 @@ namespace UseCaseTool
             var layout = new Microsoft.Msagl.Layout.MDS.MdsLayoutSettings();
 
             this.viewer.Graph = this.graph;
-
             this.initialTransform = this.GetTransformMatrix();
 
             return true;
         }
 
+        /// <summary>
+        /// Updates the graph view, with the current use case file
+        /// </summary>
+        /// <returns>true, if the graph could be displayed</returns>
         public bool UpdateGraphView()
         {
-            return UpdateGraphView(this.useCase);
+            return this.UpdateGraphView(this.useCase);
         }
 
         /// <summary>
@@ -228,29 +205,29 @@ namespace UseCaseTool
             nodeColors.Clear();
             flowIdPalette.Clear();
 
-            UpdateGraphView();
+            this.UpdateGraphView();
         }
 
         /// <summary>
         /// This method changes the graph titles
         /// </summary>
-        /// <param name="displayGraphTitles"></param>
+        /// <param name="displayGraphTitles">true, if the graph titles should be displayed</param>
         public void ChangeDisplayTitles(bool displayGraphTitles)
         {
             this.displayGraphTitles = displayGraphTitles;
 
-            UpdateGraphView();
+            this.UpdateGraphView();
         }
 
         /// <summary>
         /// This method changes the graph conditions
         /// </summary>
-        /// <param name="displayGraphTitles"></param>
+        /// <param name="displayGraphConditions">true, if the graph conditions should be displayed</param>
         public void ChangeDisplayConditions(bool displayGraphConditions)
         {
             this.displayGraphConditions = displayGraphConditions;
 
-            UpdateGraphView();
+            this.UpdateGraphView();
         }
 
         /// <summary>
@@ -293,6 +270,9 @@ namespace UseCaseTool
             return transformMatrix[1][2];
         }
 
+        /// <summary>
+        /// Clears the graph view
+        /// </summary>
         public void ClearGraph()
         {
             this.useCase = null;
@@ -302,6 +282,8 @@ namespace UseCaseTool
         /// Set the style of a graph node
         /// </summary>
         /// <param name="node">the microsoft drawing node</param>
+        /// <param name="nodeTitle">the node title</param>
+        /// <param name="flowId">the flow id</param>
         private static void SetNodeStyle(Microsoft.Msagl.Drawing.Node node, string nodeTitle, int flowId)
         {
             var backgroundColor = GetNodeColor(nodeTitle, flowId);
@@ -314,52 +296,6 @@ namespace UseCaseTool
             node.Attr.Color = MaterialDesignColors.MsaglColorFromHex(MaterialDesignColors.White);
             node.Label.FontColor = foregroundColor;
             node.Label.FontSize = 10;
-        }
-
-        /// <summary>
-        /// Generates the title for a graph node
-        /// </summary>
-        /// <param name="node">the node</param>
-        /// <param name="nodeId">the id</param>
-        /// <returns>the graph node title</returns>
-        private string GetNodeTitle(Node node, int nodeId)
-        {
-            if (!this.displayGraphTitles)
-            {
-                return (nodeId + 1).ToString();
-            }
-
-            return "id: " + (nodeId + 1) + " flow: " + node.Identifier.Id + " type: " + node.Identifier.Type + "\r\n" + InsertLines(node.StepDescription);
-        }
-
-        /// <summary>
-        /// Inserts line breaks
-        /// </summary>
-        /// <param name="text"></param>
-        /// <returns></returns>
-        private string InsertLines(string text)
-        {
-            int myLimit = 40;
-            string[] words = text.Split(' ');
-
-            StringBuilder newSentence = new StringBuilder();
-
-            string line = "";
-            foreach (string word in words)
-            {
-                if ((line + word).Length > myLimit)
-                {
-                    newSentence.AppendLine(line);
-                    line = "";
-                }
-
-                line += string.Format("{0} ", word);
-            }
-
-            if (line.Length > 0)
-                newSentence.AppendLine(line);
-
-            return newSentence.ToString();
         }
 
         /// <summary>
@@ -409,34 +345,11 @@ namespace UseCaseTool
         }
 
         /// <summary>
-        /// Returns the transform matrix of the graph viewer.
-        /// </summary>
-        /// <returns>the transform matrix</returns>
-        private double[][] GetTransformMatrix()
-        {
-            return (double[][])typeof(Microsoft.Msagl.Core.Geometry.Curves.PlaneTransformation)
-                .GetField("elements", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(this.viewer.Transform);
-        }
-
-        /// <summary>
-        /// The graph invalidation
-        /// </summary>
-        /// <param name="sender">the sender</param>
-        /// <param name="e">the event args</param>
-        private void Viewer_Invalidated(object sender, EventArgs e)
-        {
-            if (this.GraphVisualisationChanged != null)
-            {
-                this.GraphVisualisationChanged(this, null);
-            }
-        }
-
-        /// <summary>
         /// Returns the color for a use case item
         /// </summary>
-        /// <param name="nodeTitle"></param>
-        /// <param name="flowId"></param>
-        /// <returns></returns>
+        /// <param name="nodeTitle">The node title</param>
+        /// <param name="flowId">The flow id</param>
+        /// <returns>The microsoft algorithm drawing color</returns>
         private static Microsoft.Msagl.Drawing.Color GetNodeColor(string nodeTitle, int flowId)
         {
             // if the node color exists
@@ -462,8 +375,8 @@ namespace UseCaseTool
         /// <summary>
         /// Returns the id of a flow palette for a flow id
         /// </summary>
-        /// <param name="flowId"></param>
-        /// <returns></returns>
+        /// <param name="flowId">the flow id</param>
+        /// <returns>the flow palette id</returns>
         private static int GetFlowPaletteId(int flowId)
         {
             for (int i = 0; i < flowIdPalette.Count; i++)
@@ -482,6 +395,11 @@ namespace UseCaseTool
             return flowPaletteId;
         }
 
+        /// <summary>
+        /// Gets the next flow palette color
+        /// </summary>
+        /// <param name="flowId">the flow id</param>
+        /// <returns>the hex color value</returns>
         private static string FlowPaletteGetNextColor(int flowId)
         {
             // get the flow palette id for the flow id
@@ -497,6 +415,142 @@ namespace UseCaseTool
             flowIdPalette[id] = new Tuple<int, string[], int>(flowId, colorPalette, colorId);
 
             return colorPalette[colorId];
+        }
+
+        /// <summary>
+        /// Displays the edge condition
+        /// </summary>
+        /// <param name="n1">id node 1</param>
+        /// <param name="n2">id node 2</param>
+        /// <param name="node1">node object 1</param>
+        /// <param name="node2">node object 2</param>
+        /// <param name="edge">edge object</param>
+        /// <param name="useCase">use case object</param>
+        private void DisplayEdgeCondition(int n1, int n2, Microsoft.Msagl.Drawing.Node node1, Microsoft.Msagl.Drawing.Node node2, Microsoft.Msagl.Drawing.Edge edge, UseCase useCase)
+        {
+            UseCaseCore.UcIntern.Condition condition = useCase.ConditionMatrix[n1, n2] ?? new UseCaseCore.UcIntern.Condition();
+            if (this.displayGraphConditions && condition.ConditionText != null)
+            {
+                edge.LabelText = condition.ConditionText + " is " + condition.ConditionState;
+                edge.Label.FontSize = node1.Label.FontSize / 2;
+                edge.Label.FontColor = node1.Attr.FillColor;
+            }
+        }
+
+        /// <summary>
+        /// Adds a graph layout constraint
+        /// </summary>
+        /// <param name="n1">id node 1</param>
+        /// <param name="n2">id node 2</param>
+        /// <param name="node1">node object 1</param>
+        /// <param name="node2">node object 2</param>
+        /// <param name="graph">graph object</param>
+        /// <param name="useCase">use case object</param>
+        private void AddLayerConstraint(int n1, int n2, Microsoft.Msagl.Drawing.Node node1, Microsoft.Msagl.Drawing.Node node2, Microsoft.Msagl.Drawing.Graph graph, UseCase useCase)
+        {
+            if (useCase.Nodes[n1].Identifier.Id == useCase.Nodes[n2].Identifier.Id &&
+                            useCase.Nodes[n1].Identifier.Type == FlowType.Basic &&
+                            useCase.Nodes[n2].Identifier.Type == FlowType.Basic &&
+                            n1 < n2)
+            {
+                graph.LayerConstraints.AddSequenceOfUpDownVerticalConstraint(node1, node2);
+            }
+        }
+
+        /// <summary>
+        /// Generates the nodes
+        /// </summary>
+        /// <param name="n1">id node 1</param>
+        /// <param name="n2">id node 2</param>
+        /// <param name="useCase">use case object</param>
+        private void GenerateNodes(int n1, int n2, UseCase useCase)
+        {
+            string nodeTitle1 = this.GetNodeTitle(useCase.Nodes[n1], n1);
+            string nodeTitle2 = this.GetNodeTitle(useCase.Nodes[n2], n2);
+
+            var edge = this.graph.AddEdge(nodeTitle1, nodeTitle2);
+
+            var node1 = this.graph.FindNode(nodeTitle1);
+            SetNodeStyle(node1, nodeTitle1, useCase.Nodes[n1].Identifier.GetHashCode());
+
+            var node2 = this.graph.FindNode(nodeTitle2);
+            SetNodeStyle(node2, nodeTitle2, useCase.Nodes[n2].Identifier.GetHashCode());
+
+            edge.Attr.Color = GetNodeColor(nodeTitle1, useCase.Nodes[n1].Identifier.GetHashCode());
+
+            this.DisplayEdgeCondition(n1, n2, node1, node2, edge, useCase);
+            this.AddLayerConstraint(n1, n2, node1, node2, this.graph, useCase);
+        }
+
+        /// <summary>
+        /// Generates the title for a graph node
+        /// </summary>
+        /// <param name="node">the node</param>
+        /// <param name="nodeId">the id</param>
+        /// <returns>the graph node title</returns>
+        private string GetNodeTitle(Node node, int nodeId)
+        {
+            if (!this.displayGraphTitles)
+            {
+                return (nodeId + 1).ToString();
+            }
+
+            return "id: " + (nodeId + 1) + " flow: " + node.Identifier.Id + " type: " + node.Identifier.Type + "\r\n" + this.InsertLines(node.StepDescription);
+        }
+
+        /// <summary>
+        /// Inserts line breaks
+        /// </summary>
+        /// <param name="text">the text to display</param>
+        /// <returns>the text with line breaks</returns>
+        private string InsertLines(string text)
+        {
+            int myLimit = 40;
+            string[] words = text.Split(' ');
+
+            StringBuilder newSentence = new StringBuilder();
+
+            string line = string.Empty;
+            foreach (string word in words)
+            {
+                if ((line + word).Length > myLimit)
+                {
+                    newSentence.AppendLine(line);
+                    line = string.Empty;
+                }
+
+                line += string.Format("{0} ", word);
+            }
+
+            if (line.Length > 0)
+            {
+                newSentence.AppendLine(line);
+            }
+
+            return newSentence.ToString();
+        }
+
+        /// <summary>
+        /// Returns the transform matrix of the graph viewer.
+        /// </summary>
+        /// <returns>the transform matrix</returns>
+        private double[][] GetTransformMatrix()
+        {
+            return (double[][])typeof(Microsoft.Msagl.Core.Geometry.Curves.PlaneTransformation)
+                .GetField("elements", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(this.viewer.Transform);
+        }
+
+        /// <summary>
+        /// The graph invalidation
+        /// </summary>
+        /// <param name="sender">the sender</param>
+        /// <param name="e">the event args</param>
+        private void Viewer_Invalidated(object sender, EventArgs e)
+        {
+            if (this.GraphVisualisationChanged != null)
+            {
+                this.GraphVisualisationChanged(this, null);
+            }
         }
     }
 }

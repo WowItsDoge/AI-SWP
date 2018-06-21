@@ -435,8 +435,6 @@ namespace UseCaseTool
         /// </summary>
         public static int SmallPaletteSize { get; private set; }
 
-        private static Random random { get; set; }
-
         #region Red
         /// <summary>
         /// Gets Red colors
@@ -771,6 +769,11 @@ namespace UseCaseTool
         public static string White { get; private set; }
 
         /// <summary>
+        /// Gets or sets the Random object
+        /// </summary>
+        private static Random RandomGenerator { get; set; }
+
+        /// <summary>
         /// Converts a hex color string to a Windows.Media.Color
         /// </summary>
         /// <param name="hexColor">Color in hex</param>
@@ -795,7 +798,7 @@ namespace UseCaseTool
         /// <summary>
         /// Converts a Microsoft Auto Graph Layout Color to hex color
         /// </summary>
-        /// <param name="hexColor">Microsoft Auto Graph Layout Color</param>
+        /// <param name="color">Microsoft Auto Graph Layout Color</param>
         /// <returns>Color in hex</returns>
         public static string MsaglColorToHex(Microsoft.Msagl.Drawing.Color color)
         {
@@ -804,14 +807,18 @@ namespace UseCaseTool
                 BitConverter.ToString(new byte[] { color.B });
         }
 
+        /// <summary>
+        /// Generates a random microsoft algorithm drawing color
+        /// </summary>
+        /// <returns>the microsoft algorithm drawing color</returns>
         public static Microsoft.Msagl.Drawing.Color RandomMsaglColor()
         {
-            if (MaterialDesignColors.random == null)
+            if (MaterialDesignColors.RandomGenerator == null)
             {
-                MaterialDesignColors.random = new Random();
+                MaterialDesignColors.RandomGenerator = new Random();
             }
 
-            var colorNr = random.Next(0, 18);
+            var colorNr = RandomGenerator.Next(0, 18);
 
             var colorHex = White;
             var paletteSelected = Green;
@@ -821,97 +828,97 @@ namespace UseCaseTool
             {
                 case 0:
                     paletteSelected = Red;
-                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    paletteColor = RandomGenerator.Next(0, paletteSelected.Length - 1);
                     colorHex = paletteSelected[paletteColor];
                     break;
                 case 1:
                     paletteSelected = Pink;
-                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    paletteColor = RandomGenerator.Next(0, paletteSelected.Length - 1);
                     colorHex = paletteSelected[paletteColor];
                     break;
                 case 2:
                     paletteSelected = Purple;
-                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    paletteColor = RandomGenerator.Next(0, paletteSelected.Length - 1);
                     colorHex = paletteSelected[paletteColor];
                     break;
                 case 3:
                     paletteSelected = DeepPurple;
-                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    paletteColor = RandomGenerator.Next(0, paletteSelected.Length - 1);
                     colorHex = paletteSelected[paletteColor];
                     break;
                 case 4:
                     paletteSelected = Indigo;
-                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    paletteColor = RandomGenerator.Next(0, paletteSelected.Length - 1);
                     colorHex = paletteSelected[paletteColor];
                     break;
                 case 5:
                     paletteSelected = Blue;
-                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    paletteColor = RandomGenerator.Next(0, paletteSelected.Length - 1);
                     colorHex = paletteSelected[paletteColor];
                     break;
                 case 6:
                     paletteSelected = LightBlue;
-                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    paletteColor = RandomGenerator.Next(0, paletteSelected.Length - 1);
                     colorHex = paletteSelected[paletteColor];
                     break;
                 case 7:
                     paletteSelected = Cyan;
-                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    paletteColor = RandomGenerator.Next(0, paletteSelected.Length - 1);
                     colorHex = paletteSelected[paletteColor];
                     break;
                 case 8:
                     paletteSelected = Teal;
-                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    paletteColor = RandomGenerator.Next(0, paletteSelected.Length - 1);
                     colorHex = paletteSelected[paletteColor];
                     break;
                 case 9:
                     paletteSelected = Green;
-                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    paletteColor = RandomGenerator.Next(0, paletteSelected.Length - 1);
                     colorHex = paletteSelected[paletteColor];
                     break;
                 case 10:
                     paletteSelected = LightGreen;
-                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    paletteColor = RandomGenerator.Next(0, paletteSelected.Length - 1);
                     colorHex = paletteSelected[paletteColor];
                     break;
                 case 11:
                     paletteSelected = Lime;
-                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    paletteColor = RandomGenerator.Next(0, paletteSelected.Length - 1);
                     colorHex = paletteSelected[paletteColor];
                     break;
                 case 12:
                     paletteSelected = Yellow;
-                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    paletteColor = RandomGenerator.Next(0, paletteSelected.Length - 1);
                     colorHex = paletteSelected[paletteColor];
                     break;
                 case 13:
                     paletteSelected = Amber;
-                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    paletteColor = RandomGenerator.Next(0, paletteSelected.Length - 1);
                     colorHex = paletteSelected[paletteColor];
                     break;
                 case 14:
                     paletteSelected = Orange;
-                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    paletteColor = RandomGenerator.Next(0, paletteSelected.Length - 1);
                     colorHex = paletteSelected[paletteColor];
                     break;
                 case 15:
                     paletteSelected = DeepOrange;
-                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    paletteColor = RandomGenerator.Next(0, paletteSelected.Length - 1);
                     colorHex = paletteSelected[paletteColor];
                     break;
                 case 16:
                     paletteSelected = Brown;
-                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    paletteColor = RandomGenerator.Next(0, paletteSelected.Length - 1);
                     colorHex = paletteSelected[paletteColor];
                     break;
                 case 17:
                     paletteSelected = Gray;
-                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    paletteColor = RandomGenerator.Next(0, paletteSelected.Length - 1);
                     colorHex = paletteSelected[paletteColor];
                     break;
                 case 18:
                     paletteSelected = BlueGray;
-                    paletteColor = random.Next(0, paletteSelected.Length - 1);
+                    paletteColor = RandomGenerator.Next(0, paletteSelected.Length - 1);
                     colorHex = paletteSelected[paletteColor];
                     break;
                 default:
@@ -921,14 +928,18 @@ namespace UseCaseTool
             return MsaglColorFromHex(colorHex);            
         }
 
+        /// <summary>
+        /// Random palette
+        /// </summary>
+        /// <returns>returns a random hex color palette</returns>
         public static string[] GetRandomPalette()
         {
-            if (MaterialDesignColors.random == null)
+            if (MaterialDesignColors.RandomGenerator == null)
             {
-                MaterialDesignColors.random = new Random();
+                MaterialDesignColors.RandomGenerator = new Random();
             }
 
-            var colorNr = random.Next(0, 18);
+            var colorNr = RandomGenerator.Next(0, 18);
 
             switch (colorNr)
             {
@@ -980,8 +991,8 @@ namespace UseCaseTool
         /// <summary>
         /// Returns the foreground color for a background color.
         /// </summary>
-        /// <param name="colorHex"></param>
-        /// <returns></returns>
+        /// <param name="colorHex">the hex background color value</param>
+        /// <returns>the hex foreground color</returns>
         public static string GetForegroundColor(string colorHex)
         {
             var colorId = GetColorId(colorHex, Red);
@@ -1104,10 +1115,10 @@ namespace UseCaseTool
         /// <summary>
         /// Gets the foreground color for a background color
         /// </summary>
-        /// <param name="colorId"></param>
-        /// <param name="colorStartWhite"></param>
-        /// <param name="colorExceptionIds"></param>
-        /// <returns></returns>
+        /// <param name="colorId">the color id</param>
+        /// <param name="colorStartWhite">the color start white id</param>
+        /// <param name="colorExceptionIds">the color exception id</param>
+        /// <returns>the hex foreground color</returns>
         private static string GetForegroundColor(int colorId, int colorStartWhite, int[] colorExceptionIds)
         {
             if (colorId < colorStartWhite || colorExceptionIds.Contains(colorId))
@@ -1123,9 +1134,9 @@ namespace UseCaseTool
         /// <summary>
         /// Returns the array index of a color
         /// </summary>
-        /// <param name="color"></param>
-        /// <param name="colors"></param>
-        /// <returns></returns>
+        /// <param name="color">the hex color</param>
+        /// <param name="colors">the colors array</param>
+        /// <returns>the index of the color in the array</returns>
         private static int GetColorId(string color, string[] colors)
         {
             for (int i = 0; i < colors.Length; i++)
