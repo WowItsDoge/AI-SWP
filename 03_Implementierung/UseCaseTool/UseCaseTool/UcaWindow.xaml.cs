@@ -141,7 +141,7 @@ namespace UseCaseTool
         {
             OpenFileDialog openXmlFileDialog = new OpenFileDialog();
 
-            openXmlFileDialog.Filter = "Docm files (*.docm)|*.docm";
+            openXmlFileDialog.Filter = "Alle unterstützten Dateien|*.docx;*.docm|Word-Dokument|*.docx|Word-Dokument mit Makros|*.docm";
             openXmlFileDialog.RestoreDirectory = true;
 
             openXmlFileDialog.ShowDialog();
