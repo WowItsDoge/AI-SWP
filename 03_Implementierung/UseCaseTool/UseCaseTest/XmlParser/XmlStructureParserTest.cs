@@ -395,6 +395,26 @@ namespace UseCaseTest.XmlParser
 
         /// <summary>
         /// Testfuction for ParseXmlFile function
+        /// Test with broken sample file
+        /// </summary>
+        [Test]
+        public void ParseXmlFileTestWithCorrectXmlButNoUseCaseStructureSampleFile()
+        {
+            // Arrange
+            IRucmRuleValidator testrucmRuleValidator = new RucmRuleValidator(RucmRuleRepository.Rules);
+            XmlStructureParser testxmlStructureParser = new XmlStructureParser(testrucmRuleValidator);
+            string filePath = "UseCaseTest\\XmlParser\\Testdateien\\UseCaseBeispiel - Fehler beim Auslesen.docx";
+            bool result = false;
+
+            // Act
+            result = testxmlStructureParser.LoadXmlFile(filePath);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        /// <summary>
+        /// Testfuction for ParseXmlFile function
         /// Test with no basic flow sample file
         /// </summary>
         [Test]

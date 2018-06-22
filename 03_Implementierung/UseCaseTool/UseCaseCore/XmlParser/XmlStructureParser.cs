@@ -250,17 +250,7 @@ namespace UseCaseCore.XmlParser
 
                 //// Validate the usecase properties and flows with the rucm rules
                 bool rucmValidationResult = this.ValidateRucmRules();
-                if (rucmValidationResult == true)
-                {
-                    //// Create internal usecase structure
-                    this.SetOutgoingUseCaseParameter();
-
-                    //// Pass out the internal usecase structure
-                    useCase = this.outgoingUseCase;
-
-                    return true;
-                }
-                else
+                if (rucmValidationResult == false)
                 {
                     //// Set the error message
                     this.errorMessage = "UseCase RUCM-Validierung fehlerhaft!";
@@ -270,6 +260,15 @@ namespace UseCaseCore.XmlParser
 
                     return false;
                 }
+
+                //// Create internal usecase structure
+                this.SetOutgoingUseCaseParameter();
+
+                //// Pass out the internal usecase structure
+                useCase = this.outgoingUseCase;
+
+                return true;
+
             }
             catch (Exception ex)
             {
@@ -333,12 +332,12 @@ namespace UseCaseCore.XmlParser
             //// Check for errors: Only one equal property allowed
             if (propertyNode.Count == 0)
             {
-                throw new Exception("Fehler: UseCase-Eigenschaft " + "\"" + propertyName + "\"" + " nicht gefunden!");
+                throw new Exception("UseCase-Eigenschaft " + "\"" + propertyName + "\"" + " nicht gefunden!");
             }
 
             if (propertyNode.Count > 1)
             {
-                throw new Exception("Fehler: Mehr als eine UseCase-Eigenschaft " + "\"" + propertyName + "\"" + " gefunden!");
+                throw new Exception("Mehr als eine UseCase-Eigenschaft " + "\"" + propertyName + "\"" + " gefunden!");
             }
 
             try
@@ -349,7 +348,7 @@ namespace UseCaseCore.XmlParser
             }
             catch
             {
-                throw new Exception("Fehler: Inhalt für " + "\"" + propertyName + "\"" + " nicht gefunden!");
+                throw new Exception("Inhalt für " + "\"" + propertyName + "\"" + " nicht gefunden!");
             }
         }
 
@@ -366,12 +365,12 @@ namespace UseCaseCore.XmlParser
             //// Check for errors: Only one basic flow allowed
             if (basicFlowNode.Count == 0)
             {
-                throw new Exception("Fehler: Keinen Basic-Flow in UseCase-Datei gefunden!");
+                throw new Exception("Keinen Basic-Flow gefunden!");
             }
 
             if (basicFlowNode.Count > 1)
             {
-                throw new Exception("Fehler: UseCase-Datei enthält mehr als einen Basic-Flow!");
+                throw new Exception("Mehr als einen Basic-Flow gefunden!");
             }
 
             try
@@ -421,7 +420,7 @@ namespace UseCaseCore.XmlParser
             }
             catch
             {
-                throw new Exception("Fehler: Inhalt für Basic-Flow nicht gefunden!");
+                throw new Exception("Inhalt für den Basic-Flow nicht gefunden!");
             }
         }
 
@@ -496,7 +495,7 @@ namespace UseCaseCore.XmlParser
             }
             catch
             {
-                throw new Exception("Fehler: Inhalt für Global-Alternative-Flow nicht gefunden!");
+                throw new Exception("Inhalt für den Global-Alternative-Flow nicht gefunden!");
             }
         }
 
@@ -585,7 +584,7 @@ namespace UseCaseCore.XmlParser
             }
             catch
             {
-                throw new Exception("Fehler: Inhalt für Specific-Alternative-Flow nicht gefunden!");
+                throw new Exception("Inhalt für den Specific-Alternative-Flow nicht gefunden!");
             }
         }
 
@@ -692,7 +691,7 @@ namespace UseCaseCore.XmlParser
             }
             catch
             {
-                throw new Exception("Fehler: Inhalt für Bounded-Alternative-Flow nicht gefunden!");
+                throw new Exception("Inhalt für den Bounded-Alternative-Flow nicht gefunden!");
             }
         }
 

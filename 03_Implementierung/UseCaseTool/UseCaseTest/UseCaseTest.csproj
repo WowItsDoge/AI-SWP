@@ -115,6 +115,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="XmlParser\Testdateien\UseCaseBeispiel - BoundedAlternativeFlow mit einem RFS.docx" />
+    <None Include="XmlParser\Testdateien\UseCaseBeispiel - Fehler beim Auslesen.docx" />
     <None Include="XmlParser\Testdateien\UseCaseBeispiel - Kein Basic Flow.docx" />
     <None Include="XmlParser\Testdateien\UseCaseBeispiel - Kein UseCase Name.docx" />
     <None Include="XmlParser\Testdateien\UseCaseBeispiel - Keine Fehler - 2.docx" />
