@@ -5,6 +5,7 @@
 namespace UseCaseCore.RuleValidation.RucmRules
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Errors;
     using UcIntern;
 
@@ -29,6 +30,34 @@ namespace UseCaseCore.RuleValidation.RucmRules
         public override List<IError> Check(Flow basicFlow, List<Flow> globalAlternativeFlows, List<Flow> specificAlternativeFlows, List<Flow> boundedAlternativeFlows)
         {
             this.errors = new List<IError>();
+            var referencedStepNumbers = new List<int>();
+            foreach (var specflow in specificAlternativeFlows)
+            {
+                foreach (var rfs in specflow.ReferenceSteps)
+                {
+                    referencedStepNumbers.Add(rfs.Step);
+                }
+            }
+
+            foreach (var boundedFlow in boundedAlternativeFlows)
+            {
+                foreach (var rfs in boundedFlow.ReferenceSteps)
+                {
+                    referencedStepNumbers.Add(rfs.Step);
+                }
+            }
+            
+            for (int i = 0; i < basicFlow.Nodes.Count; i++)
+            {
+                var step = basicFlow.Nodes[i];
+                if (step.StepDescription.Contains(RucmRuleKeyWords.ValidateKeyWord))
+                {
+                    if (!referencedStepNumbers.Any(x => x == (i + 1)))
+                    {
+                        this.errors.Add(new StepError(i + 1, "Kein \"alternativer Pfad\" gefunden! \r\n Einem Step mit VALIDATES THAT muss immer mindestens ein RFS zugeordnet sein.", "Verletzung der Regel 22!"));
+                    }
+                }
+            }
 
             return this.errors;
         }
