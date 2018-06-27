@@ -222,7 +222,7 @@ namespace UseCaseCore.XmlParser
                     useCase = null;
 
                     //// Error handling
-                    ParseXmlFileErrorHandler("UseCase-Dateistruktur defekt! (Die Datei enthält keine XML-Child-Nodes)");
+                    this.ParseXmlFileErrorHandler("UseCase-Dateistruktur defekt! (Die Datei enthält keine XML-Child-Nodes)");
 
                     return false;
                 }
@@ -248,7 +248,7 @@ namespace UseCaseCore.XmlParser
                     useCase = null;
 
                     //// Error handling
-                    ParseXmlFileErrorHandler("UseCase RUCM-Validierung fehlerhaft!");
+                    this.ParseXmlFileErrorHandler("UseCase RUCM-Validierung fehlerhaft!");
 
                     return false;
                 }
@@ -273,17 +273,17 @@ namespace UseCaseCore.XmlParser
                 useCase = null;
 
                 //// Error handling
-                ParseXmlFileErrorHandler("Fehler beim Auslesen der UseCase-Datei:", ex);
+                this.ParseXmlFileErrorHandler("Fehler beim Auslesen der UseCase-Datei:", ex);
 
                 return false;
             }
         }
 
         /// <summary>
-        /// This function is for the error handling if a error in the function "ParseXMLFile()" occurs  
+        /// This function is for the error handling if an error in the function "ParseXMLFile()" occurs  
         /// </summary>
         /// <param name="errorMessage">The displayed error message</param>
-        /// <param name="ex">The occured exception object</param>
+        /// <param name="ex">The exception object</param>
         private void ParseXmlFileErrorHandler(string errorMessage, Exception ex = null)
         {
             //// Set the error message
