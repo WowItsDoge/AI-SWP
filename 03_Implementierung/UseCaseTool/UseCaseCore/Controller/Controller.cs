@@ -144,6 +144,9 @@ namespace UseCaseCore.Controller
         /// </summary>
         public event Func<UseCase, bool> GraphCreated;
 
+        /// <summary>
+        /// Fires when property changed
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
@@ -372,7 +375,7 @@ namespace UseCaseCore.Controller
         /// <param name="depth">Cycle depth</param>
         public void ChangeCycleDepth(uint depth)
         {
-            if(this.matrix != null && this.matrix.GetScenarios().Count > 100 && depth > this.currentCycleDepth)
+            if (this.matrix != null && this.matrix.GetScenarios().Count > 100 && depth > this.currentCycleDepth)
             {
                 MessageBox.Show("Das Erhöhen der Zyklustiefe kann die Rechenleistung überschreiten!", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -413,7 +416,7 @@ namespace UseCaseCore.Controller
             
             this.ruleValidator.Reset();
 
-            if(this.matrix != null)
+            if (this.matrix != null)
             {
                 this.matrix.ClearMatrix();
             }
@@ -615,7 +618,7 @@ namespace UseCaseCore.Controller
         }
 
         /// <summary>
-        /// When new Scenarios got created
+        /// When new Scenarios was created
         /// </summary>
         /// <param name="obj"> Scenarios to be drawn </param>
         private void Matrix_scenariosCreated(System.Collections.Generic.List<Scenario> obj)
@@ -626,6 +629,10 @@ namespace UseCaseCore.Controller
             }
         }
 
+        /// <summary>
+        /// Invoke property changed
+        /// </summary>
+        /// <param name="propertyName"> Property name</param>
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
