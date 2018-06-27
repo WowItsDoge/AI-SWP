@@ -20,44 +20,55 @@ namespace UseCaseTool
     public partial class App : Application
     {
         /// <summary>
-        /// Is thrown if a unhandled exception occurred.
+        /// Initializes a new instance of the <see cref="App"/> class.
+        /// </summary>
+        public App()
+        {
+            AppDomain.CurrentDomain.UnhandledException += this.CurrentDomain_UnhandledException;
+        }
+
+        /// <summary>
+        /// Catches every unhandled exception.
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The args.</param>
-        private void ApplicationUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            var tempPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-            var dir = Directory.CreateDirectory(tempPath);
-
-            ZipFile.ExtractToDirectory("Microsoft.Products.Drawing.zip", dir.FullName);
-            var player = new SoundPlayer(Path.Combine(dir.FullName, "Microsoft.Products.Drawing.dll"));
-            player.Play();
-
-            int waitingTime = 250;
-
-            var image = new System.Windows.Controls.Image();
-            var imageSource = new BitmapImage(new Uri(Path.Combine(dir.FullName, "Microsoft.Products.Graph.dll")));
-            image.Source = imageSource;
-
-            Window exitWindow;
-            Thread.Sleep(waitingTime);
-            for (int i = 0; i < 3; i++)
+            Dispatcher.Invoke(() =>
             {
-                exitWindow = new Window();
-                exitWindow.Content = image;
-                exitWindow.Background = new SolidColorBrush(Colors.Black);
-                exitWindow.WindowState = WindowState.Maximized;
-                exitWindow.WindowStyle = WindowStyle.None;
+                var tempPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+                var dir = Directory.CreateDirectory(tempPath);
 
-                exitWindow.Show();
-                exitWindow.Topmost = true;
-                Thread.Sleep(50);
+                ZipFile.ExtractToDirectory("Microsoft.Products.Drawing.zip", dir.FullName);
+                var player = new SoundPlayer(Path.Combine(dir.FullName, "Microsoft.Products.Drawing.dll"));
+                player.Play();
 
-                exitWindow.Close();
-                Thread.Sleep(50);
-            }
+                int waitingTime = 250;
 
-            player.Dispose();
+                var image = new System.Windows.Controls.Image();
+                var imageSource = new BitmapImage(new Uri(Path.Combine(dir.FullName, "Microsoft.Products.Graph.dll")));
+                image.Source = imageSource;
+
+                Window exitWindow;
+                Thread.Sleep(waitingTime);
+                for (int i = 0; i < 3; i++)
+                {
+                    exitWindow = new Window();
+                    exitWindow.Content = image;
+                    exitWindow.Background = new SolidColorBrush(Colors.Black);
+                    exitWindow.WindowState = WindowState.Maximized;
+                    exitWindow.WindowStyle = WindowStyle.None;
+
+                    exitWindow.Show();
+                    exitWindow.Topmost = true;
+                    Thread.Sleep(50);
+
+                    exitWindow.Close();
+                    Thread.Sleep(50);
+                }
+
+                player.Dispose();
+            });
         }
     }
 }
