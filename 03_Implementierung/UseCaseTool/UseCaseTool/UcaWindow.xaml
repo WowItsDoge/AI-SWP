@@ -157,7 +157,7 @@
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Header="_Hilfe">
-                    <MenuItem Header="_Über Usecase-Analyser" Click="InfoClick">
+                    <MenuItem Header="_Über Use-Case Visualizer" Click="InfoClick">
                         <MenuItem.Icon>
                             <Image Source="/images/info.png" Width="20" Height="20"/>
                         </MenuItem.Icon>

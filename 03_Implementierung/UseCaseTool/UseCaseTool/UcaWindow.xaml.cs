@@ -245,9 +245,9 @@ namespace UseCaseTool
         {
             MessageBox.Show(
                 "Use-Case Visualizer\n" +
-                "Copyright (c) 2018 Team B\n" +
+                "Copyright (c) 2018, Team B\n" +
                 "MIT License",
-                "Info Über Use-Case Visualizer",
+                "Über Use-Case Visualizer",
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
         }
