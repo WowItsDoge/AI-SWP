@@ -454,7 +454,7 @@ namespace UseCaseCore.Controller
                 else
                 {
                     this.BackgroundColor1 = Brushes.Red;
-                    MessageBox.Show("Fehler beim Einlesen der Datei.", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Fehler beim Einlesen der UseCase-Datei." + "\n" + "Mängelbericht für weitere Informationen abrufen.", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                     this.ruleValidator.AddExternalError(this.xmlParser.GetError());
                     this.ErrorReport();
@@ -532,7 +532,7 @@ namespace UseCaseCore.Controller
                 if (errorList.Count > 0)
                 {
                     this.BackgroundColor5 = Brushes.Red;
-                    MessageBox.Show("Fehler in UseCase aufgetreten. Mängelbericht für weitere Infos abrufen.", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Fehler im UseCase aufgetreten." + "\n" + "Mängelbericht für weitere Informationen abrufen.", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 else
                 {
