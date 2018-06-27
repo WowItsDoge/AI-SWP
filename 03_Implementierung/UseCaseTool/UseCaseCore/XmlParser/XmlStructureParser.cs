@@ -5,7 +5,6 @@ namespace UseCaseCore.XmlParser
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.IO;
     using System.Xml;
     using DocumentFormat.OpenXml.Packaging;
@@ -182,7 +181,7 @@ namespace UseCaseCore.XmlParser
         }
 
         /// <summary>
-        /// Initializes the properties. Can be used to reset everything.
+        /// Initializes the internal properties. Can be used to reset all stored properties.
         /// </summary>
         public void InitXmlParser()
         {
