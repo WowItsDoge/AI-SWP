@@ -303,6 +303,7 @@ namespace UseCaseCore.Controller
             {
                 this.backgroundWorkerLoadFile.WorkerSupportsCancellation = true;
                 this.backgroundWorkerLoadFile.DoWork += new DoWorkEventHandler(this.BackgroundWorkerLoadFile_DoWork);
+                this.backgroundWorkerLoadFile.RunWorkerCompleted += new RunWorkerCompletedEventHandler(this.BackgroundWorker_RunWorkerCompleted);
             }
             
             if (!this.backgroundWorkerLoadFile.IsBusy)
@@ -383,9 +384,6 @@ namespace UseCaseCore.Controller
             {
                 this.currentCycleDepth = depth;
                 this.matrix.CycleDepth = this.currentCycleDepth;
-                ////this.backgroundWorkerGenerateMatrix = new BackgroundWorker();
-                ////this.backgroundWorkerGenerateMatrix.DoWork += new DoWorkEventHandler(backgroundWorkerGenerateMatrix_DoWork);
-                ////this.backgroundWorkerGenerateMatrix.WorkerSupportsCancellation = true;
 
                 if (!this.backgroundWorkerGenerateMatrix.IsBusy)
                 {
@@ -427,7 +425,13 @@ namespace UseCaseCore.Controller
             this.backgroundWorkerValidFile.DoWork -= new DoWorkEventHandler(this.BackgroundWorkerValidFile_DoWork);
             this.backgroundWorkerGetErrorReport.DoWork -= new DoWorkEventHandler(this.BackgroundWorkerGetErrorReport_DoWork);
             this.backgroundWorkerGenerateGraph.DoWork -= new DoWorkEventHandler(this.BackgroundWorkerGenerateGraph_DoWork);
-            this.backgroundWorkerGenerateMatrix.DoWork -= new DoWorkEventHandler(this.BackgroundWorkerGenerateMatrix_DoWork);            
+            this.backgroundWorkerGenerateMatrix.DoWork -= new DoWorkEventHandler(this.BackgroundWorkerGenerateMatrix_DoWork);
+
+            this.backgroundWorkerLoadFile.RunWorkerCompleted -= new RunWorkerCompletedEventHandler(this.BackgroundWorker_RunWorkerCompleted);
+            this.backgroundWorkerValidFile.RunWorkerCompleted -= new RunWorkerCompletedEventHandler(this.BackgroundWorker_RunWorkerCompleted);
+            this.backgroundWorkerGetErrorReport.RunWorkerCompleted -= new RunWorkerCompletedEventHandler(this.BackgroundWorker_RunWorkerCompleted);
+            this.backgroundWorkerGenerateGraph.RunWorkerCompleted -= new RunWorkerCompletedEventHandler(this.BackgroundWorker_RunWorkerCompleted);
+            this.backgroundWorkerGenerateMatrix.RunWorkerCompleted -= new RunWorkerCompletedEventHandler(this.BackgroundWorker_RunWorkerCompleted);
         }
 
         /// <summary>
@@ -445,6 +449,7 @@ namespace UseCaseCore.Controller
 
                     this.backgroundWorkerValidFile.WorkerSupportsCancellation = true;
                     this.backgroundWorkerValidFile.DoWork += new DoWorkEventHandler(this.BackgroundWorkerValidFile_DoWork);
+                    this.backgroundWorkerValidFile.RunWorkerCompleted += new RunWorkerCompletedEventHandler(this.BackgroundWorker_RunWorkerCompleted);
 
                     if (!this.backgroundWorkerValidFile.IsBusy)
                     {
@@ -465,7 +470,20 @@ namespace UseCaseCore.Controller
                 MessageBox.Show("Vorgang wurde abgebrochen.", "Abbruch", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
-        
+
+        /// <summary>
+        /// Check if backgroundworker completed
+        /// </summary>
+        /// <param name="sender">The sender</param>
+        /// <param name="e">The e</param>
+        private void BackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (e.Error != null)
+            {
+                throw e.Error;
+            }
+        }
+
         /// <summary>
         /// BackgroundWorker to validate the file
         /// </summary>
@@ -484,10 +502,11 @@ namespace UseCaseCore.Controller
                     this.BackgroundColor2 = Brushes.Red;
                     this.ruleValidator.AddExternalError(this.xmlParser.GetError());
                     this.ErrorReport();
-                    //// MessageBox.Show("Fehler beim Validieren der Datei.", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }   
 
                 this.backgroundWorkerGetErrorReport.DoWork += new DoWorkEventHandler(this.BackgroundWorkerGetErrorReport_DoWork);
+                this.backgroundWorkerGetErrorReport.RunWorkerCompleted += new RunWorkerCompletedEventHandler(this.BackgroundWorker_RunWorkerCompleted);
+
                 this.backgroundWorkerGetErrorReport.WorkerSupportsCancellation = true;
 
                 if (!this.backgroundWorkerGetErrorReport.IsBusy)
@@ -540,9 +559,11 @@ namespace UseCaseCore.Controller
                     this.MatrixCycleDepthEnabled = true;
 
                     this.backgroundWorkerGenerateGraph.DoWork += new DoWorkEventHandler(this.BackgroundWorkerGenerateGraph_DoWork);
+                    this.backgroundWorkerGenerateGraph.RunWorkerCompleted += new RunWorkerCompletedEventHandler(this.BackgroundWorker_RunWorkerCompleted);
                     this.backgroundWorkerGenerateGraph.WorkerSupportsCancellation = true;
 
                     this.backgroundWorkerGenerateMatrix.DoWork += new DoWorkEventHandler(this.BackgroundWorkerGenerateMatrix_DoWork);
+                    this.backgroundWorkerGenerateMatrix.RunWorkerCompleted += new RunWorkerCompletedEventHandler(this.BackgroundWorker_RunWorkerCompleted);
                     this.backgroundWorkerGenerateMatrix.WorkerSupportsCancellation = true;
 
                     if (!this.backgroundWorkerGenerateGraph.IsBusy)
@@ -610,11 +631,6 @@ namespace UseCaseCore.Controller
                     MessageBox.Show("Fehler beim Erstellen der Szenariomatrix aufgetreten.", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-
-            //// else
-            //// {
-            ////    MessageBox.Show("Vorgang wurde abgebrochen.", "Abbruch", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            //// }
         }
 
         /// <summary>
