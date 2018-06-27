@@ -243,7 +243,13 @@ namespace UseCaseTool
         /// <param name="e">The e</param>
         private void InfoClick(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Bla bla...", "Info Über Use-Case Visualizer", MessageBoxButton.OK, MessageBoxImage.Question);
+            MessageBox.Show(
+                "Name: Use-Case Visualizer\n" +
+                "Copyright (c) 2018 Team B\n" +
+                "MIT License",
+                "Info Über Use-Case Visualizer",
+                MessageBoxButton.OK,
+                MessageBoxImage.Question);
         }
 
         /// <summary>
