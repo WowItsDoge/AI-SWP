@@ -372,7 +372,11 @@ namespace UseCaseCore.Controller
         /// <param name="depth">Cycle depth</param>
         public void ChangeCycleDepth(uint depth)
         {
-            if (depth != this.currentCycleDepth & depth >= 0)
+            if(this.matrix != null && this.matrix.GetScenarios().Count > 100 && depth > this.currentCycleDepth)
+            {
+                MessageBox.Show("Das Erhöhen der Zyklustiefe überschreitet kann die Rechenleistung überschreiten!", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else if (depth != this.currentCycleDepth & depth >= 0)
             {
                 this.currentCycleDepth = depth;
                 this.matrix.CycleDepth = this.currentCycleDepth;
@@ -409,7 +413,11 @@ namespace UseCaseCore.Controller
             
             this.ruleValidator.Reset();
 
-            this.matrix.ClearMatrix();
+            if(this.matrix != null)
+            {
+                this.matrix.ClearMatrix();
+            }
+
             this.GraphCreated(null);
             
             this.backgroundWorkerLoadFile.DoWork -= new DoWorkEventHandler(this.BackgroundWorkerLoadFile_DoWork);
