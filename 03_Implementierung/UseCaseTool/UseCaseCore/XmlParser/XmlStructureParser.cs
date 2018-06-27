@@ -221,12 +221,8 @@ namespace UseCaseCore.XmlParser
                     //// Clear internal usecase structure
                     useCase = null;
 
-                    //// Set the error message
-                    this.errorMessage = "UseCase-Dateistruktur defekt! (Die Datei enthält keine XML-Child-Nodes)";
-
-                    //// Close usecase file and delete temporary file from windows user temp folder
-                    this.useCaseFile.Close();
-                    File.Delete(this.useCaseFilePath);
+                    //// Error handling
+                    ParseXmlFileErrorHandler("UseCase-Dateistruktur defekt! (Die Datei enthält keine XML-Child-Nodes)");
 
                     return false;
                 }
@@ -244,25 +240,25 @@ namespace UseCaseCore.XmlParser
                 this.GetSpecificAlternativeFlows();
                 this.GetBoundedAlternativeFlows();
 
-                //// Close usecase file and delete temporary file from windows user temp folder
-                this.useCaseFile.Close();
-                File.Delete(this.useCaseFilePath);
-
                 //// Validate the usecase properties and flows with the rucm rules
                 bool rucmValidationResult = this.ValidateRucmRules();
                 if (rucmValidationResult == false)
                 {
-                    //// Set the error message
-                    this.errorMessage = "UseCase RUCM-Validierung fehlerhaft!";
-
                     //// Clear internal usecase structure
                     useCase = null;
+
+                    //// Error handling
+                    ParseXmlFileErrorHandler("UseCase RUCM-Validierung fehlerhaft!");
 
                     return false;
                 }
 
                 //// Create internal usecase structure
                 this.SetOutgoingUseCaseParameter();
+
+                //// Close usecase file and delete temporary file from windows user temp folder
+                this.useCaseFile.Close();
+                File.Delete(this.useCaseFilePath);
 
                 //// Pass out the internal usecase structure
                 useCase = this.outgoingUseCase;
@@ -276,15 +272,33 @@ namespace UseCaseCore.XmlParser
                 //// Clear internal usecase structure
                 useCase = null;
 
-                //// Set the error message
-                this.errorMessage = "Fehler beim Auslesen der UseCase-Datei: " + ex.Message.ToString();
-
-                //// Close usecase file and delete temporary file from windows user temp folder
-                this.useCaseFile.Close();
-                File.Delete(this.useCaseFilePath);
+                //// Error handling
+                ParseXmlFileErrorHandler("Fehler beim Auslesen der UseCase-Datei:", ex);
 
                 return false;
             }
+        }
+
+        /// <summary>
+        /// This function is for the error handling if a error in the function "ParseXMLFile()" occurs  
+        /// </summary>
+        /// <param name="errorMessage">The displayed error message</param>
+        /// <param name="ex">The occured exception object</param>
+        private void ParseXmlFileErrorHandler(string errorMessage, Exception ex = null)
+        {
+            //// Set the error message
+            if (ex == null)
+            {
+                this.errorMessage = errorMessage;
+            }
+            else
+            {
+                this.errorMessage = errorMessage + " " + ex.Message.ToString();
+            }
+
+            //// Close usecase file and delete temporary file from windows user temp folder
+            this.useCaseFile.Close();
+            File.Delete(this.useCaseFilePath);
         }
 
         /// <summary>
