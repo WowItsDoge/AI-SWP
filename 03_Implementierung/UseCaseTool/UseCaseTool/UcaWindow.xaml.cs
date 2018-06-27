@@ -244,12 +244,12 @@ namespace UseCaseTool
         private void InfoClick(object sender, RoutedEventArgs e)
         {
             MessageBox.Show(
-                "Name: Use-Case Visualizer\n" +
+                "Use-Case Visualizer\n" +
                 "Copyright (c) 2018 Team B\n" +
                 "MIT License",
                 "Info Über Use-Case Visualizer",
                 MessageBoxButton.OK,
-                MessageBoxImage.Question);
+                MessageBoxImage.Information);
         }
 
         /// <summary>
