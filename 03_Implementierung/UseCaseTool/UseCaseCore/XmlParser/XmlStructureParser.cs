@@ -268,7 +268,6 @@ namespace UseCaseCore.XmlParser
                 useCase = this.outgoingUseCase;
 
                 return true;
-
             }
             catch (Exception ex)
             {
@@ -817,6 +816,5 @@ namespace UseCaseCore.XmlParser
             searchWord = searchWord.Trim();
             return searchWord;
         }
-
     }
 }
