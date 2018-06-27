@@ -53,5 +53,10 @@ namespace UseCaseCore.RuleValidation.RucmRules
         /// The ending keyword for a loop
         /// </summary>
         public const string UntilKeyWord = "UNTIL";
+
+        /// <summary>
+        /// The keyword for a validation
+        /// </summary>
+        public const string ValidateKeyWord = "VALIDATES THAT";
     }
 }

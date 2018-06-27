@@ -21,10 +21,10 @@ namespace UseCaseTest.RuleValidation.Errors
         {
             var errorMessage = "Das ist ein Fehler!";
             var resolveMessage = "Zur Lösung bitte das machen...";
-            var referenceflow = 1;
+            var referenceflow = 0;
             var flowError = new FlowError(referenceflow, resolveMessage, errorMessage);
 
-            var expectedResult = "Fehler in Flow " + referenceflow + ": " + errorMessage + "\t" + resolveMessage + "\n";
+            var expectedResult = "Fehler in Flow " + (referenceflow + 1) + ": " + errorMessage + "\t" + resolveMessage + "\r\n";
 
             Assert.IsTrue(flowError.ToString() == expectedResult);
         }

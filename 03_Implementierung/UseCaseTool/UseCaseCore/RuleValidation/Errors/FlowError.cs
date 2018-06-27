@@ -32,7 +32,7 @@ namespace UseCaseCore.RuleValidation.Errors
         /// <param name="errorMessage">The reason for this error.</param>
         public FlowError(int flowReferenceNumber, string resolveMessage, string errorMessage)
         {
-            this.flowReferenceNumber = flowReferenceNumber;
+            this.flowReferenceNumber = flowReferenceNumber + 1;
             this.resolveMessage = resolveMessage;
             this.errorMessage = errorMessage;
         }
@@ -43,7 +43,7 @@ namespace UseCaseCore.RuleValidation.Errors
         /// <returns>this instance as a string</returns>
         public override string ToString()
         {
-            return "Fehler in Flow " + this.flowReferenceNumber + ": " + this.errorMessage + "\t" + this.resolveMessage + "\n";
+            return "Fehler in Flow " + this.flowReferenceNumber + ": " + this.errorMessage + "\t" + this.resolveMessage + "\r\n";
         }
     }
 }

@@ -40,7 +40,7 @@ namespace UseCaseCore.RuleValidation.RucmRules
                 {
                     if (rfs[0].Step > basicFlow.Nodes.Count || rfs[0].Step == 0)
                     {
-                        this.errors.Add(new FlowError(specificFlow.Identifier.Id, string.Format("Bitte überprüfen Sie die Nummer des Referenzschrittes!\nEs wurde kein zum RFS {0} passender Step gefunden.", rfs[0].Step), "Verletzung der Regel 19!"));
+                        this.errors.Add(new FlowError(specificFlow.Identifier.Id, string.Format("Bitte überprüfen Sie die Nummer des Referenzschrittes!\r\nEs wurde kein zum RFS {0} passender Step gefunden.", rfs[0].Step), "Verletzung der Regel 19!"));
                     }
                 }
             }
@@ -58,7 +58,7 @@ namespace UseCaseCore.RuleValidation.RucmRules
                     {
                         if (rfs.Step > basicFlow.Nodes.Count || rfs.Step == 0)
                         {
-                            this.errors.Add(new FlowError(boundedFlow.Identifier.Id, string.Format("Bitte überprüfen Sie die Nummer des Referenzschrittes!\nEs wurde kein zum RFS {0} passender Step gefunden.", rfs.Step), "Verletzung der Regel 19!"));
+                            this.errors.Add(new FlowError(boundedFlow.Identifier.Id, string.Format("Bitte überprüfen Sie die Nummer des Referenzschrittes!\r\nEs wurde kein zum RFS {0} passender Step gefunden.", rfs.Step), "Verletzung der Regel 19!"));
                         }
                     }
                 }

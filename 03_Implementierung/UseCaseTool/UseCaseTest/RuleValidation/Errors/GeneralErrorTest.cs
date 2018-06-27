@@ -21,7 +21,7 @@ namespace UseCaseTest.RuleValidation.Errors
         {
             var errorMessage = "Das ist ein Fehler!";
             var generalError = new GeneralError(errorMessage);
-            Assert.IsTrue(generalError.ToString() == errorMessage + "\n");
+            Assert.IsTrue(generalError.ToString() == errorMessage + "\r\n");
         }
     }
 }

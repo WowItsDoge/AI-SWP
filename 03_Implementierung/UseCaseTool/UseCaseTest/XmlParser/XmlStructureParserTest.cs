@@ -395,7 +395,7 @@ namespace UseCaseTest.XmlParser
 
         /// <summary>
         /// Testfuction for ParseXmlFile function
-        /// Test with broken sample file
+        /// Test with correct sample file but with no usecase structure
         /// </summary>
         [Test]
         public void ParseXmlFileTestWithCorrectXmlButNoUseCaseStructureSampleFile()
@@ -404,13 +404,18 @@ namespace UseCaseTest.XmlParser
             IRucmRuleValidator testrucmRuleValidator = new RucmRuleValidator(RucmRuleRepository.Rules);
             XmlStructureParser testxmlStructureParser = new XmlStructureParser(testrucmRuleValidator);
             string filePath = "UseCaseTest\\XmlParser\\Testdateien\\UseCaseBeispiel - Fehler beim Auslesen.docx";
-            bool result = false;
+            UseCase testUseCase = new UseCase();
+            bool resultLoadXmlFile = false;
+            bool resultParseXmlFile = false;
 
             // Act
-            result = testxmlStructureParser.LoadXmlFile(filePath);
+            resultLoadXmlFile = testxmlStructureParser.LoadXmlFile(filePath);
+            resultParseXmlFile = testxmlStructureParser.ParseXmlFile(out testUseCase);
 
             // Assert
-            Assert.IsFalse(result);
+            Assert.IsTrue(resultLoadXmlFile);
+            Assert.IsFalse(resultParseXmlFile);
+            Assert.IsNull(testUseCase);
         }
 
         /// <summary>
@@ -610,7 +615,7 @@ namespace UseCaseTest.XmlParser
             // Assert
             Assert.IsTrue(resultLoadXmlFile);
             Assert.IsFalse(resultParseXmlFile);
-            Assert.IsNotNull(testUseCase);
+            Assert.IsNull(testUseCase);
         }
 
         /// <summary>
@@ -635,7 +640,7 @@ namespace UseCaseTest.XmlParser
             // Assert
             Assert.IsTrue(resultLoadXmlFile);
             Assert.IsFalse(resultParseXmlFile);
-            Assert.IsNotNull(testUseCase);
+            Assert.IsNull(testUseCase);
         }
 
         /// <summary>
@@ -660,7 +665,7 @@ namespace UseCaseTest.XmlParser
             // Assert
             Assert.IsTrue(resultLoadXmlFile);
             Assert.IsFalse(resultParseXmlFile);
-            Assert.IsNotNull(testUseCase);
+            Assert.IsNull(testUseCase);
         }
 
         /// <summary>
@@ -685,7 +690,7 @@ namespace UseCaseTest.XmlParser
             // Assert
             Assert.IsTrue(resultLoadXmlFile);
             Assert.IsFalse(resultParseXmlFile);
-            Assert.IsNotNull(testUseCase);
+            Assert.IsNull(testUseCase);
         }
 
         /// <summary>
@@ -710,7 +715,7 @@ namespace UseCaseTest.XmlParser
             // Assert
             Assert.IsTrue(resultLoadXmlFile);
             Assert.IsFalse(resultParseXmlFile);
-            Assert.IsNotNull(testUseCase);
+            Assert.IsNull(testUseCase);
         }
 
         /// <summary>
@@ -735,7 +740,7 @@ namespace UseCaseTest.XmlParser
             // Assert
             Assert.IsTrue(resultLoadXmlFile);
             Assert.IsFalse(resultParseXmlFile);
-            Assert.IsNotNull(testUseCase);
+            Assert.IsNull(testUseCase);
         }
 
     }

@@ -40,7 +40,7 @@ namespace UseCaseCore.RuleValidation.RucmRules
                 var stepsToCheck = (List<Node>)flow.Nodes;
                 if (!this.CheckPathEnd(stepsToCheck, basicFlow))
                 {
-                    this.errors.Add(new FlowError(flow.Identifier.Id, "Flow endet ungültig! \nEin Flow muss immer mit ABORT oder einem gültigen RESUME STEP enden!", "Verletzung der Regel 24/25!"));
+                    this.errors.Add(new FlowError(flow.Identifier.Id, "Flow endet ungültig! \r\nEin Flow muss immer mit ABORT oder einem gültigen RESUME STEP enden!", "Verletzung der Regel 24/25!"));
                 }
             }
 
@@ -143,17 +143,17 @@ namespace UseCaseCore.RuleValidation.RucmRules
                         }
                         else
                         {
-                            this.errors.Add(new StepError(referencedStepId, string.Format("Der angegebene RESUME STEP konnte nicht gefunden werden!\nStellen Sie sicher, dass es einen Basic Step mit der Nummer {0} gibt!", numberToResume), "Verletzung der Regel 24 / 25!"));
+                            this.errors.Add(new StepError(referencedStepId, string.Format("Der angegebene RESUME STEP konnte nicht gefunden werden!\r\nStellen Sie sicher, dass es einen Basic Step mit der Nummer {0} gibt!", numberToResume), "Verletzung der Regel 24 / 25!"));
                         }
                     }
                     else
                     {
-                        this.errors.Add(new StepError(referencedStepId, "Der angegebene RESUME STEP konnte nicht gefunden werden!\nStellen Sie sicher, dass die Vorgabe \"RESUME STEP [+ Nummer]\" eingehalten wird.", "Verletzung der Regel 24/25!"));
+                        this.errors.Add(new StepError(referencedStepId, "Der angegebene RESUME STEP konnte nicht gefunden werden!\r\nStellen Sie sicher, dass die Vorgabe \"RESUME STEP [+ Nummer]\" eingehalten wird.", "Verletzung der Regel 24/25!"));
                     }
                 }
                 else
                 {
-                    this.errors.Add(new StepError(referencedStepId, "Ungültige Zeile\n Stellen Sie sicher, dass bei der Verwendung der Schlüsselwörter ABORT bzw. RESUME STEP die vorgegebene Struktur eingehalten wird!", "Verletzung der Regel 24/25!"));
+                    this.errors.Add(new StepError(referencedStepId, "Ungültige Zeile\r\n Stellen Sie sicher, dass bei der Verwendung der Schlüsselwörter ABORT bzw. RESUME STEP die vorgegebene Struktur eingehalten wird!", "Verletzung der Regel 24/25!"));
                 }
             }
 
