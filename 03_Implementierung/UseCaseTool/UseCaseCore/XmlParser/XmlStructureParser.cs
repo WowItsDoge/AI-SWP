@@ -163,7 +163,7 @@ namespace UseCaseCore.XmlParser
                 //// General error while loading the usecase xml-file
 
                 //// Set the error message
-                this.errorMessage = "Fehler beim Laden der UseCase-Datei: " + ex.Message.ToString();
+                this.errorMessage = "Fehler beim Einlesen der UseCase-Datei: " + ex.Message.ToString();
 
                 //// Close usecase file and delete temporary file from windows user temp folder
                 File.Delete(this.useCaseFilePath);
