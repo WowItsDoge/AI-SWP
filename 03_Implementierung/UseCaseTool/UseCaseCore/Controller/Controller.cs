@@ -374,7 +374,7 @@ namespace UseCaseCore.Controller
         {
             if(this.matrix != null && this.matrix.GetScenarios().Count > 100 && depth > this.currentCycleDepth)
             {
-                MessageBox.Show("Das Erhöhen der Zyklustiefe überschreitet kann die Rechenleistung überschreiten!", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Das Erhöhen der Zyklustiefe kann die Rechenleistung überschreiten!", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else if (depth != this.currentCycleDepth & depth >= 0)
             {
