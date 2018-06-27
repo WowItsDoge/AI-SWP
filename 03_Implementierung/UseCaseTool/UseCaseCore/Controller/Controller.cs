@@ -301,9 +301,7 @@ namespace UseCaseCore.Controller
                 this.backgroundWorkerLoadFile.WorkerSupportsCancellation = true;
                 this.backgroundWorkerLoadFile.DoWork += new DoWorkEventHandler(this.BackgroundWorkerLoadFile_DoWork);
             }
-
-            //// this.CancelButtonEnabled = true;
-
+            
             if (!this.backgroundWorkerLoadFile.IsBusy)
             {
                 this.backgroundWorkerLoadFile.RunWorkerAsync();
@@ -348,7 +346,6 @@ namespace UseCaseCore.Controller
         /// <param name="filePath">destination path for the matrix</param>
         public void MatrixFilePath(string filePath)
         {
-            // Usecase da????
             if (this.matrix != null)
             {
                 this.matrix.Export(filePath);
@@ -409,22 +406,17 @@ namespace UseCaseCore.Controller
             this.BackgroundColor3 = new SolidColorBrush(Color.FromArgb(255, 65, 177, 255));
             this.BackgroundColor4 = new SolidColorBrush(Color.FromArgb(255, 65, 177, 255));
             this.BackgroundColor5 = new SolidColorBrush(Color.FromArgb(255, 65, 177, 255));
-
-            //// ToDo: reset Fehlerbericht
+            
             this.ruleValidator.Reset();
 
             this.matrix.ClearMatrix();
             this.GraphCreated(null);
-
-            //// neu zeichnen??!?!?!
-
+            
             this.backgroundWorkerLoadFile.DoWork -= new DoWorkEventHandler(this.BackgroundWorkerLoadFile_DoWork);
             this.backgroundWorkerValidFile.DoWork -= new DoWorkEventHandler(this.BackgroundWorkerValidFile_DoWork);
             this.backgroundWorkerGetErrorReport.DoWork -= new DoWorkEventHandler(this.BackgroundWorkerGetErrorReport_DoWork);
             this.backgroundWorkerGenerateGraph.DoWork -= new DoWorkEventHandler(this.BackgroundWorkerGenerateGraph_DoWork);
-            this.backgroundWorkerGenerateMatrix.DoWork -= new DoWorkEventHandler(this.BackgroundWorkerGenerateMatrix_DoWork);
-
-            ////...
+            this.backgroundWorkerGenerateMatrix.DoWork -= new DoWorkEventHandler(this.BackgroundWorkerGenerateMatrix_DoWork);            
         }
 
         /// <summary>
@@ -434,7 +426,6 @@ namespace UseCaseCore.Controller
         /// <param name="e">The e</param>
         private void BackgroundWorkerLoadFile_DoWork(object sender, DoWorkEventArgs e)
         {
-            //// Task.Delay(2000).Wait();
             if (!this.backgroundWorkerLoadFile.CancellationPending && !this.backgroundWorkerValidFile.CancellationPending)
             {
                 if (this.xmlParser.LoadXmlFile(this.currentFilePath))
@@ -471,7 +462,6 @@ namespace UseCaseCore.Controller
         /// <param name="e">The e</param>
         private void BackgroundWorkerValidFile_DoWork(object sender, DoWorkEventArgs e)
         {
-            //// Task.Delay(2000).Wait();
             if ((!this.backgroundWorkerValidFile.CancellationPending) && (!this.backgroundWorkerLoadFile.CancellationPending))
             {
                 if (this.xmlParser.ParseXmlFile(out this.useCase))
@@ -481,6 +471,8 @@ namespace UseCaseCore.Controller
                 else
                 {
                     this.BackgroundColor2 = Brushes.Red;
+                    this.ruleValidator.AddExternalError(this.xmlParser.GetError());
+                    this.ErrorReport();
                     //// MessageBox.Show("Fehler beim Validieren der Datei.", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }   
 
@@ -522,11 +514,8 @@ namespace UseCaseCore.Controller
         /// <param name="e">The e</param>
         private void BackgroundWorkerGetErrorReport_DoWork(object sender, DoWorkEventArgs e)
         {
-            //// Task.Delay(2000).Wait();
             if ((!this.backgroundWorkerGetErrorReport.CancellationPending) && (!this.backgroundWorkerValidFile.CancellationPending) && (!this.backgroundWorkerLoadFile.CancellationPending))
             {
-                //// this.ruleValidator.AddExternalError("Beispiel Fehler");
-
                 List<IError> errorList = this.ErrorReport();
 
                 if (errorList.Count > 0)
@@ -569,7 +558,6 @@ namespace UseCaseCore.Controller
         /// <param name="e">The e</param>
         private void BackgroundWorkerGenerateGraph_DoWork(object sender, DoWorkEventArgs e)
         {
-            //// Task.Delay(2000).Wait();
             if ((!this.backgroundWorkerGenerateGraph.CancellationPending) && (!this.backgroundWorkerValidFile.CancellationPending) && (!this.backgroundWorkerLoadFile.CancellationPending))
             {
                 if (this.GraphCreated(this.useCase))
@@ -596,7 +584,6 @@ namespace UseCaseCore.Controller
         /// <param name="e">The e</param>
         private void BackgroundWorkerGenerateMatrix_DoWork(object sender, DoWorkEventArgs e)
         {
-            //// Task.Delay(2000).Wait();
             if ((!this.backgroundWorkerGenerateMatrix.CancellationPending) && (!this.backgroundWorkerValidFile.CancellationPending) && (!this.backgroundWorkerLoadFile.CancellationPending))
             {
                 this.matrix = new ScenarioMatrix(this.useCase, this.currentCycleDepth);

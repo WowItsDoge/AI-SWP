@@ -22,9 +22,9 @@ namespace UseCaseTool
         /// <summary>
         /// Save the current graph view condition
         /// true: with description
-        /// false: withou description
+        /// false: without description
         /// </summary>
-        private bool DisplayConditions = true;
+        private bool displayConditions = true;
 
         /// <summary>
         /// That's storage for the originally broad sidebar.
@@ -73,7 +73,7 @@ namespace UseCaseTool
         /// <param name="obj">Error list</param>
         private void Controller_WriteErrorReport(List<UseCaseCore.RuleValidation.Errors.IError> obj)
         {
-            ErrorList.Clear();
+            this.ErrorList.Clear();
             foreach (var error in obj)
             {
                 this.ErrorList.Add(error);
@@ -283,7 +283,7 @@ namespace UseCaseTool
         /// <param name="e">The e</param>
         private void NumericUpDownValueChanged(object sender, RoutedPropertyChangedEventArgs<double?> e)
         {
-            if(CycleDepth.Value != null)
+            if (CycleDepth.Value != null)
             {
                 this.controller.ChangeCycleDepth((uint)CycleDepth.Value);
             }
@@ -308,6 +308,7 @@ namespace UseCaseTool
         {
             GraphControl.ChangeGraphColors();
         }
+
         /// <summary>
         /// Add description graph view
         /// </summary>
@@ -315,15 +316,15 @@ namespace UseCaseTool
         /// <param name="e">The e</param>
         private void AddDescription_Click(object sender, RoutedEventArgs e)
         {
-            if (DisplayConditions)
+            if (this.displayConditions)
             {
-                GraphControl.ChangeDisplayConditions(!DisplayConditions);
-                DisplayConditions = false;
+                GraphControl.ChangeDisplayConditions(!this.displayConditions);
+                this.displayConditions = false;
             }
             else
             {
-                GraphControl.ChangeDisplayConditions(!DisplayConditions);
-                DisplayConditions = true;
+                GraphControl.ChangeDisplayConditions(!this.displayConditions);
+                this.displayConditions = true;
             }
         }
     }
