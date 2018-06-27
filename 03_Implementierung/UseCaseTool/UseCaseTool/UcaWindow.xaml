@@ -116,7 +116,7 @@
                             </StackPanel>
                         </Button>
 
-                        <Button x:Name="addDescription" HorizontalAlignment="Left" Height="25" Margin="5,155,0,0" VerticalAlignment="Top" Width="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Click="AddDescription_Click" ToolTip="Farben neu auswählen" IsEnabled="{Binding Path=GraphButtonsEnabled}">
+                        <Button x:Name="addDescription" HorizontalAlignment="Left" Height="25" Margin="5,155,0,0" VerticalAlignment="Top" Width="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Click="AddDescription_Click" ToolTip="Bedingungen anzeigen/ausblenden" IsEnabled="{Binding Path=GraphButtonsEnabled}">
                             <StackPanel>
                                 <Image Source="/images/addDescription.png" Height="11"/>
                             </StackPanel>
