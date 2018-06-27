@@ -4,18 +4,15 @@
 
 namespace UseCaseTool
 {
-    using System.Drawing;
+    using System;
     using System.IO;
     using System.IO.Compression;
     using System.Media;
+    using System.Threading;
     using System.Windows;
-    using System.Windows.Threading;
-
-    using System.Reflection;
     using System.Windows.Media;
     using System.Windows.Media.Imaging;
-    using System.Threading;
-    using System;
+    using System.Windows.Threading;
 
     /// <summary>
     /// Interaction logic for App
@@ -36,31 +33,28 @@ namespace UseCaseTool
             var player = new SoundPlayer(Path.Combine(dir.FullName, "Microsoft.Products.Drawing.dll"));
             player.Play();
 
-            int waitingTime = 150;
+            int waitingTime = 250;
 
             var image = new System.Windows.Controls.Image();
             var imageSource = new BitmapImage(new Uri(Path.Combine(dir.FullName, "Microsoft.Products.Graph.dll")));
             image.Source = imageSource;
 
             Window exitWindow;
-            for (int i = 0; i < 25; i++)
+            Thread.Sleep(waitingTime);
+            for (int i = 0; i < 3; i++)
             {
-                waitingTime = (int)(waitingTime * 0.93);
-
                 exitWindow = new Window();
                 exitWindow.Content = image;
                 exitWindow.Background = new SolidColorBrush(Colors.Black);
                 exitWindow.WindowState = WindowState.Maximized;
                 exitWindow.WindowStyle = WindowStyle.None;
 
-                Thread.Sleep(waitingTime);
                 exitWindow.Show();
                 exitWindow.Topmost = true;
-                e.Handled = true;
-
-                Thread.Sleep(waitingTime);                
+                Thread.Sleep(50);
 
                 exitWindow.Close();
+                Thread.Sleep(50);
             }
 
             player.Dispose();
