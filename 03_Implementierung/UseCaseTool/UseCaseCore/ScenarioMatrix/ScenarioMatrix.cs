@@ -221,7 +221,7 @@ namespace UseCaseCore.ScenarioMatrix
         }
 
         /// <summary>
-        /// Returns wether a Scenario is the Use Cases Basic Flow
+        /// Returns whether a Scenario is the Use Cases Basic Flow
         /// </summary>
         /// <param name="s">Scenario to check</param>
         /// <returns>Returns true if the scenario is the basic flow</returns>
@@ -231,14 +231,16 @@ namespace UseCaseCore.ScenarioMatrix
             {
                 return false;
             }
+
             int i = 0;
             foreach (Node n in s.Nodes)
             {
-                if(n.StepDescription != this.uc.BasicFlow.Nodes[i].StepDescription
-                    || n.Identifier != this.uc.BasicFlow.Nodes[i].Identifier)
+                if (n.StepDescription != this.uc.BasicFlow.Nodes[i].StepDescription
+                    || n.Identifier != this.uc.BasicFlow.Nodes[i].Identifier) 
                 {
                     return false;
                 }
+
                 i++;
             }
 
@@ -279,9 +281,9 @@ namespace UseCaseCore.ScenarioMatrix
         private void TraverseGraphRec(Matrix<bool> matrix, int startnode, Scenario s, uint cycleDepth)
         { 
             int stepsFound = CountEdgesPerRow(matrix, startnode);
-            
-            //If the node is the last node of the basic flow add a scenario for the basic flow and continue traversing
-            if(this.uc.Nodes[startnode].StepDescription == this.uc.BasicFlow.Nodes.Last().StepDescription)
+
+            // If the node is the last node of the basic flow add a scenario for the basic flow and continue traversing
+            if (this.uc.Nodes[startnode].StepDescription == this.uc.BasicFlow.Nodes.Last().StepDescription)
             {
                 Scenario s1 = new Scenario(s);
                 s1.Description = Regex.Replace(s1.Description, "(.*),", "$1"); // Remove last comma
@@ -293,8 +295,8 @@ namespace UseCaseCore.ScenarioMatrix
 
                 this.scenarios.Add(s1);
 
-                //If the basic flows last node doesnt have any other edges, return so this scenario doesnt get included twice
-                if(stepsFound == 0)
+                // If the basic flows last node doesnt have any other edges, return so this scenario doesnt get included twice
+                if (stepsFound == 0) 
                 {
                     return;
                 }
