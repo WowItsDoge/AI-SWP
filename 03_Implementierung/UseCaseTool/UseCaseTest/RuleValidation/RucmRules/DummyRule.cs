@@ -49,9 +49,8 @@ namespace UseCaseTest.RuleValidation.RucmRules
                 this.errorList.Add(new GeneralError("Error #" + i ));
             }
 
-            for (int i = 0; i < flowCount;)
+            for (int i = 0; i < flowCount; i++)
             {
-                i++;
                 this.errorList.Add(new FlowError(i, "Lösung zu: " + i, "Error #" + i));
             }
 

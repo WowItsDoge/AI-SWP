@@ -39,7 +39,7 @@ namespace UseCaseCore.RuleValidation.RucmRules
             {
                 if (!this.CheckStepsForCompleteLoop((List<Node>)flow.Nodes))
                 {
-                    this.errors.Add(new FlowError(flow.Identifier.Id, "Flow enthält ungültige Schleife! \nEin Flow muss eine immer geschlossene DO-UNTIL Schleife enthalten.", "Verletzung der Regel 23!"));
+                    this.errors.Add(new FlowError(flow.Identifier.Id, "Flow enthält ungültige Schleife! \r\nEin Flow muss eine immer geschlossene DO-UNTIL Schleife enthalten.", "Verletzung der Regel 23!"));
                 }
             }     
 
@@ -63,7 +63,7 @@ namespace UseCaseCore.RuleValidation.RucmRules
                 {
                     if (step.StepDescription != RucmRuleKeyWords.DoKeyWord)
                     {
-                        this.errors.Add(new StepError(step.Identifier.Id, "Ungültige Verwendung von DO. \nBitte verwenden Sie für das DO einen eigenen Schritt!", "Verletzung der Regel 23!"));
+                        this.errors.Add(new StepError(step.Identifier.Id, "Ungültige Verwendung von DO. \r\nBitte verwenden Sie für das DO einen eigenen Schritt!", "Verletzung der Regel 23!"));
                         result = false;
                         break;
                     }
@@ -85,7 +85,7 @@ namespace UseCaseCore.RuleValidation.RucmRules
                                 if (!stepsToCheck[j].StepDescription.StartsWith(RucmRuleKeyWords.UntilKeyWord) || 
                                     string.IsNullOrWhiteSpace(stepsToCheck[j].StepDescription.Replace(RucmRuleKeyWords.UntilKeyWord, string.Empty)))
                                 {
-                                    this.errors.Add(new StepError(step.Identifier.Id, "Ungültige Verwendung von UNTIL.\nBitte verwenden Sie für UNTIL die Syntax \"UNTIL condition\"!", "Verletzung der Regel 23!"));
+                                    this.errors.Add(new StepError(step.Identifier.Id, "Ungültige Verwendung von UNTIL.\r\nBitte verwenden Sie für UNTIL die Syntax \"UNTIL condition\"!", "Verletzung der Regel 23!"));
                                     result = false;
                                 }
 
@@ -98,7 +98,7 @@ namespace UseCaseCore.RuleValidation.RucmRules
 
                     if (doCounter != 0 && j == stepsToCheck.Count)
                     {
-                        this.errors.Add(new StepError(step.Identifier.Id, "DO ohne zugehöriges UNTIL gefunden! \nBitte achten Sie auf eine geschlossene DO-UNTIL-Schleifenstruktur", "Verletzung der Regel 23!"));
+                        this.errors.Add(new StepError(step.Identifier.Id, "DO ohne zugehöriges UNTIL gefunden! \r\nBitte achten Sie auf eine geschlossene DO-UNTIL-Schleifenstruktur", "Verletzung der Regel 23!"));
                         result = false;
                         break;
                     }
@@ -107,7 +107,7 @@ namespace UseCaseCore.RuleValidation.RucmRules
                 }
                 else if (step.StepDescription.Contains(RucmRuleKeyWords.UntilKeyWord))
                 {
-                    this.errors.Add(new StepError(step.Identifier.Id, "UNTIL ohne zugehöriges DO gefunden! \nBitte achten Sie auf eine geschlossene DO-UNTIL-Schleifenstruktur", "Verletzung der Regel 23!"));
+                    this.errors.Add(new StepError(step.Identifier.Id, "UNTIL ohne zugehöriges DO gefunden! \r\nBitte achten Sie auf eine geschlossene DO-UNTIL-Schleifenstruktur", "Verletzung der Regel 23!"));
                     result = false;
                     break;
                 }

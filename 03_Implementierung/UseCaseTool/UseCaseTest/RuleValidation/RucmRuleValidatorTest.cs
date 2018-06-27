@@ -90,7 +90,7 @@ namespace UseCaseTest.RuleValidation
             {
                 Assert.IsTrue(exportResult);
                 Assert.IsTrue(File.Exists(tempPath));
-                Assert.IsTrue(File.ReadAllText(tempPath) == ErrorReport.ExportHeader + ErrorReport.GeneralErrorHeader + fehlermeldung + "\n");
+                Assert.IsTrue(File.ReadAllText(tempPath) == ErrorReport.ExportHeader + ErrorReport.GeneralErrorHeader + fehlermeldung + "\r\n");
             }
             finally
             {
@@ -114,9 +114,9 @@ namespace UseCaseTest.RuleValidation
             {
                 Assert.IsTrue(exportResult);
                 Assert.IsTrue(File.Exists(tempPath));
-                var expectedText = ErrorReport.ExportHeader + ErrorReport.GeneralErrorHeader + "Error #1\nError #2\n" + 
-                    ErrorReport.FlowErrorHeader + "Fehler in Flow 1: Error #1\tLösung zu: 1\n" + "Fehler in Flow 2: Error #2\tLösung zu: 2\n" +
-                    ErrorReport.StepErrorHeader + "Fehler in Step 1: Error #1\tLösung zu: 1\n" + "Fehler in Step 2: Error #2\tLösung zu: 2\n";
+                var expectedText = ErrorReport.ExportHeader + ErrorReport.GeneralErrorHeader + "Error #1\r\nError #2\r\n" + 
+                    ErrorReport.FlowErrorHeader + "Fehler in Flow 1: Error #0\tLösung zu: 0\r\n" + "Fehler in Flow 2: Error #1\tLösung zu: 1\r\n" +
+                    ErrorReport.StepErrorHeader + "Fehler in Step 1: Error #1\tLösung zu: 1\r\n" + "Fehler in Step 2: Error #2\tLösung zu: 2\r\n";
                 Assert.IsTrue(File.ReadAllText(tempPath) == expectedText);
             }
             finally
@@ -137,7 +137,7 @@ namespace UseCaseTest.RuleValidation
             {
                 Assert.IsTrue(exportResult);
                 Assert.IsTrue(File.Exists(tempPath));
-                Assert.IsTrue(File.ReadAllText(tempPath) == ErrorReport.ExportHeader + ErrorReport.GeneralErrorHeader + "Error #1\nError #2\n");
+                Assert.IsTrue(File.ReadAllText(tempPath) == ErrorReport.ExportHeader + ErrorReport.GeneralErrorHeader + "Error #1\r\nError #2\r\n");
             }
             finally
             {

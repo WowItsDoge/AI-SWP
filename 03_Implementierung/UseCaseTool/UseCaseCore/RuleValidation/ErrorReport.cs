@@ -17,27 +17,27 @@ namespace UseCaseCore.RuleValidation
         /// <summary>
         /// The constant string at the beginning of every exported file.
         /// </summary>
-        public const string ExportHeader = "Mängelbericht: \n";
+        public const string ExportHeader = "Mängelbericht: \r\n";
 
         /// <summary>
         /// The constant string for an exported file without any errors.
         /// </summary>
-        public const string EmptyErrorExportMessage = "Es wurden keine Verstöße festgestellt!\n";
+        public const string EmptyErrorExportMessage = "Es wurden keine Verstöße festgestellt!\r\n";
 
         /// <summary>
         /// The header before all general errors.
         /// </summary>
-        public const string GeneralErrorHeader = "Generelle Fehler: \n";
+        public const string GeneralErrorHeader = "Generelle Fehler: \r\n";
 
         /// <summary>
         /// The header before all flow specific errors.
         /// </summary>
-        public const string FlowErrorHeader = "Flow-bezogene Fehler: \n";
+        public const string FlowErrorHeader = "Flow-bezogene Fehler: \r\n";
 
         /// <summary>
         /// The header before all step specific errors.
         /// </summary>
-        public const string StepErrorHeader = "Step-bezogene Fehler: \n";
+        public const string StepErrorHeader = "Step-bezogene Fehler: \r\n";
 
         /// <summary>
         /// The error list containing all errors.
