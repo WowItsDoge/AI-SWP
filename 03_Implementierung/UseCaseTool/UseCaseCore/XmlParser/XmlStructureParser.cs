@@ -232,13 +232,13 @@ namespace UseCaseCore.XmlParser
                 }
 
                 //// Read out usecase properties
-                this.useCaseName = this.ParseRucmProperty("Use Case Name");
-                this.briefDescription = this.ParseRucmProperty("Brief Description");
-                this.precondition = this.ParseRucmProperty("Precondition");
-                this.primaryActor = this.ParseRucmProperty("Primary Actor");
-                this.secondaryActor = this.ParseRucmProperty("Secondary Actors");
-                this.dependency = this.ParseRucmProperty("Dependency");
-                this.generalization = this.ParseRucmProperty("Generalization");
+                this.useCaseName = this.ParseRucmProperty("Use Case Name", "Anwendungsfallname");
+                this.briefDescription = this.ParseRucmProperty("Brief Description", "Kurzbeschreibung");
+                this.precondition = this.ParseRucmProperty("Precondition", "Vorbedingung");
+                this.primaryActor = this.ParseRucmProperty("Primary Actor", "Hauptdarsteller");
+                this.secondaryActor = this.ParseRucmProperty("Secondary Actors", "Nebendarsteller");
+                this.dependency = this.ParseRucmProperty("Dependency", "Abhängigkeit");
+                this.generalization = this.ParseRucmProperty("Generalization", "Verallgemeinerung");
                 this.GetBasicFlow();
                 this.GetGlobalAlternativeFlows();
                 this.GetSpecificAlternativeFlows();
@@ -337,24 +337,25 @@ namespace UseCaseCore.XmlParser
         /// <summary>
         /// Parses the RUCM properties.
         /// </summary>
-        /// <param name="propertyName">Specifies the property name to parse.</param>
+        /// <param name="englishPropertyName">Specifies the english property name to parse.</param>
+        /// <param name="germanPropertyName">Specifies the german property name to parse.</param>
         /// <returns>Returns a string with the parsed RUCM property.</returns>
-        private string ParseRucmProperty(string propertyName)
+        private string ParseRucmProperty(string englishPropertyName, string germanPropertyName)
         {
             XmlNodeList propertyNode = null;
 
             //// Get the xml node list for the usecase property name (only for property name, not for flows!)
-            propertyNode = this.GetXmlNodeList(propertyName);
+            propertyNode = this.GetXmlNodeList(englishPropertyName);
 
             //// Check for errors: Only one equal property allowed
             if (propertyNode.Count == 0)
             {
-                throw new Exception("UseCase-Eigenschaft " + "\"" + propertyName + "\"" + " nicht gefunden!");
+                throw new Exception("UseCase-Eigenschaft " + "\"" + englishPropertyName + "\"" + " nicht gefunden!");
             }
 
             if (propertyNode.Count > 1)
             {
-                throw new Exception("Mehr als eine UseCase-Eigenschaft " + "\"" + propertyName + "\"" + " gefunden!");
+                throw new Exception("Mehr als eine UseCase-Eigenschaft " + "\"" + englishPropertyName + "\"" + " gefunden!");
             }
 
             try
@@ -365,7 +366,7 @@ namespace UseCaseCore.XmlParser
             }
             catch
             {
-                throw new Exception("Inhalt für " + "\"" + propertyName + "\"" + " nicht gefunden!");
+                throw new Exception("Inhalt für " + "\"" + englishPropertyName + "\"" + " nicht gefunden!");
             }
         }
 
@@ -758,6 +759,7 @@ namespace UseCaseCore.XmlParser
             //// Create keyword list
             //// Flow can not be ending with a keyword
             List<string> keyWords = new List<string>();
+            //// Key word list in english
             keyWords.Add("IF");
             keyWords.Add("THEN");
             keyWords.Add("ELSE");
@@ -772,6 +774,7 @@ namespace UseCaseCore.XmlParser
             keyWords.Add("EXTENDED BY USE CASE");
             keyWords.Add("MEANWHILE");
             keyWords.Add("VALIDATE THAT");
+            //// Key word list in german
             keyWords.Add("WENN");
             keyWords.Add("DANN");
             keyWords.Add("SONST");
