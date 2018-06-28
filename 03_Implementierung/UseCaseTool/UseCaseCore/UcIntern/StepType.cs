@@ -36,7 +36,7 @@ namespace UseCaseCore.UcIntern
         /// <summary>
         /// An endif step of an if-statement.
         /// </summary>
-        public static readonly StepType EndIf = new StepType(4, new[] { @"\bENDIF\b", @"\bENDEWENN\b" });
+        public static readonly StepType EndIf = new StepType(4, new[] { @"\bENDIF\b", @"\bENDE WENN\b" });
 
         /// <summary>
         /// The do step of an do-until-statement.
