@@ -36,12 +36,27 @@
       <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net45\ControlzEx.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MahApps.Metro, Version=1.6.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MahApps.Metro.1.6.4\lib\net45\MahApps.Metro.dll</HintPath>
+    <Reference Include="DocumentFormat.OpenXml, Version=2.8.0.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>..\packages\DocumentFormat.OpenXml.2.8.0\lib\net40\DocumentFormat.OpenXml.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="MahApps.Metro, Version=1.6.5.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MahApps.Metro.1.6.5\lib\net45\MahApps.Metro.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OpenXmlPowerTools, Version=4.5.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenXmlPowerTools.4.5.3.2\lib\net45\OpenXmlPowerTools.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Management.Automation.dll.10.0.10586.0\lib\net40\System.Management.Automation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net45\System.Windows.Interactivity.dll</HintPath>
       <Private>True</Private>
@@ -52,20 +67,53 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Example.cs" />
+    <Compile Include="Controller\Controller.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RuleValidation\ErrorReport.cs" />
+    <Compile Include="RuleValidation\Errors\FlowError.cs" />
+    <Compile Include="RuleValidation\Errors\GeneralError.cs" />
+    <Compile Include="RuleValidation\Errors\IError.cs" />
+    <Compile Include="RuleValidation\Errors\StepError.cs" />
+    <Compile Include="RuleValidation\IRucmRuleValidator.cs" />
+    <Compile Include="RuleValidation\RucmRules\IRule.cs" />
+    <Compile Include="RuleValidation\RucmRules\RucmRule.cs" />
+    <Compile Include="RuleValidation\RucmRules\RucmRuleKeyWords.cs" />
+    <Compile Include="RuleValidation\RucmRules\RucmRule_19.cs" />
+    <Compile Include="RuleValidation\RucmRules\RucmRule_20.cs" />
+    <Compile Include="RuleValidation\RucmRules\RucmRule_22.cs" />
+    <Compile Include="RuleValidation\RucmRules\RucmRule_23.cs" />
+    <Compile Include="RuleValidation\RucmRules\RucmRule_24_25.cs" />
+    <Compile Include="RuleValidation\RucmRules\RucmRuleRepository.cs" />
+    <Compile Include="RuleValidation\RucmRules\RucmRule_26.cs" />
+    <Compile Include="RuleValidation\RucmRuleValidator.cs" />
+    <Compile Include="ScenarioMatrix\Scenario.cs" />
+    <Compile Include="ScenarioMatrix\ScenarioMatrix.cs" />
+    <Compile Include="UcIntern\BitShifter.cs" />
+    <Compile Include="UcIntern\Condition.cs" />
+    <Compile Include="UcIntern\Entry.cs" />
+    <Compile Include="UcIntern\ExternalEdge.cs" />
+    <Compile Include="UcIntern\Flow.cs" />
+    <Compile Include="UcIntern\FlowIdentifier.cs" />
+    <Compile Include="UcIntern\FlowType.cs" />
+    <Compile Include="UcIntern\GraphBuilder.cs" />
+    <Compile Include="UcIntern\InternalEdge.cs" />
+    <Compile Include="UcIntern\Matrix.cs" />
+    <Compile Include="UcIntern\Node.cs" />
+    <Compile Include="UcIntern\ReferenceStep.cs" />
+    <Compile Include="UcIntern\Row.cs" />
+    <Compile Include="UcIntern\StepType.cs" />
+    <Compile Include="UcIntern\UseCase.cs" />
+    <Compile Include="UcIntern\UseCaseBuildingException.cs" />
+    <Compile Include="XmlParser\XmlStructureParser.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="RuleValidation\" />
-    <Folder Include="ScenarioMatrix\" />
-    <Folder Include="UcIntern\" />
-    <Folder Include="XmlParser\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\StyleCop.MSBuild.5.0.0\build\StyleCop.MSBuild.targets" Condition="Exists('..\packages\StyleCop.MSBuild.5.0.0\build\StyleCop.MSBuild.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

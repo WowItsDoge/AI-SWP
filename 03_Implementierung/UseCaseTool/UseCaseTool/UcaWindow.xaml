@@ -6,8 +6,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UseCaseTool"
         xmlns:UseCaseTool="clr-namespace:UseCaseTool" x:Class="UseCaseTool.UcaWindow"
-        mc:Ignorable="d"
-                Title="Use-Case Visualizer" Height="600" Width="1200" MinHeight="400" MinWidth="650">
+        mc:Ignorable="d" Icon="Icons\Anwendungsicon.ico" IconScalingMode="NoScaleSmallerFrame"
+         Title="Use-Case Visualizer" Height="700" Width="1250" MinHeight="400" MinWidth="900" WindowStartupLocation="CenterScreen">
+
     <Grid x:Name="mainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
@@ -22,111 +23,143 @@
         <Frame x:Name="mainFrame" VerticalAlignment="Stretch" Grid.ColumnSpan="2" Grid.RowSpan="2" Grid.Row="1" Margin="-5,0,-5,-5" BorderBrush="#41B1E1" BorderThickness="1"/>
 
 
-        <Grid x:Name="GridColumn0" Grid.Column="0" Grid.Row="1" Grid.RowSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <Button x:Name="openButton" Content="Öffnen" HorizontalAlignment="Left" Height="28" Margin="10,10,0,0" VerticalAlignment="Top" Width="130" Click="openButton_Click"/>
-            <Button x:Name="cancelButton" Content="Abbrechen" HorizontalAlignment="Left" Height="28" Margin="155,10,0,0" VerticalAlignment="Top" Width="130" IsEnabled="False"/>
-            <Button x:Name="sidebarHide" Content="-" HorizontalAlignment="Left" Margin="300,-10,-10,-10" VerticalAlignment="Stretch" Width="15" Click="sidebarHide_Click" BorderThickness="0" Background="#41B1E1"/>
 
-            <TextBlock x:Name="selectedFile" HorizontalAlignment="Left" Height="28" Margin="10,50,0,0" TextWrapping="Wrap" Text="keine Datei ausgewählt..." VerticalAlignment="Top" Width="275" />
-            <GroupBox x:Name="Ablauf" Header="Ablauf" Margin="10,90,20,10" HorizontalAlignment="Left" Width="275" Grid.Row="2">
-                <Grid HorizontalAlignment="Left" Height="444" Margin="0,0,-2,-12" VerticalAlignment="Top" Width="270">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="30"/>
-                        <RowDefinition Height="10"/>
-                        <RowDefinition Height="30"/>
-                        <RowDefinition Height="10"/>
-                        <RowDefinition Height="30"/>
-                        <RowDefinition Height="10"/>
-                        <RowDefinition Height="30"/>
-                        <RowDefinition Height="8*"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="10"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="30"/>
-                    </Grid.ColumnDefinitions>
+        <Grid x:Name="GridColumn0" Grid.Column="0" Grid.Row="1" Grid.RowSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Button x:Name="openButton" Content="Öffnen" HorizontalAlignment="Left" Height="28" Margin="10,10,0,0" VerticalAlignment="Top" Width="125" Click="OpenButtonClick" Style="{StaticResource AccentedSquareButtonStyle}"/>
+            <Button x:Name="cancelButton" Content="Abbrechen" HorizontalAlignment="Left" Height="28" Margin="151,10,0,0" VerticalAlignment="Top" Width="125" Click="CancelButtonClick" IsEnabled="{Binding Path=ButtonEnabled}" Style="{StaticResource AccentedSquareButtonStyle}"/>
+            <Button x:Name="sidebarHide" HorizontalAlignment="Left" Margin="290,-4,-2,-5" VerticalAlignment="Stretch" Click="SidebarHideClick" BorderThickness="0" Background="#41B1E1" Content="&lt;" FontWeight="Bold" Foreground="White" VerticalContentAlignment="Center"/>
+
+            <TextBlock x:Name="selectedFile" FontSize="12" HorizontalAlignment="Left" Height="24" Margin="10,52,0,0" TextWrapping="NoWrap" Text="keine Datei ausgewählt..." VerticalAlignment="Top" Width="275" Focusable="True"/>
+            <GroupBox x:Name="Ablauf" Header="Ablauf" Margin="10,90,0,10" HorizontalAlignment="Left" Width="266">
+                <Grid>
+                    <Label x:Name="labelImportProgress" Content="Datei eingelesen" HorizontalAlignment="Left" Margin="10,15,0,0" VerticalAlignment="Top" Width="236" FontSize="16" FontWeight="DemiBold" Background="{Binding Path=BackgroundColor1}" Foreground="White"/>
+                    <Label x:Name="labelValiProgress" Content="Use-Case validiert" HorizontalAlignment="Left" Margin="10,55,0,0" VerticalAlignment="Top" Width="236" FontSize="16" FontWeight="DemiBold" Background="{Binding Path=BackgroundColor2}" Foreground="White"/>
+                    <Label x:Name="labelReportProgess" Content="Mängelbericht erstellt" HorizontalAlignment="Left" Margin="10,95,0,0" VerticalAlignment="Top" Width="236" FontSize="16" FontWeight="DemiBold" Background="{Binding Path=BackgroundColor5}" Foreground="White"/>
+                    <Label x:Name="labelMatrixProgess" Content="Szenario-Matrix erstellt" HorizontalAlignment="Left" Margin="10,135,0,0" VerticalAlignment="Top" Width="236" FontSize="16" FontWeight="DemiBold" Background="{Binding Path=BackgroundColor3}" Foreground="White"/>
+                    <Label x:Name="labelGraphProgress" Content="Graph erstellt" HorizontalAlignment="Left" Margin="10,175,0,0" VerticalAlignment="Top" Width="236" FontSize="16" FontWeight="DemiBold" Background="{Binding Path=BackgroundColor4}" Foreground="White"/>
                 </Grid>
             </GroupBox>
         </Grid>
 
-        <Grid x:Name="GridColumn1" Grid.Column="1" Grid.Row="1" Grid.RowSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <Button x:Name="sidebarShow" Content="+" HorizontalAlignment="Left" Margin="0,-10,0,-10" VerticalAlignment="Stretch" Width="15" Click="sidebarShow_Click" BorderThickness="0" Visibility="Collapsed" Background="LightGray"/>
-            <TabControl x:Name="tabControl" HorizontalAlignment="Stretch" Margin="25,10,10,10" VerticalAlignment="Stretch">
-
+        <Grid x:Name="GridColumn1" Grid.Column="1" Grid.RowSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1">
+            <Button x:Name="sidebarShow" HorizontalAlignment="Left" Margin="0,-5,0,-9" VerticalAlignment="Stretch" Click="SidebarShowClick" BorderThickness="0" Visibility="Collapsed" Background="#41B1E1" Content="&gt;" FontWeight="Bold" Foreground="White" VerticalContentAlignment="Center" Width="18"/>
+            <TabControl x:Name="tabControl" HorizontalAlignment="Stretch" Margin="34,10,10,10" VerticalAlignment="Stretch">
                 <TabItem Header="Mängelbericht">
-                    <Grid Background="#FFE5E5E5"/>
+                    <Grid Background="#FFE5E5E5">
+                        <DataGrid AutoGenerateColumns="False" Name="errorGrid" CanUserResizeColumns="True">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Width="1*" Header="Mängel" IsReadOnly="True" Binding="{Binding}"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
                 </TabItem>
                 <TabItem Header="Szenariomatrix">
-                    <Grid Background="#FFE5E5E5"/>
-                </TabItem>
-                <TabItem Header="Graph">
-
                     <Grid Background="#FFE5E5E5">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
-                            <RowDefinition Height="70"/>
+                            <RowDefinition Height="29"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="45"/>
                         </Grid.ColumnDefinitions>
 
-                        <UseCaseTool:GraphViewerControl x:Name="GraphView" Grid.ColumnSpan="2" Grid.RowSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-
-                        <Button x:Name="zoomIn" Content="+" HorizontalAlignment="Left" Height="25" Margin="10,10,0,0" VerticalAlignment="Top" Width="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontWeight="Bold" Grid.Row="1" Grid.Column="1"/>
-                        <Button x:Name="zoomOut" Content="-" HorizontalAlignment="Left" Height="25" Margin="10,34,0,0" VerticalAlignment="Top" Width="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontWeight="Bold" Grid.Column="1" Grid.Row="1"/>
-
-
-
+                        <UseCaseTool:MatrixControl x:Name="MatrixControl"/>
+                        <Label x:Name="cycleDepth" Content="Zyklustiefe:" HorizontalAlignment="Right" Margin="0,0,60,1" VerticalAlignment="Bottom" Width="100" FontSize="16" Height="29" Grid.Row="1"/>
+                        <Controls:NumericUpDown x:Name="CycleDepth" HorizontalAlignment="Right" Value="1" Minimum="1" Maximum="20" Interval="1" Margin="0,0,2,1" Grid.Row="1" VerticalAlignment="Bottom" Height="15" ValueChanged="NumericUpDownValueChanged" IsEnabled="{Binding Path=MatrixCycleDepthEnabled}"/>
                     </Grid>
+                </TabItem>
+                <TabItem Header="Graph">
+                    <Grid Background="#FFE5E5E5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="35"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <UseCaseTool:GraphViewerControl x:Name="GraphControl"  Margin="0,0,0,0" Grid.Row="0" Grid.Column="0"/>
+
+                        </Grid>
+
+                        <Button x:Name="zoomAll" HorizontalAlignment="Left" Height="25" Margin="5,10,0,0" VerticalAlignment="Top" Width="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Grid.Row="0"  Click="ZoomAll_Click" ToolTip="Gesamtansicht" IsEnabled="{Binding Path=GraphButtonsEnabled}">
+                            <StackPanel>
+                                <Image Source="/images/home.png"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button x:Name="zoomIn" HorizontalAlignment="Left" Height="25" Margin="5,50,0,0" VerticalAlignment="Top" Width="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Click="ZoomIn_Click" ToolTip="Ansicht vergrößern" IsEnabled="{Binding Path=GraphButtonsEnabled}">
+                            <StackPanel>
+                                <Image Source="/images/plus.png"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button x:Name="zoomOut" HorizontalAlignment="Left" Height="25" Margin="5,75,0,0" VerticalAlignment="Top" Width="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Click="ZoomOut_Click" ToolTip="Ansicht verkleinern" IsEnabled="{Binding Path=GraphButtonsEnabled}">
+                            <StackPanel>
+                                <Image Source="/images/minus.png"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button x:Name="changeColor" HorizontalAlignment="Left" Height="25" Margin="5,115,0,0" VerticalAlignment="Top" Width="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Click="ChangeColor_Click" ToolTip="Farben neu auswählen" IsEnabled="{Binding Path=GraphButtonsEnabled}">
+                            <StackPanel>
+                                <Image Source="/images/colors.png" Height="13"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button x:Name="addDescription" HorizontalAlignment="Left" Height="25" Margin="5,155,0,0" VerticalAlignment="Top" Width="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Click="AddDescription_Click" ToolTip="Bedingungen anzeigen/ausblenden" IsEnabled="{Binding Path=GraphButtonsEnabled}">
+                            <StackPanel>
+                                <Image Source="/images/addDescription.png" Height="11"/>
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+
+
                 </TabItem>
             </TabControl>
         </Grid>
 
+
         <DockPanel Grid.ColumnSpan="2" HorizontalAlignment="Stretch" Height="30" LastChildFill="False" VerticalAlignment="Top" >
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="_Datei">
-                    <MenuItem Header="_Datei öffnen..." Click="openButton_Click">
+                    <MenuItem Header="_Datei öffnen..." Click="OpenButtonClick">
                         <MenuItem.Icon>
-                            <Image Source="/images/folder_open.png" />
+                            <Image Source="/images/folder_open.png" Width="18" Height="18"/>
                         </MenuItem.Icon>
                     </MenuItem>
                     <Separator />
-                    <MenuItem Header="_Beenden">
+                    <MenuItem Header="_Beenden" Click="CloseClick">
                         <MenuItem.Icon>
-                            <Image Source="/images/exit.png" />
+                            <Image Source="/images/exit.png" Width="18" Height="18"/>
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Header="_Bearbeiten">
-                    <MenuItem Header="_Bericht exportieren" Click="exportReport_Click">
+                    <MenuItem Header="_Bericht exportieren" Click="ExportReportClick">
                         <MenuItem.Icon>
-                            <Image Source="/images/export.png"/>
+                            <Image Source="/images/export.png" Width="18" Height="18"/>
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Header="_Matrix exportieren" Click="exportMatrix_Click">
+                    <MenuItem Header="_Matrix exportieren" Click="ExportMatrixClick">
                         <MenuItem.Icon>
-                            <Image Source="/images/export.png"/>
-                        </MenuItem.Icon>
-                    </MenuItem>
-                </MenuItem>
-                <MenuItem Header="_Ansicht">
-                    <MenuItem Header="_Sprache ändern">
-                        <MenuItem.Icon>
-                            <Image Source="/images/world.png"/>
-                        </MenuItem.Icon>
-                    </MenuItem>
-                    <Separator/>
-                    <MenuItem Header="_noch andere Menüeinträge?">
-                        <MenuItem.Icon>
-                            <Image Source="/images/question.png" />
+                            <Image Source="/images/export.png" Width="18" Height="18"/>
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Header="_Hilfe">
-                    <MenuItem Header="_Über Usecase-Analyser">
+                    <MenuItem Header="_Über Use-Case Visualizer" Click="InfoClick">
                         <MenuItem.Icon>
-                            <Image Source="/images/info.png"/>
+                            <Image Source="/images/info.png" Width="20" Height="20"/>
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
