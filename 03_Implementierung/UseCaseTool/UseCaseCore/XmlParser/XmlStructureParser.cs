@@ -165,7 +165,10 @@ namespace UseCaseCore.XmlParser
                 this.errorMessage = "Fehler beim Einlesen der UseCase-Datei: " + ex.Message.ToString();
 
                 //// Close usecase file and delete temporary file from windows user temp folder
-                File.Delete(this.useCaseFilePath);
+                if (File.Exists(this.useCaseFilePath))
+                {
+                    File.Delete(this.useCaseFilePath);
+                }
 
                 return false;
             }
@@ -257,7 +260,10 @@ namespace UseCaseCore.XmlParser
 
                 //// Close usecase file and delete temporary file from windows user temp folder
                 this.useCaseFile.Close();
-                File.Delete(this.useCaseFilePath);
+                if (File.Exists(this.useCaseFilePath))
+                {
+                    File.Delete(this.useCaseFilePath);
+                }
 
                 //// Pass out the internal usecase structure
                 useCase = this.outgoingUseCase;
@@ -297,7 +303,10 @@ namespace UseCaseCore.XmlParser
 
             //// Close usecase file and delete temporary file from windows user temp folder
             this.useCaseFile.Close();
-            File.Delete(this.useCaseFilePath);
+            if (File.Exists(this.useCaseFilePath))
+            {
+                File.Delete(this.useCaseFilePath);
+            }
         }
 
         /// <summary>
