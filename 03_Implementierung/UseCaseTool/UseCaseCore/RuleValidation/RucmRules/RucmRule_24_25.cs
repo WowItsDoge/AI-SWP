@@ -80,25 +80,21 @@ namespace UseCaseCore.RuleValidation.RucmRules
                             conditionCounter++;
                             for (; j < blockToCheck.Count; j++)
                             {
-                                if (blockToCheck[j].StepDescription.Split(' ').Contains(RucmRuleKeyWords.IfKeyWord))
+                                if (this.ContainsConditionKeyword(blockToCheck[j].StepDescription))
                                 {
                                     conditionCounter++;
-                                    ifBlocks[i].Add(blockToCheck[j]);
                                 }
-                                else if (this.ContainsConditionEndKeyword(blockToCheck[j].StepDescription))
+
+                                if (this.ContainsConditionEndKeyword(blockToCheck[j].StepDescription))
                                 {
                                     conditionCounter--;
                                     if (conditionCounter == 0)
                                     {
                                         break;
                                     }
+                                }
 
-                                    ifBlocks[i].Add(blockToCheck[j]);
-                                }
-                                else
-                                {
-                                    ifBlocks[i].Add(blockToCheck[j]);
-                                }
+                                ifBlocks[i].Add(blockToCheck[j]);
                             }
 
                             i = j - 1;

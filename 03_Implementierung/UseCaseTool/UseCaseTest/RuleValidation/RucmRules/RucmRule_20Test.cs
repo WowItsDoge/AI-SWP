@@ -91,7 +91,7 @@ namespace UseCaseTest.RuleValidation
 
             basicFlow = new Flow(flowId, "Die Standard-Nachbedingung.", nodes, rfStep);
             result = rucmRule.Check(basicFlow, globalFlows, specificFlows, boundedFlows);
-            Assert.IsTrue(result.Count == 2);
+            Assert.IsTrue(result.Count == 3);
 
             // Check a normal basic Flow with if, elseif and no endif
             nodes = new List<Node>();
@@ -104,7 +104,7 @@ namespace UseCaseTest.RuleValidation
 
             basicFlow = new Flow(flowId, "Die Standard-Nachbedingung.", nodes, rfStep);
             result = rucmRule.Check(basicFlow, globalFlows, specificFlows, boundedFlows);
-            Assert.IsTrue(result.Count == 2);
+            Assert.IsTrue(result.Count == 3);
 
             // Check a normal basic Flow with else without if
             nodes = new List<Node>();
@@ -177,6 +177,21 @@ namespace UseCaseTest.RuleValidation
             nodes.Add(new Node("Der vierte Schritt", flowId));
             nodes.Add(new Node("ENDIF", flowId));
             nodes.Add(new Node("Der fünfte Schritt", flowId));
+
+            basicFlow = new Flow(flowId, "Die Standard-Nachbedingung.", nodes, rfStep);
+            result = rucmRule.Check(basicFlow, globalFlows, specificFlows, boundedFlows);
+            Assert.IsTrue(result.Count == 0);
+
+            nodes = new List<Node>();
+            nodes.Add(new Node("ELSE", flowId));
+            nodes.Add(new Node("Der erste Schritt", flowId));
+            nodes.Add(new Node("IF blablabla THEN", flowId));
+            nodes.Add(new Node("Der zweite Schritt", flowId));
+            nodes.Add(new Node("ELSE", flowId));
+            nodes.Add(new Node("Der dritte Schritt", flowId));
+            nodes.Add(new Node("ENDIF", flowId));
+            nodes.Add(new Node("Der vierte Schritt", flowId));
+            nodes.Add(new Node("ENDIF", flowId));
 
             basicFlow = new Flow(flowId, "Die Standard-Nachbedingung.", nodes, rfStep);
             result = rucmRule.Check(basicFlow, globalFlows, specificFlows, boundedFlows);
