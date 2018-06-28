@@ -472,7 +472,7 @@ namespace UseCaseCore.Controller
         }
 
         /// <summary>
-        /// Check if backgroundworker completed
+        /// Check if background worker completed
         /// </summary>
         /// <param name="sender">The sender</param>
         /// <param name="e">The e</param>
