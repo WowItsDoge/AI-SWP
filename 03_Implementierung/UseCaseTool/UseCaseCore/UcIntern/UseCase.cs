@@ -121,7 +121,9 @@ namespace UseCaseCore.UcIntern
             Matrix<bool> edgeMatrix;
             Matrix<Condition?> conditionMatrix;
 
-            GraphBuilder.BuildGraph(
+            try
+            {
+                GraphBuilder.BuildGraph(
                 ref basicFlow,
                 this.SpecificAlternativeFlows,
                 this.GlobalAlternativeFlows,
@@ -129,6 +131,11 @@ namespace UseCaseCore.UcIntern
                 out nodes,
                 out edgeMatrix,
                 out conditionMatrix);
+            }
+            catch (Exception e)
+            {
+                throw new UseCaseBuildingException(e);
+            }
 
             this.BasicFlow = basicFlow;
             this.Nodes = nodes.AsReadOnly();

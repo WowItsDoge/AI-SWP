@@ -106,6 +106,7 @@
     <Compile Include="UcIntern\Row.cs" />
     <Compile Include="UcIntern\StepType.cs" />
     <Compile Include="UcIntern\UseCase.cs" />
+    <Compile Include="UcIntern\UseCaseBuildingException.cs" />
     <Compile Include="XmlParser\XmlStructureParser.cs" />
   </ItemGroup>
   <ItemGroup>
