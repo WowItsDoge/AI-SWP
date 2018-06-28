@@ -772,6 +772,21 @@ namespace UseCaseCore.XmlParser
             keyWords.Add("EXTENDED BY USE CASE");
             keyWords.Add("MEANWHILE");
             keyWords.Add("VALIDATE THAT");
+            keyWords.Add("WENN");
+            keyWords.Add("DANN");
+            keyWords.Add("SONST");
+            keyWords.Add("SONST WENN");
+            keyWords.Add("ENDE WENN");
+            keyWords.Add("TUE");
+            keyWords.Add("SOLANGE");
+            keyWords.Add("FORTSETZEN");
+            keyWords.Add("FORTSETZEN SCHRITT");
+            keyWords.Add("ABBRECHEN");
+            keyWords.Add("SCHLIESST ANWENDUNGSFALL EIN");
+            keyWords.Add("SCHLIEẞT ANWENDUNGSFALL EIN");
+            keyWords.Add("ERWEITERT DURCH ANWENDUNGSFALL");
+            keyWords.Add("WÄHRENDDESSEN");
+            keyWords.Add("VALIDIERT, DASS");
 
             int n;
 
@@ -782,7 +797,8 @@ namespace UseCaseCore.XmlParser
             }
 
             //// Check if current step content is the postcondition
-            if (flowStepContent.ChildNodes[1].InnerText.Trim().ToLower() == "Postcondition".ToLower())
+            string innerText = flowStepContent.ChildNodes[1].InnerText.Trim().ToLower();
+            if ((innerText == "Postcondition".ToLower()) || (innerText == "Nachbedingung".ToLower()))
             {
                 return true;
             }
