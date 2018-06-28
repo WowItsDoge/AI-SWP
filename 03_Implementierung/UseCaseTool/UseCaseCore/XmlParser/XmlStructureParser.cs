@@ -127,6 +127,11 @@ namespace UseCaseCore.XmlParser
                 string fileName = filePath.Substring(filePath.LastIndexOf("\\") + 1);
                 string newFilePath = Path.Combine(Path.GetTempPath(), fileName);
                 File.Copy(filePath, newFilePath, true);
+
+                //// Delete file write protection
+                FileInfo newFilePathInfo = new FileInfo(newFilePath);
+                File.SetAttributes(newFilePath, (FileAttributes)(newFilePathInfo.Attributes - FileAttributes.ReadOnly));
+
                 this.useCaseFilePath = newFilePath;
 
                 //// Open and load usecase xml-file
@@ -165,10 +170,7 @@ namespace UseCaseCore.XmlParser
                 this.errorMessage = "Fehler beim Einlesen der UseCase-Datei: " + ex.Message.ToString();
 
                 //// Close usecase file and delete temporary file from windows user temp folder
-                if (File.Exists(this.useCaseFilePath))
-                {
-                    File.Delete(this.useCaseFilePath);
-                }
+                File.Delete(this.useCaseFilePath);
 
                 return false;
             }
@@ -260,10 +262,7 @@ namespace UseCaseCore.XmlParser
 
                 //// Close usecase file and delete temporary file from windows user temp folder
                 this.useCaseFile.Close();
-                if (File.Exists(this.useCaseFilePath))
-                {
-                    File.Delete(this.useCaseFilePath);
-                }
+                File.Delete(this.useCaseFilePath);
 
                 //// Pass out the internal usecase structure
                 useCase = this.outgoingUseCase;
@@ -303,10 +302,7 @@ namespace UseCaseCore.XmlParser
 
             //// Close usecase file and delete temporary file from windows user temp folder
             this.useCaseFile.Close();
-            if (File.Exists(this.useCaseFilePath))
-            {
-                File.Delete(this.useCaseFilePath);
-            }
+            File.Delete(this.useCaseFilePath);
         }
 
         /// <summary>
