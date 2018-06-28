@@ -21,32 +21,32 @@ namespace UseCaseCore.UcIntern
         /// <summary>
         /// The starting step of an if-statement.
         /// </summary>
-        public static readonly StepType If = new StepType(1, new[] { @"(.*)\bIF\b(.*)\bTHEN\b" });
+        public static readonly StepType If = new StepType(1, new[] { @"(.*)\bIF\b(.*)\bTHEN\b", @"(.*)\bWENN\b(.*)\bDANN\b" });
 
         /// <summary>
         /// The else step of an if-statement.
         /// </summary>
-        public static readonly StepType Else = new StepType(2, new[] { @"\bELSE\b" });
+        public static readonly StepType Else = new StepType(2, new[] { @"\bELSE\b", @"\bSONST\b" });
 
         /// <summary>
         /// An else if step of an if-statement.
         /// </summary>
-        public static readonly StepType ElseIf = new StepType(3, new[] { @"\bELSEIF\b(.*)\bTHEN\b" });
+        public static readonly StepType ElseIf = new StepType(3, new[] { @"\bELSEIF\b(.*)\bTHEN\b", @"\bSONST WENN\b(.*)\bDANN\b" });
 
         /// <summary>
         /// An endif step of an if-statement.
         /// </summary>
-        public static readonly StepType EndIf = new StepType(4, new[] { @"\bENDIF\b" });
+        public static readonly StepType EndIf = new StepType(4, new[] { @"\bENDIF\b", @"\bENDE WENN\b" });
 
         /// <summary>
         /// The do step of an do-until-statement.
         /// </summary>
-        public static readonly StepType Do = new StepType(5, new[] { @"\bDO\b" });
+        public static readonly StepType Do = new StepType(5, new[] { @"\bDO\b", @"\bTUE\b" });
 
         /// <summary>
         /// The until step of an do-until-statement.
         /// </summary>
-        public static readonly StepType Until = new StepType(6, new[] { @"(.*)\bUNTIL\b(.*)" });
+        public static readonly StepType Until = new StepType(6, new[] { @"(.*)\bUNTIL\b(.*)", @"(.*)\bSOLANGE\b(.*)" });
 
         /// <summary>
         /// A resume step.
@@ -54,17 +54,17 @@ namespace UseCaseCore.UcIntern
         /// One group holding the number of the basic step to resume to.
         /// Don't forget that C# puts the full match into an additional group at index 0!
         /// </summary>
-        public static readonly StepType Resume = new StepType(7, new[] { @"\bRESUME STEP\b ([0-9]+)", @"\bRESUME\b ([0-9]+)" });
+        public static readonly StepType Resume = new StepType(7, new[] { @"\bRESUME STEP\b ([0-9]+)", @"\bRESUME\b ([0-9]+)", @"\bFORTSETZEN SCHRITT\b ([0-9]+)", @"\bFORTSETZEN\b ([0-9]+)" });
 
         /// <summary>
         /// An abort step.
         /// </summary>
-        public static readonly StepType Abort = new StepType(8, new[] { @"\bABORT\b" });
+        public static readonly StepType Abort = new StepType(8, new[] { @"\bABORT\b", @"\bABBRECHEN\b" });
 
         /// <summary>
         /// An abort step.
         /// </summary>
-        public static readonly StepType ValidatesThat = new StepType(9, new[] { @"(.*)\bVALIDATES THAT\b(.*)" });
+        public static readonly StepType ValidatesThat = new StepType(9, new[] { @"(.*)\bVALIDATES THAT\b(.*)", @"(.*)\bVALIDIERT, DASS\b(.*)" });
 
         /// <summary>
         /// The regex patterns that match this type.
