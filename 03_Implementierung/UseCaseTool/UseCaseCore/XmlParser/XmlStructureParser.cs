@@ -358,12 +358,12 @@ namespace UseCaseCore.XmlParser
             //// Check for errors: Only one equal property allowed
             if (propertyNode.Count == 0)
             {
-                throw new Exception("UseCase-Eigenschaft " + "\"" + englishPropertyName + "\"" + " nicht gefunden!");
+                throw new Exception("UseCase-Eigenschaft " + "\"" + englishPropertyName + "\"" + " bzw. " + "\"" + germanPropertyName + "\"" + " nicht gefunden!");
             }
 
             if (propertyNode.Count > 1)
             {
-                throw new Exception("Mehr als eine UseCase-Eigenschaft " + "\"" + englishPropertyName + "\"" + " gefunden!");
+                throw new Exception("Mehr als eine UseCase-Eigenschaft " + "\"" + englishPropertyName + "\"" + " bzw. " + "\"" + germanPropertyName + "\"" + " gefunden!");
             }
 
             try
@@ -374,7 +374,7 @@ namespace UseCaseCore.XmlParser
             }
             catch
             {
-                throw new Exception("Inhalt für " + "\"" + englishPropertyName + "\"" + " nicht gefunden!");
+                throw new Exception("Inhalt für " + "\"" + englishPropertyName + "\"" + " bzw. " + "\"" + germanPropertyName + "\"" + " nicht gefunden!");
             }
         }
 
@@ -386,17 +386,19 @@ namespace UseCaseCore.XmlParser
             XmlNodeList basicFlowNode = null;
 
             //// Get the xml node list for the flow
-            basicFlowNode = this.GetXmlNodeList("Basic Flow", "Basisablauf");
+            string englishName = "Basic Flow";
+            string germanName = "Basisablauf";
+            basicFlowNode = this.GetXmlNodeList(englishName, germanName);
 
             //// Check for errors: Only one basic flow allowed
             if (basicFlowNode.Count == 0)
             {
-                throw new Exception("Keinen Basic-Flow gefunden!");
+                throw new Exception("Keinen " + "\"" + englishName + "\"" + " bzw. " + "\"" + germanName + "\"" + " gefunden!");
             }
 
             if (basicFlowNode.Count > 1)
             {
-                throw new Exception("Mehr als einen Basic-Flow gefunden!");
+                throw new Exception("Mehr als einen " + "\"" + englishName + "\"" + " bzw. " + "\"" + germanName + "\"" + " gefunden!");
             }
 
             try
@@ -446,7 +448,7 @@ namespace UseCaseCore.XmlParser
             }
             catch
             {
-                throw new Exception("Inhalt für den Basic-Flow nicht gefunden!");
+                throw new Exception("Inhalt für " + "\"" + englishName + "\"" + " bzw. " + "\"" + germanName + "\"" + " nicht gefunden!");
             }
         }
 
@@ -458,7 +460,9 @@ namespace UseCaseCore.XmlParser
             XmlNodeList globalAlternativeFlowNodes = null;
 
             //// Get the xml node list for the flow
-            globalAlternativeFlowNodes = this.GetXmlNodeList("Global Alternative Flow", "Globaler alternativer Ablauf");
+            string englishName = "Global Alternative Flow";
+            string germanName = "Globaler alternativer Ablauf";
+            globalAlternativeFlowNodes = this.GetXmlNodeList(englishName, germanName);
 
             //// Exit if no flow exists
             if (globalAlternativeFlowNodes.Count == 0)
@@ -521,7 +525,7 @@ namespace UseCaseCore.XmlParser
             }
             catch
             {
-                throw new Exception("Inhalt für den Global-Alternative-Flow nicht gefunden!");
+                throw new Exception("Inhalt für " + "\"" + englishName + "\"" + " bzw. " + "\"" + germanName + "\"" + " nicht gefunden!");
             }
         }
 
@@ -533,7 +537,9 @@ namespace UseCaseCore.XmlParser
             XmlNodeList specificAlternativeFlowNodes = null;
 
             //// Get the xml node list for the flow
-            specificAlternativeFlowNodes = this.GetXmlNodeList("Specific Alternative Flow", "Spezifizierter alternativer Ablauf");
+            string englishName = "Specific Alternative Flow";
+            string germanName = "Spezifizierter alternativer Ablauf";
+            specificAlternativeFlowNodes = this.GetXmlNodeList(englishName, germanName);
 
             //// Exit if no flow exists
             if (specificAlternativeFlowNodes.Count == 0)
@@ -610,7 +616,7 @@ namespace UseCaseCore.XmlParser
             }
             catch
             {
-                throw new Exception("Inhalt für den Specific-Alternative-Flow nicht gefunden!");
+                throw new Exception("Inhalt für " + "\"" + englishName + "\"" + " bzw. " + "\"" + germanName + "\"" + " nicht gefunden!");
             }
         }
 
@@ -622,7 +628,9 @@ namespace UseCaseCore.XmlParser
             XmlNodeList boundedAlternativeFlowNodes = null;
 
             //// Get the xml node list for the flow
-            boundedAlternativeFlowNodes = this.GetXmlNodeList("Bounded Alternative Flow", "Begrenzter alternativer Ablauf");
+            string englishName = "Bounded Alternative Flow";
+            string germanName = "Begrenzter alternativer Ablauf";
+            boundedAlternativeFlowNodes = this.GetXmlNodeList(englishName, germanName);
 
             //// Exit if no flow exists
             if (boundedAlternativeFlowNodes.Count == 0)
@@ -717,7 +725,7 @@ namespace UseCaseCore.XmlParser
             }
             catch
             {
-                throw new Exception("Inhalt für den Bounded-Alternative-Flow nicht gefunden!");
+                throw new Exception("Inhalt für " + "\"" + englishName + "\"" + " bzw. " + "\"" + germanName + "\"" + " nicht gefunden!");
             }
         }
 
