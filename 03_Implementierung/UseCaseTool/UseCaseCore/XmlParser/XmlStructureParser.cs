@@ -351,31 +351,56 @@ namespace UseCaseCore.XmlParser
         private string ParseRucmProperty(string englishPropertyName, string germanPropertyName)
         {
             XmlNodeList propertyNode = null;
+            int propertyNodeCount = 0;
+            string searchWord = string.Empty;
 
-            //// Get the xml node list for the usecase property name (only for property name, not for flows!)
-            propertyNode = this.GetXmlNodeList(englishPropertyName, germanPropertyName);
+            for (int d = 1; d <= 2; d++)
+            {
+                if (d == 1)
+                {
+                    searchWord = englishPropertyName;
+                }
+                else
+                {
+                    searchWord = germanPropertyName;
+                }
+
+                //// Get the xml node list for the usecase property name (only for property name, not for flows!)
+                propertyNode = this.GetXmlNodeList(searchWord);
+
+                //// Exit if no property name exists
+                if (propertyNode.Count == 0)
+                {
+                    continue;
+                }
+
+                //// Save property name node count
+                propertyNodeCount = propertyNodeCount + propertyNode.Count;
+
+                try
+                {
+                    //// Get the content for the property name
+                    string propertyContent = propertyNode[0].ParentNode.ParentNode.ParentNode.ParentNode.ChildNodes[1].InnerText.Trim();
+                    return propertyContent;
+                }
+                catch
+                {
+                    throw new Exception("Inhalt für " + "\"" + searchWord + "\"" + " nicht gefunden!");
+                }
+            }
 
             //// Check for errors: Only one equal property allowed
-            if (propertyNode.Count == 0)
+            if (propertyNodeCount == 0)
             {
                 throw new Exception("UseCase-Eigenschaft " + "\"" + englishPropertyName + "\"" + " bzw. " + "\"" + germanPropertyName + "\"" + " nicht gefunden!");
             }
 
-            if (propertyNode.Count > 1)
+            if (propertyNodeCount > 1)
             {
                 throw new Exception("Mehr als eine UseCase-Eigenschaft " + "\"" + englishPropertyName + "\"" + " bzw. " + "\"" + germanPropertyName + "\"" + " gefunden!");
             }
 
-            try
-            {
-                //// Get the content for the property name
-                string propertyContent = propertyNode[0].ParentNode.ParentNode.ParentNode.ParentNode.ChildNodes[1].InnerText.Trim();
-                return propertyContent;
-            }
-            catch
-            {
-                throw new Exception("Inhalt für " + "\"" + englishPropertyName + "\"" + " bzw. " + "\"" + germanPropertyName + "\"" + " nicht gefunden!");
-            }
+            return string.Empty;
         }
 
         /// <summary>
@@ -384,71 +409,94 @@ namespace UseCaseCore.XmlParser
         private void GetBasicFlow()
         {
             XmlNodeList basicFlowNode = null;
+            int basicFlowNodeCount = 0;
+            string searchWord = string.Empty;
+            string englishSearchWord = "Basic Flow";
+            string germanSearchWord = "Basisablauf";
 
-            //// Get the xml node list for the flow
-            string englishName = "Basic Flow";
-            string germanName = "Basisablauf";
-            basicFlowNode = this.GetXmlNodeList(englishName, germanName);
-
-            //// Check for errors: Only one basic flow allowed
-            if (basicFlowNode.Count == 0)
+            for (int d = 1; d <= 2; d++)
             {
-                throw new Exception("Keinen " + "\"" + englishName + "\"" + " bzw. " + "\"" + germanName + "\"" + " gefunden!");
-            }
+                if (d == 1)
+                {
+                    searchWord = englishSearchWord;
+                }
+                else
+                {
+                    searchWord = germanSearchWord;
+                }
 
-            if (basicFlowNode.Count > 1)
-            {
-                throw new Exception("Mehr als einen " + "\"" + englishName + "\"" + " bzw. " + "\"" + germanName + "\"" + " gefunden!");
-            }
+                //// Get the xml node list for the flow
+                basicFlowNode = this.GetXmlNodeList(searchWord);
 
-            try
-            {
-                //// Get the content for the flow
-                XmlNode basicFlowContent = basicFlowNode[0].ParentNode.ParentNode.ParentNode.ParentNode;
+                //// Exit if no flow exists
+                if (basicFlowNode.Count == 0)
+                {
+                    continue;
+                }
 
-                //// Read out the next step content inside the flow
-                XmlNode basicFlowStepContent = basicFlowContent.NextSibling;
+                //// Save basic flow node count
+                basicFlowNodeCount = basicFlowNodeCount + basicFlowNode.Count;
 
-                List<Node> basicSteps = new List<Node>();
-
-                //// Identifier for the flow is always zero
-                FlowIdentifier basicIdentifier = new FlowIdentifier(FlowType.Basic, 0);
-
-                //// Check if flow has ended
-                while (this.FlowHasEnded(basicFlowStepContent) == false)
-                {    
-                    //// Check how many child nodes exists in current step content and read out the content
-                    switch (basicFlowStepContent.ChildNodes.Count)
-                    {
-                        case 2:
-                            //// Content has no step number --> for example "DO" or "IF ..."
-                            basicSteps.Add(new Node(basicFlowStepContent.ChildNodes[1].InnerText.Trim(), basicIdentifier));
-                            break;
-                        case 3:
-                            //// Content has a step number
-                            basicSteps.Add(new Node(basicFlowStepContent.ChildNodes[2].InnerText.Trim(), basicIdentifier));
-                            break;
-                        default:
-                            break;
-                    }
+                try
+                {
+                    //// Get the content for the flow
+                    XmlNode basicFlowContent = basicFlowNode[0].ParentNode.ParentNode.ParentNode.ParentNode;
 
                     //// Read out the next step content inside the flow
-                    basicFlowStepContent = basicFlowStepContent.NextSibling;
-                }
+                    XmlNode basicFlowStepContent = basicFlowContent.NextSibling;
 
-                //// Read out the postcondition
-                string postcondition = string.Empty;
-                if (basicFlowStepContent.ChildNodes.Count == 3)
+                    List<Node> basicSteps = new List<Node>();
+
+                    //// Identifier for the flow is always zero
+                    FlowIdentifier basicIdentifier = new FlowIdentifier(FlowType.Basic, 0);
+
+                    //// Check if flow has ended
+                    while (this.FlowHasEnded(basicFlowStepContent) == false)
+                    {
+                        //// Check how many child nodes exists in current step content and read out the content
+                        switch (basicFlowStepContent.ChildNodes.Count)
+                        {
+                            case 2:
+                                //// Content has no step number --> for example "DO" or "IF ..."
+                                basicSteps.Add(new Node(basicFlowStepContent.ChildNodes[1].InnerText.Trim(), basicIdentifier));
+                                break;
+                            case 3:
+                                //// Content has a step number
+                                basicSteps.Add(new Node(basicFlowStepContent.ChildNodes[2].InnerText.Trim(), basicIdentifier));
+                                break;
+                            default:
+                                break;
+                        }
+
+                        //// Read out the next step content inside the flow
+                        basicFlowStepContent = basicFlowStepContent.NextSibling;
+                    }
+
+                    //// Read out the postcondition
+                    string postcondition = string.Empty;
+                    if (basicFlowStepContent.ChildNodes.Count == 3)
+                    {
+                        postcondition = basicFlowStepContent.ChildNodes[2].InnerText.Trim();
+                    }
+
+                    //// Create the internal basic flow
+                    this.basicFlow = new Flow(basicIdentifier, postcondition, basicSteps, new List<ReferenceStep>());
+                }
+                catch
                 {
-                    postcondition = basicFlowStepContent.ChildNodes[2].InnerText.Trim();
+                    throw new Exception("Inhalt für " + "\"" + searchWord + "\"" + " nicht gefunden!");
                 }
-
-                //// Create the internal basic flow
-                this.basicFlow = new Flow(basicIdentifier, postcondition, basicSteps, new List<ReferenceStep>());
             }
-            catch
+
+            //// Check for errors: Only one basic flow allowed
+            if (basicFlowNodeCount == 0)
             {
-                throw new Exception("Inhalt für " + "\"" + englishName + "\"" + " bzw. " + "\"" + germanName + "\"" + " nicht gefunden!");
+                throw new Exception("Keinen " + "\"" + englishSearchWord + "\"" + " bzw. " + "\"" + germanSearchWord + "\"" + " gefunden!");
+            }
+
+            if (basicFlowNodeCount > 1)
+            {
+                throw new Exception("Mehr als einen " + "\"" + englishSearchWord + "\"" + " bzw. " + "\"" + germanSearchWord + "\"" + " gefunden!");
             }
         }
 
@@ -458,74 +506,85 @@ namespace UseCaseCore.XmlParser
         private void GetGlobalAlternativeFlows()
         {
             XmlNodeList globalAlternativeFlowNodes = null;
+            string searchWord = string.Empty;
 
-            //// Get the xml node list for the flow
-            string englishName = "Global Alternative Flow";
-            string germanName = "Globaler alternativer Ablauf";
-            globalAlternativeFlowNodes = this.GetXmlNodeList(englishName, germanName);
-
-            //// Exit if no flow exists
-            if (globalAlternativeFlowNodes.Count == 0)
+            for (int d = 1; d <= 2; d++)
             {
-                return;
-            }
-
-            try
-            {
-                //// Create temporary flow list
-                List<Flow> temporaryFlowList = new List<Flow>();
-
-                //// Read out every existing flow
-                for (int i = 1; i <= globalAlternativeFlowNodes.Count; i++)
+                if (d == 1)
                 {
-                    List<Node> globalSteps = new List<Node>();
-
-                    //// Identifier for the flow is the current loop runs
-                    FlowIdentifier globalIdentifier = new FlowIdentifier(FlowType.GlobalAlternative, i);
-
-                    //// Get the content for the flow
-                    XmlNode globalAlternativeFlowContent = globalAlternativeFlowNodes[i - 1].ParentNode.ParentNode.ParentNode.ParentNode;
-                    XmlNode globalAlternativeFlowStepContent = globalAlternativeFlowContent;
-
-                    //// Check if flow has ended
-                    while (this.FlowHasEnded(globalAlternativeFlowStepContent) == false)
-                    {
-                        //// Check how many child nodes exists in current step content and read out the content
-                        switch (globalAlternativeFlowStepContent.ChildNodes.Count)
-                        {
-                            case 2:
-                                //// Content has no step number --> for example "DO" or "IF ..."
-                                globalSteps.Add(new Node(globalAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim(), globalIdentifier));
-                                break;
-                            case 3:
-                                //// Content has a step number
-                                globalSteps.Add(new Node(globalAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim(), globalIdentifier));
-                                break;
-                            default:
-                                break;
-                        }
-
-                        //// Read out the next step content inside the flow
-                        globalAlternativeFlowStepContent = globalAlternativeFlowStepContent.NextSibling;
-                    }
-
-                    //// Read out the postcondition
-                    string postcondition = string.Empty;
-                    if (globalAlternativeFlowStepContent.ChildNodes.Count == 3)
-                    {
-                        postcondition = globalAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim();
-                    }   
-                         
-                    //// Add the flow to temporary list       
-                    temporaryFlowList.Add(new Flow(globalIdentifier, postcondition, globalSteps, new List<ReferenceStep>()));                   
+                    searchWord = "Global Alternative Flow";
+                }
+                else
+                {
+                    searchWord = "Globaler alternativer Ablauf";
                 }
 
-                //// Create the internal global alternative flows
-                this.globalAlternativeFlows = temporaryFlowList;
-            }
-            catch
-            {
-                throw new Exception("Inhalt für " + "\"" + englishName + "\"" + " bzw. " + "\"" + germanName + "\"" + " nicht gefunden!");
+                //// Get the xml node list for the flow
+                globalAlternativeFlowNodes = this.GetXmlNodeList(searchWord);
+
+                //// Exit if no flow exists
+                if (globalAlternativeFlowNodes.Count == 0)
+                {
+                    continue;
+                }
+
+                try
+                {
+                    //// Create temporary flow list
+                    List<Flow> temporaryFlowList = new List<Flow>();
+
+                    //// Read out every existing flow
+                    for (int i = 1; i <= globalAlternativeFlowNodes.Count; i++)
+                    {
+                        List<Node> globalSteps = new List<Node>();
+
+                        //// Identifier for the flow is the current loop runs
+                        FlowIdentifier globalIdentifier = new FlowIdentifier(FlowType.GlobalAlternative, i);
+
+                        //// Get the content for the flow
+                        XmlNode globalAlternativeFlowContent = globalAlternativeFlowNodes[i - 1].ParentNode.ParentNode.ParentNode.ParentNode;
+                        XmlNode globalAlternativeFlowStepContent = globalAlternativeFlowContent;
+
+                        //// Check if flow has ended
+                        while (this.FlowHasEnded(globalAlternativeFlowStepContent) == false)
+                        {
+                            //// Check how many child nodes exists in current step content and read out the content
+                            switch (globalAlternativeFlowStepContent.ChildNodes.Count)
+                            {
+                                case 2:
+                                    //// Content has no step number --> for example "DO" or "IF ..."
+                                    globalSteps.Add(new Node(globalAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim(), globalIdentifier));
+                                    break;
+                                case 3:
+                                    //// Content has a step number
+                                    globalSteps.Add(new Node(globalAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim(), globalIdentifier));
+                                    break;
+                                default:
+                                    break;
+                            }
+
+                            //// Read out the next step content inside the flow
+                            globalAlternativeFlowStepContent = globalAlternativeFlowStepContent.NextSibling;
+                        }
+
+                        //// Read out the postcondition
+                        string postcondition = string.Empty;
+                        if (globalAlternativeFlowStepContent.ChildNodes.Count == 3)
+                        {
+                            postcondition = globalAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim();
+                        }
+
+                        //// Add the flow to temporary list       
+                        temporaryFlowList.Add(new Flow(globalIdentifier, postcondition, globalSteps, new List<ReferenceStep>()));
+                    }
+
+                    //// Add the temporary global alternative flow list to the internal global alternative flow list with all global alternative flows
+                    this.globalAlternativeFlows.AddRange(temporaryFlowList);
+                }
+                catch
+                {
+                    throw new Exception("Inhalt für " + "\"" + searchWord + "\"" + " nicht gefunden!");
+                }
             }
         }
 
@@ -535,88 +594,99 @@ namespace UseCaseCore.XmlParser
         private void GetSpecificAlternativeFlows()
         {
             XmlNodeList specificAlternativeFlowNodes = null;
+            string searchWord = string.Empty;
 
-            //// Get the xml node list for the flow
-            string englishName = "Specific Alternative Flow";
-            string germanName = "Spezifizierter alternativer Ablauf";
-            specificAlternativeFlowNodes = this.GetXmlNodeList(englishName, germanName);
-
-            //// Exit if no flow exists
-            if (specificAlternativeFlowNodes.Count == 0)
+            for (int d = 1; d <= 2; d++)
             {
-                return;
-            }
-
-            try
-            {
-                //// Create temporary flow list
-                List<Flow> temporaryFlowList = new List<Flow>();
-
-                //// Read out every existing flow
-                for (int i = 1; i <= specificAlternativeFlowNodes.Count; i++)
+                if (d == 1)
                 {
-                    List<Node> specificSteps = new List<Node>();
-
-                    //// Identifier for the flow is the current loop runs
-                    FlowIdentifier specificIdentifier = new FlowIdentifier(FlowType.SpecificAlternative, i);
-
-                    ReferenceStep referenceStep = new ReferenceStep();
-
-                    //// Get the content for the flow
-                    XmlNode specificAlternativeFlowContent = specificAlternativeFlowNodes[i - 1].ParentNode.ParentNode.ParentNode.ParentNode;
-                    XmlNode specificAlternativeFlowStepContent = specificAlternativeFlowContent;
-
-                    //// Check if flow has ended
-                    while (this.FlowHasEnded(specificAlternativeFlowStepContent) == false)
-                    {
-                        //// Check how many child nodes exists in current step content and read out the content
-                        switch (specificAlternativeFlowStepContent.ChildNodes.Count)
-                        {
-                            case 2:
-                                //// Content has no step number --> for example "DO" or "IF ..."
-                                string unparsedReferenceStep = specificAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim().ToLower();
-                                
-                                //// Help query for rucm rule 19
-                                if (unparsedReferenceStep.Contains("RFS".ToLower()))   
-                                {
-                                    unparsedReferenceStep = this.TrimReferenceStepNumber(unparsedReferenceStep);
-                                    int referenceStepNumber = int.Parse(unparsedReferenceStep);
-                                    FlowIdentifier flowIdentifier = new FlowIdentifier(FlowType.Basic, 0);
-                                    referenceStep = new ReferenceStep(flowIdentifier, referenceStepNumber);
-                                    break;
-                                }
-
-                                specificSteps.Add(new Node(specificAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim(), specificIdentifier));
-                                break;
-                            case 3:
-                                //// Content has a step number
-                                specificSteps.Add(new Node(specificAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim(), specificIdentifier));
-                                break;
-                            default:
-                                break;
-                        }
-
-                        //// Read out the next step content inside the flow
-                        specificAlternativeFlowStepContent = specificAlternativeFlowStepContent.NextSibling;
-                    }
-
-                    //// Read out the postcondition
-                    string postcondition = string.Empty;
-                    if (specificAlternativeFlowStepContent.ChildNodes.Count == 3)
-                    {
-                        postcondition = specificAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim();
-                    }
-
-                    //// Add the flow to temporary list                      
-                    temporaryFlowList.Add(new Flow(specificIdentifier, postcondition, specificSteps, new List<ReferenceStep>() { referenceStep }));
+                    searchWord = "Specific Alternative Flow";
+                }
+                else
+                {
+                    searchWord = "Spezifizierter alternativer Ablauf";
                 }
 
-                //// Create the internal specific alternative flows
-                this.specificAlternativeFlows = temporaryFlowList;
-            }
-            catch
-            {
-                throw new Exception("Inhalt für " + "\"" + englishName + "\"" + " bzw. " + "\"" + germanName + "\"" + " nicht gefunden!");
+                //// Get the xml node list for the flow
+                specificAlternativeFlowNodes = this.GetXmlNodeList(searchWord);
+
+                //// Exit if no flow exists
+                if (specificAlternativeFlowNodes.Count == 0)
+                {
+                    continue;
+                }
+
+                try
+                {
+                    //// Create temporary flow list
+                    List<Flow> temporaryFlowList = new List<Flow>();
+
+                    //// Read out every existing flow
+                    for (int i = 1; i <= specificAlternativeFlowNodes.Count; i++)
+                    {
+                        List<Node> specificSteps = new List<Node>();
+
+                        //// Identifier for the flow is the current loop runs
+                        FlowIdentifier specificIdentifier = new FlowIdentifier(FlowType.SpecificAlternative, i);
+
+                        ReferenceStep referenceStep = new ReferenceStep();
+
+                        //// Get the content for the flow
+                        XmlNode specificAlternativeFlowContent = specificAlternativeFlowNodes[i - 1].ParentNode.ParentNode.ParentNode.ParentNode;
+                        XmlNode specificAlternativeFlowStepContent = specificAlternativeFlowContent;
+
+                        //// Check if flow has ended
+                        while (this.FlowHasEnded(specificAlternativeFlowStepContent) == false)
+                        {
+                            //// Check how many child nodes exists in current step content and read out the content
+                            switch (specificAlternativeFlowStepContent.ChildNodes.Count)
+                            {
+                                case 2:
+                                    //// Content has no step number --> for example "DO" or "IF ..."
+                                    string unparsedReferenceStep = specificAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim().ToLower();
+
+                                    //// Help query for rucm rule 19
+                                    if (unparsedReferenceStep.Contains("RFS".ToLower()))
+                                    {
+                                        unparsedReferenceStep = this.TrimReferenceStepNumber(unparsedReferenceStep);
+                                        int referenceStepNumber = int.Parse(unparsedReferenceStep);
+                                        FlowIdentifier flowIdentifier = new FlowIdentifier(FlowType.Basic, 0);
+                                        referenceStep = new ReferenceStep(flowIdentifier, referenceStepNumber);
+                                        break;
+                                    }
+
+                                    specificSteps.Add(new Node(specificAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim(), specificIdentifier));
+                                    break;
+                                case 3:
+                                    //// Content has a step number
+                                    specificSteps.Add(new Node(specificAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim(), specificIdentifier));
+                                    break;
+                                default:
+                                    break;
+                            }
+
+                            //// Read out the next step content inside the flow
+                            specificAlternativeFlowStepContent = specificAlternativeFlowStepContent.NextSibling;
+                        }
+
+                        //// Read out the postcondition
+                        string postcondition = string.Empty;
+                        if (specificAlternativeFlowStepContent.ChildNodes.Count == 3)
+                        {
+                            postcondition = specificAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim();
+                        }
+
+                        //// Add the flow to temporary list                      
+                        temporaryFlowList.Add(new Flow(specificIdentifier, postcondition, specificSteps, new List<ReferenceStep>() { referenceStep }));
+                    }
+
+                    //// Add the temporary specific alternative flow list to the internal specific alternative flow list with all specific alternative flows
+                    this.specificAlternativeFlows.AddRange(temporaryFlowList);
+                }
+                catch
+                {
+                    throw new Exception("Inhalt für " + "\"" + searchWord + "\"" + " nicht gefunden!");
+                }
             }
         }
 
@@ -626,162 +696,149 @@ namespace UseCaseCore.XmlParser
         private void GetBoundedAlternativeFlows()
         {
             XmlNodeList boundedAlternativeFlowNodes = null;
+            string searchWord = string.Empty;
 
-            //// Get the xml node list for the flow
-            string englishName = "Bounded Alternative Flow";
-            string germanName = "Begrenzter alternativer Ablauf";
-            boundedAlternativeFlowNodes = this.GetXmlNodeList(englishName, germanName);
-
-            //// Exit if no flow exists
-            if (boundedAlternativeFlowNodes.Count == 0)
+            for (int d = 1; d <= 2; d++)
             {
-                return;
-            }
-
-            try
-            {
-                //// Create temporary flow list
-                List<Flow> temporaryFlowList = new List<Flow>();
-
-                //// Read out every existing flow
-                for (int i = 1; i <= boundedAlternativeFlowNodes.Count; i++)
+                if (d == 1)
                 {
-                    List<Node> boundedSteps = new List<Node>();
-
-                    //// Identifier for the flow is the current loop runs
-                    FlowIdentifier boundedIdentifier = new FlowIdentifier(FlowType.BoundedAlternative, i);
-
-                    List<ReferenceStep> referenceSteps = new List<ReferenceStep>();
-
-                    //// Get the content for the flow
-                    XmlNode boundedAlternativeFlowContent = boundedAlternativeFlowNodes[i - 1].ParentNode.ParentNode.ParentNode.ParentNode;
-                    XmlNode boundedAlternativeFlowStepContent = boundedAlternativeFlowContent;
-
-                    //// Check if flow has ended
-                    while (this.FlowHasEnded(boundedAlternativeFlowStepContent) == false)
-                    {
-                        //// Check how many child nodes exists in current step content and read out the content
-                        switch (boundedAlternativeFlowStepContent.ChildNodes.Count)
-                        {
-                            case 2:
-                                //// Content has no step number --> for example "DO" or "IF ..."
-                                string unparsedReferenceStep = boundedAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim().ToLower();
-
-                                //// Help query for rucm rule 19
-                                if (unparsedReferenceStep.Contains("RFS".ToLower()) == true)   
-                                {
-                                    //// Check if reference step numbers are separated by hyphen
-                                    //// For example: "RFS Basic Flow 3-6"
-                                    string referenceStepNumbers = this.TrimReferenceStepNumber(unparsedReferenceStep);
-                                    if (referenceStepNumbers.Contains("-") == true)
-                                    {
-                                        int stepStartNumber = int.Parse(referenceStepNumbers.Split('-')[0]);
-                                        int stepEndNumber = int.Parse(referenceStepNumbers.Split('-')[1]);
-                                        for (int n = stepStartNumber; n <= stepEndNumber; n++)
-                                        {
-                                            FlowIdentifier flowIdentifier = new FlowIdentifier(FlowType.Basic, 0);
-                                            ReferenceStep referenceStep = new ReferenceStep(flowIdentifier, n);
-                                            referenceSteps.Add(referenceStep);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        int referenceStepNumber = int.Parse(referenceStepNumbers);
-                                        FlowIdentifier flowIdentifier = new FlowIdentifier(FlowType.Basic, 0);
-                                        ReferenceStep referenceStep = new ReferenceStep(flowIdentifier, referenceStepNumber);
-                                        referenceSteps.Add(referenceStep);
-                                    }
-
-                                    break;
-                                }
-
-                                boundedSteps.Add(new Node(boundedAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim(), boundedIdentifier));
-                                break;
-                            case 3:
-                                //// Content has a step number
-                                boundedSteps.Add(new Node(boundedAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim(), boundedIdentifier));
-                                break;
-                            default:
-                                break;
-                        }
-
-                        //// Read out the next step content inside the flow
-                        boundedAlternativeFlowStepContent = boundedAlternativeFlowStepContent.NextSibling;
-                    }
-
-                    //// Read out the postcondition
-                    string postcondition = string.Empty;
-                    if (boundedAlternativeFlowStepContent.ChildNodes.Count == 3)
-                    {
-                        postcondition = boundedAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim();
-                    }
-
-                    //// Add the flow to temporary list  
-                    temporaryFlowList.Add(new Flow(boundedIdentifier, postcondition, boundedSteps, referenceSteps));                
+                    searchWord = "Bounded Alternative Flow";
+                }
+                else
+                {
+                    searchWord = "Begrenzter alternativer Ablauf";
                 }
 
-                //// Create the internal bounded alternative flows
-                this.boundedAlternativeFlows = temporaryFlowList;
-            }
-            catch
-            {
-                throw new Exception("Inhalt für " + "\"" + englishName + "\"" + " bzw. " + "\"" + germanName + "\"" + " nicht gefunden!");
+                //// Get the xml node list for the flow
+                boundedAlternativeFlowNodes = this.GetXmlNodeList(searchWord);
+
+                //// Exit if no flow exists
+                if (boundedAlternativeFlowNodes.Count == 0)
+                {
+                    continue;
+                }
+
+                try
+                {
+                    //// Create temporary flow list
+                    List<Flow> temporaryFlowList = new List<Flow>();
+
+                    //// Read out every existing flow
+                    for (int i = 1; i <= boundedAlternativeFlowNodes.Count; i++)
+                    {
+                        List<Node> boundedSteps = new List<Node>();
+
+                        //// Identifier for the flow is the current loop runs
+                        FlowIdentifier boundedIdentifier = new FlowIdentifier(FlowType.BoundedAlternative, i);
+
+                        List<ReferenceStep> referenceSteps = new List<ReferenceStep>();
+
+                        //// Get the content for the flow
+                        XmlNode boundedAlternativeFlowContent = boundedAlternativeFlowNodes[i - 1].ParentNode.ParentNode.ParentNode.ParentNode;
+                        XmlNode boundedAlternativeFlowStepContent = boundedAlternativeFlowContent;
+
+                        //// Check if flow has ended
+                        while (this.FlowHasEnded(boundedAlternativeFlowStepContent) == false)
+                        {
+                            //// Check how many child nodes exists in current step content and read out the content
+                            switch (boundedAlternativeFlowStepContent.ChildNodes.Count)
+                            {
+                                case 2:
+                                    //// Content has no step number --> for example "DO" or "IF ..."
+                                    string unparsedReferenceStep = boundedAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim().ToLower();
+
+                                    //// Help query for rucm rule 19
+                                    if (unparsedReferenceStep.Contains("RFS".ToLower()) == true)
+                                    {
+                                        //// Check if reference step numbers are separated by hyphen
+                                        //// For example: "RFS Basic Flow 3-6"
+                                        string referenceStepNumbers = this.TrimReferenceStepNumber(unparsedReferenceStep);
+                                        if (referenceStepNumbers.Contains("-") == true)
+                                        {
+                                            int stepStartNumber = int.Parse(referenceStepNumbers.Split('-')[0]);
+                                            int stepEndNumber = int.Parse(referenceStepNumbers.Split('-')[1]);
+                                            for (int n = stepStartNumber; n <= stepEndNumber; n++)
+                                            {
+                                                FlowIdentifier flowIdentifier = new FlowIdentifier(FlowType.Basic, 0);
+                                                ReferenceStep referenceStep = new ReferenceStep(flowIdentifier, n);
+                                                referenceSteps.Add(referenceStep);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            int referenceStepNumber = int.Parse(referenceStepNumbers);
+                                            FlowIdentifier flowIdentifier = new FlowIdentifier(FlowType.Basic, 0);
+                                            ReferenceStep referenceStep = new ReferenceStep(flowIdentifier, referenceStepNumber);
+                                            referenceSteps.Add(referenceStep);
+                                        }
+
+                                        break;
+                                    }
+
+                                    boundedSteps.Add(new Node(boundedAlternativeFlowStepContent.ChildNodes[1].InnerText.Trim(), boundedIdentifier));
+                                    break;
+                                case 3:
+                                    //// Content has a step number
+                                    boundedSteps.Add(new Node(boundedAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim(), boundedIdentifier));
+                                    break;
+                                default:
+                                    break;
+                            }
+
+                            //// Read out the next step content inside the flow
+                            boundedAlternativeFlowStepContent = boundedAlternativeFlowStepContent.NextSibling;
+                        }
+
+                        //// Read out the postcondition
+                        string postcondition = string.Empty;
+                        if (boundedAlternativeFlowStepContent.ChildNodes.Count == 3)
+                        {
+                            postcondition = boundedAlternativeFlowStepContent.ChildNodes[2].InnerText.Trim();
+                        }
+
+                        //// Add the flow to temporary list  
+                        temporaryFlowList.Add(new Flow(boundedIdentifier, postcondition, boundedSteps, referenceSteps));
+                    }
+
+                    //// Add the temporary bounded alternative flow list to the internal bounded alternative flow list with all bounded alternative flows
+                    this.boundedAlternativeFlows.AddRange(temporaryFlowList);
+                }
+                catch
+                {
+                    throw new Exception("Inhalt für " + "\"" + searchWord + "\"" + " nicht gefunden!");
+                }
             }
         }
 
         /// <summary>
         /// Get the xml node list for specified flow type
         /// </summary>
-        /// <param name="englishSearchWord">Defines the english search word with which you want to search</param>
-        /// <param name="germanSearchWord">Defines the german search word with which you want to search</param>
+        /// <param name="searchWord">Defines the search word with which you want to search</param>
         /// <returns>Returns the XmlNodeList with the founded Node.</returns>
-        private XmlNodeList GetXmlNodeList(string englishSearchWord, string germanSearchWord)
+        private XmlNodeList GetXmlNodeList(string searchWord)
         {
             XmlNode root = this.useCaseXml.DocumentElement;
             XmlNodeList flowNodeList = null;
-            string searchWord = string.Empty;
-            bool flowNodeListFound = false;
 
-            for (int i = 0; i < 2; i++)
+            //// Create a list for search words by trimming the search word string at the blank signs from the right on
+            //// Improves the readout stability for the usecase quite a lot !!!
+            List<string> searchWordList = new List<string>();
+            int charPosition = searchWord.Length;
+            while (charPosition > 0)
             {
-                if (i == 0)
-                {
-                    //// First pass with english search word
-                    searchWord = englishSearchWord;
-                }
-                else
-                {
-                    //// Second pass with german search word
-                    searchWord = germanSearchWord;
-                }
+                searchWord = searchWord.Substring(0, charPosition);
+                searchWordList.Add(searchWord);
+                charPosition = searchWord.LastIndexOf(' ');
+            }
 
-                //// Create a list for search words by trimming the search word string at the blank signs from the right on
-                //// Improves the readout stability for the usecase quite a lot !!!
-                List<string> searchWordList = new List<string>();
-                int charPosition = searchWord.Length;
-                while (charPosition > 0)
+            for (int n = 1; n <= searchWordList.Count; n++)
+            {
+                //// Find xml node list
+                string xPathFilter = "//*/text()[normalize-space(.)='" + searchWordList[n - 1] + "']/parent::*";
+                flowNodeList = root.SelectNodes(xPathFilter);
+                if (flowNodeList.Count > 0)
                 {
-                    searchWord = searchWord.Substring(0, charPosition);
-                    searchWordList.Add(searchWord);
-                    charPosition = searchWord.LastIndexOf(' ');
-                }
-
-                for (int n = 1; n <= searchWordList.Count; n++)
-                {
-                    //// Find xml node list
-                    string xPathFilter = "//*/text()[normalize-space(.)='" + searchWordList[n - 1] + "']/parent::*";
-                    flowNodeList = root.SelectNodes(xPathFilter);
-                    if (flowNodeList.Count > 0)
-                    {
-                        //// Xml node list was found
-                        flowNodeListFound = true;
-                        break;
-                    }
-                }
-
-                if (flowNodeListFound == true)
-                {
-                    //// Xml node list was found, no more further traversing the loop necessary
+                    //// Xml node list was found
                     break;
                 }
             }
