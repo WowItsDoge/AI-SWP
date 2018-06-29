@@ -129,8 +129,9 @@ namespace UseCaseCore.XmlParser
                 File.Copy(filePath, newFilePath, true);
 
                 //// Delete file write protection
-                FileInfo newFilePathInfo = new FileInfo(newFilePath);
-                File.SetAttributes(newFilePath, (FileAttributes)(newFilePathInfo.Attributes - FileAttributes.ReadOnly));
+                FileAttributes fileAttributes = File.GetAttributes(newFilePath);
+                fileAttributes = fileAttributes & ~FileAttributes.ReadOnly;
+                File.SetAttributes(newFilePath, fileAttributes);
 
                 this.useCaseFilePath = newFilePath;
 
@@ -169,8 +170,15 @@ namespace UseCaseCore.XmlParser
                 //// Set the error message
                 this.errorMessage = "Fehler beim Einlesen der UseCase-Datei: " + ex.Message.ToString();
 
-                //// Close usecase file and delete temporary file from windows user temp folder
-                File.Delete(this.useCaseFilePath);
+                try
+                {
+                    //// Close usecase file and delete temporary file from windows user temp folder
+                    //// With "try" and "catch", never create a exception error. Program must continue!
+                    File.Delete(this.useCaseFilePath);
+                }
+                catch
+                {
+                }
 
                 return false;
             }
@@ -345,7 +353,7 @@ namespace UseCaseCore.XmlParser
             XmlNodeList propertyNode = null;
 
             //// Get the xml node list for the usecase property name (only for property name, not for flows!)
-            propertyNode = this.GetXmlNodeList(englishPropertyName);
+            propertyNode = this.GetXmlNodeList(englishPropertyName, germanPropertyName);
 
             //// Check for errors: Only one equal property allowed
             if (propertyNode.Count == 0)
@@ -378,7 +386,7 @@ namespace UseCaseCore.XmlParser
             XmlNodeList basicFlowNode = null;
 
             //// Get the xml node list for the flow
-            basicFlowNode = this.GetXmlNodeList("Basic Flow");
+            basicFlowNode = this.GetXmlNodeList("Basic Flow", "Basisablauf");
 
             //// Check for errors: Only one basic flow allowed
             if (basicFlowNode.Count == 0)
@@ -450,7 +458,7 @@ namespace UseCaseCore.XmlParser
             XmlNodeList globalAlternativeFlowNodes = null;
 
             //// Get the xml node list for the flow
-            globalAlternativeFlowNodes = this.GetXmlNodeList("Global Alternative Flow");
+            globalAlternativeFlowNodes = this.GetXmlNodeList("Global Alternative Flow", "Globaler alternativer Ablauf");
 
             //// Exit if no flow exists
             if (globalAlternativeFlowNodes.Count == 0)
@@ -525,7 +533,7 @@ namespace UseCaseCore.XmlParser
             XmlNodeList specificAlternativeFlowNodes = null;
 
             //// Get the xml node list for the flow
-            specificAlternativeFlowNodes = this.GetXmlNodeList("Specific Alternative Flow");
+            specificAlternativeFlowNodes = this.GetXmlNodeList("Specific Alternative Flow", "Spezifizierter alternativer Ablauf");
 
             //// Exit if no flow exists
             if (specificAlternativeFlowNodes.Count == 0)
@@ -614,7 +622,7 @@ namespace UseCaseCore.XmlParser
             XmlNodeList boundedAlternativeFlowNodes = null;
 
             //// Get the xml node list for the flow
-            boundedAlternativeFlowNodes = this.GetXmlNodeList("Bounded Alternative Flow");
+            boundedAlternativeFlowNodes = this.GetXmlNodeList("Bounded Alternative Flow", "Begrenzter alternativer Ablauf");
 
             //// Exit if no flow exists
             if (boundedAlternativeFlowNodes.Count == 0)
@@ -716,32 +724,56 @@ namespace UseCaseCore.XmlParser
         /// <summary>
         /// Get the xml node list for specified flow type
         /// </summary>
-        /// <param name="searchWord">Defines the search word with which you want to search</param>
+        /// <param name="englishSearchWord">Defines the english search word with which you want to search</param>
+        /// <param name="germanSearchWord">Defines the german search word with which you want to search</param>
         /// <returns>Returns the XmlNodeList with the founded Node.</returns>
-        private XmlNodeList GetXmlNodeList(string searchWord)
+        private XmlNodeList GetXmlNodeList(string englishSearchWord, string germanSearchWord)
         {
             XmlNode root = this.useCaseXml.DocumentElement;
             XmlNodeList flowNodeList = null;
+            string searchWord = string.Empty;
+            bool flowNodeListFound = false;
 
-            //// Create a list for search words by trimming the search word string at the blank signs from the right on
-            //// Improves the readout stability for the usecase quite a lot !!!
-            List<string> searchWordList = new List<string>();
-            int charPosition = searchWord.Length;
-            while (charPosition > 0)
+            for (int i = 0; i < 2; i++)
             {
-                searchWord = searchWord.Substring(0, charPosition);
-                searchWordList.Add(searchWord);
-                charPosition = searchWord.LastIndexOf(' ');
-            }
-
-            for (int i = 1; i <= searchWordList.Count; i++)
-            {
-                //// Find xml node list
-                string xPathFilter = "//*/text()[normalize-space(.)='" + searchWordList[i - 1] + "']/parent::*";
-                flowNodeList = root.SelectNodes(xPathFilter);
-                if (flowNodeList.Count > 0)
+                if (i == 0)
                 {
-                    //// Xml node list was found
+                    //// First pass with english search word
+                    searchWord = englishSearchWord;
+                }
+                else
+                {
+                    //// Second pass with german search word
+                    searchWord = germanSearchWord;
+                }
+
+                //// Create a list for search words by trimming the search word string at the blank signs from the right on
+                //// Improves the readout stability for the usecase quite a lot !!!
+                List<string> searchWordList = new List<string>();
+                int charPosition = searchWord.Length;
+                while (charPosition > 0)
+                {
+                    searchWord = searchWord.Substring(0, charPosition);
+                    searchWordList.Add(searchWord);
+                    charPosition = searchWord.LastIndexOf(' ');
+                }
+
+                for (int n = 1; n <= searchWordList.Count; n++)
+                {
+                    //// Find xml node list
+                    string xPathFilter = "//*/text()[normalize-space(.)='" + searchWordList[n - 1] + "']/parent::*";
+                    flowNodeList = root.SelectNodes(xPathFilter);
+                    if (flowNodeList.Count > 0)
+                    {
+                        //// Xml node list was found
+                        flowNodeListFound = true;
+                        break;
+                    }
+                }
+
+                if (flowNodeListFound == true)
+                {
+                    //// Xml node list was found, no more further traversing the loop necessary
                     break;
                 }
             }
@@ -847,9 +879,15 @@ namespace UseCaseCore.XmlParser
         private string TrimReferenceStepNumber(string searchWord)
         {
             //// Replace the static word expressions from the search word
+
+            //// Key word list in english
             searchWord = searchWord.Replace("RFS".ToLower(), string.Empty);
             searchWord = searchWord.Replace("Basic".ToLower(), string.Empty);
             searchWord = searchWord.Replace("Flow".ToLower(), string.Empty);
+
+            //// Additional key word list in german
+            searchWord = searchWord.Replace("Basisablauf".ToLower(), string.Empty);
+
             searchWord = searchWord.Trim();
             return searchWord;
         }
