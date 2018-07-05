@@ -173,7 +173,7 @@ namespace UseCaseCore.XmlParser
                 try
                 {
                     //// Close usecase file and delete temporary file from windows user temp folder
-                    //// With "try" and "catch", never create a exception error. Program must continue!
+                    //// With "try" and "catch", never create a exception error. Program must continue at this point!
                     File.Delete(this.useCaseFilePath);
                 }
                 catch
@@ -269,8 +269,15 @@ namespace UseCaseCore.XmlParser
                 this.SetOutgoingUseCaseParameter();
 
                 //// Close usecase file and delete temporary file from windows user temp folder
-                this.useCaseFile.Close();
-                File.Delete(this.useCaseFilePath);
+                try
+                {
+                    //// With "try" and "catch", never create a exception error. Program must continue at this point!
+                    this.useCaseFile.Close();
+                    File.Delete(this.useCaseFilePath);
+                }
+                catch
+                {
+                }
 
                 //// Pass out the internal usecase structure
                 useCase = this.outgoingUseCase;
@@ -309,8 +316,15 @@ namespace UseCaseCore.XmlParser
             }
 
             //// Close usecase file and delete temporary file from windows user temp folder
-            this.useCaseFile.Close();
-            File.Delete(this.useCaseFilePath);
+            try
+            {
+                //// With "try" and "catch", never create a exception error. Program must continue at this point!
+                this.useCaseFile.Close();
+                File.Delete(this.useCaseFilePath);
+            }
+            catch
+            {
+            }
         }
 
         /// <summary>
@@ -351,6 +365,7 @@ namespace UseCaseCore.XmlParser
         private string ParseRucmProperty(string englishPropertyName, string germanPropertyName)
         {
             XmlNodeList propertyNode = null;
+            string propertyContent = string.Empty;
             int propertyNodeCount = 0;
             string searchWord = string.Empty;
 
@@ -380,8 +395,7 @@ namespace UseCaseCore.XmlParser
                 try
                 {
                     //// Get the content for the property name
-                    string propertyContent = propertyNode[0].ParentNode.ParentNode.ParentNode.ParentNode.ChildNodes[1].InnerText.Trim();
-                    return propertyContent;
+                    propertyContent = propertyNode[0].ParentNode.ParentNode.ParentNode.ParentNode.ChildNodes[1].InnerText.Trim();
                 }
                 catch
                 {
@@ -400,7 +414,7 @@ namespace UseCaseCore.XmlParser
                 throw new Exception("Mehr als eine UseCase-Eigenschaft " + "\"" + englishPropertyName + "\"" + " bzw. " + "\"" + germanPropertyName + "\"" + " gefunden!");
             }
 
-            return string.Empty;
+            return propertyContent;
         }
 
         /// <summary>
