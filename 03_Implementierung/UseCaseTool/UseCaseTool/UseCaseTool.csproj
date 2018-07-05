@@ -94,6 +94,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="KeyWordWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MatrixControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -108,6 +112,9 @@
     </Compile>
     <Compile Include="GraphViewerControl.xaml.cs">
       <DependentUpon>GraphViewerControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="KeyWordWindow.xaml.cs">
+      <DependentUpon>KeyWordWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="MaterialDesignColors.cs" />
     <Compile Include="MatrixControl.xaml.cs">

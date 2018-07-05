@@ -333,5 +333,17 @@ namespace UseCaseTool
                 this.displayConditions = true;
             }
         }
+
+        /// <summary>
+        /// Shows a key word overview
+        /// </summary>
+        /// <param name="sender">The sender</param>
+        /// <param name="e">The arguments</param>
+        private void SchluesselwoerterClick(object sender, RoutedEventArgs e)
+        {
+            var keyWordWindow = new KeyWordWindow();
+            keyWordWindow.Owner = this;
+            keyWordWindow.ShowDialog();
+        }
     }
 }
