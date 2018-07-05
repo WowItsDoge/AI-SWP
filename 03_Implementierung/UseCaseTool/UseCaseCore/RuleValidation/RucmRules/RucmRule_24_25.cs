@@ -122,16 +122,16 @@ namespace UseCaseCore.RuleValidation.RucmRules
         private bool CheckForCorrectUsage(int referencedStepId, string step, Flow referencedBasicFlow)
         {
             var result = false;
-            if (step == RucmRuleKeyWords.AbortKeyWord)
+            if (RucmRuleKeyWords.AbortKeyWord.Contains(step))   
             {
                 result = true;
             }
             else
             {
-                if (step.StartsWith(RucmRuleKeyWords.ResumeKeyWord))
+                if (RucmRuleKeyWords.ResumeKeyWord.Any(x => step.StartsWith(x)))
                 {
                     int numberToResume = 0;
-                    if (int.TryParse(step.Substring(RucmRuleKeyWords.ResumeKeyWord.Length), out numberToResume))
+                    if (int.TryParse(step.Substring(RucmRuleKeyWords.ResumeKeyWord.First(x => step.StartsWith(x)).Length), out numberToResume))
                     {
                         if (referencedBasicFlow.Nodes.Count >= numberToResume && numberToResume != 0)
                         {

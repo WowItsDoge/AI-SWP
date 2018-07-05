@@ -5,6 +5,7 @@
 namespace UseCaseCore.RuleValidation.RucmRules
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Errors;
     using UcIntern;
 
@@ -59,9 +60,9 @@ namespace UseCaseCore.RuleValidation.RucmRules
             for (int i = 0; i < stepsToCheck.Count; i++)
             {
                 var step = stepsToCheck[i];
-                if (step.StepDescription.Contains(RucmRuleKeyWords.DoKeyWord))
+                if (RucmRuleKeyWords.DoKeyWord.Any(x => step.StepDescription.Contains(x)))
                 {
-                    if (step.StepDescription != RucmRuleKeyWords.DoKeyWord)
+                    if (!RucmRuleKeyWords.DoKeyWord.Any(x => step.StepDescription == x))
                     {
                         this.errors.Add(new StepError(step.Identifier.Id, "Ungültige Verwendung von DO. \r\nBitte verwenden Sie für das DO einen eigenen Schritt!", "Verletzung der Regel 23!"));
                         result = false;
@@ -73,17 +74,22 @@ namespace UseCaseCore.RuleValidation.RucmRules
                     var doCounter = 1;
                     for (; j < stepsToCheck.Count; j++)
                     {
-                        if (stepsToCheck[j].StepDescription.Contains(RucmRuleKeyWords.DoKeyWord))
+                        if (RucmRuleKeyWords.DoKeyWord.Any(x => stepsToCheck[j].StepDescription.Contains(x)))
                         {
                             doCounter++;
                         }
-                        else if (stepsToCheck[j].StepDescription.Contains(RucmRuleKeyWords.UntilKeyWord))
+                        else if (RucmRuleKeyWords.UntilKeyWord.Any(x => stepsToCheck[j].StepDescription.Contains(x)))
                         {
                             doCounter--;
                             if (doCounter == 0)
                             {
-                                if (!stepsToCheck[j].StepDescription.StartsWith(RucmRuleKeyWords.UntilKeyWord) || 
-                                    string.IsNullOrWhiteSpace(stepsToCheck[j].StepDescription.Replace(RucmRuleKeyWords.UntilKeyWord, string.Empty)))
+                                var replacedString = stepsToCheck[j].StepDescription;
+                                foreach (var keyWord in RucmRuleKeyWords.UntilKeyWord)
+                                {
+                                    replacedString = replacedString.Replace(keyWord, string.Empty);
+                                }
+
+                                if (!RucmRuleKeyWords.UntilKeyWord.Any(x => stepsToCheck[j].StepDescription.StartsWith(x)) || string.IsNullOrWhiteSpace(replacedString))
                                 {
                                     this.errors.Add(new StepError(step.Identifier.Id, "Ungültige Verwendung von UNTIL.\r\nBitte verwenden Sie für UNTIL die Syntax \"UNTIL condition\"!", "Verletzung der Regel 23!"));
                                     result = false;
@@ -105,7 +111,7 @@ namespace UseCaseCore.RuleValidation.RucmRules
 
                     i = j;
                 }
-                else if (step.StepDescription.Contains(RucmRuleKeyWords.UntilKeyWord))
+                else if (RucmRuleKeyWords.UntilKeyWord.Any(x => step.StepDescription.Contains(x)))
                 {
                     this.errors.Add(new StepError(step.Identifier.Id, "UNTIL ohne zugehöriges DO gefunden! \r\nBitte achten Sie auf eine geschlossene DO-UNTIL-Schleifenstruktur", "Verletzung der Regel 23!"));
                     result = false;

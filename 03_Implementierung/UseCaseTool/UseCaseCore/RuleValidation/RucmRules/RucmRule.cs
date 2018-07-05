@@ -5,6 +5,7 @@
 namespace UseCaseCore.RuleValidation.RucmRules
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Errors;
     using UcIntern;
 
@@ -30,7 +31,7 @@ namespace UseCaseCore.RuleValidation.RucmRules
         /// <returns>True if the string contains one of the keywords.</returns>
         protected bool ContainsEndKeyword(string stepToCheck)
         {
-            if (stepToCheck.Contains(RucmRuleKeyWords.AbortKeyWord) || stepToCheck.Contains(RucmRuleKeyWords.ResumeKeyWord))
+            if (RucmRuleKeyWords.AbortKeyWord.Any(x => stepToCheck.Contains(x)) || RucmRuleKeyWords.ResumeKeyWord.Any(x => stepToCheck.Contains(x)))
             {
                 return true;
             }
@@ -45,7 +46,7 @@ namespace UseCaseCore.RuleValidation.RucmRules
         /// <returns>True if the string contains one of the keywords.</returns>
         protected bool ContainsConditionKeyword(string stepToCheck)
         {
-            if (stepToCheck.Contains(RucmRuleKeyWords.IfKeyWord + " ") || stepToCheck.Contains(RucmRuleKeyWords.ElseifKeyWord) || stepToCheck.Contains(RucmRuleKeyWords.ElseKeyWord))
+            if (RucmRuleKeyWords.IfKeyWord.Any(x => stepToCheck.Contains(x + " ")) || RucmRuleKeyWords.ElseifKeyWord.Any(x => stepToCheck.Contains(x)) || RucmRuleKeyWords.ElseKeyWord.Any(x => stepToCheck.Contains(x)))
             {
                 return true;
             }
@@ -60,7 +61,7 @@ namespace UseCaseCore.RuleValidation.RucmRules
         /// <returns>True if the string contains one of the keywords.</returns>
         protected bool ContainsConditionEndKeyword(string stepToCheck)
         {
-            if (stepToCheck.Contains(RucmRuleKeyWords.ElseifKeyWord) || stepToCheck.Contains(RucmRuleKeyWords.EndifKeyWord) || stepToCheck.Contains(RucmRuleKeyWords.ElseKeyWord))
+            if (RucmRuleKeyWords.ElseifKeyWord.Any(x => stepToCheck.Contains(x)) || RucmRuleKeyWords.EndifKeyWord.Any(x => stepToCheck.Contains(x)) || RucmRuleKeyWords.ElseKeyWord.Any(x => stepToCheck.Contains(x)))
             {
                 return true;
             }
