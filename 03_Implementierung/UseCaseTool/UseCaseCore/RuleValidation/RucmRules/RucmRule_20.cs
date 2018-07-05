@@ -118,17 +118,28 @@ namespace UseCaseCore.RuleValidation.RucmRules
         {
             var stringToCheck = stepToCheck.StepDescription;
             var result = false;
-            if (stringToCheck == RucmRuleKeyWords.EndifKeyWord)
+            if (RucmRuleKeyWords.EndifKeyWord.Any(x => x == stringToCheck))
             {
                 result = true;
             }
-            else if (stringToCheck.StartsWith(RucmRuleKeyWords.ElseifKeyWord))
+            else if (RucmRuleKeyWords.ElseifKeyWord.Any(x => stringToCheck.StartsWith(x)))
             {
-                if (!stringToCheck.EndsWith(RucmRuleKeyWords.ThenKeyWord))
+                var replacedString = stringToCheck;
+                foreach (var keyWord in RucmRuleKeyWords.ElseifKeyWord)
+                {
+                    replacedString = replacedString.Replace(keyWord, string.Empty);
+                }
+
+                foreach (var keyWord in RucmRuleKeyWords.ThenKeyWord)
+                {
+                    replacedString = replacedString.Replace(keyWord, string.Empty);
+                }
+
+                if (!RucmRuleKeyWords.ThenKeyWord.Any(x => stringToCheck.EndsWith(x)))
                 {
                     this.errors.Add(new StepError(stepToCheck.Identifier.Id, "Ungültige Verwendung von ELSEIF!\r\nStellen Sie sicher, dass der Aufbau \"ELSEIF condition THEN\" eingehalten wird.", "Verletzung der Regel 20!"));
                 }
-                else if (string.IsNullOrWhiteSpace(stringToCheck.Replace(RucmRuleKeyWords.ElseifKeyWord, string.Empty).Replace(RucmRuleKeyWords.ThenKeyWord, string.Empty)))
+                else if (string.IsNullOrWhiteSpace(replacedString))
                 {
                     this.errors.Add(new StepError(stepToCheck.Identifier.Id, "Ungültige Verwendung von ELSEIF!\r\nStellen Sie sicher, dass der Aufbau \"ELSEIF condition THEN\" eingehalten wird.", "Verletzung der Regel 20!"));
                 }
@@ -137,17 +148,28 @@ namespace UseCaseCore.RuleValidation.RucmRules
                     result = true;
                 }
             }
-            else if (stringToCheck == RucmRuleKeyWords.ElseKeyWord)
+            else if (RucmRuleKeyWords.ElseKeyWord.Any(x => x == stringToCheck))
             {
                 result = true;
             }
-            else if (stringToCheck.StartsWith(RucmRuleKeyWords.IfKeyWord))
+            else if (RucmRuleKeyWords.IfKeyWord.Any(x => stringToCheck.StartsWith(x)))
             {
-                if (!stringToCheck.EndsWith(RucmRuleKeyWords.ThenKeyWord))
+                var replacedString = stringToCheck;
+                foreach (var keyWord in RucmRuleKeyWords.IfKeyWord)
+                {
+                    replacedString = replacedString.Replace(keyWord, string.Empty);
+                }
+
+                foreach (var keyWord in RucmRuleKeyWords.ThenKeyWord)
+                {
+                    replacedString = replacedString.Replace(keyWord, string.Empty);
+                }
+
+                if (!RucmRuleKeyWords.ThenKeyWord.Any(x => stringToCheck.EndsWith(x)))
                 {
                     this.errors.Add(new StepError(stepToCheck.Identifier.Id, "Ungültige Verwendung von IF!\r\nStellen Sie sicher, dass der Aufbau \"IF condition THEN\" eingehalten wird.", "Verletzung der Regel 20!"));
                 }
-                else if (string.IsNullOrWhiteSpace(stringToCheck.Replace(RucmRuleKeyWords.IfKeyWord, string.Empty).Replace(RucmRuleKeyWords.ThenKeyWord, string.Empty)))
+                else if (string.IsNullOrWhiteSpace(replacedString))
                 {
                     this.errors.Add(new StepError(stepToCheck.Identifier.Id, "Ungültige Verwendung von IF!\r\nStellen Sie sicher, dass der Aufbau \"IF condition THEN\" eingehalten wird.", "Verletzung der Regel 20!"));
                 }

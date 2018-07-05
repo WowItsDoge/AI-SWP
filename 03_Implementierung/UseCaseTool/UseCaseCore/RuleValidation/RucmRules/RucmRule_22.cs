@@ -50,7 +50,7 @@ namespace UseCaseCore.RuleValidation.RucmRules
             for (int i = 0; i < basicFlow.Nodes.Count; i++)
             {
                 var step = basicFlow.Nodes[i];
-                if (step.StepDescription.Contains(RucmRuleKeyWords.ValidateKeyWord))
+                if (RucmRuleKeyWords.ValidateKeyWord.Any(x => step.StepDescription.Contains(x)))
                 {
                     if (!referencedStepNumbers.Any(x => x == (i + 1)))
                     {
